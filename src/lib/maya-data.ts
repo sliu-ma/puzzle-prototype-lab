@@ -1,93 +1,261 @@
-export type Season = "in" | "out" | "import";
+// Daten für den "Grünen Markt" — Kapitel 1
+// Schweiz · CHF · Schweizer Siegel (Bio Suisse, IP-Suisse)
 
-export interface ReceiptItem {
-  id: number;
+export type Kategorie =
+  | "milch-eier"
+  | "fruechte-gemuese"
+  | "getreide-backen"
+  | "fette"
+  | "andere";
+
+export interface Produkt {
+  id: string;
   name: string;
-  origin: string;
-  originRegion: "regional" | "germany" | "europe" | "world";
-  season: Season; // in season (DE March) / not / tropical import
-  label: "bio" | "fairtrade" | "none";
-  price: string;
+  kategorie: Kategorie;
+  herkunft: string; // Land oder Region
+  preis: number; // CHF
+  siegel: string[]; // z. B. "Bio Suisse", "IP-Suisse", "Fairtrade", "Bio Import"
+  saison: "in" | "out" | "ganzjahr";
+  emoji: string;
+  // Bewertet das Produkt entlang der Lernziele:
+  // "gut" = regional/saisonal/fair · "schlecht" = problematisch · "neutral" = unkritisch
+  bewertung: "gut" | "schlecht" | "neutral";
+  // Falls "schlecht": Begründung, die nach falschem Bezahlen angezeigt wird.
+  problemHinweis?: string;
+  // Falls "gut" und es einen direkten "schlechten" Konterpart gibt: ID-Verweis.
+  ersetzt?: string;
+  // Für das Rezept benötigte Zutat (Schlüssel)
+  zutat?:
+    | "erdbeeren"
+    | "eier"
+    | "mehl"
+    | "zucker"
+    | "salz"
+    | "butter"
+    | "zitrone"
+    | "vollrahm"
+    | "vanillezucker";
 }
 
-export const RECEIPT: ReceiptItem[] = [
+export const KATEGORIEN: { id: Kategorie; label: string; emoji: string }[] = [
+  { id: "milch-eier", label: "Milch & Eier", emoji: "🥛" },
+  { id: "fruechte-gemuese", label: "Früchte & Gemüse", emoji: "🍎" },
+  { id: "getreide-backen", label: "Getreide & Backen", emoji: "🌾" },
+  { id: "fette", label: "Öle & Fette", emoji: "🧈" },
+  { id: "andere", label: "Weiteres", emoji: "🛒" },
+];
+
+// Produktkatalog — wird im Shop angezeigt.
+export const PRODUKTE: Produkt[] = [
+  // ── Früchte & Gemüse ────────────────────────────────────────────
   {
-    id: 1,
-    name: "Erdbeeren 250g",
-    origin: "Spanien",
-    originRegion: "europe",
-    season: "out",
-    label: "none",
-    price: "3,49",
+    id: "erdbeeren-es",
+    name: "Erdbeeren 500g · Bio (Spanien)",
+    kategorie: "fruechte-gemuese",
+    herkunft: "Spanien",
+    preis: 5.9,
+    siegel: ["Bio Import"],
+    saison: "out",
+    emoji: "🍓",
+    bewertung: "schlecht",
+    zutat: "erdbeeren",
+    problemHinweis:
+      "Erdbeeren wachsen in der Schweiz erst ab Mai/Juni. Importe aus Südeuropa im März bedeuten lange Transporte oder Plastiktunnel — viel Energie für wenig Geschmack.",
   },
   {
-    id: 2,
-    name: "Avocado, 2 Stück",
-    origin: "Peru",
-    originRegion: "world",
-    season: "import",
-    label: "none",
-    price: "2,98",
+    id: "erdbeeren-ch",
+    name: "Erdbeeren 500g · Region Thurgau",
+    kategorie: "fruechte-gemuese",
+    herkunft: "Region Thurgau (CH)",
+    preis: 7.5,
+    siegel: ["IP-Suisse"],
+    saison: "in",
+    emoji: "🍓",
+    bewertung: "gut",
+    zutat: "erdbeeren",
+    ersetzt: "erdbeeren-es",
   },
   {
-    id: 3,
-    name: "Äpfel 'Boskoop' 1kg",
-    origin: "Bodensee, DE",
-    originRegion: "regional",
-    season: "in",
-    label: "bio",
-    price: "2,99",
+    id: "zitrone-it",
+    name: "Bio-Zitrone (Italien)",
+    kategorie: "fruechte-gemuese",
+    herkunft: "Italien",
+    preis: 0.9,
+    siegel: ["Bio"],
+    saison: "ganzjahr",
+    emoji: "🍋",
+    bewertung: "neutral",
+    zutat: "zitrone",
   },
   {
-    id: 4,
-    name: "Bananen 1kg",
-    origin: "Ecuador",
-    originRegion: "world",
-    season: "import",
-    label: "fairtrade",
-    price: "1,79",
+    id: "aepfel-ch",
+    name: "Äpfel 'Gala' 1kg · Schweiz",
+    kategorie: "fruechte-gemuese",
+    herkunft: "Schweiz",
+    preis: 3.9,
+    siegel: ["IP-Suisse"],
+    saison: "in",
+    emoji: "🍎",
+    bewertung: "neutral",
   },
   {
-    id: 5,
-    name: "Tomaten 500g",
-    origin: "Marokko",
-    originRegion: "world",
-    season: "out",
-    label: "none",
-    price: "2,29",
+    id: "tomaten-ma",
+    name: "Tomaten 500g (Marokko)",
+    kategorie: "fruechte-gemuese",
+    herkunft: "Marokko",
+    preis: 3.2,
+    siegel: [],
+    saison: "out",
+    emoji: "🍅",
+    bewertung: "neutral",
+  },
+
+  // ── Milch & Eier ────────────────────────────────────────────────
+  {
+    id: "eier-bh-import",
+    name: "Eier 6er · Bodenhaltung (Import EU)",
+    kategorie: "milch-eier",
+    herkunft: "EU-Import",
+    preis: 2.9,
+    siegel: [],
+    saison: "ganzjahr",
+    emoji: "🥚",
+    bewertung: "schlecht",
+    zutat: "eier",
+    problemHinweis:
+      "Bodenhaltung bedeutet enge Ställe, importierte Eier kommen oft tausende Kilometer weit. Schweizer Bio-Freilandeier garantieren Auslauf und kurze Wege.",
   },
   {
-    id: 6,
-    name: "Kartoffeln 2kg",
-    origin: "Region (DE)",
-    originRegion: "regional",
-    season: "in",
-    label: "none",
-    price: "2,49",
+    id: "eier-bio-ch",
+    name: "Eier 6er · Bio-Freiland Schweiz",
+    kategorie: "milch-eier",
+    herkunft: "Schweiz",
+    preis: 5.4,
+    siegel: ["Bio Suisse"],
+    saison: "ganzjahr",
+    emoji: "🥚",
+    bewertung: "gut",
+    zutat: "eier",
+    ersetzt: "eier-bh-import",
   },
   {
-    id: 7,
-    name: "Kaffee 500g",
-    origin: "Kolumbien",
-    originRegion: "world",
-    season: "import",
-    label: "fairtrade",
-    price: "7,99",
+    id: "butter-ch",
+    name: "Butter 250g · Schweiz",
+    kategorie: "fette",
+    herkunft: "Schweiz",
+    preis: 3.6,
+    siegel: ["IP-Suisse"],
+    saison: "ganzjahr",
+    emoji: "🧈",
+    bewertung: "neutral",
+    zutat: "butter",
   },
   {
-    id: 8,
-    name: "Feldsalat 100g",
-    origin: "Region (DE)",
-    originRegion: "regional",
-    season: "in",
-    label: "bio",
-    price: "1,49",
+    id: "vollrahm-ch",
+    name: "Vollrahm 2.5dl · Schweiz",
+    kategorie: "milch-eier",
+    herkunft: "Schweiz",
+    preis: 2.4,
+    siegel: ["IP-Suisse"],
+    saison: "ganzjahr",
+    emoji: "🥛",
+    bewertung: "neutral",
+    zutat: "vollrahm",
+  },
+
+  // ── Getreide & Backen ───────────────────────────────────────────
+  {
+    id: "mehl-ch",
+    name: "Weissmehl 1kg · Schweiz",
+    kategorie: "getreide-backen",
+    herkunft: "Schweiz",
+    preis: 1.9,
+    siegel: ["IP-Suisse"],
+    saison: "ganzjahr",
+    emoji: "🌾",
+    bewertung: "neutral",
+    zutat: "mehl",
+  },
+  {
+    id: "zucker-ch",
+    name: "Zucker 1kg · Schweiz",
+    kategorie: "getreide-backen",
+    herkunft: "Schweiz",
+    preis: 1.6,
+    siegel: [],
+    saison: "ganzjahr",
+    emoji: "🧂",
+    bewertung: "neutral",
+    zutat: "zucker",
+  },
+  {
+    id: "vanillezucker",
+    name: "Vanillezucker 5×8g",
+    kategorie: "getreide-backen",
+    herkunft: "Schweiz (verpackt)",
+    preis: 1.4,
+    siegel: [],
+    saison: "ganzjahr",
+    emoji: "🍦",
+    bewertung: "neutral",
+    zutat: "vanillezucker",
+  },
+
+  // ── Andere ──────────────────────────────────────────────────────
+  {
+    id: "salz",
+    name: "Meersalz 500g",
+    kategorie: "andere",
+    herkunft: "Frankreich",
+    preis: 2.2,
+    siegel: [],
+    saison: "ganzjahr",
+    emoji: "🧂",
+    bewertung: "neutral",
+    zutat: "salz",
   },
 ];
 
-// Code derivation (see /akte page):
-// 1: not in season (DE, March) → 2 (Erdbeeren, Tomaten)
-// 2: origin outside Europe → 4 (Peru, Ecuador, Marokko, Kolumbien)
-// 3: without Bio/Fairtrade label → 4
-// 4: truly regional (DE-Region) → 3
-export const SOLUTION_CODE = "2443";
+// Rezept: Erdbeer-Törtchen
+export const REZEPT = {
+  titel: "Erdbeer-Törtchen (8 Stück)",
+  emoji: "🥧",
+  zutaten: [
+    "200 g Mehl",
+    "2 EL Zucker",
+    "1 Prise Salz",
+    "100 g Butter",
+    "½ Zitrone",
+    "1 Ei",
+    "2 dl Vollrahm",
+    "2 EL Vanillezucker",
+    "500 g Erdbeeren",
+  ],
+};
+
+// Initialer Warenkorb-Bestand: enthält die zwei "schlechten" Produkte + ein paar neutrale.
+export const START_WARENKORB: string[] = [
+  "erdbeeren-es",
+  "eier-bh-import",
+  "mehl-ch",
+  "zucker-ch",
+  "salz",
+  "butter-ch",
+  "zitrone-it",
+  "vollrahm-ch",
+  "vanillezucker",
+];
+
+// Lernziel: Kein "schlechtes" Produkt mehr im Warenkorb,
+// aber alle Rezeptzutaten (über irgendein passendes Produkt) abgedeckt.
+export const REZEPT_ZUTATEN_KEYS = [
+  "mehl",
+  "zucker",
+  "salz",
+  "butter",
+  "zitrone",
+  "eier",
+  "vollrahm",
+  "vanillezucker",
+  "erdbeeren",
+] as const;
