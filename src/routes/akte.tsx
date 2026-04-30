@@ -332,7 +332,7 @@ function AktePage() {
             },
             {
               title: "Regional",
-              body: "Lebensmittel aus deiner Umgebung — meist 50–100 km. Kurzer Transport, frischer, oft kleinere Höfe. Achtung: „Aus Deutschland" ist noch nicht regional. Region heißt: aus deiner Gegend.",
+              body: "Lebensmittel aus deiner Umgebung — meist 50–100 km. Kurzer Transport, frischer, oft kleinere Höfe. Achtung: „Aus Deutschland“ ist noch nicht regional. Region heißt: aus deiner Gegend.",
               hint: "Auf dem Bon: nur Produkte mit Region (DE) gelten als regional.",
             },
             {
