@@ -2,9 +2,9 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { PaperCard } from "@/components/case-file/PaperCard";
 import { Stamp } from "@/components/case-file/Stamp";
-import { EvidenceModal } from "@/components/case-file/EvidenceModal";
-import { CodeLock } from "@/components/case-file/CodeLock";
-import { RECEIPT, SOLUTION_CODE } from "@/lib/maya-data";
+import { GruenerMarkt } from "@/components/case-file/GruenerMarkt";
+import { REZEPT, START_WARENKORB } from "@/lib/maya-data";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/akte")({
   head: () => ({
@@ -13,18 +13,33 @@ export const Route = createFileRoute("/akte")({
       {
         name: "description",
         content:
-          "Kapitel 1: Der Einkaufszettel. Lies Mayas Beweise, vergleiche und finde den Code, um den verschlossenen Umschlag zu öffnen.",
+          "Kapitel 1: Maya ist verschwunden. Folge ihren Spuren durch den Grünen Markt und lerne, was nachhaltiger Einkauf wirklich bedeutet.",
       },
     ],
   }),
   component: AktePage,
 });
 
-type EvidenceId = "voicemail" | "receipt" | "notes" | "study" | "envelope" | null;
+type Step = "voicemail" | "raetselkarte" | "shop" | "input" | "naechstes";
+
+const STEPS: { id: Step; label: string }[] = [
+  { id: "voicemail", label: "Sprachnachricht" },
+  { id: "raetselkarte", label: "Rätselkarte" },
+  { id: "shop", label: "Grüner Markt" },
+  { id: "input", label: "Fachlicher Input" },
+  { id: "naechstes", label: "Nächstes Rätsel" },
+];
 
 function AktePage() {
-  const [open, setOpen] = useState<EvidenceId>(null);
-  const [unlocked, setUnlocked] = useState(false);
+  const [step, setStep] = useState<Step>("voicemail");
+  const [unlockedSteps, setUnlockedSteps] = useState<Set<Step>>(new Set(["voicemail"]));
+
+  const goto = (s: Step) => {
+    setUnlockedSteps((prev) => new Set([...prev, s]));
+    setStep(s);
+  };
+
+  const aktuellerIndex = STEPS.findIndex((s) => s.id === step);
 
   return (
     <main className="relative min-h-screen px-4 py-10 sm:py-14">
@@ -37,9 +52,9 @@ function AktePage() {
         }}
       />
 
-      <div className="relative mx-auto max-w-6xl">
+      <div className="relative mx-auto max-w-5xl">
         {/* Header */}
-        <header className="mb-10 flex flex-wrap items-end justify-between gap-4 border-b border-border pb-5">
+        <header className="mb-8 flex flex-wrap items-end justify-between gap-4 border-b border-border pb-5">
           <div>
             <Link
               to="/"
@@ -51,366 +66,252 @@ function AktePage() {
               Akte 001 · Kapitel 1
             </h1>
             <p className="mt-1 font-serif italic text-foreground/70">
-              Der Einkaufszettel
+              Der Einkauf
             </p>
           </div>
           <Stamp rotate={-6}>Vertraulich</Stamp>
         </header>
 
-        {/* Briefing */}
-        <PaperCard className="mb-10" rotate={-0.3}>
-          <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-            Auftrag
-          </p>
-          <p className="mt-3 font-serif text-lg leading-relaxed text-foreground/90">
-            Sieh dir alle Beweisstücke an. Vergleiche Mayas Kassenbon mit ihrem Recherche-Material.
-            Aus den Antworten auf ihre vier Fragen ergibt sich ein <strong>vierstelliger Code</strong>{" "}
-            — er öffnet den verschlossenen Umschlag.
-          </p>
-        </PaperCard>
-
-        {/* Evidence board */}
-        <section
-          aria-label="Beweisstücke"
-          className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
-        >
-          <PaperCard
-            as="button"
-            onClick={() => setOpen("voicemail")}
-            ariaLabel="Sprachnachricht öffnen"
-            rotate={-1.5}
-            tape="top-left"
-            className="min-h-[210px]"
-          >
-            <p className="font-mono-typed text-[10px] uppercase tracking-[0.18em] text-stamp">
-              Beweis 01 · Audio-Transkript
-            </p>
-            <h3 className="mt-3 font-serif text-2xl font-bold">Sprachnachricht</h3>
-            <p className="mt-3 text-sm text-foreground/70">
-              Mayas letzte Nachricht an ihre beste Freundin Lin. Aufgenommen am Mittwoch, 14:32 Uhr.
-            </p>
-            <p className="mt-4 font-mono-typed text-xs uppercase tracking-wider text-muted-foreground">
-              ▶ 0:47
-            </p>
-          </PaperCard>
-
-          <PaperCard
-            as="button"
-            onClick={() => setOpen("receipt")}
-            ariaLabel="Kassenbon öffnen"
-            rotate={1}
-            tape="top"
-            className="min-h-[210px]"
-          >
-            <p className="font-mono-typed text-[10px] uppercase tracking-[0.18em] text-stamp">
-              Beweis 02 · Kassenbon
-            </p>
-            <h3 className="mt-3 font-serif text-2xl font-bold">Der Einkauf</h3>
-            <p className="mt-3 text-sm text-foreground/70">
-              Bon eines Supermarkts in der Innenstadt. 8 Produkte. Mayas Handschrift am Rand.
-            </p>
-            <p className="mt-4 font-mono-typed text-xs uppercase tracking-wider text-muted-foreground">
-              Markt-Frisch · 13.03. · 17:48
-            </p>
-          </PaperCard>
-
-          <PaperCard
-            as="button"
-            onClick={() => setOpen("notes")}
-            ariaLabel="Notizzettel öffnen"
-            rotate={-0.8}
-            tape="top-right"
-            className="min-h-[210px]"
-          >
-            <p className="font-mono-typed text-[10px] uppercase tracking-[0.18em] text-stamp">
-              Beweis 03 · Mayas Notizen
-            </p>
-            <h3 className="mt-3 font-serif text-2xl font-bold">Vier Fragen</h3>
-            <p className="mt-3 text-sm text-foreground/70">
-              Ein abgerissener Notizzettel mit Mayas Aufgaben — die Reihenfolge der Antworten ist
-              wichtig.
-            </p>
-            <p className="mt-4 font-mono-typed text-xs uppercase tracking-wider text-muted-foreground">
-              4 Aufgaben · Bleistift
-            </p>
-          </PaperCard>
-
-          <PaperCard
-            as="button"
-            onClick={() => setOpen("study")}
-            ariaLabel="Recherche öffnen"
-            rotate={1.2}
-            tape="top-left"
-            className="min-h-[210px] lg:col-span-2"
-          >
-            <p className="font-mono-typed text-[10px] uppercase tracking-[0.18em] text-stamp">
-              Beweis 04 · Recherche
-            </p>
-            <h3 className="mt-3 font-serif text-2xl font-bold">
-              Was heißt eigentlich „nachhaltig einkaufen"?
-            </h3>
-            <p className="mt-3 text-sm text-foreground/70">
-              Mayas Lese-Material: regional, saisonal, fair. Drei Begriffe, die du brauchst, um den
-              Bon zu lesen.
-            </p>
-            <p className="mt-4 font-mono-typed text-xs uppercase tracking-wider text-muted-foreground">
-              Ausdruck · 3 Karten
-            </p>
-          </PaperCard>
-
-          <PaperCard
-            as="button"
-            onClick={() => setOpen("envelope")}
-            ariaLabel="Verschlossenen Umschlag öffnen"
-            rotate={-1.8}
-            className={`min-h-[210px] ${
-              unlocked ? "bg-paper-deep/60" : "bg-secondary"
-            }`}
-          >
-            <div className="flex h-full flex-col">
-              <p className="font-mono-typed text-[10px] uppercase tracking-[0.18em] text-stamp">
-                Beweis 05 · Verschlossen
-              </p>
-              <h3 className="mt-3 font-serif text-2xl font-bold">
-                {unlocked ? "Umschlag (geöffnet)" : "Brauner Umschlag"}
-              </h3>
-              <p className="mt-3 text-sm text-foreground/70">
-                {unlocked
-                  ? "Der Umschlag liegt offen vor dir. Klicke, um den Inhalt zu lesen."
-                  : "Mit Klebeband versiegelt. Ein 4-stelliges Schloss verriegelt das Klappband."}
-              </p>
-              <div className="mt-auto pt-4">
-                {unlocked ? (
-                  <span className="font-mono-typed text-xs uppercase tracking-wider text-emerald-800">
-                    ✓ Geöffnet · Inhalt einsehen
-                  </span>
-                ) : (
-                  <span className="stamp-mark inline-block px-2 py-0.5 text-[10px]">
-                    🔒 Code erforderlich
-                  </span>
-                )}
-              </div>
-            </div>
-          </PaperCard>
-        </section>
-
-        <p className="mt-12 text-center font-mono-typed text-xs uppercase tracking-[0.2em] text-muted-foreground">
-          — Ende der Akte · Kapitel 1 —
-        </p>
-      </div>
-
-      {/* Modals */}
-      <EvidenceModal
-        open={open === "voicemail"}
-        onClose={() => setOpen(null)}
-        kicker="Beweis 01 · Sprachnachricht"
-        title="Mayas Nachricht an Lin"
-      >
-        <div className="space-y-4 font-serif italic">
-          <p className="text-foreground/60">[Aufnahme · 14:32 · 47 Sek.]</p>
-          <blockquote className="border-l-4 border-stamp pl-4 not-italic font-sans text-[15px] leading-relaxed">
-            „Lin, hör mal — ich war eben im Markt-Frisch. Ich glaub, ich hab's. Du weißt, was sie
-            uns über dieses Gaskraftwerk erzählen, dass es ja so super grün und regional ist? Einer
-            der Investoren hat genau diese Supermarkt-Kette."
-            <br />
-            <br />
-            „Und ich hab gerade dort eingekauft — wegen Bio, hab ich gedacht. Aber wenn du den Bon
-            siehst… also, ich hab vier Fragen aufgeschrieben. Vier Antworten, vier Ziffern. Ich pack
-            alles in den Umschlag. Falls mir was passiert — du weißt schon, wo der Schlüssel zur
-            Antwort liegt."
-            <br />
-            <br />
-            „Bis gleich. Ich fahr noch zur Redaktion."
-          </blockquote>
-          <p className="text-sm text-foreground/60 not-italic font-sans">
-            <strong>Maya kam nie in der Redaktion an.</strong>
-          </p>
-        </div>
-      </EvidenceModal>
-
-      <EvidenceModal
-        open={open === "receipt"}
-        onClose={() => setOpen(null)}
-        kicker="Beweis 02 · Kassenbon"
-        title="Markt-Frisch · 13. März · 17:48"
-        className="max-w-xl"
-      >
-        <div className="-mx-2 rounded-sm bg-paper p-4 font-mono-typed text-[13px] leading-relaxed text-ink shadow-inner sm:p-6">
-          <div className="text-center">
-            <p className="text-base font-bold tracking-widest">MARKT–FRISCH</p>
-            <p className="text-[11px]">Hauptstraße 14 · Filiale 042</p>
-            <p className="mt-1 text-[11px]">— — — — — — — — — — — —</p>
-          </div>
-          <table className="mt-3 w-full text-[12px]">
-            <thead>
-              <tr className="border-b border-dashed border-ink/40 text-left">
-                <th className="py-1 pr-2">Produkt</th>
-                <th className="py-1 pr-2">Herkunft</th>
-                <th className="py-1 pr-2">Saison</th>
-                <th className="py-1 pr-2">Siegel</th>
-                <th className="py-1 text-right">€</th>
-              </tr>
-            </thead>
-            <tbody>
-              {RECEIPT.map((it) => (
-                <tr key={it.id} className="border-b border-dotted border-ink/15">
-                  <td className="py-1.5 pr-2">{it.name}</td>
-                  <td className="py-1.5 pr-2">{it.origin}</td>
-                  <td className="py-1.5 pr-2">
-                    {it.season === "in" && "in Saison"}
-                    {it.season === "out" && "nicht Saison"}
-                    {it.season === "import" && "Import"}
-                  </td>
-                  <td className="py-1.5 pr-2 uppercase">
-                    {it.label === "none" ? "—" : it.label}
-                  </td>
-                  <td className="py-1.5 text-right">{it.price}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <p className="mt-3 text-[11px]">— — — — — — — — — — — —</p>
-          <p className="mt-1 text-right text-[12px]">Datum: heute, 13. März</p>
-        </div>
-        <p className="mt-4 text-sm font-serif italic text-foreground/70">
-          Am Rand, mit Bleistift: <span className="ink-underline">„Saison = Deutschland, März"</span>
-          <br />
-          Daneben: <span className="ink-underline">„Region = unser Bundesland, nicht nur DE"</span>
-        </p>
-      </EvidenceModal>
-
-      <EvidenceModal
-        open={open === "notes"}
-        onClose={() => setOpen(null)}
-        kicker="Beweis 03 · Mayas Notizen"
-        title="Vier Fragen, vier Ziffern"
-        className="max-w-xl"
-      >
-        <div
-          className="rounded-sm bg-paper-deep/70 p-6 font-mono-typed text-[15px] leading-relaxed text-ink"
-          style={{
-            backgroundImage:
-              "repeating-linear-gradient(0deg, transparent 0, transparent 27px, oklch(0.42 0.135 28 / 0.18) 27px, oklch(0.42 0.135 28 / 0.18) 28px)",
-          }}
-        >
-          <p className="font-serif text-base italic">— Code-Schlüssel für Lin —</p>
-          <ol className="mt-4 space-y-3">
-            <li>
-              <strong>Ziffer 1:</strong> Wie viele Produkte auf dem Bon sind <u>nicht in Saison</u>{" "}
-              (Deutschland, März)?
-            </li>
-            <li>
-              <strong>Ziffer 2:</strong> Wie viele Produkte kommen von <u>außerhalb Europas</u>?
-            </li>
-            <li>
-              <strong>Ziffer 3:</strong> Wie viele Produkte tragen <u>kein</u> Bio- und{" "}
-              <u>kein</u> Fairtrade-Siegel?
-            </li>
-            <li>
-              <strong>Ziffer 4:</strong> Wie viele Produkte sind <u>wirklich regional</u> (also aus
-              unserer Region, nicht nur „DE")?
-            </li>
+        {/* Stepper */}
+        <nav aria-label="Ablauf" className="mb-8">
+          <ol className="flex flex-wrap items-center gap-2">
+            {STEPS.map((s, i) => {
+              const isUnlocked = unlockedSteps.has(s.id);
+              const isActive = s.id === step;
+              const isDone = unlockedSteps.has(s.id) && i < aktuellerIndex;
+              return (
+                <li key={s.id} className="flex items-center gap-2">
+                  <button
+                    onClick={() => isUnlocked && setStep(s.id)}
+                    disabled={!isUnlocked}
+                    className={cn(
+                      "flex items-center gap-2 rounded-full border px-3 py-1.5 font-mono-typed text-[11px] uppercase tracking-wider transition-colors",
+                      isActive && "border-ink bg-ink text-paper",
+                      !isActive && isUnlocked && "border-border bg-paper hover:bg-secondary",
+                      !isUnlocked && "cursor-not-allowed border-border bg-paper opacity-40",
+                    )}
+                  >
+                    <span
+                      className={cn(
+                        "flex h-5 w-5 items-center justify-center rounded-full text-[10px]",
+                        isActive ? "bg-paper text-ink" : "bg-secondary text-foreground",
+                      )}
+                    >
+                      {isDone ? "✓" : i + 1}
+                    </span>
+                    {s.label}
+                  </button>
+                  {i < STEPS.length - 1 && (
+                    <span className="text-muted-foreground" aria-hidden>
+                      →
+                    </span>
+                  )}
+                </li>
+              );
+            })}
           </ol>
-          <p className="mt-4 text-sm italic">
-            Reihenfolge merken! Erst Ziffer 1, dann 2, dann 3, dann 4. — M.
-          </p>
-        </div>
-      </EvidenceModal>
+        </nav>
 
-      <EvidenceModal
-        open={open === "study"}
-        onClose={() => setOpen(null)}
-        kicker="Beweis 04 · Recherche"
-        title="Drei Begriffe, die du brauchst"
-      >
-        <div className="grid gap-4 sm:grid-cols-3">
-          {[
-            {
-              title: "Saisonal",
-              body: "Obst und Gemüse, das gerade in deinem Land wächst und geerntet werden kann. Wer im März in Deutschland Erdbeeren oder Tomaten kauft, kauft Ware, die im warmen Süden oder im beheizten Gewächshaus produziert wurde — das kostet viel Energie.",
-              hint: "Im März in DE in Saison: Äpfel (Lager), Kartoffeln, Feldsalat, Lauch, Möhren …",
-            },
-            {
-              title: "Regional",
-              body: "Lebensmittel aus deiner Umgebung — meist 50–100 km. Kurzer Transport, frischer, oft kleinere Höfe. Achtung: „Aus Deutschland“ ist noch nicht regional. Region heißt: aus deiner Gegend.",
-              hint: "Auf dem Bon: nur Produkte mit Region (DE) gelten als regional.",
-            },
-            {
-              title: "Fair & Bio",
-              body: "Bio = ohne synthetische Pestizide, artgerecht. Fairtrade = faire Löhne für Bauernfamilien, vor allem bei Kaffee, Bananen, Schokolade. Produkte ohne Siegel werden weder geprüft noch garantiert fair.",
-              hint: "Zähle nur Siegel, die im Bon stehen.",
-            },
-          ].map((c) => (
-            <div
-              key={c.title}
-              className="rounded-sm border border-border bg-paper p-4 shadow-sm"
-            >
-              <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
-                Karte
-              </p>
-              <h4 className="mt-1 font-serif text-xl font-bold">{c.title}</h4>
-              <p className="mt-2 text-sm text-foreground/85">{c.body}</p>
-              <p className="mt-3 border-t border-dashed border-border pt-2 text-xs italic text-foreground/60">
-                {c.hint}
-              </p>
-            </div>
-          ))}
-        </div>
-      </EvidenceModal>
-
-      <EvidenceModal
-        open={open === "envelope"}
-        onClose={() => setOpen(null)}
-        kicker={unlocked ? "Beweis 05 · Geöffnet" : "Beweis 05 · Verschlossen"}
-        title={unlocked ? "Inhalt des Umschlags" : "Brauner Umschlag"}
-        className="max-w-lg"
-      >
-        {!unlocked ? (
-          <>
-            <p className="mb-6 text-foreground/80">
-              Der Umschlag ist mit Tape versiegelt und mit einem 4-stelligen Zahlenschloss
-              gesichert. Trag die vier Ziffern ein, die du aus dem Bon errechnet hast.
+        {/* Steps */}
+        {step === "voicemail" && (
+          <PaperCard rotate={-0.4}>
+            <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
+              Beweis 01 · Sprachnachricht
             </p>
-            <CodeLock expected={SOLUTION_CODE} onUnlock={() => setUnlocked(true)} />
-            <p className="mt-6 text-center font-mono-typed text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
-              Tipp: Reihenfolge ist Saison · Welt · ohne Siegel · regional
+            <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
+              Mayas letzte Nachricht an Lin
+            </h2>
+            <p className="mt-1 font-mono-typed text-xs text-muted-foreground">
+              [Aufnahme · Mittwoch · 14:32 · 47 Sek.]
             </p>
-          </>
-        ) : (
-          <div className="space-y-5">
-            <div
-              className="rounded-sm bg-paper p-5 font-serif italic leading-relaxed text-foreground/90"
-              style={{ transform: "rotate(-0.3deg)" }}
-            >
-              <p className="not-italic font-mono-typed text-[10px] uppercase tracking-[0.2em] text-stamp">
-                Mayas Notiz · gefaltetes Blatt
+            <blockquote className="mt-5 border-l-4 border-stamp pl-4 text-[15px] leading-relaxed">
+              „Lin, hör mal — ich glaub, ich hab's. Du weißt, was sie uns über dieses
+              Gaskraftwerk erzählen, dass es ja so super grün und regional ist? Einer der
+              Investoren betreibt eine ganze Supermarkt-Kette und schreibt sich
+              ‚nachhaltig' auf die Werbung. Ich war eben auf seiner Online-Plattform.
+              Der Einkaufswagen, den ich da gesehen hab, war alles andere als das."
+              <br />
+              <br />
+              „Ich hab dir den Link geschickt. Auf dem Bildschirm liegt ein Rezept und ein
+              halb-fertiger Warenkorb. Schau dir das mal genau an — und mach es richtig.
+              Wenn du kapierst, wo der Haken ist, kommst du an die nächste Spur."
+              <br />
+              <br />
+              „Bis gleich. Ich fahr noch zur Redaktion."
+            </blockquote>
+            <p className="mt-4 text-sm text-foreground/60">
+              <strong>Maya kam nie in der Redaktion an.</strong>
+            </p>
+            <div className="mt-6 flex justify-end">
+              <button
+                onClick={() => goto("raetselkarte")}
+                className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
+              >
+                Weiter zur Rätselkarte →
+              </button>
+            </div>
+          </PaperCard>
+        )}
+
+        {step === "raetselkarte" && (
+          <PaperCard rotate={0.3} tape="top">
+            <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
+              Rätselkarte · Auftrag von Maya
+            </p>
+            <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
+              {REZEPT.emoji} {REZEPT.titel}
+            </h2>
+            <p className="mt-3 text-sm font-mono-typed uppercase tracking-wider text-muted-foreground">
+              Zutaten:
+            </p>
+            <ul className="mt-2 grid gap-1 sm:grid-cols-2">
+              {REZEPT.zutaten.map((z) => (
+                <li key={z} className="text-[15px]">
+                  • {z}
+                </li>
+              ))}
+            </ul>
+            <div className="mt-6 rounded-sm border border-stamp/30 bg-stamp/5 p-4">
+              <p className="font-serif italic leading-relaxed">
+                „Du möchtest gerade bezahlen — aber irgendetwas stimmt mit dem Warenkorb
+                nicht. Deine Aufgabe: Entferne die problematischen Produkte und ersetze
+                sie durch nachhaltige Alternativen. Erst dann kommst du weiter."
               </p>
-              <p className="mt-3">
-                „Wer ‚regional und nachhaltig' auf seine Werbung schreibt, aber so einkaufen lässt —
-                der hat ein Problem mit der Wahrheit. Genau wie bei dem Gaskraftwerk."
-              </p>
-              <p className="mt-3">
-                „Auf dem Foto, das ich gefunden hab, sieht man, wer wirklich dahintersteckt. Es
-                liegt im zweiten Umschlag, in der Redaktion. Wenn du das hier liest, Lin — du weißt,
-                wo."
+              <p className="mt-2 font-mono-typed text-[11px] uppercase tracking-wider text-stamp">
+                — M.
               </p>
             </div>
+            <div className="mt-6 flex justify-between">
+              <button
+                onClick={() => setStep("voicemail")}
+                className="rounded-sm border border-border bg-card px-4 py-2.5 font-serif text-sm hover:bg-secondary"
+              >
+                ← Zurück
+              </button>
+              <button
+                onClick={() => goto("shop")}
+                className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
+              >
+                Verstanden — zum Shop →
+              </button>
+            </div>
+          </PaperCard>
+        )}
 
-            <div className="rounded-sm border-2 border-dashed border-stamp bg-paper-deep/40 p-5">
-              <p className="font-mono-typed text-[10px] uppercase tracking-[0.2em] text-stamp">
-                Kapitel 2 folgt
+        {step === "shop" && (
+          <div className="space-y-4">
+            <GruenerMarkt
+              startWarenkorb={START_WARENKORB}
+              onErfolg={() => goto("input")}
+            />
+            <div className="flex justify-start">
+              <button
+                onClick={() => setStep("raetselkarte")}
+                className="rounded-sm border border-border bg-card px-4 py-2.5 font-serif text-sm hover:bg-secondary"
+              >
+                ← Rätselkarte erneut ansehen
+              </button>
+            </div>
+          </div>
+        )}
+
+        {step === "input" && (
+          <div className="space-y-6">
+            <PaperCard rotate={-0.3}>
+              <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
+                Mayas Recherche · 3 Lernkarten
               </p>
-              <h4 className="mt-1 font-serif text-xl font-bold">Die Geldspur</h4>
-              <p className="mt-2 text-sm text-foreground/80">
-                In Kapitel 2 folgst du Mayas Spur in die Redaktion und entwirrst, wer die Investoren
-                des Gaskraftwerks wirklich sind.
+              <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
+                Was heißt eigentlich „nachhaltig einkaufen"?
+              </h2>
+              <p className="mt-3 text-foreground/80">
+                Drei Begriffe, die Maya immer wieder unterstrichen hat — und die du
+                gerade im Shop angewendet hast:
               </p>
-              <p className="mt-3 font-mono-typed text-[11px] uppercase tracking-wider text-muted-foreground">
-                In Vorbereitung — bald spielbar
+
+              <div className="mt-5 grid gap-4 sm:grid-cols-3">
+                {[
+                  {
+                    title: "Saisonal",
+                    body: "Obst und Gemüse, das gerade in der Schweiz wächst und geerntet werden kann. Wer im März Erdbeeren kauft, kauft Ware aus dem Süden oder beheizten Tunneln — viel Energie für wenig Geschmack.",
+                    hint: "Im März in CH in Saison: Äpfel, Lauch, Karotten, Feldsalat …",
+                  },
+                  {
+                    title: "Regional",
+                    body: "Lebensmittel aus deiner Umgebung — meist 50–100 km. Kurzer Transport, frischer, oft kleinere Höfe. Achtung: „Aus der Schweiz" ist nicht automatisch regional. Region heißt: aus deiner Gegend.",
+                    hint: "Bio Suisse & IP-Suisse stehen für Schweizer Herkunft mit klaren Standards.",
+                  },
+                  {
+                    title: "Tiergerecht & Bio",
+                    body: "Bio-Freilandhaltung garantiert Auslauf und Bio-Futter — Bodenhaltung nicht. Importeier reisen oft über tausende Kilometer. Hinter günstigen Preisen stehen meist enge Ställe und industrielle Logistik.",
+                    hint: "Schweizer Bio-Eier sind teurer, halten aber, was die Werbung verspricht.",
+                  },
+                ].map((c) => (
+                  <div
+                    key={c.title}
+                    className="rounded-sm border border-border bg-paper p-4 shadow-sm"
+                  >
+                    <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
+                      Karte
+                    </p>
+                    <h4 className="mt-1 font-serif text-xl font-bold">{c.title}</h4>
+                    <p className="mt-2 text-sm text-foreground/85">{c.body}</p>
+                    <p className="mt-3 border-t border-dashed border-border pt-2 text-xs italic text-foreground/60">
+                      {c.hint}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </PaperCard>
+
+            <div className="flex justify-between">
+              <button
+                onClick={() => setStep("shop")}
+                className="rounded-sm border border-border bg-card px-4 py-2.5 font-serif text-sm hover:bg-secondary"
+              >
+                ← Zurück zum Shop
+              </button>
+              <button
+                onClick={() => goto("naechstes")}
+                className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
+              >
+                Zum nächsten Rätsel →
+              </button>
+            </div>
+          </div>
+        )}
+
+        {step === "naechstes" && (
+          <PaperCard rotate={-0.5} tape="top-left">
+            <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
+              Kapitel 2 · folgt bald
+            </p>
+            <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
+              Die Geldspur
+            </h2>
+            <div className="mt-4 rounded-sm border border-dashed border-stamp/40 bg-paper-deep/30 p-5">
+              <p className="font-serif italic leading-relaxed">
+                „Wer ‚regional und nachhaltig' auf seine Werbung schreibt, aber so
+                einkaufen lässt — der hat ein Problem mit der Wahrheit. Genau wie bei
+                dem Gaskraftwerk."
+              </p>
+              <p className="mt-3 font-serif italic">
+                „Auf dem Foto, das ich gefunden hab, sieht man, wer wirklich
+                dahintersteckt. Es liegt im zweiten Umschlag, in der Redaktion. Wenn
+                du das hier liest, Lin — du weißt, wo."
+              </p>
+              <p className="mt-3 font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
+                — M.
               </p>
             </div>
-
-            <div className="text-center">
+            <p className="mt-5 text-sm text-foreground/70">
+              In Kapitel 2 folgst du Mayas Spur in die Redaktion und entwirrst, wer
+              die Investoren des Gaskraftwerks wirklich sind.
+            </p>
+            <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
+              <span className="stamp-mark inline-block px-3 py-1 text-xs">
+                In Vorbereitung
+              </span>
               <Link
                 to="/"
                 className="inline-flex items-center gap-2 rounded-sm border border-border bg-card px-5 py-2.5 font-serif text-sm font-semibold transition-colors hover:bg-secondary"
@@ -418,9 +319,13 @@ function AktePage() {
                 ← Akte schließen
               </Link>
             </div>
-          </div>
+          </PaperCard>
         )}
-      </EvidenceModal>
+
+        <p className="mt-12 text-center font-mono-typed text-xs uppercase tracking-[0.2em] text-muted-foreground">
+          — Akte 001 · Wo ist Maya? —
+        </p>
+      </div>
     </main>
   );
 }
