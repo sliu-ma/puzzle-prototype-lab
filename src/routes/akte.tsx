@@ -238,7 +238,7 @@ function AktePage() {
                   },
                   {
                     title: "Regional",
-                    body: "Lebensmittel aus deiner Umgebung — meist 50–100 km. Kurzer Transport, frischer, oft kleinere Höfe. Achtung: „Aus der Schweiz" ist nicht automatisch regional. Region heißt: aus deiner Gegend.",
+                    body: "Lebensmittel aus deiner Umgebung — meist 50–100 km. Kurzer Transport, frischer, oft kleinere Höfe. Achtung: „Aus der Schweiz“ ist nicht automatisch regional. Region heißt: aus deiner Gegend.",
                     hint: "Bio Suisse & IP-Suisse stehen für Schweizer Herkunft mit klaren Standards.",
                   },
                   {
