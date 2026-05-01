@@ -50,7 +50,7 @@ export const PRODUKTE: Produkt[] = [
   // ── Früchte & Gemüse ────────────────────────────────────────────
   {
     id: "erdbeeren-es",
-    name: "Erdbeeren 500g · Bio (Spanien)",
+    name: "Erdbeeren 500g · Bio",
     kategorie: "fruechte-gemuese",
     herkunft: "Spanien",
     preis: 5.9,
@@ -64,7 +64,7 @@ export const PRODUKTE: Produkt[] = [
   },
   {
     id: "erdbeeren-ch",
-    name: "Erdbeeren 500g · Region Thurgau",
+    name: "Erdbeeren 500g",
     kategorie: "fruechte-gemuese",
     herkunft: "Region Thurgau (CH)",
     preis: 7.5,
@@ -77,7 +77,7 @@ export const PRODUKTE: Produkt[] = [
   },
   {
     id: "zitrone-it",
-    name: "Bio-Zitrone (Italien)",
+    name: "Bio-Zitrone",
     kategorie: "fruechte-gemuese",
     herkunft: "Italien",
     preis: 0.9,
@@ -89,7 +89,7 @@ export const PRODUKTE: Produkt[] = [
   },
   {
     id: "aepfel-ch",
-    name: "Äpfel 'Gala' 1kg · Schweiz",
+    name: "Äpfel 'Gala' 1kg",
     kategorie: "fruechte-gemuese",
     herkunft: "Schweiz",
     preis: 3.9,
@@ -100,7 +100,7 @@ export const PRODUKTE: Produkt[] = [
   },
   {
     id: "tomaten-ma",
-    name: "Tomaten 500g (Marokko)",
+    name: "Tomaten 500g",
     kategorie: "fruechte-gemuese",
     herkunft: "Marokko",
     preis: 3.2,
@@ -113,7 +113,7 @@ export const PRODUKTE: Produkt[] = [
   // ── Milch & Eier ────────────────────────────────────────────────
   {
     id: "eier-bh-import",
-    name: "Eier 6er · Bodenhaltung (Import EU)",
+    name: "Eier 6er · Bodenhaltung",
     kategorie: "milch-eier",
     herkunft: "EU-Import",
     preis: 2.9,
@@ -127,7 +127,7 @@ export const PRODUKTE: Produkt[] = [
   },
   {
     id: "eier-bio-ch",
-    name: "Eier 6er · Bio-Freiland Schweiz",
+    name: "Eier 6er · Bio-Freiland",
     kategorie: "milch-eier",
     herkunft: "Schweiz",
     preis: 5.4,
@@ -140,7 +140,7 @@ export const PRODUKTE: Produkt[] = [
   },
   {
     id: "butter-ch",
-    name: "Butter 250g · Schweiz",
+    name: "Butter 250g",
     kategorie: "fette",
     herkunft: "Schweiz",
     preis: 3.6,
@@ -152,7 +152,7 @@ export const PRODUKTE: Produkt[] = [
   },
   {
     id: "vollrahm-ch",
-    name: "Vollrahm 2.5dl · Schweiz",
+    name: "Vollrahm 2.5dl",
     kategorie: "milch-eier",
     herkunft: "Schweiz",
     preis: 2.4,
@@ -166,7 +166,7 @@ export const PRODUKTE: Produkt[] = [
   // ── Getreide & Backen ───────────────────────────────────────────
   {
     id: "mehl-ch",
-    name: "Weissmehl 1kg · Schweiz",
+    name: "Weissmehl 1kg",
     kategorie: "getreide-backen",
     herkunft: "Schweiz",
     preis: 1.9,
@@ -178,7 +178,7 @@ export const PRODUKTE: Produkt[] = [
   },
   {
     id: "zucker-ch",
-    name: "Zucker 1kg · Schweiz",
+    name: "Zucker 1kg",
     kategorie: "getreide-backen",
     herkunft: "Schweiz",
     preis: 1.6,
