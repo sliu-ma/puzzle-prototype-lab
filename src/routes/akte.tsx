@@ -42,7 +42,7 @@ function AktePage() {
   const aktuellerIndex = STEPS.findIndex((s) => s.id === step);
 
   return (
-    <main className="relative min-h-screen px-4 py-10 sm:py-14">
+    <main className="relative min-h-screen px-3 py-6 sm:px-4 sm:py-14">
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 opacity-[0.05]"
@@ -54,18 +54,18 @@ function AktePage() {
 
       <div className="relative mx-auto max-w-5xl">
         {/* Header */}
-        <header className="mb-8 flex flex-wrap items-end justify-between gap-4 border-b border-border pb-5">
-          <div>
+        <header className="mb-5 flex flex-wrap items-end justify-between gap-3 border-b border-border pb-4 sm:mb-8 sm:pb-5">
+          <div className="min-w-0">
             <Link
               to="/"
-              className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-muted-foreground hover:text-foreground"
+              className="font-mono-typed text-[10px] uppercase tracking-[0.2em] text-muted-foreground hover:text-foreground sm:text-[11px]"
             >
               ← Aktenmappe schließen
             </Link>
-            <h1 className="mt-2 font-serif text-3xl font-bold sm:text-5xl">
+            <h1 className="mt-1.5 font-serif text-2xl font-bold leading-tight sm:mt-2 sm:text-5xl">
               Akte 001 · Kapitel 1
             </h1>
-            <p className="mt-1 font-serif italic text-foreground/70">
+            <p className="mt-0.5 font-serif italic text-sm text-foreground/70 sm:text-base">
               Der Einkauf
             </p>
           </div>
@@ -73,19 +73,19 @@ function AktePage() {
         </header>
 
         {/* Stepper */}
-        <nav aria-label="Ablauf" className="mb-8">
-          <ol className="flex flex-wrap items-center gap-2">
+        <nav aria-label="Ablauf" className="mb-5 sm:mb-8">
+          <ol className="-mx-3 flex items-center gap-1.5 overflow-x-auto px-3 pb-2 sm:mx-0 sm:flex-wrap sm:gap-2 sm:overflow-visible sm:px-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {STEPS.map((s, i) => {
               const isUnlocked = unlockedSteps.has(s.id);
               const isActive = s.id === step;
               const isDone = unlockedSteps.has(s.id) && i < aktuellerIndex;
               return (
-                <li key={s.id} className="flex items-center gap-2">
+                <li key={s.id} className="flex shrink-0 items-center gap-1.5 sm:gap-2">
                   <button
                     onClick={() => isUnlocked && setStep(s.id)}
                     disabled={!isUnlocked}
                     className={cn(
-                      "flex items-center gap-2 rounded-full border px-3 py-1.5 font-mono-typed text-[11px] uppercase tracking-wider transition-colors",
+                      "flex items-center gap-1.5 rounded-full border px-2.5 py-1 font-mono-typed text-[10px] uppercase tracking-wider transition-colors sm:px-3 sm:py-1.5 sm:text-[11px]",
                       isActive && "border-ink bg-ink text-paper",
                       !isActive && isUnlocked && "border-border bg-paper hover:bg-secondary",
                       !isUnlocked && "cursor-not-allowed border-border bg-paper opacity-40",
@@ -93,13 +93,13 @@ function AktePage() {
                   >
                     <span
                       className={cn(
-                        "flex h-5 w-5 items-center justify-center rounded-full text-[10px]",
+                        "flex h-4 w-4 items-center justify-center rounded-full text-[9px] sm:h-5 sm:w-5 sm:text-[10px]",
                         isActive ? "bg-paper text-ink" : "bg-secondary text-foreground",
                       )}
                     >
                       {isDone ? "✓" : i + 1}
                     </span>
-                    {s.label}
+                    <span className="whitespace-nowrap">{s.label}</span>
                   </button>
                   {i < STEPS.length - 1 && (
                     <span className="text-muted-foreground" aria-hidden>
