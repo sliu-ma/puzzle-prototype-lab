@@ -3,6 +3,7 @@ import { useState } from "react";
 import { PaperCard } from "@/components/case-file/PaperCard";
 import { Stamp } from "@/components/case-file/Stamp";
 import { GruenerMarkt } from "@/components/case-file/GruenerMarkt";
+import { QRGate } from "@/components/case-file/QRGate";
 import { REZEPT, START_WARENKORB } from "@/lib/maya-data";
 import { cn } from "@/lib/utils";
 
@@ -17,8 +18,16 @@ export const Route = createFileRoute("/akte")({
       },
     ],
   }),
-  component: AktePage,
+  component: AkteGated,
 });
+
+function AkteGated() {
+  return (
+    <QRGate>
+      <AktePage />
+    </QRGate>
+  );
+}
 
 type Step = "voicemail" | "raetselkarte" | "shop" | "input" | "naechstes";
 
