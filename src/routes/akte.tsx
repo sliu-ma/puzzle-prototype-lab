@@ -297,7 +297,7 @@ function AktePage() {
                 onClick={() => goto("naechstes")}
                 className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
               >
-                Zum nächsten Rätsel →
+                Zum nächsten Beweis →
               </button>
             </div>
           </div>
@@ -306,7 +306,7 @@ function AktePage() {
         {step === "naechstes" && (
           <PaperCard rotate={-0.5} tape="top-left">
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-              Kapitel 2 · folgt bald
+              Beweis 06 · folgt bald
             </p>
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
               Die Geldspur
@@ -327,7 +327,7 @@ function AktePage() {
               </p>
             </div>
             <p className="mt-5 text-sm text-foreground/70">
-              In Kapitel 2 folgst du Mayas Spur in die Redaktion und entwirrst, wer
+              In den nächsten Beweisen folgst du Mayas Spur in die Redaktion und entwirrst, wer
               die Investoren des Gaskraftwerks wirklich sind.
             </p>
             <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
