@@ -296,6 +296,17 @@ export const PRODUKTE: Produkt[] = [
     herkunft: "Frankreich",
     preis: 2.2,
     siegel: [],
+    saison: "ganzjahr",
+    emoji: "🧂",
+    bewertung: "neutral",
+    zutat: "salz",
+    score: 3,
+    beschreibung: "Naturbelassenes Meersalz aus der Bretagne.",
+    erhaeltlichBei: "Detailhändler · Bio-Laden",
+    zutatenInfo: "100% Meersalz",
+    tipp: "Schweizer Salz aus Salinen (z. B. Schweizerhall) ist regional verfügbar.",
+  },
+];
 
 // Rezept: Erdbeer-Törtchen
 export const REZEPT = {
