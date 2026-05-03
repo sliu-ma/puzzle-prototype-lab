@@ -131,8 +131,21 @@ function AktePage() {
               Mayas letzte Nachricht an Lin
             </h2>
             <p className="mt-1 font-mono-typed text-xs text-muted-foreground">
-              [Aufnahme · Mittwoch · 14:32 · 47 Sek.]
+              [Aufnahme · Mittwoch · 14:32]
             </p>
+            <div className="mt-4 rounded-sm border border-border bg-paper-deep/40 p-3">
+              <audio
+                controls
+                preload="metadata"
+                className="w-full"
+                src="/audio/maya-sprachnachricht.mp3"
+              >
+                Dein Browser unterstützt keine Audiowiedergabe.
+              </audio>
+              <p className="mt-2 font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+                Original-Aufnahme · Transkript unten
+              </p>
+            </div>
             <blockquote className="mt-5 border-l-4 border-stamp pl-4 text-[15px] leading-relaxed">
               „Lin, hör mal — ich glaub, ich hab's. Du weißt, was sie uns über dieses
               Gaskraftwerk erzählen, dass es ja so super grün und regional ist? Einer der
