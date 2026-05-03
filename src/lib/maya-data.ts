@@ -35,15 +35,6 @@ export interface Produkt {
     | "zitrone"
     | "vollrahm"
     | "vanillezucker";
-  // Detail-Infos (Biovision-Stil)
-  beschreibung?: string;
-  erhaeltlichBei?: string;
-  zutatenInfo?: string;
-  hinweis?: string;
-  wichtigeInfo?: string;
-  tipp?: string;
-  // Nachhaltigkeits-Score 1–5 (5 = sehr nachhaltig)
-  score?: 1 | 2 | 3 | 4 | 5;
 }
 
 export const KATEGORIEN: { id: Kategorie; label: string; emoji: string }[] = [
@@ -68,16 +59,6 @@ export const PRODUKTE: Produkt[] = [
     emoji: "🍓",
     bewertung: "schlecht",
     zutat: "erdbeeren",
-    score: 2,
-    beschreibung:
-      "Frische Erdbeeren in der 500g-Schale, kultiviert unter Folientunneln in Südspanien.",
-    erhaeltlichBei: "Grossverteiler · ganzjährig im Kühlregal",
-    zutatenInfo: "100% Erdbeeren · Bio-Anbau",
-    hinweis:
-      "In der Region Huelva werden für den Erdbeeranbau riesige Wassermengen aus geschützten Gebieten entnommen.",
-    wichtigeInfo:
-      "Transport per LKW über 1'800 km. Anbau ausserhalb der Schweizer Saison (Mai–Juli).",
-    tipp: "Warte auf die Schweizer Saison ab Mai — der Geschmack ist unvergleichlich besser.",
     problemHinweis:
       "Erdbeeren wachsen in der Schweiz erst ab Mai/Juni. Importe aus Südeuropa im März bedeuten lange Transporte oder Plastiktunnel — viel Energie für wenig Geschmack.",
   },
@@ -93,15 +74,6 @@ export const PRODUKTE: Produkt[] = [
     bewertung: "gut",
     zutat: "erdbeeren",
     ersetzt: "erdbeeren-es",
-    score: 5,
-    beschreibung:
-      "Sonnengereifte Erdbeeren von Schweizer Höfen, geerntet in der laufenden Saison.",
-    erhaeltlichBei: "Hofladen · Wochenmarkt · regionale Detailhändler",
-    zutatenInfo: "100% Erdbeeren aus Freilandanbau",
-    hinweis: "Saisonale Frucht — nur Mai bis Juli erhältlich.",
-    wichtigeInfo:
-      "IP-Suisse fördert Biodiversität, weniger Pestizide und faire Bedingungen für Bauernfamilien.",
-    tipp: "Frisch verarbeiten oder einfrieren, damit du auch ausserhalb der Saison etwas davon hast.",
   },
   {
     id: "zitrone-it",
@@ -114,12 +86,6 @@ export const PRODUKTE: Produkt[] = [
     emoji: "🍋",
     bewertung: "neutral",
     zutat: "zitrone",
-    score: 4,
-    beschreibung: "Unbehandelte Bio-Zitrone aus Süditalien.",
-    erhaeltlichBei: "Detailhändler · Bio-Läden",
-    zutatenInfo: "100% Zitrusfrucht · Bio-Anbau",
-    hinweis: "Schale ist unbehandelt und kann mitverwendet werden.",
-    tipp: "Zitronen wachsen in der Schweiz nicht — Bio aus Europa ist die nachhaltigste Option.",
   },
   {
     id: "aepfel-ch",
@@ -131,11 +97,6 @@ export const PRODUKTE: Produkt[] = [
     saison: "in",
     emoji: "🍎",
     bewertung: "neutral",
-    score: 5,
-    beschreibung: "Knackige Gala-Äpfel von Schweizer Hochstammkulturen.",
-    erhaeltlichBei: "Detailhändler · Hofladen",
-    zutatenInfo: "100% Äpfel",
-    tipp: "Lagerfähig — ideal als Pausensnack oder fürs Backen.",
   },
   {
     id: "tomaten-ma",
@@ -147,11 +108,6 @@ export const PRODUKTE: Produkt[] = [
     saison: "out",
     emoji: "🍅",
     bewertung: "neutral",
-    score: 2,
-    beschreibung: "Rispentomaten aus Treibhaus-Kulturen in Nordafrika.",
-    erhaeltlichBei: "Grossverteiler · ganzjährig",
-    hinweis: "Anbau in beheizten Folientunneln, hoher Wasserbedarf.",
-    tipp: "Schweizer Tomaten gibt es Juli–Oktober — bis dann lieber Lagergemüse verwenden.",
   },
 
   // ── Milch & Eier ────────────────────────────────────────────────
@@ -166,15 +122,6 @@ export const PRODUKTE: Produkt[] = [
     emoji: "🥚",
     bewertung: "schlecht",
     zutat: "eier",
-    score: 1,
-    beschreibung: "Eier aus Bodenhaltung, 6er-Karton, importiert aus EU-Grossbetrieben.",
-    erhaeltlichBei: "Discounter · Grossverteiler",
-    zutatenInfo: "Hühnereier · Käfigfreie Bodenhaltung (EU-Standard)",
-    hinweis:
-      "Bodenhaltung bedeutet bis zu 9 Tiere pro m² ohne Zugang ins Freie.",
-    wichtigeInfo:
-      "Schweizer Tierschutzgesetz wird hier nicht angewendet. Lange Transportwege.",
-    tipp: "Pro Ei nur wenige Rappen mehr für Schweizer Bio-Freiland — grosser Unterschied für die Tiere.",
     problemHinweis:
       "Bodenhaltung bedeutet enge Ställe, importierte Eier kommen oft tausende Kilometer weit. Schweizer Bio-Freilandeier garantieren Auslauf und kurze Wege.",
   },
@@ -190,14 +137,6 @@ export const PRODUKTE: Produkt[] = [
     bewertung: "gut",
     zutat: "eier",
     ersetzt: "eier-bh-import",
-    score: 5,
-    beschreibung:
-      "Eier von Schweizer Bio-Höfen mit täglichem Auslauf ins Freie und Bio-Futter.",
-    erhaeltlichBei: "Hofladen · Bio-Laden · Detailhändler",
-    zutatenInfo: "Hühnereier · Bio Suisse Knospe · Freilandhaltung",
-    hinweis:
-      "Maximal 2'000 Hühner pro Hof, gentech-freies Bio-Futter, Auslauf garantiert.",
-    tipp: "Hühner sind Allesfresser — füttere Schalen- und Essensreste nicht weg, sondern auf den Kompost.",
   },
   {
     id: "butter-ch",
@@ -210,11 +149,6 @@ export const PRODUKTE: Produkt[] = [
     emoji: "🧈",
     bewertung: "neutral",
     zutat: "butter",
-    score: 4,
-    beschreibung: "Schweizer Butter aus Wiesenmilch.",
-    erhaeltlichBei: "Detailhändler · Hofladen",
-    zutatenInfo: "Pasteurisierter Rahm aus Schweizer Milch",
-    tipp: "In Massen geniessen — tierische Fette haben einen hohen CO₂-Fussabdruck.",
   },
   {
     id: "vollrahm-ch",
@@ -227,11 +161,6 @@ export const PRODUKTE: Produkt[] = [
     emoji: "🥛",
     bewertung: "neutral",
     zutat: "vollrahm",
-    score: 4,
-    beschreibung: "Schweizer Vollrahm 35% Fett.",
-    erhaeltlichBei: "Detailhändler",
-    zutatenInfo: "Pasteurisierter Rahm",
-    tipp: "Reste lassen sich einfrieren — z. B. portioniert in einer Eiswürfelform.",
   },
 
   // ── Getreide & Backen ───────────────────────────────────────────
@@ -246,11 +175,6 @@ export const PRODUKTE: Produkt[] = [
     emoji: "🌾",
     bewertung: "neutral",
     zutat: "mehl",
-    score: 4,
-    beschreibung: "Weissmehl aus Schweizer Weizen.",
-    erhaeltlichBei: "Detailhändler · Mühle",
-    zutatenInfo: "Weizenmehl Type 400",
-    tipp: "Vollkornmehl ist nährstoffreicher — gerne mischen.",
   },
   {
     id: "zucker-ch",
@@ -263,11 +187,6 @@ export const PRODUKTE: Produkt[] = [
     emoji: "🧂",
     bewertung: "neutral",
     zutat: "zucker",
-    score: 3,
-    beschreibung: "Kristallzucker aus Schweizer Zuckerrüben.",
-    erhaeltlichBei: "Detailhändler",
-    zutatenInfo: "Saccharose 100%",
-    tipp: "Kristall- und Würfelzucker sind in der Schweiz hergestellt — Rohrzucker meist Importware.",
   },
   {
     id: "vanillezucker",
@@ -280,12 +199,6 @@ export const PRODUKTE: Produkt[] = [
     emoji: "🍦",
     bewertung: "neutral",
     zutat: "vanillezucker",
-    score: 3,
-    beschreibung: "Zucker mit echten Vanille-Extrakten.",
-    erhaeltlichBei: "Detailhändler",
-    zutatenInfo: "Zucker, Vanille-Extrakt",
-    hinweis: "Vanille ist eine Importware — Madagaskar deckt 80% des Weltmarkts.",
-    tipp: "Eine ganze Vanilleschote ist nachhaltiger und intensiver im Geschmack.",
   },
 
   // ── Andere ──────────────────────────────────────────────────────
@@ -300,11 +213,6 @@ export const PRODUKTE: Produkt[] = [
     emoji: "🧂",
     bewertung: "neutral",
     zutat: "salz",
-    score: 3,
-    beschreibung: "Naturbelassenes Meersalz aus der Bretagne.",
-    erhaeltlichBei: "Detailhändler · Bio-Laden",
-    zutatenInfo: "100% Meersalz",
-    tipp: "Schweizer Salz aus Salinen (z. B. Schweizerhall) ist regional verfügbar.",
   },
 ];
 

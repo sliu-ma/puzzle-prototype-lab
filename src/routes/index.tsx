@@ -87,7 +87,7 @@ function CoverPage() {
                   Hinweis der Redaktion
                 </p>
                 <ul className="mt-3 space-y-1.5 text-foreground/80">
-                  <li>· 5 Beweise · ca. 20 Minuten</li>
+                  <li>· 1 Kapitel · ca. 20 Minuten</li>
                   <li>· Einzeln oder im Team spielbar</li>
                   <li>· Stift &amp; Zettel empfohlen</li>
                 </ul>
@@ -108,7 +108,7 @@ function CoverPage() {
                 </span>
               </Link>
               <p className="font-mono-typed text-xs uppercase tracking-[0.15em] text-muted-foreground">
-                Akte 001 · Der Einkaufszettel
+                Kapitel 1 · Der Einkaufszettel
               </p>
             </div>
           </article>

@@ -14,7 +14,7 @@ export const Route = createFileRoute("/akte")({
       {
         name: "description",
         content:
-          "Beweis für Beweis folgst du Mayas Spur durch den Grünen Markt — und lernst, was nachhaltiger Einkauf wirklich bedeutet.",
+          "Kapitel 1: Maya ist verschwunden. Folge ihren Spuren durch den Grünen Markt und lerne, was nachhaltiger Einkauf wirklich bedeutet.",
       },
     ],
   }),
@@ -32,11 +32,11 @@ function AkteGated() {
 type Step = "voicemail" | "raetselkarte" | "shop" | "input" | "naechstes";
 
 const STEPS: { id: Step; label: string }[] = [
-  { id: "voicemail", label: "Beweis 01 · Sprachnachricht" },
-  { id: "raetselkarte", label: "Beweis 02 · Rätselkarte" },
-  { id: "shop", label: "Beweis 03 · Grüner Markt" },
-  { id: "input", label: "Beweis 04 · Recherche" },
-  { id: "naechstes", label: "Beweis 05 · Nächste Spur" },
+  { id: "voicemail", label: "Sprachnachricht" },
+  { id: "raetselkarte", label: "Rätselkarte" },
+  { id: "shop", label: "Grüner Markt" },
+  { id: "input", label: "Fachlicher Input" },
+  { id: "naechstes", label: "Nächstes Rätsel" },
 ];
 
 function AktePage() {
@@ -72,10 +72,10 @@ function AktePage() {
               ← Aktenmappe schließen
             </Link>
             <h1 className="mt-1.5 font-serif text-2xl font-bold leading-tight sm:mt-2 sm:text-5xl">
-              Akte 001 · Wo ist Maya?
+              Akte 001 · Kapitel 1
             </h1>
             <p className="mt-0.5 font-serif italic text-sm text-foreground/70 sm:text-base">
-              5 Beweise · Spur 1: Der Einkauf
+              Der Einkauf
             </p>
           </div>
           <Stamp rotate={-6}>Vertraulich</Stamp>
@@ -131,21 +131,8 @@ function AktePage() {
               Mayas letzte Nachricht an Lin
             </h2>
             <p className="mt-1 font-mono-typed text-xs text-muted-foreground">
-              [Aufnahme · Mittwoch · 14:32]
+              [Aufnahme · Mittwoch · 14:32 · 47 Sek.]
             </p>
-            <div className="mt-4 rounded-sm border border-border bg-paper-deep/40 p-3">
-              <audio
-                controls
-                preload="metadata"
-                className="w-full"
-                src="/audio/maya-sprachnachricht.mp3"
-              >
-                Dein Browser unterstützt keine Audiowiedergabe.
-              </audio>
-              <p className="mt-2 font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
-                Original-Aufnahme · Transkript unten
-              </p>
-            </div>
             <blockquote className="mt-5 border-l-4 border-stamp pl-4 text-[15px] leading-relaxed">
               „Lin, hör mal — ich glaub, ich hab's. Du weißt, was sie uns über dieses
               Gaskraftwerk erzählen, dass es ja so super grün und regional ist? Einer der
@@ -297,7 +284,7 @@ function AktePage() {
                 onClick={() => goto("naechstes")}
                 className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
               >
-                Zum nächsten Beweis →
+                Zum nächsten Rätsel →
               </button>
             </div>
           </div>
@@ -306,7 +293,7 @@ function AktePage() {
         {step === "naechstes" && (
           <PaperCard rotate={-0.5} tape="top-left">
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-              Beweis 06 · folgt bald
+              Kapitel 2 · folgt bald
             </p>
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
               Die Geldspur
@@ -327,7 +314,7 @@ function AktePage() {
               </p>
             </div>
             <p className="mt-5 text-sm text-foreground/70">
-              In den nächsten Beweisen folgst du Mayas Spur in die Redaktion und entwirrst, wer
+              In Kapitel 2 folgst du Mayas Spur in die Redaktion und entwirrst, wer
               die Investoren des Gaskraftwerks wirklich sind.
             </p>
             <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
