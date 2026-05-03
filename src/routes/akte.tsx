@@ -72,10 +72,10 @@ function AktePage() {
               ← Aktenmappe schließen
             </Link>
             <h1 className="mt-1.5 font-serif text-2xl font-bold leading-tight sm:mt-2 sm:text-5xl">
-              Akte 001 · Kapitel 1
+              Akte 001 · Wo ist Maya?
             </h1>
             <p className="mt-0.5 font-serif italic text-sm text-foreground/70 sm:text-base">
-              Der Einkauf
+              5 Beweise · Spur 1: Der Einkauf
             </p>
           </div>
           <Stamp rotate={-6}>Vertraulich</Stamp>
