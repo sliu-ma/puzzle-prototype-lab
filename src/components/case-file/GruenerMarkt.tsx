@@ -21,6 +21,7 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
   const [aktiveKat, setAktiveKat] = useState<Kategorie>("fruechte-gemuese");
   const [status, setStatus] = useState<Status>("shop");
   const [cartOpen, setCartOpen] = useState(false);
+  const [detailId, setDetailId] = useState<string | null>(null);
 
   const produktById = useMemo(
     () => Object.fromEntries(PRODUKTE.map((p) => [p.id, p])) as Record<string, Produkt>,
