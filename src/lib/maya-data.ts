@@ -35,6 +35,15 @@ export interface Produkt {
     | "zitrone"
     | "vollrahm"
     | "vanillezucker";
+  // Detail-Infos (Biovision-Stil)
+  beschreibung?: string;
+  erhaeltlichBei?: string;
+  zutatenInfo?: string;
+  hinweis?: string;
+  wichtigeInfo?: string;
+  tipp?: string;
+  // Nachhaltigkeits-Score 1–5 (5 = sehr nachhaltig)
+  score?: 1 | 2 | 3 | 4 | 5;
 }
 
 export const KATEGORIEN: { id: Kategorie; label: string; emoji: string }[] = [
