@@ -14,7 +14,7 @@ export const Route = createFileRoute("/akte")({
       {
         name: "description",
         content:
-          "Kapitel 1: Maya ist verschwunden. Folge ihren Spuren durch den Grünen Markt und lerne, was nachhaltiger Einkauf wirklich bedeutet.",
+          "Beweis für Beweis folgst du Mayas Spur durch den Grünen Markt — und lernst, was nachhaltiger Einkauf wirklich bedeutet.",
       },
     ],
   }),
