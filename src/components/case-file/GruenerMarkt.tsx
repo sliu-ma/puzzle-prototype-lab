@@ -21,6 +21,7 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
   const [aktiveKat, setAktiveKat] = useState<Kategorie>("fruechte-gemuese");
   const [status, setStatus] = useState<Status>("shop");
   const [cartOpen, setCartOpen] = useState(false);
+  const [detailId, setDetailId] = useState<string | null>(null);
 
   const produktById = useMemo(
     () => Object.fromEntries(PRODUKTE.map((p) => [p.id, p])) as Record<string, Produkt>,
@@ -116,6 +117,7 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
               imKorb={inKorb(p.id)}
               onAdd={() => hinzufuegen(p.id)}
               onRemove={() => entfernen(p.id)}
+              onInfo={() => setDetailId(p.id)}
             />
           ))}
         </div>
@@ -222,20 +224,46 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
           <span className="font-bold">CHF {total.toFixed(2)}</span>
         </div>
       </aside>
+      {/* Produkt-Detail Modal */}
+      {detailId && (
+        <ProduktDetail
+          produkt={produktById[detailId]}
+          imKorb={inKorb(detailId)}
+          onClose={() => setDetailId(null)}
+          onAdd={() => {
+            hinzufuegen(detailId);
+            setDetailId(null);
+          }}
+          onRemove={() => {
+            entfernen(detailId);
+            setDetailId(null);
+          }}
+        />
+      )}
     </div>
   );
 }
+
+const SCORE_LABEL: Record<number, string> = {
+  1: "wenig nachhaltig",
+  2: "eher schwach",
+  3: "mittel",
+  4: "gut",
+  5: "sehr nachhaltig",
+};
 
 function ProduktKarte({
   produkt,
   imKorb,
   onAdd,
   onRemove,
+  onInfo,
 }: {
   produkt: Produkt;
   imKorb: boolean;
   onAdd: () => void;
   onRemove: () => void;
+  onInfo: () => void;
 }) {
   return (
     <div
@@ -244,32 +272,59 @@ function ProduktKarte({
         imKorb ? "border-ink/60 bg-paper-deep/40" : "border-border",
       )}
     >
-      <div className="flex items-start justify-between gap-1">
-        <span className="text-2xl sm:text-3xl" aria-hidden>
-          {produkt.emoji}
-        </span>
-        <span className="font-mono-typed text-[11px] sm:text-xs">
-          CHF {produkt.preis.toFixed(2)}
-        </span>
-      </div>
-      <p className="mt-1.5 text-xs font-medium leading-tight sm:text-sm">
-        {produkt.name}
-      </p>
-      <div className="mt-1.5 flex flex-wrap gap-1">
-        {produkt.siegel.map((s) => (
-          <span
-            key={s}
-            className="rounded-full border border-border bg-card px-1.5 py-0.5 text-[9px] font-mono-typed sm:text-[10px]"
+      <button
+        onClick={onInfo}
+        aria-label={`Details zu ${produkt.name}`}
+        className="-mx-1 -mt-1 flex flex-col items-stretch rounded-sm px-1 pt-1 text-left transition-colors hover:bg-paper-deep/40"
+      >
+        <div className="flex items-start justify-between gap-1">
+          <span className="text-2xl sm:text-3xl" aria-hidden>
+            {produkt.emoji}
+          </span>
+          <span className="font-mono-typed text-[11px] sm:text-xs">
+            CHF {produkt.preis.toFixed(2)}
+          </span>
+        </div>
+        <p className="mt-1.5 text-xs font-medium leading-tight sm:text-sm">
+          {produkt.name}
+        </p>
+        <div className="mt-1.5 flex flex-wrap gap-1">
+          {produkt.siegel.map((s) => (
+            <span
+              key={s}
+              className="rounded-full border border-border bg-card px-1.5 py-0.5 text-[9px] font-mono-typed sm:text-[10px]"
+            >
+              {s}
+            </span>
+          ))}
+          {produkt.saison === "in" && (
+            <span className="rounded-full bg-emerald-700/10 px-1.5 py-0.5 text-[9px] font-mono-typed text-emerald-800 sm:text-[10px]">
+              Saison
+            </span>
+          )}
+        </div>
+        {produkt.score && (
+          <div
+            className="mt-1.5 flex items-center gap-0.5"
+            aria-label={`Nachhaltigkeit: ${produkt.score} von 5`}
           >
-            {s}
-          </span>
-        ))}
-        {produkt.saison === "in" && (
-          <span className="rounded-full bg-emerald-700/10 px-1.5 py-0.5 text-[9px] font-mono-typed text-emerald-800 sm:text-[10px]">
-            Saison
-          </span>
+            {[1, 2, 3, 4, 5].map((i) => (
+              <span
+                key={i}
+                className={cn(
+                  "h-1.5 flex-1 rounded-full",
+                  i <= (produkt.score ?? 0)
+                    ? "bg-emerald-700/80"
+                    : "bg-border",
+                )}
+              />
+            ))}
+          </div>
         )}
-      </div>
+        <p className="mt-1 text-[10px] italic text-muted-foreground">
+          Tippen für Details
+        </p>
+      </button>
       <button
         onClick={imKorb ? onRemove : onAdd}
         className={cn(
@@ -281,6 +336,141 @@ function ProduktKarte({
       >
         {imKorb ? "− Entfernen" : "+ In den Korb"}
       </button>
+    </div>
+  );
+}
+
+function ProduktDetail({
+  produkt,
+  imKorb,
+  onClose,
+  onAdd,
+  onRemove,
+}: {
+  produkt: Produkt;
+  imKorb: boolean;
+  onClose: () => void;
+  onAdd: () => void;
+  onRemove: () => void;
+}) {
+  const sections: { title: string; body?: string }[] = [
+    { title: "Beschreibung", body: produkt.beschreibung },
+    { title: "Erhältlich bei", body: produkt.erhaeltlichBei },
+    { title: "Herkunft", body: produkt.herkunft },
+    { title: "Zutaten", body: produkt.zutatenInfo },
+    { title: "Hinweis", body: produkt.hinweis },
+    { title: "Wichtige Information", body: produkt.wichtigeInfo },
+    { title: "Tipp", body: produkt.tipp },
+  ].filter((s) => !!s.body);
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 sm:items-center"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+    >
+      <div
+        className="max-h-[90vh] w-full overflow-y-auto rounded-t-lg bg-paper shadow-2xl sm:max-w-lg sm:rounded-lg"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="sticky top-0 flex items-start justify-between gap-3 border-b border-border bg-paper/95 px-4 py-3 backdrop-blur">
+          <div className="flex items-center gap-3">
+            <span className="text-3xl" aria-hidden>
+              {produkt.emoji}
+            </span>
+            <div>
+              <h3 className="font-serif text-lg font-bold leading-tight">
+                {produkt.name}
+              </h3>
+              <p className="font-mono-typed text-xs text-muted-foreground">
+                CHF {produkt.preis.toFixed(2)}
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            aria-label="Schliessen"
+            className="rounded p-1.5 text-muted-foreground hover:bg-secondary"
+          >
+            ✕
+          </button>
+        </div>
+
+        <div className="space-y-3 px-4 py-4 text-sm">
+          {(produkt.siegel.length > 0 || produkt.saison === "in") && (
+            <div className="flex flex-wrap gap-1.5">
+              {produkt.siegel.map((s) => (
+                <span
+                  key={s}
+                  className="rounded-full border border-border bg-card px-2 py-0.5 text-[11px] font-mono-typed"
+                >
+                  {s}
+                </span>
+              ))}
+              {produkt.saison === "in" && (
+                <span className="rounded-full bg-emerald-700/10 px-2 py-0.5 text-[11px] font-mono-typed text-emerald-800">
+                  Saison
+                </span>
+              )}
+              {produkt.saison === "out" && (
+                <span className="rounded-full bg-stamp/10 px-2 py-0.5 text-[11px] font-mono-typed text-stamp">
+                  Nicht in Saison
+                </span>
+              )}
+            </div>
+          )}
+
+          {produkt.score && (
+            <div className="rounded-sm border border-border bg-paper-deep/30 p-3">
+              <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+                Nachhaltigkeits-Bewertung
+              </p>
+              <div className="mt-1.5 flex items-center gap-2">
+                <div className="flex flex-1 gap-1">
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <span
+                      key={i}
+                      className={cn(
+                        "h-2 flex-1 rounded-full",
+                        i <= (produkt.score ?? 0)
+                          ? "bg-emerald-700/80"
+                          : "bg-border",
+                      )}
+                    />
+                  ))}
+                </div>
+                <span className="font-mono-typed text-xs">
+                  {produkt.score}/5 · {SCORE_LABEL[produkt.score]}
+                </span>
+              </div>
+            </div>
+          )}
+
+          {sections.map((s) => (
+            <div key={s.title}>
+              <h4 className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
+                {s.title}
+              </h4>
+              <p className="mt-1 text-foreground/90">{s.body}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="sticky bottom-0 border-t border-border bg-paper/95 px-4 py-3 backdrop-blur">
+          <button
+            onClick={imKorb ? onRemove : onAdd}
+            className={cn(
+              "w-full rounded-sm py-2.5 font-serif text-sm font-semibold transition-colors",
+              imKorb
+                ? "border border-stamp/40 bg-stamp/5 text-stamp hover:bg-stamp/10"
+                : "bg-ink text-paper hover:bg-ink/90",
+            )}
+          >
+            {imKorb ? "− Aus dem Korb entfernen" : "+ In den Korb legen"}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
