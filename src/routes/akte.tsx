@@ -32,11 +32,11 @@ function AkteGated() {
 type Step = "voicemail" | "raetselkarte" | "shop" | "input" | "naechstes";
 
 const STEPS: { id: Step; label: string }[] = [
-  { id: "voicemail", label: "Sprachnachricht" },
-  { id: "raetselkarte", label: "Rätselkarte" },
-  { id: "shop", label: "Grüner Markt" },
-  { id: "input", label: "Fachlicher Input" },
-  { id: "naechstes", label: "Nächstes Rätsel" },
+  { id: "voicemail", label: "Beweis 01 · Sprachnachricht" },
+  { id: "raetselkarte", label: "Beweis 02 · Rätselkarte" },
+  { id: "shop", label: "Beweis 03 · Grüner Markt" },
+  { id: "input", label: "Beweis 04 · Recherche" },
+  { id: "naechstes", label: "Beweis 05 · Nächste Spur" },
 ];
 
 function AktePage() {
