@@ -336,6 +336,11 @@ function AktePage() {
           — Akte 001 · Wo ist Maya? —
         </p>
       </div>
+
+      {/* Tipp-System: aktiv ab Rätselkarte bis Shop abgeschlossen */}
+      {unlockedSteps.has("raetselkarte") && (step === "raetselkarte" || step === "shop") && (
+        <HintSystem />
+      )}
     </main>
   );
 }
