@@ -4,6 +4,7 @@ import { PaperCard } from "@/components/case-file/PaperCard";
 import { Stamp } from "@/components/case-file/Stamp";
 import { GruenerMarkt } from "@/components/case-file/GruenerMarkt";
 import { QRGate } from "@/components/case-file/QRGate";
+import { HintSystem } from "@/components/case-file/HintSystem";
 import { REZEPT, START_WARENKORB } from "@/lib/maya-data";
 import { cn } from "@/lib/utils";
 
