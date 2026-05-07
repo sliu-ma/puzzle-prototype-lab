@@ -19,9 +19,21 @@ async function sha256(text: string): Promise<string> {
 
 type Props = {
   children: React.ReactNode;
+  token?: string;
+  storageKey?: string;
+  title?: React.ReactNode;
+  description?: string;
 };
 
-export function QRGate({ children }: Props) {
+export function QRGate({
+  children,
+  token = DEFAULT_TOKEN,
+  storageKey = DEFAULT_STORAGE_KEY,
+  title,
+  description,
+}: Props) {
+  const EXPECTED_TOKEN = token;
+  const STORAGE_KEY = storageKey;
   const [unlocked, setUnlocked] = useState<boolean | null>(null); // null = noch nicht geprüft
   const [scanning, setScanning] = useState(false);
   const [error, setError] = useState<string | null>(null);
