@@ -4,9 +4,9 @@ import { PaperCard } from "./PaperCard";
 import { Stamp } from "./Stamp";
 import { cn } from "@/lib/utils";
 
-// Erwarteter QR-Code-Inhalt. Bewusst NICHT im UI angezeigt.
-const EXPECTED_TOKEN = "CpZk0z9RaQkL22gtiWoR";
-const STORAGE_KEY = "akte-001-unlocked";
+// Default für Akte 001 — bewusst NICHT im UI angezeigt.
+const DEFAULT_TOKEN = "CpZk0z9RaQkL22gtiWoR";
+const DEFAULT_STORAGE_KEY = "akte-001-unlocked";
 
 // Hash zur Persistenz – wir speichern nicht den Klartext-Token im LocalStorage.
 async function sha256(text: string): Promise<string> {
