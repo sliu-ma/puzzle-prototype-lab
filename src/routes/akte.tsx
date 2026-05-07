@@ -24,7 +24,11 @@ export const Route = createFileRoute("/akte")({
 
 function AkteGated() {
   return (
-    <QRGate>
+    <QRGate
+      token="CpZk0z9RaQkL22gtiWoR"
+      storageKey="akte-001-unlocked"
+      title={<>Akte 001 — QR-Code scannen</>}
+    >
       <AktePage />
     </QRGate>
   );
