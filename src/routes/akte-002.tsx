@@ -2,44 +2,74 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { PaperCard } from "@/components/case-file/PaperCard";
 import { Stamp } from "@/components/case-file/Stamp";
-import { GruenerMarkt } from "@/components/case-file/GruenerMarkt";
+import { CodeLock } from "@/components/case-file/CodeLock";
 import { QRGate } from "@/components/case-file/QRGate";
-import { HintSystem } from "@/components/case-file/HintSystem";
-import { REZEPT, START_WARENKORB } from "@/lib/maya-data";
+import { HintSystem, type Hint } from "@/components/case-file/HintSystem";
 import { cn } from "@/lib/utils";
 
-export const Route = createFileRoute("/akte")({
+export const Route = createFileRoute("/akte-002")({
   head: () => ({
     meta: [
-      { title: "Akte 001 — Wo ist Maya?" },
+      { title: "Akte 002 — Verschwundene Stimmen" },
       {
         name: "description",
         content:
-          "Kapitel 1: Maya ist verschwunden. Folge ihren Spuren durch den Grünen Markt und lerne, was nachhaltiger Einkauf wirklich bedeutet.",
+          "Kapitel 2: Wer fehlt im Wald? Sortiere die Tiere, entdecke versteckte Zahlen im Gedicht und folge Mayas Spur weiter.",
       },
     ],
   }),
   component: AkteGated,
 });
 
+// QR-Token bewusst nicht im UI sichtbar
+const AKTE_002_TOKEN = "Mn7YxQ2pVe9TbR4Ks0Lh";
+
+// Lösung: gefährdete Tiere → 3, 5, 7, 9 → aufsteigend = 3579
+const EXPECTED_CODE = "3579";
+
+const HINTS_002: Hint[] = [
+  {
+    id: 0,
+    unlockMin: 3,
+    label: "Tipp 1",
+    title: "Sortier zuerst die Tiere",
+    body: "Lege die sieben Polaroids vor dich. Welche Tiere sind in der Schweiz akut gefährdet? Tipp: Es sind genau vier davon. Drei gelten als ungefährdet.",
+  },
+  {
+    id: 1,
+    unlockMin: 6,
+    label: "Tipp 2",
+    title: "Dreh die Karten um",
+    body: "Auf der Rückseite jedes Polaroids siehst du eine Zahl. Lege nur die gefährdeten Tiere mit der Zahlenseite nach oben aufs Gedicht — die Zahlen erscheinen in den Lücken.",
+  },
+  {
+    id: 2,
+    unlockMin: 9,
+    label: "Auflösung",
+    title: "So geht's",
+    body: "Gefährdet sind: Feldhase (3), Wiedehopf (5), Geburtshelferkröte (7) und Apollofalter (9). Aufsteigend ergibt das den Code 3 — 5 — 7 — 9.",
+  },
+];
+
 function AkteGated() {
   return (
     <QRGate
-      token="CpZk0z9RaQkL22gtiWoR"
-      storageKey="akte-001-unlocked"
-      title={<>Akte 001 — QR-Code scannen</>}
+      token={AKTE_002_TOKEN}
+      storageKey="akte-002-unlocked"
+      title={<>Akte 002 — QR-Code scannen</>}
+      description="Akte 002 ist versiegelt. Scanne den beigelegten QR-Code aus deiner Mappe, um Mayas Spur weiterzuverfolgen."
     >
       <AktePage />
     </QRGate>
   );
 }
 
-type Step = "voicemail" | "raetselkarte" | "shop" | "input" | "naechstes";
+type Step = "voicemail" | "raetselkarte" | "code" | "input" | "naechstes";
 
 const STEPS: { id: Step; label: string }[] = [
   { id: "voicemail", label: "Sprachnachricht" },
   { id: "raetselkarte", label: "Rätselkarte" },
-  { id: "shop", label: "Grüner Markt" },
+  { id: "code", label: "Code eintippen" },
   { id: "input", label: "Fachlicher Input" },
   { id: "naechstes", label: "Nächstes Rätsel" },
 ];
@@ -77,10 +107,10 @@ function AktePage() {
               ← Aktenmappe schließen
             </Link>
             <h1 className="mt-1.5 font-serif text-2xl font-bold leading-tight sm:mt-2 sm:text-5xl">
-              Akte 001 · Kapitel 1
+              Akte 002 · Kapitel 2
             </h1>
             <p className="mt-0.5 font-serif italic text-sm text-foreground/70 sm:text-base">
-              Der Einkauf
+              Verschwundene Stimmen
             </p>
           </div>
           <Stamp rotate={-6}>Vertraulich</Stamp>
@@ -126,36 +156,29 @@ function AktePage() {
           </ol>
         </nav>
 
-        {/* Steps */}
         {step === "voicemail" && (
           <PaperCard rotate={-0.4}>
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-              Beweis 01 · Sprachnachricht
+              Beweis 02 · Sprachnachricht
             </p>
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-              Mayas letzte Nachricht an Lin
+              Mayas zweite Nachricht
             </h2>
             <p className="mt-1 font-mono-typed text-xs text-muted-foreground">
-              [Aufnahme · Mittwoch · 14:32 · 47 Sek.]
+              [Aufnahme · Donnerstag · 06:11 · 38 Sek.]
             </p>
             <blockquote className="mt-5 border-l-4 border-stamp pl-4 text-[15px] leading-relaxed">
-              „Lin, hör mal — ich glaub, ich hab's. Du weißt, was sie uns über dieses
-              Gaskraftwerk erzählen, dass es ja so super grün und regional ist? Einer der
-              Investoren betreibt eine ganze Supermarkt-Kette und schreibt sich
-              ‚nachhaltig' auf die Werbung. Ich war eben auf seiner Online-Plattform.
-              Der Einkaufswagen, den ich da gesehen hab, war alles andere als das."
+              „Lin — ich war heute Morgen draussen, im Wäldchen hinter dem
+              geplanten Kraftwerk. Es ist still. Zu still. Kein Wiedehopf, keine
+              Kröte, nichts. Ich hab eine alte Naturschutz-Mappe der Gemeinde
+              dabei — Polaroids, ein Gedicht hinten drauf. Schau dir das an."
               <br />
               <br />
-              „Ich hab dir den Link geschickt. Auf dem Bildschirm liegt ein Rezept und ein
-              halb-fertiger Warenkorb. Schau dir das mal genau an — und mach es richtig.
-              Wenn du kapierst, wo der Haken ist, kommst du an die nächste Spur."
-              <br />
-              <br />
-              „Bis gleich. Ich fahr noch zur Redaktion."
+              „Sortier die Tiere: Welche sind hier wirklich noch zuhause, welche
+              sind verschwunden? Auf den Rückseiten stehen Zahlen. Wenn du nur
+              die gefährdeten Tiere umdrehst und aufs Gedicht legst, siehst du
+              den Code. Klein nach gross, dann tippst du ihn ein."
             </blockquote>
-            <p className="mt-4 text-sm text-foreground/60">
-              <strong>Maya kam nie in der Redaktion an.</strong>
-            </p>
             <div className="mt-6 flex justify-end">
               <button
                 onClick={() => goto("raetselkarte")}
@@ -173,28 +196,47 @@ function AktePage() {
               Rätselkarte · Auftrag von Maya
             </p>
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-              {REZEPT.emoji} {REZEPT.titel}
+              🦋 Wer fehlt im Wald?
             </h2>
-            <p className="mt-3 text-sm font-mono-typed uppercase tracking-wider text-muted-foreground">
-              Zutaten:
-            </p>
-            <ul className="mt-2 grid gap-1 sm:grid-cols-2">
-              {REZEPT.zutaten.map((z) => (
-                <li key={z} className="text-[15px]">
-                  • {z}
-                </li>
-              ))}
-            </ul>
+
+            <div className="mt-5 grid gap-4 sm:grid-cols-2">
+              <div className="rounded-sm border border-border bg-paper p-4">
+                <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
+                  In deiner Mappe
+                </p>
+                <ul className="mt-2 space-y-1 text-[15px]">
+                  <li>· 7 Polaroids von Tieren</li>
+                  <li>· 1 Blatt Papier mit Gedicht (Rückseite)</li>
+                  <li>· Schere</li>
+                </ul>
+              </div>
+              <div className="rounded-sm border border-border bg-paper p-4">
+                <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
+                  Dein Auftrag
+                </p>
+                <ol className="mt-2 list-decimal space-y-1 pl-5 text-[15px]">
+                  <li>Polaroids ausschneiden.</li>
+                  <li>Sortieren: gefährdet ↔ nicht gefährdet.</li>
+                  <li>Gefährdete Tiere umdrehen und aufs Gedicht legen.</li>
+                  <li>
+                    Zahlen ablesen — von der <strong>kleinsten</strong> zur{" "}
+                    <strong>grössten</strong>.
+                  </li>
+                  <li>Code unten eintippen.</li>
+                </ol>
+              </div>
+            </div>
+
             <div className="mt-6 rounded-sm border border-stamp/30 bg-stamp/5 p-4">
               <p className="font-serif italic leading-relaxed">
-                „Du möchtest gerade bezahlen — aber irgendetwas stimmt mit dem Warenkorb
-                nicht. Deine Aufgabe: Entferne die problematischen Produkte und ersetze
-                sie durch nachhaltige Alternativen. Erst dann kommst du weiter."
+                „Vier von sieben Tieren stehen auf der Roten Liste der Schweiz.
+                Wenn du sie richtig erkennst, gibt dir das Gedicht den Schlüssel."
               </p>
               <p className="mt-2 font-mono-typed text-[11px] uppercase tracking-wider text-stamp">
                 — M.
               </p>
             </div>
+
             <div className="mt-6 flex justify-between">
               <button
                 onClick={() => setStep("voicemail")}
@@ -203,22 +245,34 @@ function AktePage() {
                 ← Zurück
               </button>
               <button
-                onClick={() => goto("shop")}
+                onClick={() => goto("code")}
                 className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
               >
-                Verstanden — zum Shop →
+                Code eintippen →
               </button>
             </div>
           </PaperCard>
         )}
 
-        {step === "shop" && (
-          <div className="space-y-4">
-            <GruenerMarkt
-              startWarenkorb={START_WARENKORB}
-              onErfolg={() => goto("input")}
-            />
-            <div className="flex justify-start">
+        {step === "code" && (
+          <PaperCard rotate={-0.2} tape="top-right">
+            <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
+              Schloss · 4-stelliger Code
+            </p>
+            <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
+              Was sagt das Gedicht?
+            </h2>
+            <p className="mt-3 text-[15px] text-foreground/80">
+              Lege die gefährdeten Tiere mit der Zahlenseite aufs Gedicht. Tippe
+              die vier Zahlen <strong>von der kleinsten zur grössten</strong>{" "}
+              ein.
+            </p>
+
+            <div className="mt-6">
+              <CodeLock expected={EXPECTED_CODE} onUnlock={() => goto("input")} />
+            </div>
+
+            <div className="mt-6 flex justify-start">
               <button
                 onClick={() => setStep("raetselkarte")}
                 className="rounded-sm border border-border bg-card px-4 py-2.5 font-serif text-sm hover:bg-secondary"
@@ -226,39 +280,40 @@ function AktePage() {
                 ← Rätselkarte erneut ansehen
               </button>
             </div>
-          </div>
+          </PaperCard>
         )}
 
         {step === "input" && (
           <div className="space-y-6">
             <PaperCard rotate={-0.3}>
               <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-                Mayas Recherche · 3 Lernkarten
+                Mayas Recherche · Biodiversität
               </p>
               <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-                Was heißt eigentlich „nachhaltig einkaufen"?
+                Warum Vielfalt zählt
               </h2>
               <p className="mt-3 text-foreground/80">
-                Drei Begriffe, die Maya immer wieder unterstrichen hat — und die du
-                gerade im Shop angewendet hast:
+                Die Schweiz gehört in Europa zu den Ländern mit dem grössten
+                Anteil bedrohter Arten. Drei Begriffe, die Maya immer wieder
+                unterstrichen hat:
               </p>
 
               <div className="mt-5 grid gap-4 sm:grid-cols-3">
                 {[
                   {
-                    title: "Saisonal",
-                    body: "Obst und Gemüse, das gerade in der Schweiz wächst und geerntet werden kann. Wer im März Erdbeeren kauft, kauft Ware aus dem Süden oder beheizten Tunneln — viel Energie für wenig Geschmack.",
-                    hint: "Im März in CH in Saison: Äpfel, Lauch, Karotten, Feldsalat …",
+                    title: "Rote Liste",
+                    body: "Eine offizielle Übersicht der gefährdeten Tier- und Pflanzenarten der Schweiz. Rund ein Drittel aller untersuchten Arten gilt heute als bedroht — vom Feldhasen bis zum Apollofalter.",
+                    hint: "Quelle: BAFU – Bundesamt für Umwelt.",
                   },
                   {
-                    title: "Regional",
-                    body: "Lebensmittel aus deiner Umgebung — meist 50–100 km. Kurzer Transport, frischer, oft kleinere Höfe. Achtung: „Aus der Schweiz“ ist nicht automatisch regional. Region heißt: aus deiner Gegend.",
-                    hint: "Bio Suisse & IP-Suisse stehen für Schweizer Herkunft mit klaren Standards.",
+                    title: "Lebensraum",
+                    body: "Versiegelte Böden, intensive Landwirtschaft und Verkehr zerschneiden Wiesen, Hecken und Feuchtgebiete. Ohne Lebensraum keine Tiere — auch nicht im Wald hinter dem Schulhaus.",
+                    hint: "Hecken, Trockenmauern und Tümpel sind echte Biodiversitäts-Hotspots.",
                   },
                   {
-                    title: "Tiergerecht & Bio",
-                    body: "Bio-Freilandhaltung garantiert Auslauf und Bio-Futter — Bodenhaltung nicht. Importeier reisen oft über tausende Kilometer. Hinter günstigen Preisen stehen meist enge Ställe und industrielle Logistik.",
-                    hint: "Schweizer Bio-Eier sind teurer, halten aber, was die Werbung verspricht.",
+                    title: "Vernetzung",
+                    body: "Tiere brauchen Wanderkorridore: Grünbrücken, Gewässer, Hecken. Werden Räume durch Strassen oder Kraftwerke getrennt, sterben Populationen lokal aus, auch wenn jede einzelne noch zu retten wäre.",
+                    hint: "Stichwort: Wildtierkorridore und Renaturierung.",
                   },
                 ].map((c) => (
                   <div
@@ -280,10 +335,10 @@ function AktePage() {
 
             <div className="flex justify-between">
               <button
-                onClick={() => setStep("shop")}
+                onClick={() => setStep("code")}
                 className="rounded-sm border border-border bg-card px-4 py-2.5 font-serif text-sm hover:bg-secondary"
               >
-                ← Zurück zum Shop
+                ← Zurück
               </button>
               <button
                 onClick={() => goto("naechstes")}
@@ -298,29 +353,28 @@ function AktePage() {
         {step === "naechstes" && (
           <PaperCard rotate={-0.5} tape="top-left">
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-              Kapitel 2 · folgt bald
+              Kapitel 3 · folgt bald
             </p>
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-              Die Geldspur
+              Unterwegs — aber wie?
             </h2>
             <div className="mt-4 rounded-sm border border-dashed border-stamp/40 bg-paper-deep/30 p-5">
               <p className="font-serif italic leading-relaxed">
-                „Wer ‚regional und nachhaltig' auf seine Werbung schreibt, aber so
-                einkaufen lässt — der hat ein Problem mit der Wahrheit. Genau wie bei
-                dem Gaskraftwerk."
+                „Wer Lebensräume zerschneidet, baut auch Strassen. Und wer
+                Strassen baut, will Autos füllen. Aber wie bewegen wir uns
+                eigentlich — und mit welchem Preis für Klima und Biodiversität?"
               </p>
               <p className="mt-3 font-serif italic">
-                „Auf dem Foto, das ich gefunden hab, sieht man, wer wirklich
-                dahintersteckt. Es liegt im zweiten Umschlag, in der Redaktion. Wenn
-                du das hier liest, Lin — du weißt, wo."
+                „Den nächsten Hinweis findest du in der Mappe — dort liegt eine
+                gefaltete Karte. Schau, welche Wege sie zeigt."
               </p>
               <p className="mt-3 font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
                 — M.
               </p>
             </div>
             <p className="mt-5 text-sm text-foreground/70">
-              In Kapitel 2 folgst du Mayas Spur in die Redaktion und entwirrst, wer
-              die Investoren des Gaskraftwerks wirklich sind.
+              In Kapitel 3 geht es um <strong>Mobilität</strong>: Wege,
+              Verkehrsmittel und ihre Folgen für Mensch und Natur.
             </p>
             <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
               <span className="stamp-mark inline-block px-3 py-1 text-xs">
@@ -337,13 +391,13 @@ function AktePage() {
         )}
 
         <p className="mt-12 text-center font-mono-typed text-xs uppercase tracking-[0.2em] text-muted-foreground">
-          — Akte 001 · Wo ist Maya? —
+          — Akte 002 · Verschwundene Stimmen —
         </p>
       </div>
 
-      {/* Tipp-System: aktiv ab Rätselkarte bis Shop abgeschlossen */}
-      {unlockedSteps.has("raetselkarte") && (step === "raetselkarte" || step === "shop") && (
-        <HintSystem />
+      {/* Tipp-System: aktiv ab Rätselkarte bis Code geknackt */}
+      {unlockedSteps.has("raetselkarte") && (step === "raetselkarte" || step === "code") && (
+        <HintSystem hints={HINTS_002} storageKey="akte-002-hints-start" />
       )}
     </main>
   );

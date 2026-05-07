@@ -94,12 +94,12 @@ function CoverPage() {
               </aside>
             </div>
 
-            <div className="mt-12 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
+            <div className="mt-12 flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:flex-wrap">
               <Link
                 to="/akte"
                 className="group inline-flex items-center gap-3 rounded-sm bg-primary px-7 py-3.5 font-serif text-base font-semibold text-primary-foreground shadow-md transition-all hover:-translate-y-0.5 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background"
               >
-                Akte öffnen
+                Akte 001 öffnen
                 <span
                   aria-hidden
                   className="transition-transform group-hover:translate-x-1"
@@ -107,8 +107,17 @@ function CoverPage() {
                   →
                 </span>
               </Link>
+              <Link
+                to="/akte-002"
+                className="group inline-flex items-center gap-3 rounded-sm border border-border bg-card px-7 py-3.5 font-serif text-base font-semibold transition-all hover:-translate-y-0.5 hover:bg-secondary"
+              >
+                Akte 002 öffnen
+                <span aria-hidden className="transition-transform group-hover:translate-x-1">
+                  →
+                </span>
+              </Link>
               <p className="font-mono-typed text-xs uppercase tracking-[0.15em] text-muted-foreground">
-                Kapitel 1 · Der Einkaufszettel
+                Kapitel 1: Einkauf · Kapitel 2: Biodiversität
               </p>
             </div>
           </article>

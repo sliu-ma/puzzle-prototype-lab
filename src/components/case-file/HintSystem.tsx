@@ -1,8 +1,15 @@
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
-// Drei Tipps mit Freischalt-Zeitpunkten (in Minuten ab Start)
-const HINTS = [
+export type Hint = {
+  id: number;
+  unlockMin: number;
+  label: string;
+  title: string;
+  body: string;
+};
+
+const DEFAULT_HINTS: Hint[] = [
   {
     id: 0,
     unlockMin: 3,
@@ -24,11 +31,18 @@ const HINTS = [
     title: "So geht's",
     body: "Entferne die Erdbeeren aus Spanien und die Bodenhaltungs-Eier aus dem EU-Import. Lege stattdessen die Schweizer Erdbeeren (IP-Suisse, in Saison) und die Bio-Freiland-Eier aus der Schweiz in den Korb. Dann kannst du bezahlen.",
   },
-] as const;
+];
 
-const STORAGE_KEY = "akte-001-hints-start";
+const DEFAULT_STORAGE_KEY = "akte-001-hints-start";
 
-export function HintSystem() {
+type Props = {
+  hints?: Hint[];
+  storageKey?: string;
+};
+
+export function HintSystem({ hints = DEFAULT_HINTS, storageKey = DEFAULT_STORAGE_KEY }: Props = {}) {
+  const HINTS = hints;
+  const STORAGE_KEY = storageKey;
   const [now, setNow] = useState(() => Date.now());
   const [startedAt, setStartedAt] = useState<number | null>(null);
   const [open, setOpen] = useState(false);

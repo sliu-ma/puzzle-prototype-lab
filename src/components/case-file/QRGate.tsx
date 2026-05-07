@@ -4,9 +4,9 @@ import { PaperCard } from "./PaperCard";
 import { Stamp } from "./Stamp";
 import { cn } from "@/lib/utils";
 
-// Erwarteter QR-Code-Inhalt. Bewusst NICHT im UI angezeigt.
-const EXPECTED_TOKEN = "CpZk0z9RaQkL22gtiWoR";
-const STORAGE_KEY = "akte-001-unlocked";
+// Default für Akte 001 — bewusst NICHT im UI angezeigt.
+const DEFAULT_TOKEN = "CpZk0z9RaQkL22gtiWoR";
+const DEFAULT_STORAGE_KEY = "akte-001-unlocked";
 
 // Hash zur Persistenz – wir speichern nicht den Klartext-Token im LocalStorage.
 async function sha256(text: string): Promise<string> {
@@ -19,9 +19,21 @@ async function sha256(text: string): Promise<string> {
 
 type Props = {
   children: React.ReactNode;
+  token?: string;
+  storageKey?: string;
+  title?: React.ReactNode;
+  description?: string;
 };
 
-export function QRGate({ children }: Props) {
+export function QRGate({
+  children,
+  token = DEFAULT_TOKEN,
+  storageKey = DEFAULT_STORAGE_KEY,
+  title,
+  description,
+}: Props) {
+  const EXPECTED_TOKEN = token;
+  const STORAGE_KEY = storageKey;
   const [unlocked, setUnlocked] = useState<boolean | null>(null); // null = noch nicht geprüft
   const [scanning, setScanning] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -136,18 +148,21 @@ export function QRGate({ children }: Props) {
                 Akte 001 · Versiegelt
               </p>
               <h1 className="mt-2 font-serif text-3xl font-bold leading-tight sm:text-4xl">
-                QR-Code scannen,
-                <br />
-                um Akte zu öffnen
+                {title ?? (
+                  <>
+                    QR-Code scannen,
+                    <br />
+                    um Akte zu öffnen
+                  </>
+                )}
               </h1>
             </div>
             <Stamp rotate={8}>Gesperrt</Stamp>
           </div>
 
           <p className="mt-5 text-[15px] leading-relaxed text-foreground/80">
-            Diese Akte ist versiegelt. Sie lässt sich nur mit dem original
-            beigelegten QR-Code öffnen. Halte den Code vor die Kamera deines
-            Geräts.
+            {description ??
+              "Diese Akte ist versiegelt. Sie lässt sich nur mit dem original beigelegten QR-Code öffnen. Halte den Code vor die Kamera deines Geräts."}
           </p>
 
           <div
