@@ -148,18 +148,21 @@ export function QRGate({
                 Akte 001 · Versiegelt
               </p>
               <h1 className="mt-2 font-serif text-3xl font-bold leading-tight sm:text-4xl">
-                QR-Code scannen,
-                <br />
-                um Akte zu öffnen
+                {title ?? (
+                  <>
+                    QR-Code scannen,
+                    <br />
+                    um Akte zu öffnen
+                  </>
+                )}
               </h1>
             </div>
             <Stamp rotate={8}>Gesperrt</Stamp>
           </div>
 
           <p className="mt-5 text-[15px] leading-relaxed text-foreground/80">
-            Diese Akte ist versiegelt. Sie lässt sich nur mit dem original
-            beigelegten QR-Code öffnen. Halte den Code vor die Kamera deines
-            Geräts.
+            {description ??
+              "Diese Akte ist versiegelt. Sie lässt sich nur mit dem original beigelegten QR-Code öffnen. Halte den Code vor die Kamera deines Geräts."}
           </p>
 
           <div
