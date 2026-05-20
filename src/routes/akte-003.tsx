@@ -90,6 +90,10 @@ function AktePage() {
   const [ziel, setZiel] = useState("");
   const [eingabeError, setEingabeError] = useState<string | null>(null);
 
+  // Routen-Phase: Liste vs. Detail einer Route
+  const [selectedRouteId, setSelectedRouteId] = useState<string | null>(null);
+  const [routeError, setRouteError] = useState<string | null>(null);
+
   const goto = (s: Step) => {
     setUnlockedSteps((prev) => new Set([...prev, s]));
     setStep(s);
