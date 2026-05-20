@@ -228,8 +228,8 @@ function AktePage() {
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
               Rätselkarte · Auftrag von Maya
             </p>
-            <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-              🗺️ Welche Route hat Maya genommen?
+            <h2 className="mt-2 flex items-center gap-2 font-serif text-2xl font-bold sm:text-3xl">
+              <MapIcon className="h-6 w-6 text-stamp" /> Welche Route hat Maya genommen?
             </h2>
 
             <div className="mt-5 grid gap-4 sm:grid-cols-2">
