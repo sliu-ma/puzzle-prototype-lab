@@ -1,11 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
+import { Map as MapIcon, MapPin } from "lucide-react";
 import { PaperCard } from "@/components/case-file/PaperCard";
 import { Stamp } from "@/components/case-file/Stamp";
 import { QRGate } from "@/components/case-file/QRGate";
 import { HintSystem, type Hint } from "@/components/case-file/HintSystem";
 import { RouteCards } from "@/components/case-file/RouteCards";
-import { VALID_START, VALID_ZIEL } from "@/lib/mobility-data";
+import { RouteDetail } from "@/components/case-file/RouteDetail";
+import { VALID_START, VALID_ZIEL, type RouteOption } from "@/lib/mobility-data";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/akte-003")({
