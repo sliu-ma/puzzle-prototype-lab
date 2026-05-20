@@ -344,20 +344,21 @@ function AktePage() {
           </PaperCard>
         )}
 
-        {step === "routen" && (
+        {step === "routen" && !selectedRouteId && (
           <div className="space-y-4">
             <PaperCard rotate={-0.3}>
               <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
                 Verbindung identifiziert
               </p>
               <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-                Genf <span className="text-muted-foreground">›</span> Speicher
+                Genève <span className="text-muted-foreground">›</span> Speicher
               </h2>
               <p className="mt-1 text-sm text-foreground/70">
-                Welche Route hat Maya genutzt? Vergleiche Aufwand, Preis und CO₂.
+                Drei Routen stehen zur Auswahl. Tippe eine an, um Karte, Verbindung
+                und CO₂-Werte im Detail zu sehen.
               </p>
               <div className="mt-5">
-                <RouteCards onSolved={() => goto("input")} />
+                <RouteCards onSelect={(id) => setSelectedRouteId(id)} />
               </div>
             </PaperCard>
 
@@ -370,6 +371,27 @@ function AktePage() {
               </button>
             </div>
           </div>
+        )}
+
+        {step === "routen" && selectedRouteId && (
+          <RouteDetail
+            routeId={selectedRouteId}
+            errorText={routeError}
+            onBack={() => {
+              setSelectedRouteId(null);
+              setRouteError(null);
+            }}
+            onChoose={(r: RouteOption) => {
+              if (r.correct) {
+                setRouteError(null);
+                goto("input");
+              } else {
+                setRouteError(
+                  "Diese Route ist nicht die nachhaltigste. Vergleiche CO₂-Werte und realen Aufwand und wähle erneut.",
+                );
+              }
+            }}
+          />
         )}
 
         {step === "input" && (
