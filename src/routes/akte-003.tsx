@@ -285,8 +285,8 @@ function AktePage() {
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
               Beweismittel analysieren
             </p>
-            <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-              📍 Rekonstruiere Mayas Reiseroute
+            <h2 className="mt-2 flex items-center gap-2 font-serif text-2xl font-bold sm:text-3xl">
+              <MapPin className="h-6 w-6 text-stamp" /> Rekonstruiere Mayas Reiseroute
             </h2>
             <p className="mt-3 text-[15px] text-foreground/80">
               Hör dir die Sprachnachricht erneut an — beide Orte stecken in
@@ -296,7 +296,7 @@ function AktePage() {
             <form onSubmit={handleEingabe} className="mt-6 space-y-4">
               <div>
                 <label className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
-                  🟢 Startort
+                  Startort
                 </label>
                 <input
                   type="text"
@@ -308,7 +308,7 @@ function AktePage() {
               </div>
               <div>
                 <label className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
-                  📍 Zielort
+                  Zielort
                 </label>
                 <input
                   type="text"
