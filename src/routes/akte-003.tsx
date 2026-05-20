@@ -1,11 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
+import { Map as MapIcon, MapPin } from "lucide-react";
 import { PaperCard } from "@/components/case-file/PaperCard";
 import { Stamp } from "@/components/case-file/Stamp";
 import { QRGate } from "@/components/case-file/QRGate";
 import { HintSystem, type Hint } from "@/components/case-file/HintSystem";
 import { RouteCards } from "@/components/case-file/RouteCards";
-import { VALID_START, VALID_ZIEL } from "@/lib/mobility-data";
+import { RouteDetail } from "@/components/case-file/RouteDetail";
+import { VALID_START, VALID_ZIEL, type RouteOption } from "@/lib/mobility-data";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/akte-003")({
@@ -87,6 +89,10 @@ function AktePage() {
   const [start, setStart] = useState("");
   const [ziel, setZiel] = useState("");
   const [eingabeError, setEingabeError] = useState<string | null>(null);
+
+  // Routen-Phase: Liste vs. Detail einer Route
+  const [selectedRouteId, setSelectedRouteId] = useState<string | null>(null);
+  const [routeError, setRouteError] = useState<string | null>(null);
 
   const goto = (s: Step) => {
     setUnlockedSteps((prev) => new Set([...prev, s]));
@@ -222,8 +228,8 @@ function AktePage() {
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
               Rätselkarte · Auftrag von Maya
             </p>
-            <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-              🗺️ Welche Route hat Maya genommen?
+            <h2 className="mt-2 flex items-center gap-2 font-serif text-2xl font-bold sm:text-3xl">
+              <MapIcon className="h-6 w-6 text-stamp" /> Welche Route hat Maya genommen?
             </h2>
 
             <div className="mt-5 grid gap-4 sm:grid-cols-2">
@@ -279,8 +285,8 @@ function AktePage() {
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
               Beweismittel analysieren
             </p>
-            <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-              📍 Rekonstruiere Mayas Reiseroute
+            <h2 className="mt-2 flex items-center gap-2 font-serif text-2xl font-bold sm:text-3xl">
+              <MapPin className="h-6 w-6 text-stamp" /> Rekonstruiere Mayas Reiseroute
             </h2>
             <p className="mt-3 text-[15px] text-foreground/80">
               Hör dir die Sprachnachricht erneut an — beide Orte stecken in
@@ -290,7 +296,7 @@ function AktePage() {
             <form onSubmit={handleEingabe} className="mt-6 space-y-4">
               <div>
                 <label className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
-                  🟢 Startort
+                  Startort
                 </label>
                 <input
                   type="text"
@@ -302,7 +308,7 @@ function AktePage() {
               </div>
               <div>
                 <label className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
-                  📍 Zielort
+                  Zielort
                 </label>
                 <input
                   type="text"
@@ -338,20 +344,21 @@ function AktePage() {
           </PaperCard>
         )}
 
-        {step === "routen" && (
+        {step === "routen" && !selectedRouteId && (
           <div className="space-y-4">
             <PaperCard rotate={-0.3}>
               <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
                 Verbindung identifiziert
               </p>
               <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-                Genf <span className="text-muted-foreground">›</span> Speicher
+                Genève <span className="text-muted-foreground">›</span> Speicher
               </h2>
               <p className="mt-1 text-sm text-foreground/70">
-                Welche Route hat Maya genutzt? Vergleiche Aufwand, Preis und CO₂.
+                Drei Routen stehen zur Auswahl. Tippe eine an, um Karte, Verbindung
+                und CO₂-Werte im Detail zu sehen.
               </p>
               <div className="mt-5">
-                <RouteCards onSolved={() => goto("input")} />
+                <RouteCards onSelect={(id) => setSelectedRouteId(id)} />
               </div>
             </PaperCard>
 
@@ -364,6 +371,27 @@ function AktePage() {
               </button>
             </div>
           </div>
+        )}
+
+        {step === "routen" && selectedRouteId && (
+          <RouteDetail
+            routeId={selectedRouteId}
+            errorText={routeError}
+            onBack={() => {
+              setSelectedRouteId(null);
+              setRouteError(null);
+            }}
+            onChoose={(r: RouteOption) => {
+              if (r.correct) {
+                setRouteError(null);
+                goto("input");
+              } else {
+                setRouteError(
+                  "Diese Route ist nicht die nachhaltigste. Vergleiche CO₂-Werte und realen Aufwand und wähle erneut.",
+                );
+              }
+            }}
+          />
         )}
 
         {step === "input" && (
