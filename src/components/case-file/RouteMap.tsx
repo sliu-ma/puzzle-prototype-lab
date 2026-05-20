@@ -12,19 +12,21 @@ export type RouteSegment = {
 export type RouteStop = {
   pos: LatLng;
   label: string;
+  major?: boolean;
 };
 
 type Props = {
   segments: RouteSegment[];
   stops: RouteStop[];
   color?: string;
+  minHeight?: number;
 };
 
 /**
  * Leaflet karte — wird nur clientseitig dynamisch geladen,
  * damit kein SSR-Fehler entsteht (Leaflet greift auf window zu).
  */
-export function RouteMap({ segments, stops, color = "#5eead4" }: Props) {
+export function RouteMap({ segments, stops, color = "#5eead4", minHeight = 420 }: Props) {
   const [Lib, setLib] = useState<any>(null);
 
   useEffect(() => {
@@ -40,7 +42,10 @@ export function RouteMap({ segments, stops, color = "#5eead4" }: Props) {
 
   if (!Lib) {
     return (
-      <div className="flex aspect-square w-full items-center justify-center rounded-sm border border-border bg-black/80 text-xs text-muted-foreground">
+      <div
+        className="flex w-full items-center justify-center rounded-sm border border-border bg-black/80 text-xs text-muted-foreground"
+        style={{ minHeight }}
+      >
         Karte lädt …
       </div>
     );
@@ -48,20 +53,19 @@ export function RouteMap({ segments, stops, color = "#5eead4" }: Props) {
 
   const { MapContainer, TileLayer, Polyline, CircleMarker, Tooltip } = Lib;
 
-  // Bounds aus allen Stops berechnen
   const lats = stops.map((s) => s.pos[0]);
   const lngs = stops.map((s) => s.pos[1]);
   const bounds: [LatLng, LatLng] = [
-    [Math.min(...lats) - 0.1, Math.min(...lngs) - 0.1],
-    [Math.max(...lats) + 0.1, Math.max(...lngs) + 0.1],
+    [Math.min(...lats) - 0.15, Math.min(...lngs) - 0.15],
+    [Math.max(...lats) + 0.15, Math.max(...lngs) + 0.15],
   ];
 
   return (
-    <div className="overflow-hidden rounded-sm border border-border">
+    <div className="overflow-hidden rounded-sm border border-border" style={{ minHeight }}>
       <MapContainer
         bounds={bounds}
         scrollWheelZoom={false}
-        style={{ height: "100%", width: "100%", minHeight: 260, background: "#0a0f14" }}
+        style={{ height: "100%", width: "100%", minHeight, background: "#0a0f14" }}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
@@ -73,9 +77,9 @@ export function RouteMap({ segments, stops, color = "#5eead4" }: Props) {
             positions={seg.coords}
             pathOptions={{
               color: seg.color ?? color,
-              weight: 3,
-              dashArray: seg.dashed ? "6 6" : undefined,
-              opacity: 0.9,
+              weight: 4,
+              dashArray: seg.dashed ? "6 8" : undefined,
+              opacity: 0.95,
             }}
           />
         ))}
@@ -83,8 +87,13 @@ export function RouteMap({ segments, stops, color = "#5eead4" }: Props) {
           <CircleMarker
             key={i}
             center={s.pos}
-            radius={5}
-            pathOptions={{ color: "#fff", weight: 2, fillColor: color, fillOpacity: 1 }}
+            radius={s.major ? 6 : 3}
+            pathOptions={{
+              color: "#fff",
+              weight: s.major ? 2 : 1,
+              fillColor: s.major ? color : "#fff",
+              fillOpacity: 1,
+            }}
           >
             <Tooltip direction="top" offset={[0, -6]} opacity={1} permanent={false}>
               {s.label}
