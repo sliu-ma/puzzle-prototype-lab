@@ -197,9 +197,10 @@ function AktePage() {
             </p>
             <blockquote className="mt-5 border-l-4 border-stamp pl-4 text-[15px] leading-relaxed">
               „Lin, hör mal — ich hab heute mit einer ehemaligen Mitarbeiterin
-              des Investors gesprochen. Sie wohnt in einem kleinen Dorf in den
-              Appenzeller Hügeln, das nach einem Vorrat klingt. Sie wollte mir
-              Dokumente übergeben."
+              von Marc Tissots AlpLogistik gesprochen. Sie wohnt in einem
+              kleinen Dorf in den Appenzeller Hügeln, das nach einem Vorrat
+              klingt. Sie hat Frachtpapiere — sie beweisen, wie das
+              Baumaterial fürs Kraftwerk wirklich transportiert wird."
               <br />
               <br />
               „Ich bin morgens von hier — also vom See in der Westschweiz, du
@@ -209,8 +210,9 @@ function AktePage() {
               kommst."
               <br />
               <br />
-              „Drei Optionen lagen auf dem Tisch. Ich hab die genommen, bei der
-              ich nachts noch schlafen kann. Du wirst es sehen."
+              „Drei Optionen lagen auf dem Tisch — Zug, Auto, Inlandflug
+              kombiniert. Ich hab die genommen, bei der ich nachts noch
+              schlafen kann. Du wirst es sehen."
             </blockquote>
             <div className="mt-6 flex justify-end">
               <button
@@ -466,14 +468,16 @@ function AktePage() {
               Kapitel 4 · folgt bald
             </p>
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-              Vier Wände, ein Fussabdruck
+              Das gute Quartier
             </h2>
             <div className="mt-4 rounded-sm border border-dashed border-stamp/40 bg-paper-deep/30 p-5">
               <p className="font-serif italic leading-relaxed">
-                „Die Frau in Speicher hat mir gezeigt, was der Investor wirklich
-                baut. Es geht nicht nur um ein Kraftwerk — es geht um ganze
-                Quartiere. Heizung, Dämmung, Baustoffe. Sie nennen es
-                ‚modern' — aber wer rechnet eigentlich nach?"
+                „Tissots Greenwashing fliegt auf — aber er ist nur Nr. 3.
+                Investorin Nr. 4 heisst <strong>Sandra Keller</strong>,
+                Geschäftsführerin des ‚Helvetia Immobilien Fonds'. Sie
+                vermarktet das Quartier ‚Sonnenfeld' als Minergie-P-Vorzeige­
+                projekt — und liefert genau damit den Beweis, warum das
+                Gaskraftwerk angeblich nötig sei."
               </p>
               <p className="mt-3 font-serif italic">
                 „Schau dir den Plan in der nächsten Akte an. Es geht um's

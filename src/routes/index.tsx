@@ -69,13 +69,15 @@ function CoverPage() {
                   einer Recherche.
                 </p>
                 <p>
-                  Maya war einer Spur auf der Sicher. Sie glaubte, etwas gefunden zu haben, das den
-                  Bau des neuen <span className="ink-underline">Gaskraftwerks am Stadtrand</span>{" "}
-                  stoppen könnte.
+                  Maya war einer Spur auf der Sicher. Sie glaubte, beweisen zu können, dass beim
+                  Bau des neuen{" "}
+                  <span className="ink-underline">Gaskraftwerks „Thermika Ost"</span> bei der
+                  Vergabe geschummelt wurde — fünf Investoren, fünf gefälschte
+                  Nachhaltigkeits-Versprechen.
                 </p>
                 <p className="font-serif italic text-foreground/70">
-                  Du übernimmst ihre Akte. Lies, vergleiche, kombiniere — und finde heraus, was sie
-                  entdeckt hat.
+                  Du übernimmst ihre Akte. Fünf Umschläge, einer nach dem anderen. Lies,
+                  vergleiche, kombiniere — und finde heraus, was sie entdeckt hat.
                 </p>
               </div>
 
@@ -84,13 +86,17 @@ function CoverPage() {
                 style={{ transform: "rotate(1.2deg)" }}
               >
                 <p className="font-mono-typed text-[10px] uppercase tracking-[0.2em] text-stamp">
-                  Hinweis der Redaktion
+                  Brief von Lin
                 </p>
-                <ul className="mt-3 space-y-1.5 text-foreground/80">
-                  <li>· 1 Kapitel · ca. 20 Minuten</li>
-                  <li>· Einzeln oder im Team spielbar</li>
-                  <li>· Stift &amp; Zettel empfohlen</li>
-                </ul>
+                <p className="mt-3 font-serif italic leading-relaxed text-foreground/85">
+                  „Maya ist weg. Die Polizei sagt ‚Ausreisserin' — ich glaub kein Wort.
+                  Sie hat mir diese Mappe zugesteckt: fünf versiegelte Umschläge mit
+                  QR-Codes. Ihr Zettel sagt: <em>‚Wenn ich mich nicht melde, macht ihr
+                  weiter. Ein Umschlag nach dem anderen.'</em> Helft mir."
+                </p>
+                <p className="mt-2 font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
+                  — Lin
+                </p>
               </aside>
             </div>
 
@@ -126,7 +132,7 @@ function CoverPage() {
                 </span>
               </Link>
               <p className="font-mono-typed text-xs uppercase tracking-[0.15em] text-muted-foreground">
-                Einkauf · Biodiversität · Mobilität
+                5 Akten · Konsum · Biodiv. · Mobilität · Wohnen · Energie
               </p>
             </div>
           </article>
