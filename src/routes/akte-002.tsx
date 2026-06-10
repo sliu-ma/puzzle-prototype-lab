@@ -169,15 +169,19 @@ function AktePage() {
             </p>
             <blockquote className="mt-5 border-l-4 border-stamp pl-4 text-[15px] leading-relaxed">
               „Lin — ich war heute Morgen draussen, im Wäldchen hinter dem
-              geplanten Kraftwerk. Es ist still. Zu still. Kein Wiedehopf, keine
-              Kröte, nichts. Ich hab eine alte Naturschutz-Mappe der Gemeinde
-              dabei — Polaroids, ein Gedicht hinten drauf. Schau dir das an."
+              geplanten Kraftwerk. Genau dort, wo Brönnimanns ‚Stiftung
+              WaldZukunft' angeblich Artenschutz betreibt. Es ist still. Zu
+              still. Kein Wiedehopf, keine Kröte, nichts. Ich hab eine alte
+              Naturschutz-Mappe aus dem Gemeindearchiv dabei — Polaroids, ein
+              Gedicht hinten drauf. Schau dir das an."
               <br />
               <br />
               „Sortier die Tiere: Welche sind hier wirklich noch zuhause, welche
               sind verschwunden? Auf den Rückseiten stehen Zahlen. Wenn du nur
               die gefährdeten Tiere umdrehst und aufs Gedicht legst, siehst du
-              den Code. Klein nach gross, dann tippst du ihn ein."
+              den Code. Klein nach gross, dann tippst du ihn ein. Wenn ich
+              recht hab, ist Brönnimanns Biodiversitäts-Gutachten fürs
+              Kraftwerk gefälscht."
             </blockquote>
             <div className="mt-6 flex justify-end">
               <button
@@ -356,17 +360,21 @@ function AktePage() {
               Kapitel 3 · folgt bald
             </p>
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-              Unterwegs — aber wie?
+              Die Lieferkette
             </h2>
             <div className="mt-4 rounded-sm border border-dashed border-stamp/40 bg-paper-deep/30 p-5">
               <p className="font-serif italic leading-relaxed">
-                „Wer Lebensräume zerschneidet, baut auch Strassen. Und wer
-                Strassen baut, will Autos füllen. Aber wie bewegen wir uns
-                eigentlich — und mit welchem Preis für Klima und Biodiversität?"
+                „Wer den Wald belügt, belügt auch beim Verkehr. Investor Nr. 3
+                heisst <strong>Marc Tissot</strong> — Verwaltungsrat der
+                ‚AlpLogistik SA' in Genf. Seine Firma transportiert das
+                Baumaterial fürs Kraftwerk und wirbt mit ‚CO₂-neutralen
+                Lieferketten'."
               </p>
               <p className="mt-3 font-serif italic">
-                „Den nächsten Hinweis findest du in der Mappe — dort liegt eine
-                gefaltete Karte. Schau, welche Wege sie zeigt."
+                „Ich fahre morgen früh zu einer Zeugin nach Speicher (AR).
+                Genf → Speicher. Frag dich, <em>wie</em> man so eine Strecke
+                wirklich nachhaltig macht. Den nächsten Umschlag findest du
+                in der Mappe."
               </p>
               <p className="mt-3 font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
                 — M.

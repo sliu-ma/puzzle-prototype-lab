@@ -139,11 +139,13 @@ function AktePage() {
               [Aufnahme · Mittwoch · 14:32 · 47 Sek.]
             </p>
             <blockquote className="mt-5 border-l-4 border-stamp pl-4 text-[15px] leading-relaxed">
-              „Lin, hör mal — ich glaub, ich hab's. Du weißt, was sie uns über dieses
-              Gaskraftwerk erzählen, dass es ja so super grün und regional ist? Einer der
-              Investoren betreibt eine ganze Supermarkt-Kette und schreibt sich
-              ‚nachhaltig' auf die Werbung. Ich war eben auf seiner Online-Plattform.
-              Der Einkaufswagen, den ich da gesehen hab, war alles andere als das."
+              „Lin, hör mal — ich glaub, ich hab's. Du weisst, was sie uns über das
+              Gaskraftwerk ‚Thermika Ost' erzählen — alles super grün, alles regional?
+              Hinter dem Konsortium ‚Helvetia Energie AG' stehen fünf Investoren. Einer
+              davon ist <strong>Roland Vetterli</strong>, der CEO der Frischmarkt AG.
+              Seine Supermärkte werben mit ‚regional &amp; saisonal'. Ich war eben auf
+              seiner Online-Plattform. Der Einkaufswagen, den ich da gesehen hab, war
+              alles andere als das."
               <br />
               <br />
               „Ich hab dir den Link geschickt. Auf dem Bildschirm liegt ein Rezept und ein
@@ -301,18 +303,19 @@ function AktePage() {
               Kapitel 2 · folgt bald
             </p>
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-              Die Geldspur
+              Der Wald hinter dem Kraftwerk
             </h2>
             <div className="mt-4 rounded-sm border border-dashed border-stamp/40 bg-paper-deep/30 p-5">
               <p className="font-serif italic leading-relaxed">
-                „Wer ‚regional und nachhaltig' auf seine Werbung schreibt, aber so
-                einkaufen lässt — der hat ein Problem mit der Wahrheit. Genau wie bei
-                dem Gaskraftwerk."
+                „Vetterli ist nicht allein. Im Stiftungsrat seiner ‚Stiftung
+                WaldZukunft' sitzt <strong>Dr. Eva Brönnimann</strong> — Forstunternehmerin,
+                Investorin Nr. 2 der Helvetia Energie AG. Sie behauptet, sie schütze die
+                Artenvielfalt rund um den geplanten Kraftwerks-Standort."
               </p>
               <p className="mt-3 font-serif italic">
-                „Auf dem Foto, das ich gefunden hab, sieht man, wer wirklich
-                dahintersteckt. Es liegt im zweiten Umschlag, in der Redaktion. Wenn
-                du das hier liest, Lin — du weißt, wo."
+                „Ich war heute Morgen draussen, im Wäldchen hinter dem Standort.
+                Was ich dort gehört habe — oder eben <em>nicht</em> gehört habe —
+                liegt im zweiten Umschlag. Öffne ihn, Lin."
               </p>
               <p className="mt-3 font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
                 — M.
