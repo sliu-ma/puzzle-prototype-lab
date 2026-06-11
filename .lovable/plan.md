@@ -1,97 +1,63 @@
-# Storyline: „Wo ist Maya?" — Gesamtbogen
+## Ziel
 
-## Setup (bleibt wie gehabt)
-- **Maya Brandt, 16**, Schülerzeitungs-Redakteurin und Klimaaktivistin, ist verschwunden.
-- Sie war einer Geschichte auf der Spur: Beim Bau des neuen **Gaskraftwerks „Thermika Ost"** am Stadtrand wurde bei der **Bauvergabe geschummelt** — ein Konsortium hat sich mit gefälschten Nachhaltigkeits-Gutachten durchgesetzt.
-- Die Klasse / der Spieler übernimmt Mayas Aktenmappe und rollt die Recherche in **5 Kapiteln** auf. Jede Akte = ein Beweisstück gegen einen anderen Investor des Konsortiums.
+Im Grünen Markt (Akte 001) werden Produkte anklickbar. Ein Klick auf Bild/Karte öffnet ein Detail-Popup mit Foto, Label-Logos, Herkunft/Zutaten und einem 5-stufigen Nachhaltigkeitsbarometer. Die Übersicht zeigt – wo verfügbar – echte Produktbilder statt Emojis. Der „+ In den Korb"-Button bleibt unten auf der Karte und wird nicht durch das Popup ausgelöst.
 
-## Der rote Faden
-Das **Konsortium „Helvetia Energie AG"** besteht aus fünf Gesellschaftern. Jeder hat sein „grünes" Image gefälscht, um den Zuschlag zu bekommen. Maya hat zu jedem ein Beweisstück gesammelt — die Akten 001–005. Wer alle fünf Codes hat, kann den letzten Umschlag öffnen: das Protokoll der manipulierten Vergabesitzung.
+## Assets
 
-```text
-   Prolog  →  001 Konsum  →  002 Biodiv.  →  003 Mobilität  →  004 Wohnen  →  005 Energie  →  Epilog
-   (Mappe)   (Supermarkt)   (Forst-Lobby)    (Verkehrs-AG)     (Immo-Fonds)   (Helvetia)    (Auflösung)
-```
+Hochgeladene Bilder werden als Lovable-Assets registriert (CDN-Pointer in `src/assets/*.asset.json`), damit keine Binaries im Repo liegen:
 
----
+- Produktfotos: Erdbeeren CH, Erdbeeren ES, Zitrone (Demeter), Mehl (M-Classic), Vollrahm (Valflora)
+- Label-Logos: Migros Bio, IP-Suisse, Demeter
 
-## Prolog — „Die Mappe" (vor Akte 001)
-Eingeklebt in der Mappe: ein **Brief von Lin** (Mayas bester Freundin) an die Klasse.
-> „Maya ist seit Mittwoch weg. Die Polizei sagt 'Ausreißerin'. Ich glaube ihr kein Wort. Sie hat mir diese Mappe in den Briefkasten geworfen — mit fünf versiegelten Umschlägen und einem Zettel: *‚Wenn ich mich nicht melde, macht ihr weiter. Ein Umschlag nach dem anderen. Am Ende habt ihr genug, um sie zu stoppen.'* Ich kann das nicht alleine. Helft mir."
+Produkte ohne Bild behalten vorerst das Emoji als Fallback (User liefert später nach). Die Zitrone wird zusätzlich mit Demeter-Label markiert.
 
-**Funktion:** Erklärt den Spielmechanismus (QR-Codes, Umschläge, Reihenfolge) in der Fiktion.
+## Datenmodell (`src/lib/maya-data.ts`)
 
----
+`Produkt` wird erweitert:
 
-## Akte 001 — Der Einkauf *(bestehend)*
-**Investor:** Roland Vetterli, CEO **„Frischmarkt AG"** (Supermarktkette).
-**Fassade:** Wirbt mit „regional & saisonal".
-**Beweis:** Sein eigener Online-Shop verkauft Spanien-Erdbeeren im März und Bodenhaltungs-Eier als „nachhaltig".
-**Maya-Notiz am Ende:** „Vetterli ist nicht allein. Im Stiftungsrat seines ‚Naturparks Ost' sitzt eine Frau, die behauptet, sie schütze den Wald. Nächste Spur: der Wald."
+- `bildUrl?: string` — optionales Produktfoto (Asset-Import). Fällt zurück auf `emoji`.
+- `siegel` bekommt strukturierten Typ: `Array<{ key: "bio-suisse" | "ip-suisse" | "demeter" | "migros-bio" | "fairtrade" | "bio-import"; label: string }>` damit Logos sauber zugeordnet werden.
+- Neues Feld `nachhaltigkeit`:
+  ```ts
+  {
+    regional: 1–5,
+    saisonal: 1–5,
+    verpackung: 1–5,
+    label: 1–5,
+    erklaerung: string  // 1–2 Sätze, warum diese Bewertung
+  }
+  ```
+  Gesamtwert wird aus dem Durchschnitt berechnet.
 
-## Akte 002 — Die verschwundenen Stimmen *(bestehend)*
-**Investor:** Dr. Eva Brönnimann, Forstunternehmerin, Präsidentin „Stiftung WaldZukunft".
-**Fassade:** „Wir schützen die Biodiversität rund um den Kraftwerks-Standort."
-**Beweis:** Die Tier-Polaroids stammen aus *ihrem* Schutzgebiet — vier der dort offiziell „häufigen" Arten sind in Wahrheit gefährdet. Das Biodiversitäts-Gutachten fürs Kraftwerk ist gefälscht.
-**Code 3579** öffnet einen Umschlag mit Brönnimanns Unterschrift unter dem Gutachten.
-**Maya-Notiz:** „Wer den Wald belügt, belügt auch beim Verkehr. Schau dir an, wie das Baumaterial geliefert wird. Genf → Speicher. Frag dich, warum."
+Bestehende `bewertung` (gut/schlecht/neutral) und `problemHinweis` bleiben — sie steuern weiterhin die Rätsel-Logik beim Bezahlen.
 
-## Akte 003 — Spur in den Osten *(bestehend)*
-**Investor:** Marc Tissot, Verwaltungsrat **„AlpLogistik SA"**, Genf.
-**Fassade:** „CO₂-neutrale Lieferketten."
-**Beweis:** Die Transporte für die Kraftwerk-Turbinen gehen per **Inlandflug + LKW** statt per Bahn — Maya rekonstruiert die Route Genf→Speicher und zeigt, dass der Zug schneller UND sauberer wäre. Die „CO₂-Kompensation" der AlpLogistik ist Greenwashing.
-**Maya-Notiz:** „Tissot wohnt in einem ‚Vorzeige-Ökoquartier'. Das nächste Stück liegt da. Schau dir an, *wie* dort gewohnt wird."
+## Neue Komponente: `ProduktDetailDialog.tsx`
 
-## Akte 004 — Das gute Quartier *(neu — Wohnen)*
-**Investor:** Sandra Keller, Geschäftsführerin **„Helvetia Immobilien Fonds"**.
-**Fassade:** Das Quartier „Sonnenfeld" wird als Minergie-P-Vorzeigeprojekt vermarktet — und liefert angeblich den Strombedarfs-Nachweis, warum das Gaskraftwerk *nötig* sei.
-**Rätselidee (Vorschlag, separat zu spezifizieren):**
-- Spieler erhält Grundrisse + Energieausweise von 3 Wohnungen.
-- Vergleicht: m²/Person, Heizsystem, Stromverbrauch, graue Energie.
-- Eine Wohnung („Penthouse Keller") verbraucht **5× so viel** wie die kleine Familienwohnung darunter.
-- Aufgabe: aufdecken, dass der „Mehrbedarf", mit dem das Gaskraftwerk begründet wird, fast vollständig von wenigen Luxus-Einheiten kommt.
-**Maya-Notiz:** „Es geht gar nicht um Strom für alle. Es geht um *deren* Strom. Im letzten Umschlag steht, wer wirklich profitiert."
+Auf Basis von `@/components/ui/dialog`. Layout (gemäß User-Vorgabe):
 
-## Akte 005 — Helvetia *(neu — Energie / Auflösung)*
-**Investor:** Konsortium **„Helvetia Energie AG"** — alle vier Vorgenannten + Stadtrat **Felix Brandt**.
-**Twist:** Felix Brandt ist Mayas Onkel. Deshalb hatte sie Zugang zu internen Dokumenten — und deshalb wurde sie weggeschafft.
-**Rätselidee (Vorschlag):**
-- Aus den 4 vorigen Akten hat der Spieler je einen **Code-Fetzen** gesammelt (z. B. eine Zahl, ein Wort, ein Buchstabe pro Akte).
-- Diese ergeben den Schlüssel zum letzten Umschlag: das **Sitzungsprotokoll der Vergabe**, in dem das Konsortium ein zweites Gebot kleinredet.
-- Abschluss: Spieler entscheidet zwischen „Anonyme Veröffentlichung" oder „An die Staatsanwaltschaft" → zwei Schluss-Texte.
+1. **Bild** — großes Produktfoto auf paper-Hintergrund, Fallback Emoji-XXL
+2. **Label-Logos** — horizontale Reihe von Logo-Chips (nur vorhandene Labels), darunter Saison-Badge falls relevant
+3. **Herkunft & Zutaten** — Block mit Herkunft, Preis, ggf. „Für Rezept: <Zutat>"
+4. **Nachhaltigkeitsbarometer** — 4 Sub-Kategorien als horizontale Balken (5 Punkte / gefüllt-leer), darüber Gesamtscore (große Zahl + Punkt-Skala), darunter Erklärungstext
 
----
+Stil bleibt im Krimi-Dossier-Look (paper, ink, font-serif/mono-typed). Keine Emojis in Buttons/Labels — nur als Bild-Fallback.
 
-## Epilog — „Drei Wochen später"
-- **Zeitungsausschnitt:** Vergabe annulliert, Bauvergabe-Skandal löst Untersuchung aus.
-- **Sprachnachricht von Maya** (zum ersten Mal wieder hörbar): Sie ist okay, war im Tessin bei einer Tante untergetaucht. „Ihr habt es geschafft. Danke, dass ihr mir geglaubt habt."
-- Letzter Stempel auf der Mappe: **ABGESCHLOSSEN**.
+## Änderungen `GruenerMarkt.tsx`
 
----
+- `ProduktKarte`: Bild-Bereich wird `<button>` der das Dialog öffnet (`onOpenDetail`). Der vorhandene „+ In den Korb"-Button bleibt separat unten.
+- State `detailProdukt: Produkt | null` im Parent, übergeben an `ProduktDetailDialog`.
+- Wo `bildUrl` vorhanden: `<img>` rendern (object-contain, aspect-square), sonst Emoji wie bisher.
+- Siegel-Chips zeigen weiterhin Textlabel in der Karte; im Dialog erscheinen die Logos.
 
-## Wiederkehrende Erzähl-Elemente (Konsistenz über alle Akten)
-1. **Sprachnachricht** (intro) — Mayas Stimme leitet jede Akte ein.
-2. **Rätselkarte** — handschriftliche Aufgabenstellung von Maya.
-3. **Interaktives Rätsel** — themenspezifisch (Shop / Polaroids / Karte / Grundrisse / Code-Synthese).
-4. **Fachlicher Input** — 2–3 Lernkarten zum Thema.
-5. **Cliffhanger zur nächsten Akte** — Maya verweist konkret auf den nächsten Investor.
+## Dateien
 
-## Personen-Übersicht (Spickzettel)
-| # | Akte | Investor:in | Branche | Greenwashing |
-|---|------|------|------|------|
-| 1 | Konsum | Roland Vetterli | Supermarkt | „regional/saisonal" |
-| 2 | Biodiv. | Dr. Eva Brönnimann | Forst-Stiftung | „Artenschutz" |
-| 3 | Mobilität | Marc Tissot | Logistik | „CO₂-neutral" |
-| 4 | Wohnen | Sandra Keller | Immobilien | „Minergie-P" |
-| 5 | Energie | Stadtrat Felix Brandt | Politik | „Versorgungssicherheit" |
+- `src/lib/maya-data.ts` — Schema erweitern, Bilder/Logos importieren, alle Produkte mit `nachhaltigkeit`-Werten und (wo vorhanden) `bildUrl` befüllen, Zitrone zusätzlich `demeter`-Label.
+- `src/assets/*.asset.json` — neue Pointer für 5 Produktbilder + 3 Label-Logos (via `lovable-assets create` aus `/mnt/user-uploads/`).
+- `src/components/case-file/ProduktDetailDialog.tsx` — neue Komponente.
+- `src/components/case-file/GruenerMarkt.tsx` — Karte klickbar machen, Dialog einbinden, Bild-Rendering.
 
----
+## Technische Hinweise
 
-## Was als Nächstes (nach Plan-Approval)
-1. Mayas Voicemails, Rätselkarten und Cliffhanger-Texte in **Akte 001–003** so anpassen, dass die Investor:innen-Namen + Übergänge zur jeweils nächsten Akte stimmen.
-2. Prolog-Brief auf der Startseite (`/`) integrieren.
-3. Gerüst für **Akte 004 (Wohnen)** anlegen — Rätselmechanik separat mit dir spezifizieren.
-4. Gerüst für **Akte 005 (Finale)** mit Code-Synthese-Mechanik anlegen.
-5. Epilog-Seite (`/epilog` oder als Schlussschritt in Akte 005).
-
-Sag mir, ob die Story so passt — oder welche:r Investor:in / welches Motiv anders soll. Wenn ja, baue ich danach zuerst die Story-Anpassungen in Akte 001–003 ein, bevor wir Akte 004 mechanisch konzipieren.
+- `.jxl`-Dateien werden über lovable-assets (CDN) ausgeliefert; das umgeht Browser-Kompatibilität nicht. Falls JXL im Browser nicht lädt, konvertiere ich die beiden betroffenen Bilder (Mehl, Vollrahm) zu `.jpg` vor dem Upload.
+- Dialog stoppt Klick-Propagation, damit der Korb-Button auf der Karte unabhängig bleibt.
+- Rätsel-Logik (Pruefen-Button) bleibt unverändert.
