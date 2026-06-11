@@ -1,13 +1,21 @@
 // Daten für den "Grünen Markt" — Kapitel 1
-// Schweiz · CHF · Schweizer Siegel (Bio Suisse, IP-Suisse, Demeter, Migros Bio)
+// Schweiz · CHF · Schweizer Siegel (Bio, IP-Suisse, Demeter)
 
 import erdbeerenChAsset from "@/assets/produkte/erdbeeren-ch.webp.asset.json";
 import erdbeerenEsAsset from "@/assets/produkte/erdbeeren-es.jpg.asset.json";
 import zitroneAsset from "@/assets/produkte/zitrone.webp.asset.json";
 import mehlAsset from "@/assets/produkte/mehl.jpg.asset.json";
 import vollrahmAsset from "@/assets/produkte/vollrahm.jpg.asset.json";
+import aepfelAsset from "@/assets/produkte/aepfel.jpg.asset.json";
+import tomatenAsset from "@/assets/produkte/tomaten.webp.asset.json";
+import eierImportAsset from "@/assets/produkte/eier-import.jpg.asset.json";
+import eierBioAsset from "@/assets/produkte/eier-bio.jpg.asset.json";
+import butterAsset from "@/assets/produkte/butter.webp.asset.json";
+import zuckerAsset from "@/assets/produkte/zucker.webp.asset.json";
+import vanillezuckerAsset from "@/assets/produkte/vanillezucker.webp.asset.json";
+import salzAsset from "@/assets/produkte/salz.webp.asset.json";
 
-import migrosBioLogo from "@/assets/labels/migros-bio.jpg.asset.json";
+import bioLogo from "@/assets/labels/bio.png.asset.json";
 import ipSuisseLogo from "@/assets/labels/ip-suisse.png.asset.json";
 import demeterLogo from "@/assets/labels/demeter.png.asset.json";
 
@@ -18,14 +26,7 @@ export type Kategorie =
   | "fette"
   | "andere";
 
-export type SiegelKey =
-  | "bio-suisse"
-  | "migros-bio"
-  | "ip-suisse"
-  | "demeter"
-  | "fairtrade"
-  | "bio-import"
-  | "bio";
+export type SiegelKey = "bio" | "ip-suisse" | "demeter";
 
 export interface SiegelInfo {
   key: SiegelKey;
@@ -34,13 +35,9 @@ export interface SiegelInfo {
 }
 
 export const SIEGEL: Record<SiegelKey, SiegelInfo> = {
-  "migros-bio": { key: "migros-bio", label: "Migros Bio", logoUrl: migrosBioLogo.url },
+  bio: { key: "bio", label: "Bio", logoUrl: bioLogo.url },
   "ip-suisse": { key: "ip-suisse", label: "IP-Suisse", logoUrl: ipSuisseLogo.url },
   demeter: { key: "demeter", label: "Demeter", logoUrl: demeterLogo.url },
-  "bio-suisse": { key: "bio-suisse", label: "Bio Suisse" },
-  fairtrade: { key: "fairtrade", label: "Fairtrade" },
-  "bio-import": { key: "bio-import", label: "Bio Import" },
-  bio: { key: "bio", label: "Bio" },
 };
 
 export interface Nachhaltigkeit {
@@ -93,7 +90,7 @@ export const PRODUKTE: Produkt[] = [
     kategorie: "fruechte-gemuese",
     herkunft: "Spanien",
     preis: 5.9,
-    siegel: ["bio-import"],
+    siegel: [],
     saison: "out",
     emoji: "🍓",
     bildUrl: erdbeerenEsAsset.url,
@@ -105,7 +102,7 @@ export const PRODUKTE: Produkt[] = [
       regional: 1,
       saisonal: 1,
       verpackung: 1,
-      label: 2,
+      label: 1,
       erklaerung:
         "Importware aus Südeuropa, oft aus beheizten Folientunneln. Plastikverpackung, lange Transportwege und ausserhalb der Schweizer Saison.",
     },
@@ -138,7 +135,7 @@ export const PRODUKTE: Produkt[] = [
     kategorie: "fruechte-gemuese",
     herkunft: "Italien",
     preis: 0.9,
-    siegel: ["migros-bio", "demeter"],
+    siegel: ["bio", "demeter"],
     saison: "ganzjahr",
     emoji: "🍋",
     bildUrl: zitroneAsset.url,
@@ -162,6 +159,7 @@ export const PRODUKTE: Produkt[] = [
     siegel: ["ip-suisse"],
     saison: "in",
     emoji: "🍎",
+    bildUrl: aepfelAsset.url,
     bewertung: "neutral",
     nachhaltigkeit: {
       regional: 5,
@@ -181,6 +179,7 @@ export const PRODUKTE: Produkt[] = [
     siegel: [],
     saison: "out",
     emoji: "🍅",
+    bildUrl: tomatenAsset.url,
     bewertung: "neutral",
     nachhaltigkeit: {
       regional: 1,
@@ -195,13 +194,14 @@ export const PRODUKTE: Produkt[] = [
   // ── Milch & Eier ────────────────────────────────────────────────
   {
     id: "eier-bh-import",
-    name: "Eier 6er · Bodenhaltung",
+    name: "Eier 10er · Bodenhaltung",
     kategorie: "milch-eier",
     herkunft: "EU-Import",
     preis: 2.9,
     siegel: [],
     saison: "ganzjahr",
     emoji: "🥚",
+    bildUrl: eierImportAsset.url,
     bewertung: "schlecht",
     zutat: "eier",
     problemHinweis:
@@ -221,9 +221,10 @@ export const PRODUKTE: Produkt[] = [
     kategorie: "milch-eier",
     herkunft: "Schweiz",
     preis: 5.4,
-    siegel: ["bio-suisse"],
+    siegel: ["bio"],
     saison: "ganzjahr",
     emoji: "🥚",
+    bildUrl: eierBioAsset.url,
     bewertung: "gut",
     zutat: "eier",
     ersetzt: "eier-bh-import",
@@ -233,7 +234,7 @@ export const PRODUKTE: Produkt[] = [
       verpackung: 4,
       label: 5,
       erklaerung:
-        "Schweizer Bio-Freilandhaltung mit Auslauf, kontrolliertes Bio-Futter und kurze Wege. Knospen-Standard (Bio Suisse).",
+        "Schweizer Bio-Freilandhaltung mit Auslauf, kontrolliertes Bio-Futter und kurze Wege.",
     },
   },
   {
@@ -245,6 +246,7 @@ export const PRODUKTE: Produkt[] = [
     siegel: ["ip-suisse"],
     saison: "ganzjahr",
     emoji: "🧈",
+    bildUrl: butterAsset.url,
     bewertung: "neutral",
     zutat: "butter",
     nachhaltigkeit: {
@@ -302,19 +304,20 @@ export const PRODUKTE: Produkt[] = [
   },
   {
     id: "zucker-ch",
-    name: "Zucker 1kg",
+    name: "Cristal Feinkristall-Zucker 1kg",
     kategorie: "getreide-backen",
     herkunft: "Schweiz",
     preis: 1.6,
     siegel: [],
     saison: "ganzjahr",
     emoji: "🧂",
+    bildUrl: zuckerAsset.url,
     bewertung: "neutral",
     zutat: "zucker",
     nachhaltigkeit: {
       regional: 5,
       saisonal: 5,
-      verpackung: 4,
+      verpackung: 3,
       label: 2,
       erklaerung:
         "Schweizer Zuckerrüben — regional, aber ohne weiteres Nachhaltigkeitslabel. Papierverpackung.",
@@ -329,6 +332,7 @@ export const PRODUKTE: Produkt[] = [
     siegel: [],
     saison: "ganzjahr",
     emoji: "🍦",
+    bildUrl: vanillezuckerAsset.url,
     bewertung: "neutral",
     zutat: "vanillezucker",
     nachhaltigkeit: {
@@ -344,22 +348,23 @@ export const PRODUKTE: Produkt[] = [
   // ── Andere ──────────────────────────────────────────────────────
   {
     id: "salz",
-    name: "Meersalz 500g",
+    name: "Sel des Alpes · Speisesalz 500g",
     kategorie: "andere",
-    herkunft: "Frankreich",
+    herkunft: "Schweizer Berggebiete",
     preis: 2.2,
     siegel: [],
     saison: "ganzjahr",
     emoji: "🧂",
+    bildUrl: salzAsset.url,
     bewertung: "neutral",
     zutat: "salz",
     nachhaltigkeit: {
-      regional: 3,
+      regional: 5,
       saisonal: 5,
-      verpackung: 4,
+      verpackung: 3,
       label: 2,
       erklaerung:
-        "Meersalz aus Frankreich — kurze Wege innerhalb Europas, einfache Papierverpackung, aber kein spezifisches Nachhaltigkeitslabel.",
+        "Speisesalz aus Schweizer Berggebieten — sehr kurze Wege, jodiert und fluoridiert. Kartonverpackung, kein zusätzliches Nachhaltigkeitslabel.",
     },
   },
 ];
