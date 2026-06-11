@@ -189,9 +189,7 @@ function AktePage() {
             </ul>
             <div className="mt-6 rounded-sm border border-stamp/30 bg-stamp/5 p-4">
               <p className="font-serif italic leading-relaxed">
-                „Du möchtest gerade bezahlen — aber irgendetwas stimmt mit dem Warenkorb
-                nicht. Deine Aufgabe: Entferne die problematischen Produkte und ersetze
-                sie durch nachhaltige Alternativen. Erst dann kommst du weiter."
+                „Du möchtest gerade bezahlen — aber irgendetwas stimmt mit dem Warenkorb nicht. "
               </p>
               <p className="mt-2 font-mono-typed text-[11px] uppercase tracking-wider text-stamp">
                 — M.
