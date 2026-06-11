@@ -206,7 +206,7 @@ function AktePage() {
                 onClick={() => goto("shop")}
                 className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
               >
-                Verstanden — zum Shop →
+                Zum Shop →
               </button>
             </div>
           </PaperCard>
