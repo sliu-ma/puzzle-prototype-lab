@@ -61,7 +61,7 @@ export function ProduktDetailDialog({ produkt, onOpenChange }: ProduktDetailDial
         </DialogDescription>
 
         {/* 1. Bild */}
-        <div className="flex items-center justify-center border-b border-border bg-paper-deep/30 p-6">
+        <div className="flex items-center justify-center border-b border-border bg-white p-6">
           {produkt.bildUrl ? (
             <img
               src={produkt.bildUrl}
@@ -95,7 +95,7 @@ export function ProduktDetailDialog({ produkt, onOpenChange }: ProduktDetailDial
                 return (
                   <div
                     key={key}
-                    className="flex items-center gap-2 rounded-sm border border-border bg-paper px-2 py-1.5"
+                    className="flex items-center gap-2 rounded-sm border border-border bg-white px-2 py-1.5"
                   >
                     {s.logoUrl ? (
                       <img
@@ -125,20 +125,16 @@ export function ProduktDetailDialog({ produkt, onOpenChange }: ProduktDetailDial
             <span className="text-muted-foreground">Preis</span>
             <span className="font-mono-typed font-medium">CHF {produkt.preis.toFixed(2)}</span>
           </div>
-          <div className="flex justify-between gap-3">
-            <span className="text-muted-foreground">Saison</span>
-            <span className="font-medium">
-              {produkt.saison === "in"
-                ? "In Saison"
-                : produkt.saison === "out"
-                  ? "Ausserhalb Saison"
-                  : "Ganzjährig"}
-            </span>
-          </div>
-          {produkt.zutat && (
+          {produkt.kategorie === "fruechte-gemuese" && (
             <div className="flex justify-between gap-3">
-              <span className="text-muted-foreground">Für Rezept</span>
-              <span className="font-medium capitalize">{produkt.zutat}</span>
+              <span className="text-muted-foreground">Saison</span>
+              <span className="font-medium">
+                {produkt.saison === "in"
+                  ? "In Saison"
+                  : produkt.saison === "out"
+                    ? "Ausserhalb Saison"
+                    : "Ganzjährig"}
+              </span>
             </div>
           )}
         </div>
