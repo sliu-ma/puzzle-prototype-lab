@@ -14,6 +14,9 @@ import butterAsset from "@/assets/produkte/butter.webp.asset.json";
 import zuckerAsset from "@/assets/produkte/zucker.webp.asset.json";
 import vanillezuckerAsset from "@/assets/produkte/vanillezucker.webp.asset.json";
 import salzAsset from "@/assets/produkte/salz.webp.asset.json";
+import milchAsset from "@/assets/produkte/milch.webp.asset.json";
+import joghurtSchokoAsset from "@/assets/produkte/joghurt-schoko.webp.asset.json";
+
 
 import bioLogo from "@/assets/labels/bio.png.asset.json";
 import ipSuisseLogo from "@/assets/labels/ip-suisse.png.asset.json";
