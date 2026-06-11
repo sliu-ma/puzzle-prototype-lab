@@ -7,7 +7,8 @@ interface ProduktDetailDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
-const KAT_LABELS: { key: keyof Produkt["nachhaltigkeit"]; label: string }[] = [
+type NumKey = "regional" | "saisonal" | "verpackung" | "label";
+const KAT_LABELS: { key: NumKey; label: string }[] = [
   { key: "regional", label: "Regionalität" },
   { key: "saisonal", label: "Saisonalität" },
   { key: "verpackung", label: "Verpackung" },
