@@ -14,6 +14,9 @@ import butterAsset from "@/assets/produkte/butter.webp.asset.json";
 import zuckerAsset from "@/assets/produkte/zucker.webp.asset.json";
 import vanillezuckerAsset from "@/assets/produkte/vanillezucker.webp.asset.json";
 import salzAsset from "@/assets/produkte/salz.webp.asset.json";
+import milchAsset from "@/assets/produkte/milch.webp.asset.json";
+import joghurtSchokoAsset from "@/assets/produkte/joghurt-schoko.webp.asset.json";
+
 
 import bioLogo from "@/assets/labels/bio.png.asset.json";
 import ipSuisseLogo from "@/assets/labels/ip-suisse.png.asset.json";
@@ -235,6 +238,46 @@ export const PRODUKTE: Produkt[] = [
       label: 5,
       erklaerung:
         "Schweizer Bio-Freilandhaltung mit Auslauf, kontrolliertes Bio-Futter und kurze Wege.",
+    },
+  },
+  {
+    id: "milch-valflora",
+    name: "Valflora Vollmilch 1L · PAST",
+    kategorie: "milch-eier",
+    herkunft: "Schweiz",
+    preis: 1.85,
+    siegel: ["ip-suisse"],
+    saison: "ganzjahr",
+    emoji: "🥛",
+    bildUrl: milchAsset.url,
+    bewertung: "neutral",
+    nachhaltigkeit: {
+      regional: 5,
+      saisonal: 5,
+      verpackung: 3,
+      label: 4,
+      erklaerung:
+        "Schweizer Milch (3.5% Fett, pasteurisiert) von IP-Suisse-Betrieben. Tetrapak-Verpackung ist recycelbar, aber mehrschichtig.",
+    },
+  },
+  {
+    id: "joghurt-schoko",
+    name: "M-Classic Joghurt Schokolade",
+    kategorie: "milch-eier",
+    herkunft: "Schweiz",
+    preis: 1.1,
+    siegel: [],
+    saison: "ganzjahr",
+    emoji: "🍫",
+    bildUrl: joghurtSchokoAsset.url,
+    bewertung: "neutral",
+    nachhaltigkeit: {
+      regional: 3,
+      saisonal: 5,
+      verpackung: 2,
+      label: 1,
+      erklaerung:
+        "Schweizer Milchbasis, aber Kakao stammt aus Übersee (oft ohne Fairtrade-Label). Einweg-Plastikbecher, kein Bio- oder Tierwohl-Label.",
     },
   },
   {

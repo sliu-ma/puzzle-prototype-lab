@@ -263,7 +263,7 @@ function ProduktKarte({
         type="button"
         onClick={onOpenDetail}
         aria-label={`${produkt.name} — Details anzeigen`}
-        className="group flex aspect-square w-full items-center justify-center overflow-hidden rounded-sm border border-border/60 bg-white transition-colors hover:bg-paper-deep/20"
+        className="group flex aspect-square w-full items-center justify-center overflow-hidden rounded-sm border border-border/60 bg-white transition-colors hover:border-ink/40"
       >
         {produkt.bildUrl ? (
           <img
