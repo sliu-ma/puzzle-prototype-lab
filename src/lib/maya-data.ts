@@ -1,5 +1,15 @@
 // Daten für den "Grünen Markt" — Kapitel 1
-// Schweiz · CHF · Schweizer Siegel (Bio Suisse, IP-Suisse)
+// Schweiz · CHF · Schweizer Siegel (Bio Suisse, IP-Suisse, Demeter, Migros Bio)
+
+import erdbeerenChAsset from "@/assets/produkte/erdbeeren-ch.webp.asset.json";
+import erdbeerenEsAsset from "@/assets/produkte/erdbeeren-es.jpg.asset.json";
+import zitroneAsset from "@/assets/produkte/zitrone.webp.asset.json";
+import mehlAsset from "@/assets/produkte/mehl.jpg.asset.json";
+import vollrahmAsset from "@/assets/produkte/vollrahm.jpg.asset.json";
+
+import migrosBioLogo from "@/assets/labels/migros-bio.jpg.asset.json";
+import ipSuisseLogo from "@/assets/labels/ip-suisse.png.asset.json";
+import demeterLogo from "@/assets/labels/demeter.png.asset.json";
 
 export type Kategorie =
   | "milch-eier"
@@ -8,23 +18,52 @@ export type Kategorie =
   | "fette"
   | "andere";
 
+export type SiegelKey =
+  | "bio-suisse"
+  | "migros-bio"
+  | "ip-suisse"
+  | "demeter"
+  | "fairtrade"
+  | "bio-import"
+  | "bio";
+
+export interface SiegelInfo {
+  key: SiegelKey;
+  label: string;
+  logoUrl?: string;
+}
+
+export const SIEGEL: Record<SiegelKey, SiegelInfo> = {
+  "migros-bio": { key: "migros-bio", label: "Migros Bio", logoUrl: migrosBioLogo.url },
+  "ip-suisse": { key: "ip-suisse", label: "IP-Suisse", logoUrl: ipSuisseLogo.url },
+  demeter: { key: "demeter", label: "Demeter", logoUrl: demeterLogo.url },
+  "bio-suisse": { key: "bio-suisse", label: "Bio Suisse" },
+  fairtrade: { key: "fairtrade", label: "Fairtrade" },
+  "bio-import": { key: "bio-import", label: "Bio Import" },
+  bio: { key: "bio", label: "Bio" },
+};
+
+export interface Nachhaltigkeit {
+  regional: number; // 1–5
+  saisonal: number; // 1–5
+  verpackung: number; // 1–5
+  label: number; // 1–5
+  erklaerung: string;
+}
+
 export interface Produkt {
   id: string;
   name: string;
   kategorie: Kategorie;
-  herkunft: string; // Land oder Region
+  herkunft: string;
   preis: number; // CHF
-  siegel: string[]; // z. B. "Bio Suisse", "IP-Suisse", "Fairtrade", "Bio Import"
+  siegel: SiegelKey[];
   saison: "in" | "out" | "ganzjahr";
   emoji: string;
-  // Bewertet das Produkt entlang der Lernziele:
-  // "gut" = regional/saisonal/fair · "schlecht" = problematisch · "neutral" = unkritisch
+  bildUrl?: string;
   bewertung: "gut" | "schlecht" | "neutral";
-  // Falls "schlecht": Begründung, die nach falschem Bezahlen angezeigt wird.
   problemHinweis?: string;
-  // Falls "gut" und es einen direkten "schlechten" Konterpart gibt: ID-Verweis.
   ersetzt?: string;
-  // Für das Rezept benötigte Zutat (Schlüssel)
   zutat?:
     | "erdbeeren"
     | "eier"
@@ -35,6 +74,7 @@ export interface Produkt {
     | "zitrone"
     | "vollrahm"
     | "vanillezucker";
+  nachhaltigkeit: Nachhaltigkeit;
 }
 
 export const KATEGORIEN: { id: Kategorie; label: string; emoji: string }[] = [
@@ -45,22 +85,30 @@ export const KATEGORIEN: { id: Kategorie; label: string; emoji: string }[] = [
   { id: "andere", label: "Weiteres", emoji: "🛒" },
 ];
 
-// Produktkatalog — wird im Shop angezeigt.
 export const PRODUKTE: Produkt[] = [
   // ── Früchte & Gemüse ────────────────────────────────────────────
   {
     id: "erdbeeren-es",
-    name: "Erdbeeren 500g · Bio",
+    name: "Erdbeeren 500g",
     kategorie: "fruechte-gemuese",
     herkunft: "Spanien",
     preis: 5.9,
-    siegel: ["Bio Import"],
+    siegel: ["bio-import"],
     saison: "out",
     emoji: "🍓",
+    bildUrl: erdbeerenEsAsset.url,
     bewertung: "schlecht",
     zutat: "erdbeeren",
     problemHinweis:
       "Erdbeeren wachsen in der Schweiz erst ab Mai/Juni. Importe aus Südeuropa im März bedeuten lange Transporte oder Plastiktunnel — viel Energie für wenig Geschmack.",
+    nachhaltigkeit: {
+      regional: 1,
+      saisonal: 1,
+      verpackung: 1,
+      label: 2,
+      erklaerung:
+        "Importware aus Südeuropa, oft aus beheizten Folientunneln. Plastikverpackung, lange Transportwege und ausserhalb der Schweizer Saison.",
+    },
   },
   {
     id: "erdbeeren-ch",
@@ -68,12 +116,21 @@ export const PRODUKTE: Produkt[] = [
     kategorie: "fruechte-gemuese",
     herkunft: "Region Thurgau (CH)",
     preis: 7.5,
-    siegel: ["IP-Suisse"],
+    siegel: ["ip-suisse"],
     saison: "in",
     emoji: "🍓",
+    bildUrl: erdbeerenChAsset.url,
     bewertung: "gut",
     zutat: "erdbeeren",
     ersetzt: "erdbeeren-es",
+    nachhaltigkeit: {
+      regional: 5,
+      saisonal: 5,
+      verpackung: 4,
+      label: 4,
+      erklaerung:
+        "Schweizer Freilanderdbeeren in der Hauptsaison, kurze Transportwege, kompostierbare Kartonschale und IP-Suisse-Standard.",
+    },
   },
   {
     id: "zitrone-it",
@@ -81,11 +138,20 @@ export const PRODUKTE: Produkt[] = [
     kategorie: "fruechte-gemuese",
     herkunft: "Italien",
     preis: 0.9,
-    siegel: ["Bio"],
+    siegel: ["migros-bio", "demeter"],
     saison: "ganzjahr",
     emoji: "🍋",
+    bildUrl: zitroneAsset.url,
     bewertung: "neutral",
     zutat: "zitrone",
+    nachhaltigkeit: {
+      regional: 2,
+      saisonal: 4,
+      verpackung: 5,
+      label: 5,
+      erklaerung:
+        "Zitronen wachsen nicht in der Schweiz — Süditalien ist der nächste sinnvolle Anbauort. Demeter-Standard (biodynamisch), unverpackt.",
+    },
   },
   {
     id: "aepfel-ch",
@@ -93,10 +159,18 @@ export const PRODUKTE: Produkt[] = [
     kategorie: "fruechte-gemuese",
     herkunft: "Schweiz",
     preis: 3.9,
-    siegel: ["IP-Suisse"],
+    siegel: ["ip-suisse"],
     saison: "in",
     emoji: "🍎",
     bewertung: "neutral",
+    nachhaltigkeit: {
+      regional: 5,
+      saisonal: 5,
+      verpackung: 4,
+      label: 4,
+      erklaerung:
+        "Schweizer Äpfel sind ganzjährig regional verfügbar (Lagerware). Geringe Transportwege und IP-Suisse-Standard.",
+    },
   },
   {
     id: "tomaten-ma",
@@ -108,6 +182,14 @@ export const PRODUKTE: Produkt[] = [
     saison: "out",
     emoji: "🍅",
     bewertung: "neutral",
+    nachhaltigkeit: {
+      regional: 1,
+      saisonal: 1,
+      verpackung: 2,
+      label: 1,
+      erklaerung:
+        "Tomaten aus Marokko ausserhalb der Schweizer Saison: lange Transportwege, hoher Wasserverbrauch im Anbauland, keine Nachhaltigkeitslabel.",
+    },
   },
 
   // ── Milch & Eier ────────────────────────────────────────────────
@@ -124,6 +206,14 @@ export const PRODUKTE: Produkt[] = [
     zutat: "eier",
     problemHinweis:
       "Bodenhaltung bedeutet enge Ställe, importierte Eier kommen oft tausende Kilometer weit. Schweizer Bio-Freilandeier garantieren Auslauf und kurze Wege.",
+    nachhaltigkeit: {
+      regional: 1,
+      saisonal: 5,
+      verpackung: 3,
+      label: 1,
+      erklaerung:
+        "Import-Eier aus Bodenhaltung — enge Ställe, lange Transportwege, keine Tierwohl-Label und keine Kontrolle über die Futtermittelherkunft.",
+    },
   },
   {
     id: "eier-bio-ch",
@@ -131,12 +221,20 @@ export const PRODUKTE: Produkt[] = [
     kategorie: "milch-eier",
     herkunft: "Schweiz",
     preis: 5.4,
-    siegel: ["Bio Suisse"],
+    siegel: ["bio-suisse"],
     saison: "ganzjahr",
     emoji: "🥚",
     bewertung: "gut",
     zutat: "eier",
     ersetzt: "eier-bh-import",
+    nachhaltigkeit: {
+      regional: 5,
+      saisonal: 5,
+      verpackung: 4,
+      label: 5,
+      erklaerung:
+        "Schweizer Bio-Freilandhaltung mit Auslauf, kontrolliertes Bio-Futter und kurze Wege. Knospen-Standard (Bio Suisse).",
+    },
   },
   {
     id: "butter-ch",
@@ -144,11 +242,19 @@ export const PRODUKTE: Produkt[] = [
     kategorie: "fette",
     herkunft: "Schweiz",
     preis: 3.6,
-    siegel: ["IP-Suisse"],
+    siegel: ["ip-suisse"],
     saison: "ganzjahr",
     emoji: "🧈",
     bewertung: "neutral",
     zutat: "butter",
+    nachhaltigkeit: {
+      regional: 5,
+      saisonal: 5,
+      verpackung: 3,
+      label: 4,
+      erklaerung:
+        "Schweizer Milchprodukt mit IP-Suisse-Standard. Aluminiumverpackung ist recycelbar, aber nicht optimal.",
+    },
   },
   {
     id: "vollrahm-ch",
@@ -156,11 +262,20 @@ export const PRODUKTE: Produkt[] = [
     kategorie: "milch-eier",
     herkunft: "Schweiz",
     preis: 2.4,
-    siegel: ["IP-Suisse"],
+    siegel: ["ip-suisse"],
     saison: "ganzjahr",
     emoji: "🥛",
+    bildUrl: vollrahmAsset.url,
     bewertung: "neutral",
     zutat: "vollrahm",
+    nachhaltigkeit: {
+      regional: 5,
+      saisonal: 5,
+      verpackung: 3,
+      label: 4,
+      erklaerung:
+        "Schweizer Milch von IP-Suisse-Betrieben. Tetrapak-Verpackung ist recycelbar, aber mehrschichtig.",
+    },
   },
 
   // ── Getreide & Backen ───────────────────────────────────────────
@@ -170,11 +285,20 @@ export const PRODUKTE: Produkt[] = [
     kategorie: "getreide-backen",
     herkunft: "Schweiz",
     preis: 1.9,
-    siegel: ["IP-Suisse"],
+    siegel: ["ip-suisse"],
     saison: "ganzjahr",
     emoji: "🌾",
+    bildUrl: mehlAsset.url,
     bewertung: "neutral",
     zutat: "mehl",
+    nachhaltigkeit: {
+      regional: 5,
+      saisonal: 5,
+      verpackung: 4,
+      label: 4,
+      erklaerung:
+        "Schweizer Weizen, IP-Suisse-Standard, einfache Papierverpackung.",
+    },
   },
   {
     id: "zucker-ch",
@@ -187,6 +311,14 @@ export const PRODUKTE: Produkt[] = [
     emoji: "🧂",
     bewertung: "neutral",
     zutat: "zucker",
+    nachhaltigkeit: {
+      regional: 5,
+      saisonal: 5,
+      verpackung: 4,
+      label: 2,
+      erklaerung:
+        "Schweizer Zuckerrüben — regional, aber ohne weiteres Nachhaltigkeitslabel. Papierverpackung.",
+    },
   },
   {
     id: "vanillezucker",
@@ -199,6 +331,14 @@ export const PRODUKTE: Produkt[] = [
     emoji: "🍦",
     bewertung: "neutral",
     zutat: "vanillezucker",
+    nachhaltigkeit: {
+      regional: 3,
+      saisonal: 5,
+      verpackung: 2,
+      label: 1,
+      erklaerung:
+        "Vanille kommt meist aus Madagaskar. Einzeln verpackte Portionen verursachen viel Verpackungsmüll.",
+    },
   },
 
   // ── Andere ──────────────────────────────────────────────────────
@@ -213,10 +353,17 @@ export const PRODUKTE: Produkt[] = [
     emoji: "🧂",
     bewertung: "neutral",
     zutat: "salz",
+    nachhaltigkeit: {
+      regional: 3,
+      saisonal: 5,
+      verpackung: 4,
+      label: 2,
+      erklaerung:
+        "Meersalz aus Frankreich — kurze Wege innerhalb Europas, einfache Papierverpackung, aber kein spezifisches Nachhaltigkeitslabel.",
+    },
   },
 ];
 
-// Rezept: Erdbeer-Törtchen
 export const REZEPT = {
   titel: "Erdbeer-Törtchen (8 Stück)",
   emoji: "🥧",
@@ -233,7 +380,6 @@ export const REZEPT = {
   ],
 };
 
-// Initialer Warenkorb-Bestand: enthält die zwei "schlechten" Produkte + ein paar neutrale.
 export const START_WARENKORB: string[] = [
   "erdbeeren-es",
   "eier-bh-import",
@@ -246,8 +392,6 @@ export const START_WARENKORB: string[] = [
   "vanillezucker",
 ];
 
-// Lernziel: Kein "schlechtes" Produkt mehr im Warenkorb,
-// aber alle Rezeptzutaten (über irgendein passendes Produkt) abgedeckt.
 export const REZEPT_ZUTATEN_KEYS = [
   "mehl",
   "zucker",

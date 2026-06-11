@@ -5,9 +5,11 @@ import {
   PRODUKTE,
   REZEPT,
   REZEPT_ZUTATEN_KEYS,
+  SIEGEL,
   type Kategorie,
   type Produkt,
 } from "@/lib/maya-data";
+import { ProduktDetailDialog } from "./ProduktDetailDialog";
 
 interface GruenerMarktProps {
   startWarenkorb: string[];
@@ -21,6 +23,7 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
   const [aktiveKat, setAktiveKat] = useState<Kategorie>("fruechte-gemuese");
   const [status, setStatus] = useState<Status>("shop");
   const [cartOpen, setCartOpen] = useState(false);
+  const [detail, setDetail] = useState<Produkt | null>(null);
 
   const produktById = useMemo(
     () => Object.fromEntries(PRODUKTE.map((p) => [p.id, p])) as Record<string, Produkt>,
@@ -53,7 +56,6 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
       setCartOpen(false);
       setTimeout(onErfolg, 1200);
     }
-    // Bei Fehler: keine Hinweise anzeigen — Schüler:innen sollen selbst herausfinden.
   };
 
   return (
@@ -76,7 +78,7 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
       {/* Rezept-Akkordeon */}
       <details className="border-b border-border bg-paper-deep/20 px-3 py-2 sm:px-5">
         <summary className="cursor-pointer font-mono-typed text-[11px] uppercase tracking-wider text-stamp">
-          📝 Rezept · {REZEPT.titel}
+          Rezept · {REZEPT.titel}
         </summary>
         <ul className="mt-2 grid grid-cols-2 gap-x-3 gap-y-1 text-xs">
           {REZEPT.zutaten.map((z) => (
@@ -85,7 +87,7 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
         </ul>
       </details>
 
-      {/* Kategorien — horizontal scroll auf mobile */}
+      {/* Kategorien */}
       <div className="border-b border-border bg-paper px-3 py-2 sm:px-5">
         <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {KATEGORIEN.map((k) => (
@@ -116,12 +118,13 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
               imKorb={inKorb(p.id)}
               onAdd={() => hinzufuegen(p.id)}
               onRemove={() => entfernen(p.id)}
+              onOpenDetail={() => setDetail(p)}
             />
           ))}
         </div>
       </div>
 
-      {/* Sticky Cart Bar (mobile-first) */}
+      {/* Sticky Cart Bar */}
       <div className="sticky bottom-0 z-20 border-t border-border bg-paper/95 px-3 py-2.5 backdrop-blur sm:px-5">
         <div className="flex items-center gap-2">
           <button
@@ -196,11 +199,16 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
               key={p.id}
               className="flex items-start justify-between gap-2 rounded-sm border border-border/60 bg-card p-2 text-xs"
             >
-              <div className="min-w-0">
-                <p className="font-medium leading-tight">
-                  {p.emoji} {p.name}
-                </p>
-                <p className="text-muted-foreground">CHF {p.preis.toFixed(2)}</p>
+              <div className="flex min-w-0 items-center gap-2">
+                {p.bildUrl ? (
+                  <img src={p.bildUrl} alt="" className="h-8 w-8 shrink-0 rounded-sm object-contain" />
+                ) : (
+                  <span className="text-lg" aria-hidden>{p.emoji}</span>
+                )}
+                <div className="min-w-0">
+                  <p className="truncate font-medium leading-tight">{p.name}</p>
+                  <p className="text-muted-foreground">CHF {p.preis.toFixed(2)}</p>
+                </div>
               </div>
               <button
                 onClick={() => entfernen(p.id)}
@@ -222,6 +230,11 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
           <span className="font-bold">CHF {total.toFixed(2)}</span>
         </div>
       </aside>
+
+      <ProduktDetailDialog
+        produkt={detail}
+        onOpenChange={(open) => !open && setDetail(null)}
+      />
     </div>
   );
 }
@@ -231,11 +244,13 @@ function ProduktKarte({
   imKorb,
   onAdd,
   onRemove,
+  onOpenDetail,
 }: {
   produkt: Produkt;
   imKorb: boolean;
   onAdd: () => void;
   onRemove: () => void;
+  onOpenDetail: () => void;
 }) {
   return (
     <div
@@ -244,32 +259,48 @@ function ProduktKarte({
         imKorb ? "border-ink/60 bg-paper-deep/40" : "border-border",
       )}
     >
-      <div className="flex items-start justify-between gap-1">
-        <span className="text-2xl sm:text-3xl" aria-hidden>
-          {produkt.emoji}
-        </span>
-        <span className="font-mono-typed text-[11px] sm:text-xs">
+      <button
+        type="button"
+        onClick={onOpenDetail}
+        aria-label={`${produkt.name} — Details anzeigen`}
+        className="group flex aspect-square w-full items-center justify-center overflow-hidden rounded-sm border border-border/60 bg-paper-deep/20 transition-colors hover:bg-paper-deep/40"
+      >
+        {produkt.bildUrl ? (
+          <img
+            src={produkt.bildUrl}
+            alt={produkt.name}
+            className="h-full w-full object-contain p-1.5 transition-transform group-hover:scale-105"
+          />
+        ) : (
+          <span className="text-4xl transition-transform group-hover:scale-110 sm:text-5xl" aria-hidden>
+            {produkt.emoji}
+          </span>
+        )}
+      </button>
+
+      <div className="mt-2 flex items-start justify-between gap-1">
+        <p className="text-xs font-medium leading-tight sm:text-sm">{produkt.name}</p>
+        <span className="shrink-0 font-mono-typed text-[11px] sm:text-xs">
           CHF {produkt.preis.toFixed(2)}
         </span>
       </div>
-      <p className="mt-1.5 text-xs font-medium leading-tight sm:text-sm">
-        {produkt.name}
-      </p>
+
       <div className="mt-1.5 flex flex-wrap gap-1">
-        {produkt.siegel.map((s) => (
+        {produkt.siegel.map((key) => (
           <span
-            key={s}
-            className="rounded-full border border-border bg-card px-1.5 py-0.5 text-[9px] font-mono-typed sm:text-[10px]"
+            key={key}
+            className="rounded-full border border-border bg-card px-1.5 py-0.5 font-mono-typed text-[9px] sm:text-[10px]"
           >
-            {s}
+            {SIEGEL[key].label}
           </span>
         ))}
         {produkt.saison === "in" && (
-          <span className="rounded-full bg-emerald-700/10 px-1.5 py-0.5 text-[9px] font-mono-typed text-emerald-800 sm:text-[10px]">
+          <span className="rounded-full bg-emerald-700/10 px-1.5 py-0.5 font-mono-typed text-[9px] text-emerald-800 sm:text-[10px]">
             Saison
           </span>
         )}
       </div>
+
       <button
         onClick={imKorb ? onRemove : onAdd}
         className={cn(
