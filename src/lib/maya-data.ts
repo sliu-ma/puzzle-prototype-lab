@@ -17,17 +17,11 @@ import salzAsset from "@/assets/produkte/salz.webp.asset.json";
 import milchAsset from "@/assets/produkte/milch.webp.asset.json";
 import joghurtSchokoAsset from "@/assets/produkte/joghurt-schoko.webp.asset.json";
 
-
 import bioLogo from "@/assets/labels/bio.png.asset.json";
 import ipSuisseLogo from "@/assets/labels/ip-suisse.png.asset.json";
 import demeterLogo from "@/assets/labels/demeter.png.asset.json";
 
-export type Kategorie =
-  | "milch-eier"
-  | "fruechte-gemuese"
-  | "getreide-backen"
-  | "fette"
-  | "andere";
+export type Kategorie = "milch-eier" | "fruechte-gemuese" | "getreide-backen" | "fette" | "andere";
 
 export type SiegelKey = "bio" | "ip-suisse" | "demeter";
 
@@ -64,16 +58,7 @@ export interface Produkt {
   bewertung: "gut" | "schlecht" | "neutral";
   problemHinweis?: string;
   ersetzt?: string;
-  zutat?:
-    | "erdbeeren"
-    | "eier"
-    | "mehl"
-    | "zucker"
-    | "salz"
-    | "butter"
-    | "zitrone"
-    | "vollrahm"
-    | "vanillezucker";
+  zutat?: "erdbeeren" | "eier" | "mehl" | "zucker" | "salz" | "butter" | "zitrone" | "vollrahm" | "vanillezucker";
   nachhaltigkeit: Nachhaltigkeit;
 }
 
@@ -92,7 +77,7 @@ export const PRODUKTE: Produkt[] = [
     name: "Erdbeeren 500g",
     kategorie: "fruechte-gemuese",
     herkunft: "Spanien",
-    preis: 5.9,
+    preis: 6.8,
     siegel: [],
     saison: "out",
     emoji: "🍓",
@@ -115,7 +100,7 @@ export const PRODUKTE: Produkt[] = [
     name: "Erdbeeren 500g",
     kategorie: "fruechte-gemuese",
     herkunft: "Region Thurgau (CH)",
-    preis: 7.5,
+    preis: 6.0,
     siegel: ["ip-suisse"],
     saison: "in",
     emoji: "🍓",
@@ -137,7 +122,7 @@ export const PRODUKTE: Produkt[] = [
     name: "Bio-Zitrone",
     kategorie: "fruechte-gemuese",
     herkunft: "Italien",
-    preis: 0.9,
+    preis: 0.45,
     siegel: ["bio", "demeter"],
     saison: "ganzjahr",
     emoji: "🍋",
@@ -158,7 +143,7 @@ export const PRODUKTE: Produkt[] = [
     name: "Äpfel 'Gala' 1kg",
     kategorie: "fruechte-gemuese",
     herkunft: "Schweiz",
-    preis: 3.9,
+    preis: 2.8,
     siegel: ["ip-suisse"],
     saison: "in",
     emoji: "🍎",
@@ -200,7 +185,7 @@ export const PRODUKTE: Produkt[] = [
     name: "Eier 10er · Bodenhaltung",
     kategorie: "milch-eier",
     herkunft: "EU-Import",
-    preis: 2.9,
+    preis: 3.2,
     siegel: [],
     saison: "ganzjahr",
     emoji: "🥚",
@@ -236,8 +221,7 @@ export const PRODUKTE: Produkt[] = [
       saisonal: 5,
       verpackung: 4,
       label: 5,
-      erklaerung:
-        "Schweizer Bio-Freilandhaltung mit Auslauf, kontrolliertes Bio-Futter und kurze Wege.",
+      erklaerung: "Schweizer Bio-Freilandhaltung mit Auslauf, kontrolliertes Bio-Futter und kurze Wege.",
     },
   },
   {
@@ -285,7 +269,7 @@ export const PRODUKTE: Produkt[] = [
     name: "Butter 250g",
     kategorie: "fette",
     herkunft: "Schweiz",
-    preis: 3.6,
+    preis: 3.85,
     siegel: ["ip-suisse"],
     saison: "ganzjahr",
     emoji: "🧈",
@@ -306,7 +290,7 @@ export const PRODUKTE: Produkt[] = [
     name: "Vollrahm 2.5dl",
     kategorie: "milch-eier",
     herkunft: "Schweiz",
-    preis: 2.4,
+    preis: 2.1,
     siegel: ["ip-suisse"],
     saison: "ganzjahr",
     emoji: "🥛",
@@ -318,8 +302,7 @@ export const PRODUKTE: Produkt[] = [
       saisonal: 5,
       verpackung: 3,
       label: 4,
-      erklaerung:
-        "Schweizer Milch von IP-Suisse-Betrieben. Tetrapak-Verpackung ist recycelbar, aber mehrschichtig.",
+      erklaerung: "Schweizer Milch von IP-Suisse-Betrieben. Tetrapak-Verpackung ist recycelbar, aber mehrschichtig.",
     },
   },
 
@@ -341,8 +324,7 @@ export const PRODUKTE: Produkt[] = [
       saisonal: 5,
       verpackung: 4,
       label: 4,
-      erklaerung:
-        "Schweizer Weizen, IP-Suisse-Standard, einfache Papierverpackung.",
+      erklaerung: "Schweizer Weizen, IP-Suisse-Standard, einfache Papierverpackung.",
     },
   },
   {
@@ -350,7 +332,7 @@ export const PRODUKTE: Produkt[] = [
     name: "Cristal Feinkristall-Zucker 1kg",
     kategorie: "getreide-backen",
     herkunft: "Schweiz",
-    preis: 1.6,
+    preis: 1.8,
     siegel: [],
     saison: "ganzjahr",
     emoji: "🧂",
@@ -362,16 +344,15 @@ export const PRODUKTE: Produkt[] = [
       saisonal: 5,
       verpackung: 3,
       label: 2,
-      erklaerung:
-        "Schweizer Zuckerrüben — regional, aber ohne weiteres Nachhaltigkeitslabel. Papierverpackung.",
+      erklaerung: "Schweizer Zuckerrüben — regional, aber ohne weiteres Nachhaltigkeitslabel. Papierverpackung.",
     },
   },
   {
     id: "vanillezucker",
-    name: "Vanillezucker 5×8g",
+    name: "Vanillezucker 10×8g",
     kategorie: "getreide-backen",
     herkunft: "Schweiz (verpackt)",
-    preis: 1.4,
+    preis: 0.45,
     siegel: [],
     saison: "ganzjahr",
     emoji: "🍦",
@@ -383,8 +364,7 @@ export const PRODUKTE: Produkt[] = [
       saisonal: 5,
       verpackung: 2,
       label: 1,
-      erklaerung:
-        "Vanille kommt meist aus Madagaskar. Einzeln verpackte Portionen verursachen viel Verpackungsmüll.",
+      erklaerung: "Vanille kommt meist aus Madagaskar. Einzeln verpackte Portionen verursachen viel Verpackungsmüll.",
     },
   },
 
@@ -394,7 +374,7 @@ export const PRODUKTE: Produkt[] = [
     name: "Sel des Alpes · Speisesalz 500g",
     kategorie: "andere",
     herkunft: "Schweizer Berggebiete",
-    preis: 2.2,
+    preis: 1.6,
     siegel: [],
     saison: "ganzjahr",
     emoji: "🧂",
