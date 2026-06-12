@@ -220,10 +220,10 @@ export const PRODUKTE: Produkt[] = [
   },
   {
     id: "eier-bio-ch",
-    name: "Eier 6er · Bio-Freiland",
+    name: "Eier 4er · Bio-Freiland",
     kategorie: "milch-eier",
     herkunft: "Schweiz",
-    preis: 5.4,
+    preis: 3.5,
     siegel: ["bio"],
     saison: "ganzjahr",
     emoji: "🥚",
