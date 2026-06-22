@@ -1,63 +1,104 @@
-## Ziel
+Ziel
+----
+Die beiden kopierten Lovable-Projekte werden als Akte 004 (Wohnen) und Akte 005 (Energie) in den bestehenden Escape-Room "Wo ist Maya?" integriert. Die Startseite, Navigation und das Akten-Stepper-Muster bleiben erhalten.
 
-Im Grünen Markt (Akte 001) werden Produkte anklickbar. Ein Klick auf Bild/Karte öffnet ein Detail-Popup mit Foto, Label-Logos, Herkunft/Zutaten und einem 5-stufigen Nachhaltigkeitsbarometer. Die Übersicht zeigt – wo verfügbar – echte Produktbilder statt Emojis. Der „+ In den Korb"-Button bleibt unten auf der Karte und wird nicht durch das Popup ausgelöst.
+Quelle → Ziel
+--------------
+- "Remix of Energy Game Builder" (Haus-Energie-Upgrade-Spiel) → Akte 004 · Wohnen
+- "Remix of Forest's Fading Echo" (Gutachten-Fehler-finden-Rätsel) → Akte 005 · Energie
 
-## Assets
+Aktueller Stand
+----------------
+- Vorhanden: Akte 001 Konsum, Akte 002 Biodiversität, Akte 003 Mobilität
+- Startseite kündigt bereits 5 Akten an: Konsum · Biodiv. · Mobilität · Wohnen · Energie
+- Jedes Akten-Kapitel nutzt: QRGate → Sprachnachricht → Rätselkarte → Interaktives Rätsel → Fachlicher Input → Nächstes Kapitel
 
-Hochgeladene Bilder werden als Lovable-Assets registriert (CDN-Pointer in `src/assets/*.asset.json`), damit keine Binaries im Repo liegen:
+Geplante Schritte
+-----------------
 
-- Produktfotos: Erdbeeren CH, Erdbeeren ES, Zitrone (Demeter), Mehl (M-Classic), Vollrahm (Valflora)
-- Label-Logos: Migros Bio, IP-Suisse, Demeter
+1. Assets kopieren
+   - Aus "Remix of Energy Game Builder" ins aktuelle Projekt:
+     - src/assets/coin.png
+     - src/assets/trophy.png
+     - src/assets/house-bg.jpg
+   - "Remix of Forest's Fading Echo" hat keine Assets.
 
-Produkte ohne Bild behalten vorerst das Emoji als Fallback (User liefert später nach). Die Zitrone wird zusätzlich mit Demeter-Label markiert.
+2. Akte 004 – Wohnen (Energy Game Builder)
+   - Neue Route: src/routes/akte-004.tsx
+   - Kopieren und anpassen:
+     - src/components/HouseView.tsx
+     - src/components/RoomModal.tsx
+     - src/components/CoinBadge.tsx
+     - src/lib/energyData.ts
+   - GameState-Hook prüfen/kopieren (im Original unter @/lib/gameState referenziert, aber nicht auffindbar; ggf. neu erstellen oder Logik vereinfachen).
+   - Framer-Motion-Abhängigkeit prüfen; falls nicht vorhanden, entweder installieren oder Animationen auf CSS-Transition reduzieren.
+   - Akten-Rahmen aufbauen:
+     - QRGate mit neuem Token
+     - Sprachnachricht von Maya (Investor Nr. 4 – Wohnbau/Immobilien)
+     - Rätselkarte mit Hinweisen
+     - Energy-Game als Kernrätsel
+     - Fachlicher Input zu Haushalts-Energieeffizienz
+     - Teaser auf Akte 005
 
-## Datenmodell (`src/lib/maya-data.ts`)
+3. Akte 005 – Energie (Forest's Fading Echo)
+   - Neue Route: src/routes/akte-005.tsx
+   - Kopieren und anpassen:
+     - src/routes/raetsel.energie.tsx (komplettes Gutachten-Rätsel) in die Aktenstruktur einbauen
+   - Akten-Rahmen aufbauen:
+     - QRGate mit neuem Token
+     - Sprachnachricht von Maya (Investor Nr. 5 – Energiekonsortium)
+     - Rätselkarte mit Hinweisen
+     - Gutachten-Fehler-Rätsel als Kernrätsel
+     - Fachlicher Input zu Energieträgern, CO₂ und Versorgungssicherheit
+     - Abschluss: Mayas Entdeckung zusammenführen
 
-`Produkt` wird erweitert:
+4. Navigation & Startseite aktualisieren
+   - src/routes/index.tsx:
+     - Buttons "Akte 004 öffnen" und "Akte 005 öffnen" hinzufügen
+     - Beschreibung aktualisieren (alle 5 Akten verlinkt)
+   - Ggf. Akte 003Abschluss aktualisieren, damit er auf Akte 004 verweist statt "folgt bald"
 
-- `bildUrl?: string` — optionales Produktfoto (Asset-Import). Fällt zurück auf `emoji`.
-- `siegel` bekommt strukturierten Typ: `Array<{ key: "bio-suisse" | "ip-suisse" | "demeter" | "migros-bio" | "fairtrade" | "bio-import"; label: string }>` damit Logos sauber zugeordnet werden.
-- Neues Feld `nachhaltigkeit`:
-  ```ts
-  {
-    regional: 1–5,
-    saisonal: 1–5,
-    verpackung: 1–5,
-    label: 1–5,
-    erklaerung: string  // 1–2 Sätze, warum diese Bewertung
-  }
-  ```
-  Gesamtwert wird aus dem Durchschnitt berechnet.
+5. Styling-Abgleich
+   - Energy Game verwendet ein spielerisches Holz-/Gras-Design mit Fredoka/Nunito.
+   - Aktuelles Projekt nutzt Aktenmappe-Papier-Look mit Serifen-Fonts.
+   - Lösung: Innerhalb der Akte 004 darf das Energy-Game-Theme als "eigenes Mini-Spiel" erhalten bleiben; Rahmen (Header, Stepper, Sprachnachricht) übernehmen Aktenmappe-Stil. Alternativ komplette Angleichung an Aktenmappe vorsehen.
+   - CSS-Variablen und Utility-Klassen aus den Quellprojekten übernehmen, soweit sie nicht mit dem bestehenden Design kollidieren.
 
-Bestehende `bewertung` (gut/schlecht/neutral) und `problemHinweis` bleiben — sie steuern weiterhin die Rätsel-Logik beim Bezahlen.
+6. Abhängigkeiten prüfen
+   - Prüfen, ob framer-motion installiert ist. Falls nein: entweder `bun add framer-motion` oder Animationen entfernen.
+   - Prüfen, ob lucide-react im Zielprojekt vorhanden ist (wird bereits genutzt).
 
-## Neue Komponente: `ProduktDetailDialog.tsx`
+7. Testen
+   - Dev-Server Build prüfen
+   - Akte 004 und 005 durchklicken: QRGate, Sprachnachricht, Rätsel, Lösung, Input, Teaser
+   - Navigation von Akte 003 → Akte 004 und Startseite → alle Akten
 
-Auf Basis von `@/components/ui/dialog`. Layout (gemäß User-Vorgabe):
+Technische Details
+-------------------
+- Neue Dateien:
+  - src/routes/akte-004.tsx
+  - src/routes/akte-005.tsx
+  - src/components/case-file/EnergyGame/
+    - HouseView.tsx
+    - RoomModal.tsx
+    - CoinBadge.tsx
+  - src/lib/energyData.ts
+  - src/lib/energyGameState.ts (oder angepasste gameState.ts)
+  - src/components/case-file/EnergyReports/
+    - EnergyRaetsel.tsx (aus raetsel.energie.tsx)
+- Kopierte Assets:
+  - src/assets/coin.png
+  - src/assets/trophy.png
+  - src/assets/house-bg.jpg
+- Geänderte Dateien:
+  - src/routes/index.tsx
+  - src/routes/akte-003.tsx (Teaser auf Akte 004)
+  - src/styles.css (falls neue Theme-Variablen nötig)
 
-1. **Bild** — großes Produktfoto auf paper-Hintergrund, Fallback Emoji-XXL
-2. **Label-Logos** — horizontale Reihe von Logo-Chips (nur vorhandene Labels), darunter Saison-Badge falls relevant
-3. **Herkunft & Zutaten** — Block mit Herkunft, Preis, ggf. „Für Rezept: <Zutat>"
-4. **Nachhaltigkeitsbarometer** — 4 Sub-Kategorien als horizontale Balken (5 Punkte / gefüllt-leer), darüber Gesamtscore (große Zahl + Punkt-Skala), darunter Erklärungstext
+Offene Entscheidungen
+---------------------
+1. Soll Akte 004 das bunte Holz-/Spiel-Design des Energy Games behalten oder komplett an den Aktenmappe-Look angeglichen werden?
+2. Sollen die neuen Akten eigene QR-Tokens bekommen (wie 001–003) oder direkt ohne QR-Gate erreichbar sein?
+3. Soll Mayas Erzählbogen in den Sprachnachrichten der neuen Akten fortgeführt werden (Investoren 4 + 5 des Helvetia-Energie-Konsortiums)?
 
-Stil bleibt im Krimi-Dossier-Look (paper, ink, font-serif/mono-typed). Keine Emojis in Buttons/Labels — nur als Bild-Fallback.
-
-## Änderungen `GruenerMarkt.tsx`
-
-- `ProduktKarte`: Bild-Bereich wird `<button>` der das Dialog öffnet (`onOpenDetail`). Der vorhandene „+ In den Korb"-Button bleibt separat unten.
-- State `detailProdukt: Produkt | null` im Parent, übergeben an `ProduktDetailDialog`.
-- Wo `bildUrl` vorhanden: `<img>` rendern (object-contain, aspect-square), sonst Emoji wie bisher.
-- Siegel-Chips zeigen weiterhin Textlabel in der Karte; im Dialog erscheinen die Logos.
-
-## Dateien
-
-- `src/lib/maya-data.ts` — Schema erweitern, Bilder/Logos importieren, alle Produkte mit `nachhaltigkeit`-Werten und (wo vorhanden) `bildUrl` befüllen, Zitrone zusätzlich `demeter`-Label.
-- `src/assets/*.asset.json` — neue Pointer für 5 Produktbilder + 3 Label-Logos (via `lovable-assets create` aus `/mnt/user-uploads/`).
-- `src/components/case-file/ProduktDetailDialog.tsx` — neue Komponente.
-- `src/components/case-file/GruenerMarkt.tsx` — Karte klickbar machen, Dialog einbinden, Bild-Rendering.
-
-## Technische Hinweise
-
-- `.jxl`-Dateien werden über lovable-assets (CDN) ausgeliefert; das umgeht Browser-Kompatibilität nicht. Falls JXL im Browser nicht lädt, konvertiere ich die beiden betroffenen Bilder (Mehl, Vollrahm) zu `.jpg` vor dem Upload.
-- Dialog stoppt Klick-Propagation, damit der Korb-Button auf der Karte unabhängig bleibt.
-- Rätsel-Logik (Pruefen-Button) bleibt unverändert.
+Wenn du dem Plan zustimmst, starte ich die Umsetzung mit Akte 004.
