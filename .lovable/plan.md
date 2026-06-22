@@ -1,104 +1,63 @@
-Ziel
-----
-Die beiden kopierten Lovable-Projekte werden als Akte 004 (Wohnen) und Akte 005 (Energie) in den bestehenden Escape-Room "Wo ist Maya?" integriert. Die Startseite, Navigation und das Akten-Stepper-Muster bleiben erhalten.
+# Plan: Vollständige Read-me als DOCX
 
-Quelle → Ziel
---------------
-- "Remix of Energy Game Builder" (Haus-Energie-Upgrade-Spiel) → Akte 004 · Wohnen
-- "Remix of Forest's Fading Echo" (Gutachten-Fehler-finden-Rätsel) → Akte 005 · Energie
+Eine neue Datei `Maya_README_Tokens_v2.docx` unter `/mnt/documents/` erzeugen. Strukturierte Übersicht über alle fünf Akten — als Spickzettel für dich (nicht für die Spielenden).
 
-Aktueller Stand
-----------------
-- Vorhanden: Akte 001 Konsum, Akte 002 Biodiversität, Akte 003 Mobilität
-- Startseite kündigt bereits 5 Akten an: Konsum · Biodiv. · Mobilität · Wohnen · Energie
-- Jedes Akten-Kapitel nutzt: QRGate → Sprachnachricht → Rätselkarte → Interaktives Rätsel → Fachlicher Input → Nächstes Kapitel
+## Aufbau pro Akte
 
-Geplante Schritte
------------------
+Jede Akte erhält einen eigenen Abschnitt mit vier Blöcken:
 
-1. Assets kopieren
-   - Aus "Remix of Energy Game Builder" ins aktuelle Projekt:
-     - src/assets/coin.png
-     - src/assets/trophy.png
-     - src/assets/house-bg.jpg
-   - "Remix of Forest's Fading Echo" hat keine Assets.
+1. **Beschreibung** — Worum geht es, was tut die*der Spielende?
+2. **QR-Token** — Klartext, der im QR-Code stehen muss, plus Storage-Key
+3. **Lösung** — Was ist die richtige Antwort / Code / Auswahl?
+4. **Tipps** — Die drei zeitgesteuerten Hinweise (3 / 6 / 9 Min), wie sie im Spiel erscheinen
 
-2. Akte 004 – Wohnen (Energy Game Builder)
-   - Neue Route: src/routes/akte-004.tsx
-   - Kopieren und anpassen:
-     - src/components/HouseView.tsx
-     - src/components/RoomModal.tsx
-     - src/components/CoinBadge.tsx
-     - src/lib/energyData.ts
-   - GameState-Hook prüfen/kopieren (im Original unter @/lib/gameState referenziert, aber nicht auffindbar; ggf. neu erstellen oder Logik vereinfachen).
-   - Framer-Motion-Abhängigkeit prüfen; falls nicht vorhanden, entweder installieren oder Animationen auf CSS-Transition reduzieren.
-   - Akten-Rahmen aufbauen:
-     - QRGate mit neuem Token
-     - Sprachnachricht von Maya (Investor Nr. 4 – Wohnbau/Immobilien)
-     - Rätselkarte mit Hinweisen
-     - Energy-Game als Kernrätsel
-     - Fachlicher Input zu Haushalts-Energieeffizienz
-     - Teaser auf Akte 005
+## Inhalte (Quellen verifiziert im Code)
 
-3. Akte 005 – Energie (Forest's Fading Echo)
-   - Neue Route: src/routes/akte-005.tsx
-   - Kopieren und anpassen:
-     - src/routes/raetsel.energie.tsx (komplettes Gutachten-Rätsel) in die Aktenstruktur einbauen
-   - Akten-Rahmen aufbauen:
-     - QRGate mit neuem Token
-     - Sprachnachricht von Maya (Investor Nr. 5 – Energiekonsortium)
-     - Rätselkarte mit Hinweisen
-     - Gutachten-Fehler-Rätsel als Kernrätsel
-     - Fachlicher Input zu Energieträgern, CO₂ und Versorgungssicherheit
-     - Abschluss: Mayas Entdeckung zusammenführen
+```text
+Akte 001 — Wo ist Maya? (Grüner Markt)
+  Token:   CpZk0z9RaQkL22gtiWoR        Storage: akte-001-unlocked
+  Lösung:  Erdbeeren ES + Import-Eier raus → CH-Erdbeeren (IP-Suisse) + CH-Bio-Freiland-Eier rein
+  Tipps:   1) Warenkorb-Herkunft prüfen  2) Saisonal/regional vs. Import  3) Auflösung
 
-4. Navigation & Startseite aktualisieren
-   - src/routes/index.tsx:
-     - Buttons "Akte 004 öffnen" und "Akte 005 öffnen" hinzufügen
-     - Beschreibung aktualisieren (alle 5 Akten verlinkt)
-   - Ggf. Akte 003Abschluss aktualisieren, damit er auf Akte 004 verweist statt "folgt bald"
+Akte 002 — Biodiversität (Polaroid-Rätsel)
+  Token:   Mn7YxQ2pVe9TbR4Ks0Lh        Storage: akte-002-unlocked
+  Lösung:  Code 3579 (gefährdete Tiere aufsteigend:
+           Feldhase 3, Wiedehopf 5, Geburtshelferkröte 7, Apollofalter 9)
+  Tipps:   1) Tiere sortieren (4 gefährdet) 2) Karten umdrehen 3) Auflösung
 
-5. Styling-Abgleich
-   - Energy Game verwendet ein spielerisches Holz-/Gras-Design mit Fredoka/Nunito.
-   - Aktuelles Projekt nutzt Aktenmappe-Papier-Look mit Serifen-Fonts.
-   - Lösung: Innerhalb der Akte 004 darf das Energy-Game-Theme als "eigenes Mini-Spiel" erhalten bleiben; Rahmen (Header, Stepper, Sprachnachricht) übernehmen Aktenmappe-Stil. Alternativ komplette Angleichung an Aktenmappe vorsehen.
-   - CSS-Variablen und Utility-Klassen aus den Quellprojekten übernehmen, soweit sie nicht mit dem bestehenden Design kollidieren.
+Akte 003 — Mobilität (Routen-Vergleich)
+  Token:   Tz3PqW8nXmYr5JcLs6Vk        Storage: akte-003-unlocked
+  Lösung:  Start: Genf — Ziel: Speicher (AR)
+           Nachhaltigste Route: direkter Zug (IC 1 → S21), ca. 4 kg CO₂/Person
+  Tipps:   1) Hinweise nochmals lesen 2) CO₂ + realer Aufwand 3) Auflösung
 
-6. Abhängigkeiten prüfen
-   - Prüfen, ob framer-motion installiert ist. Falls nein: entweder `bun add framer-motion` oder Animationen entfernen.
-   - Prüfen, ob lucide-react im Zielprojekt vorhanden ist (wird bereits genutzt).
+Akte 004 — Wohnen (Energie-Spiel Show-Villa)
+  Token:   Wb6Vc4Hn1ZqYpMr8Js3F        Storage: akte-004-unlocked
+  Lösung:  Mind. 8 000 kWh/Jahr sparen, ohne 1 500 CHF Budget zu sprengen
+           (Auswahl von Massnahmen pro Raum — Mehrere Kombinationen möglich)
+  Tipps:   (keine zeitgesteuerten Tipps definiert — Ziele oben dienen als Anker)
 
-7. Testen
-   - Dev-Server Build prüfen
-   - Akte 004 und 005 durchklicken: QRGate, Sprachnachricht, Rätsel, Lösung, Input, Teaser
-   - Navigation von Akte 003 → Akte 004 und Startseite → alle Akten
+Akte 005 — Energie (Gutachten-Fact-Check)
+  Token:   Eg9LkRq2VhYbP4Mn7TcW        Storage: akte-005-unlocked
+  Lösung:  Genau 5 falsche Aussagen markieren (f1–f5):
+           f1: "Erdgas 95 g CO₂/kWh, nahezu klimaneutral"   (real ≈ 400)
+           f2: "Steinkohle 78 % Wirkungsgrad, besser als erneuerbar"
+           f3: "Kohle ist erneuerbare Brückentechnologie"
+           f4: "PV-Volllaststunden auf 250 h/Jahr korrigiert" (real ~1 000)
+           f5: "Versorgungssicherheit mit PV+Speicher nicht möglich"
+  Tipps:   (keine zeitgesteuerten Tipps definiert)
+```
 
-Technische Details
--------------------
-- Neue Dateien:
-  - src/routes/akte-004.tsx
-  - src/routes/akte-005.tsx
-  - src/components/case-file/EnergyGame/
-    - HouseView.tsx
-    - RoomModal.tsx
-    - CoinBadge.tsx
-  - src/lib/energyData.ts
-  - src/lib/energyGameState.ts (oder angepasste gameState.ts)
-  - src/components/case-file/EnergyReports/
-    - EnergyRaetsel.tsx (aus raetsel.energie.tsx)
-- Kopierte Assets:
-  - src/assets/coin.png
-  - src/assets/trophy.png
-  - src/assets/house-bg.jpg
-- Geänderte Dateien:
-  - src/routes/index.tsx
-  - src/routes/akte-003.tsx (Teaser auf Akte 004)
-  - src/styles.css (falls neue Theme-Variablen nötig)
+Zusätzlich vorne eine kurze **Übersichtstabelle** (Akte · Thema · Token · Lösung in einer Zeile) als schneller Spickzettel.
 
-Offene Entscheidungen
----------------------
-1. Soll Akte 004 das bunte Holz-/Spiel-Design des Energy Games behalten oder komplett an den Aktenmappe-Look angeglichen werden?
-2. Sollen die neuen Akten eigene QR-Tokens bekommen (wie 001–003) oder direkt ohne QR-Gate erreichbar sein?
-3. Soll Mayas Erzählbogen in den Sprachnachrichten der neuen Akten fortgeführt werden (Investoren 4 + 5 des Helvetia-Energie-Konsortiums)?
+## Technisches
 
-Wenn du dem Plan zustimmst, starte ich die Umsetzung mit Akte 004.
+- Erzeugen mit `docx` (Node, bereits in Skill-Doku beschrieben).
+- A4, 1″ Ränder, Arial 12 pt, H1/H2 fett, Bullet-Listen über `LevelFormat.BULLET`.
+- Tokens in Monospace-ähnlichem Stil (fett) damit sie beim Kopieren auffallen.
+- Datei: `/mnt/documents/Maya_README_Tokens_v2.docx` (Original bleibt erhalten).
+- Nach Erzeugung: validieren und als `<presentation-artifact>` einbetten.
+
+## Offene Frage
+
+Soll die alte `Maya_README_Tokens.docx` gelöscht werden, oder beide nebeneinander stehen lassen? Standardmäßig: **beide behalten**, neue Version klar als v2.
