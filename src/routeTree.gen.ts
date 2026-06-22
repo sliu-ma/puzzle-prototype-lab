@@ -9,11 +9,23 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as Akte005RouteImport } from './routes/akte-005'
+import { Route as Akte004RouteImport } from './routes/akte-004'
 import { Route as Akte003RouteImport } from './routes/akte-003'
 import { Route as Akte002RouteImport } from './routes/akte-002'
 import { Route as AkteRouteImport } from './routes/akte'
 import { Route as IndexRouteImport } from './routes/index'
 
+const Akte005Route = Akte005RouteImport.update({
+  id: '/akte-005',
+  path: '/akte-005',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Akte004Route = Akte004RouteImport.update({
+  id: '/akte-004',
+  path: '/akte-004',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const Akte003Route = Akte003RouteImport.update({
   id: '/akte-003',
   path: '/akte-003',
@@ -40,12 +52,16 @@ export interface FileRoutesByFullPath {
   '/akte': typeof AkteRoute
   '/akte-002': typeof Akte002Route
   '/akte-003': typeof Akte003Route
+  '/akte-004': typeof Akte004Route
+  '/akte-005': typeof Akte005Route
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/akte': typeof AkteRoute
   '/akte-002': typeof Akte002Route
   '/akte-003': typeof Akte003Route
+  '/akte-004': typeof Akte004Route
+  '/akte-005': typeof Akte005Route
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -53,13 +69,28 @@ export interface FileRoutesById {
   '/akte': typeof AkteRoute
   '/akte-002': typeof Akte002Route
   '/akte-003': typeof Akte003Route
+  '/akte-004': typeof Akte004Route
+  '/akte-005': typeof Akte005Route
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/akte' | '/akte-002' | '/akte-003'
+  fullPaths:
+    | '/'
+    | '/akte'
+    | '/akte-002'
+    | '/akte-003'
+    | '/akte-004'
+    | '/akte-005'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/akte' | '/akte-002' | '/akte-003'
-  id: '__root__' | '/' | '/akte' | '/akte-002' | '/akte-003'
+  to: '/' | '/akte' | '/akte-002' | '/akte-003' | '/akte-004' | '/akte-005'
+  id:
+    | '__root__'
+    | '/'
+    | '/akte'
+    | '/akte-002'
+    | '/akte-003'
+    | '/akte-004'
+    | '/akte-005'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -67,10 +98,26 @@ export interface RootRouteChildren {
   AkteRoute: typeof AkteRoute
   Akte002Route: typeof Akte002Route
   Akte003Route: typeof Akte003Route
+  Akte004Route: typeof Akte004Route
+  Akte005Route: typeof Akte005Route
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/akte-005': {
+      id: '/akte-005'
+      path: '/akte-005'
+      fullPath: '/akte-005'
+      preLoaderRoute: typeof Akte005RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/akte-004': {
+      id: '/akte-004'
+      path: '/akte-004'
+      fullPath: '/akte-004'
+      preLoaderRoute: typeof Akte004RouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/akte-003': {
       id: '/akte-003'
       path: '/akte-003'
@@ -107,6 +154,8 @@ const rootRouteChildren: RootRouteChildren = {
   AkteRoute: AkteRoute,
   Akte002Route: Akte002Route,
   Akte003Route: Akte003Route,
+  Akte004Route: Akte004Route,
+  Akte005Route: Akte005Route,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
