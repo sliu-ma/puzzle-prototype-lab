@@ -131,9 +131,28 @@ function CoverPage() {
                   →
                 </span>
               </Link>
+              <Link
+                to="/akte-004"
+                className="group inline-flex items-center gap-3 rounded-sm border border-border bg-card px-7 py-3.5 font-serif text-base font-semibold transition-all hover:-translate-y-0.5 hover:bg-secondary"
+              >
+                Akte 004 öffnen
+                <span aria-hidden className="transition-transform group-hover:translate-x-1">
+                  →
+                </span>
+              </Link>
+              <Link
+                to="/akte-005"
+                className="group inline-flex items-center gap-3 rounded-sm border border-border bg-card px-7 py-3.5 font-serif text-base font-semibold transition-all hover:-translate-y-0.5 hover:bg-secondary"
+              >
+                Akte 005 öffnen
+                <span aria-hidden className="transition-transform group-hover:translate-x-1">
+                  →
+                </span>
+              </Link>
               <p className="font-mono-typed text-xs uppercase tracking-[0.15em] text-muted-foreground">
                 5 Akten · Konsum · Biodiv. · Mobilität · Wohnen · Energie
               </p>
+
             </div>
           </article>
 
