@@ -43,7 +43,7 @@ export function RouteMap({ segments, stops, color = "#5eead4", minHeight = 420 }
   if (!Lib) {
     return (
       <div
-        className="flex w-full items-center justify-center rounded-sm border border-border bg-black/80 text-xs text-muted-foreground"
+        className="flex w-full items-center justify-center rounded-sm border border-border bg-paper text-xs text-muted-foreground"
         style={{ minHeight }}
       >
         Karte lädt …
@@ -65,11 +65,11 @@ export function RouteMap({ segments, stops, color = "#5eead4", minHeight = 420 }
       <MapContainer
         bounds={bounds}
         scrollWheelZoom={false}
-        style={{ height: "100%", width: "100%", minHeight, background: "#0a0f14" }}
+        style={{ height: "100%", width: "100%", minHeight, background: "#f5f1e8" }}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
-          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+          url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
         />
         {segments.map((seg, i) => (
           <Polyline
