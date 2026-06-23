@@ -54,7 +54,7 @@ export const councilQuestions: CouncilQuestion[] = [
       { id: "C", text: "Wenn alle Einwohner*innen im Winter die Heizung komplett ausschalten, sparen wir genug.", correct: false },
     ],
     wrongHint: "Schau noch einmal in Akte 004 nach — dort hast du konkret berechnet, wie viel kWh ein einzelnes Wohnhaus durch Sanierung einsparen kann.",
-    rightReply: "Herr Rüegg nickt langsam: „Hm. 8'000 kWh pro Haus … hochgerechnet auf das Dorf — das ist tatsächlich mehr, als wir geplant hatten."",
+    rightReply: "Herr Rüegg nickt langsam: „Hm. 8'000 kWh pro Haus … hochgerechnet auf das Dorf — das ist tatsächlich mehr, als wir geplant hatten”",
     akteRef: { label: "Akte 004 · Wohnen", to: "/akte-004" },
   },
   {
@@ -77,7 +77,7 @@ export const councilQuestions: CouncilQuestion[] = [
       },
     ],
     wrongHint: "Erinnere dich an Akte 002 — die Tierspuren und Beobachtungen, die Elvira über Jahre dokumentiert hat.",
-    rightReply: "Frau Bircher legt den Stift weg: „Wenn Elviras Daten das wirklich belegen, müssen wir den Standort neu beurteilen."",
+    rightReply: "Frau Bircher legt den Stift weg: „Wenn Elviras Daten das wirklich belegen, müssen wir den Standort neu beurteilen”",
     akteRef: { label: "Akte 002 · Biodiversität", to: "/akte-002" },
   },
   {
@@ -100,7 +100,7 @@ export const councilQuestions: CouncilQuestion[] = [
       { id: "C", text: "Die Gemeinde sollte allen Einwohner*innen verbieten, Autos zu kaufen oder Fleisch zu essen.", correct: false },
     ],
     wrongHint: "Denk an Akte 001 (Konsum) und Akte 003 (Mobilität) — die Vergleiche zwischen regional/saisonal und Import bzw. Zug vs. Auto.",
-    rightReply: "Herr Tanner schmunzelt: „Also doch — die Summe der vielen kleinen Entscheidungen macht den Unterschied."",
+    rightReply: "Herr Tanner schmunzelt: „Also doch — die Summe der vielen kleinen Entscheidungen macht den Unterschied”",
     akteRef: { label: "Akte 001 & 003 · Konsum / Mobilität", to: "/akte-003" },
   },
   {
@@ -123,7 +123,7 @@ export const councilQuestions: CouncilQuestion[] = [
       { id: "C", text: "Weil das Papier alt ist und wir stattdessen lieber ein Kohlekraftwerk bauen sollten.", correct: false },
     ],
     wrongHint: "In Akte 005 hast du das Gutachten Wort für Wort geprüft und genau fünf falsche Behauptungen markiert.",
-    rightReply: "Der Gemeindepräsident wird blass: „Fünf Fehler … das ändert alles."",
+    rightReply: "Der Gemeindepräsident wird blass: „Fünf Fehler … das ändert alles”",
     akteRef: { label: "Akte 005 · Energie / Gutachten", to: "/akte-005" },
   },
 ];
