@@ -1,4 +1,4 @@
-import { Train, Plane, Car, ChevronRight, Leaf } from "lucide-react";
+import { Train, Plane, Car, ChevronRight } from "lucide-react";
 import { ROUTES, type RouteOption } from "@/lib/mobility-data";
 import { cn } from "@/lib/utils";
 
@@ -32,11 +32,6 @@ export function RouteCards({ onSelect }: Props) {
             <div className="min-w-0">
               <div className="flex items-center gap-2">
                 <h4 className="truncate font-serif text-lg font-bold">{r.titel}</h4>
-                {r.correct && (
-                  <span className="hidden items-center gap-1 rounded-sm bg-emerald-700/15 px-1.5 py-0.5 font-mono-typed text-[9px] uppercase tracking-wider text-emerald-700 sm:inline-flex">
-                    <Leaf className="h-3 w-3" /> Nachhaltig
-                  </span>
-                )}
               </div>
               <p className="mt-0.5 font-mono-typed text-xs text-muted-foreground">
                 {r.dauer} · {r.preis} · ca. {r.co2Kg} kg CO₂
