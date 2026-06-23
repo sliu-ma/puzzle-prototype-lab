@@ -149,19 +149,9 @@ function CoverPage() {
                   →
                 </span>
               </Link>
-              <Link
-                to="/finale"
-                className="group inline-flex items-center gap-3 rounded-sm bg-stamp px-7 py-3.5 font-serif text-base font-semibold text-white shadow-md transition-all hover:-translate-y-0.5 hover:shadow-lg"
-              >
-                Finale · Das Hearing
-                <span aria-hidden className="transition-transform group-hover:translate-x-1">
-                  →
-                </span>
-              </Link>
               <p className="font-mono-typed text-xs uppercase tracking-[0.15em] text-muted-foreground">
-                5 Akten · Konsum · Biodiv. · Mobilität · Wohnen · Energie · + Finale
+                5 Akten · Konsum · Biodiv. · Mobilität · Wohnen · Energie
               </p>
-
 
             </div>
           </article>

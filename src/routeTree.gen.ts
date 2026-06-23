@@ -9,7 +9,6 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as FinaleRouteImport } from './routes/finale'
 import { Route as Akte005RouteImport } from './routes/akte-005'
 import { Route as Akte004RouteImport } from './routes/akte-004'
 import { Route as Akte003RouteImport } from './routes/akte-003'
@@ -17,11 +16,6 @@ import { Route as Akte002RouteImport } from './routes/akte-002'
 import { Route as AkteRouteImport } from './routes/akte'
 import { Route as IndexRouteImport } from './routes/index'
 
-const FinaleRoute = FinaleRouteImport.update({
-  id: '/finale',
-  path: '/finale',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const Akte005Route = Akte005RouteImport.update({
   id: '/akte-005',
   path: '/akte-005',
@@ -60,7 +54,6 @@ export interface FileRoutesByFullPath {
   '/akte-003': typeof Akte003Route
   '/akte-004': typeof Akte004Route
   '/akte-005': typeof Akte005Route
-  '/finale': typeof FinaleRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -69,7 +62,6 @@ export interface FileRoutesByTo {
   '/akte-003': typeof Akte003Route
   '/akte-004': typeof Akte004Route
   '/akte-005': typeof Akte005Route
-  '/finale': typeof FinaleRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -79,7 +71,6 @@ export interface FileRoutesById {
   '/akte-003': typeof Akte003Route
   '/akte-004': typeof Akte004Route
   '/akte-005': typeof Akte005Route
-  '/finale': typeof FinaleRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -90,16 +81,8 @@ export interface FileRouteTypes {
     | '/akte-003'
     | '/akte-004'
     | '/akte-005'
-    | '/finale'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/akte'
-    | '/akte-002'
-    | '/akte-003'
-    | '/akte-004'
-    | '/akte-005'
-    | '/finale'
+  to: '/' | '/akte' | '/akte-002' | '/akte-003' | '/akte-004' | '/akte-005'
   id:
     | '__root__'
     | '/'
@@ -108,7 +91,6 @@ export interface FileRouteTypes {
     | '/akte-003'
     | '/akte-004'
     | '/akte-005'
-    | '/finale'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -118,18 +100,10 @@ export interface RootRouteChildren {
   Akte003Route: typeof Akte003Route
   Akte004Route: typeof Akte004Route
   Akte005Route: typeof Akte005Route
-  FinaleRoute: typeof FinaleRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/finale': {
-      id: '/finale'
-      path: '/finale'
-      fullPath: '/finale'
-      preLoaderRoute: typeof FinaleRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/akte-005': {
       id: '/akte-005'
       path: '/akte-005'
@@ -182,7 +156,6 @@ const rootRouteChildren: RootRouteChildren = {
   Akte003Route: Akte003Route,
   Akte004Route: Akte004Route,
   Akte005Route: Akte005Route,
-  FinaleRoute: FinaleRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
