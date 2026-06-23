@@ -1,63 +1,60 @@
-# Plan: Vollständige Read-me als DOCX
+# Finale: Hearing im Gemeindesaal
 
-Eine neue Datei `Maya_README_Tokens_v2.docx` unter `/mnt/documents/` erzeugen. Strukturierte Übersicht über alle fünf Akten — als Spickzettel für dich (nicht für die Spielenden).
+Ein dialogisches Abschluss-Szenario, in dem Maya vor dem Gemeinderat von Grünwald die vier Fachkommissionen mit Argumenten aus den Akten 001–005 überzeugen muss.
 
-## Aufbau pro Akte
+## Konzept
 
-Jede Akte erhält einen eigenen Abschnitt mit vier Blöcken:
+Ein neues "Finale" das erst freigeschaltet wird, wenn alle 5 Akten gelöst sind (Check via `localStorage`: `akte-001-unlocked` … `akte-005-unlocked`). Solange Akten fehlen, sieht die/der Spieler*in welche noch offen sind und kann nicht starten — das motiviert den Fachinhalt wirklich durchzuarbeiten.
 
-1. **Beschreibung** — Worum geht es, was tut die*der Spielende?
-2. **QR-Token** — Klartext, der im QR-Code stehen muss, plus Storage-Key
-3. **Lösung** — Was ist die richtige Antwort / Code / Auswahl?
-4. **Tipps** — Die drei zeitgesteuerten Hinweise (3 / 6 / 9 Min), wie sie im Spiel erscheinen
+Das Finale ist als Dialog inszeniert: Sprechblasen, Namen + Rollen der Gemeinderät*innen, Mayas Antwort-Optionen wie Repliken in einem Theaterstück — nicht wie ein Quiz.
 
-## Inhalte (Quellen verifiziert im Code)
+## Struktur
 
-```text
-Akte 001 — Wo ist Maya? (Grüner Markt)
-  Token:   CpZk0z9RaQkL22gtiWoR        Storage: akte-001-unlocked
-  Lösung:  Erdbeeren ES + Import-Eier raus → CH-Erdbeeren (IP-Suisse) + CH-Bio-Freiland-Eier rein
-  Tipps:   1) Warenkorb-Herkunft prüfen  2) Saisonal/regional vs. Import  3) Auflösung
+### Neue Route `/finale`
+- Eintritts-Story-Text (Maya, Elvira, Marlene betreten den Saal — wie im Briefing).
+- Button „Bitte um das Wort" → startet die Befragung.
+- Gate: wenn nicht alle 5 Akten gelöst → Hinweis-Karte „Du brauchst die Beweise aus allen Akten" mit Liste, welche noch offen sind, und Links zurück.
 
-Akte 002 — Biodiversität (Polaroid-Rätsel)
-  Token:   Mn7YxQ2pVe9TbR4Ks0Lh        Storage: akte-002-unlocked
-  Lösung:  Code 3579 (gefährdete Tiere aufsteigend:
-           Feldhase 3, Wiedehopf 5, Geburtshelferkröte 7, Apollofalter 9)
-  Tipps:   1) Tiere sortieren (4 gefährdet) 2) Karten umdrehen 3) Auflösung
+### Dialog-Komponente `Hearing.tsx`
+Vier Sequenzen, eine pro Gemeinderat. Jede Sequenz:
+1. Avatar-Plättchen + Name + Ressort (z.B. „Herr Rüegg · Bau & Finanzen").
+2. Frage in Sprechblase (links).
+3. Drei Antwort-Optionen als Karten — Maya „spricht" sie.
+4. Bei **falsch**: Reaktion des Gemeinderats („Das überzeugt mich nicht…") + sanfter Hinweis auf die zugehörige Akte (z.B. „Schau noch einmal in Akte 004 — Energieeinsparung pro Haushalt"). Spieler*in kann es nochmal versuchen. Kein „Game Over".
+5. Bei **richtig**: zustimmende Reaktion, Stempel „ÜBERZEUGT" wird gesetzt, Fortschritts­leiste füllt sich, nächste Frage.
 
-Akte 003 — Mobilität (Routen-Vergleich)
-  Token:   Tz3PqW8nXmYr5JcLs6Vk        Storage: akte-003-unlocked
-  Lösung:  Start: Genf — Ziel: Speicher (AR)
-           Nachhaltigste Route: direkter Zug (IC 1 → S21), ca. 4 kg CO₂/Person
-  Tipps:   1) Hinweise nochmals lesen 2) CO₂ + realer Aufwand 3) Auflösung
+Nach allen vier richtigen Antworten → Auflösungs-Story + „Happy End"-Karte + Button zurück zur Übersicht.
 
-Akte 004 — Wohnen (Energie-Spiel Show-Villa)
-  Token:   Wb6Vc4Hn1ZqYpMr8Js3F        Storage: akte-004-unlocked
-  Lösung:  Mind. 8 000 kWh/Jahr sparen, ohne 1 500 CHF Budget zu sprengen
-           (Auswahl von Massnahmen pro Raum — Mehrere Kombinationen möglich)
-  Tipps:   (keine zeitgesteuerten Tipps definiert — Ziele oben dienen als Anker)
+### Inhalt der 4 Fragen
+Wörtlich vom User übernommen (Fragen 1–4, Optionen A/B/C, jeweilige Richtig-Markierung), zugeordnete Bezugs-Akte als Hinweis-Text bei Fehlversuch.
 
-Akte 005 — Energie (Gutachten-Fact-Check)
-  Token:   Eg9LkRq2VhYbP4Mn7TcW        Storage: akte-005-unlocked
-  Lösung:  Genau 5 falsche Aussagen markieren (f1–f5):
-           f1: "Erdgas 95 g CO₂/kWh, nahezu klimaneutral"   (real ≈ 400)
-           f2: "Steinkohle 78 % Wirkungsgrad, besser als erneuerbar"
-           f3: "Kohle ist erneuerbare Brückentechnologie"
-           f4: "PV-Volllaststunden auf 250 h/Jahr korrigiert" (real ~1 000)
-           f5: "Versorgungssicherheit mit PV+Speicher nicht möglich"
-  Tipps:   (keine zeitgesteuerten Tipps definiert)
-```
+## Implementierung (technisch)
 
-Zusätzlich vorne eine kurze **Übersichtstabelle** (Akte · Thema · Token · Lösung in einer Zeile) als schneller Spickzettel.
+### Neue Dateien
+- `src/lib/finale-data.ts`: Array `councilQuestions` mit `{ id, council: { name, role, ressort }, question, options: [{ id, text, correct }], wrongHint, akteRef }`. Plus Story-Texte (Intro, Outro).
+- `src/components/case-file/Hearing.tsx`: State-Maschine (aktuelle Frage, Versuche, abgeschlossen). Rendert Dialog-UI mit Sprechblasen.
+- `src/components/case-file/CouncilAvatar.tsx`: Kleines Initialen-Plättchen mit Rollenfarbe (Bau=erde, Umwelt=grün, Verkehr=blau, Präsident=stamp-rot). Keine generierten Bilder — bleibt im Paper-Look.
+- `src/routes/finale.tsx`: Gate + Intro + `<Hearing />` + Outro.
 
-## Technisches
+### Anpassungen
+- `src/routes/index.tsx`: Neue Karte/Button „Finale: Das Hearing" (zunächst gesperrt-Look bis alle Akten erledigt; checkt nur clientseitig in `useEffect`).
+- Optional: kleines Fortschritts-Widget auf der Startseite („3 / 5 Akten gelöst").
 
-- Erzeugen mit `docx` (Node, bereits in Skill-Doku beschrieben).
-- A4, 1″ Ränder, Arial 12 pt, H1/H2 fett, Bullet-Listen über `LevelFormat.BULLET`.
-- Tokens in Monospace-ähnlichem Stil (fett) damit sie beim Kopieren auffallen.
-- Datei: `/mnt/documents/Maya_README_Tokens_v2.docx` (Original bleibt erhalten).
-- Nach Erzeugung: validieren und als `<presentation-artifact>` einbetten.
+### Design
+- Konsequent im bestehenden Paper-Stil (PaperCard, Stamp, font-serif für Sprache, font-mono-typed für Meta).
+- Sprechblasen: leicht rotiertes Karten-Rechteck mit „Tail" via CSS `clip-path` oder einfach ein Dreieck-Pseudo-Element.
+- Bei Fehlversuch: Stempel „PRÜFE NOCHMAL" in stamp-rot, kurze Animation.
+- Bei Erfolg: Stempel „ÜBERZEUGT" in dunklem Grün/Tinte.
 
-## Offene Frage
+### Persistenz
+- `localStorage["finale-completed"]` nach Erfolg — damit die Auflösung erhalten bleibt.
+- Pro Frage `attempts` nur im React-State (kein dauerhafter Fehlerspeicher — Lernprozess, nicht Strafe).
 
-Soll die alte `Maya_README_Tokens.docx` gelöscht werden, oder beide nebeneinander stehen lassen? Standardmäßig: **beide behalten**, neue Version klar als v2.
+## Pädagogisches Prinzip
+- **Kein Highscore, keine Zeit, keine Strafen.** Falsche Antworten führen zu einem Dialog-Hinweis, der die zugehörige Akte benennt — die/der Spieler*in kann zwischen Tabs wechseln, in den Akten nachschauen und zurückkehren.
+- **Argumente verändern etwas:** die Outro-Sequenz macht spürbar, dass die Fachargumente die Entscheidung der Gemeinde gekippt haben — der Bau wird abgesagt.
+
+## Offen / zu bestätigen
+1. Sollen die Namen der Gemeinderät*innen frei erfunden sein, oder gibst du Namen vor?
+2. Sollen falsche Antworten gar nicht zählen (beliebig oft versuchen) oder nach z.B. 3 Fehlversuchen die Akte automatisch verlinken?
+3. Soll das Finale auf der Startseite gesperrt erscheinen bis alle Akten erledigt sind, oder immer sichtbar mit Gate auf der Finale-Seite selbst?
