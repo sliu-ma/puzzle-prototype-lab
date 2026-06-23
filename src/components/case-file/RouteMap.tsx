@@ -89,9 +89,9 @@ export function RouteMap({ segments, stops, color = "#5eead4", minHeight = 420 }
             center={s.pos}
             radius={s.major ? 6 : 3}
             pathOptions={{
-              color: "#fff",
+              color: "#1f2937",
               weight: s.major ? 2 : 1,
-              fillColor: s.major ? color : "#fff",
+              fillColor: s.major ? color : "#1f2937",
               fillOpacity: 1,
             }}
           >
