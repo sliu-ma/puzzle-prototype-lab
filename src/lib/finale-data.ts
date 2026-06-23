@@ -60,7 +60,7 @@ export const councilQuestions: CouncilQuestion[] = [
     innerThought: "Die Zahlen aus den Stromrechnungen … was hatten wir nochmal pro Haus berechnet?",
     question:
       "Maya, du behauptest, wir bräuchten das Kraftwerk gar nicht, weil wir im Dorf genug Energie sparen könnten. Ein schöner Gedanke — aber wie soll das in der Praxis funktionieren? Unsere Berechnungen zeigen ein klares Defizit.",
-    interjection: "Marlene flüstert: „Vergiss die Sanierungs-Berechnung aus den Stromrechnungen nicht!"",
+    interjection: `Marlene flüstert: „Vergiss die Sanierungs-Berechnung aus den Stromrechnungen nicht!"`,
     options: [
       {
         key: "shutdown",
@@ -128,7 +128,7 @@ export const councilQuestions: CouncilQuestion[] = [
     innerThought: "Erdbeeren im Januar, Zug statt Auto — die kleinen Entscheidungen summieren sich.",
     question:
       "Selbst wenn das mit dem Hausstrom und dem Wald stimmt — das Kraftwerk soll doch ein Zeichen für eine moderne, zukunftsorientierte Gemeinde sein. Was hat unser alltägliches Leben im Dorf überhaupt mit der globalen Klimabilanz zu tun?",
-    interjection: "Eine Stimme aus dem Saal ruft: „Was nützt uns ein „modernes" Kraftwerk, wenn wir den Rest verschlafen?",
+    interjection: `Eine Stimme aus dem Saal ruft: „Was nützt uns ein 'modernes' Kraftwerk, wenn wir den Rest verschlafen?"`,
     options: [
       {
         key: "summe",
