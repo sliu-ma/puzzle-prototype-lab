@@ -5,6 +5,9 @@ import { Stamp } from "@/components/case-file/Stamp";
 import { QRGate } from "@/components/case-file/QRGate";
 import { StageGate } from "@/components/case-file/StageGate";
 import { EnergyGame } from "@/components/case-file/EnergyGame";
+import { EtappeIntro } from "@/components/narrative/EtappeIntro";
+import { SuccessReaction } from "@/components/narrative/SuccessReaction";
+import { STATION } from "@/lib/story-beats";
 import { completeStage } from "@/lib/progress";
 import { cn } from "@/lib/utils";
 
@@ -33,7 +36,13 @@ function AkteGated() {
         title={<>Etappe 4 — QR-Code in Elviras Haus scannen</>}
         description="Diese Etappe ist versiegelt. Scanne den QR-Code, der bei Elvira auf dem Küchentisch liegt."
       >
-        <AktePage />
+        <EtappeIntro
+          stationKey="haus"
+          storageKey="story-haus-seen"
+          title="Etappe 4 · Elviras Haus"
+        >
+          <AktePage />
+        </EtappeIntro>
       </QRGate>
     </StageGate>
   );
@@ -52,9 +61,11 @@ const STEPS: { id: Step; label: string }[] = [
 function AktePage() {
   const [step, setStep] = useState<Step>("brief");
   const [unlockedSteps, setUnlockedSteps] = useState<Set<Step>>(new Set(["brief"]));
+  const [successOpen, setSuccessOpen] = useState(false);
 
   useEffect(() => {
     if (step === "naechstes") completeStage(4);
+    if (step === "input") setSuccessOpen(true);
   }, [step]);
 
   const goto = (s: Step) => {
@@ -348,6 +359,12 @@ function AktePage() {
           — Etappe 4 · Elviras Haus —
         </p>
       </div>
+      <SuccessReaction
+        open={successOpen}
+        mood={STATION.haus.success.mood}
+        text={STATION.haus.success.text}
+        onClose={() => setSuccessOpen(false)}
+      />
     </main>
   );
 }
