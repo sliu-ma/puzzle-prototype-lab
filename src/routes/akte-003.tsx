@@ -1,13 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Map as MapIcon, MapPin } from "lucide-react";
 import { PaperCard } from "@/components/case-file/PaperCard";
 import { Stamp } from "@/components/case-file/Stamp";
 import { QRGate } from "@/components/case-file/QRGate";
+import { StageGate } from "@/components/case-file/StageGate";
 import { HintSystem, type Hint } from "@/components/case-file/HintSystem";
 import { RouteCards } from "@/components/case-file/RouteCards";
 import { RouteDetail } from "@/components/case-file/RouteDetail";
 import { VALID_START, VALID_ZIEL, type RouteOption } from "@/lib/mobility-data";
+import { completeStage } from "@/lib/progress";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/akte-003")({
@@ -52,14 +54,16 @@ const HINTS_003: Hint[] = [
 
 function AkteGated() {
   return (
-    <QRGate
-      token={AKTE_003_TOKEN}
-      storageKey="akte-003-unlocked"
-      title={<>Etappe 1 — QR-Code am Bahnhof scannen</>}
-      description="Diese Etappe ist versiegelt. Scanne den QR-Code, der am Bahnhof Grünwald für dich hinterlegt ist."
-    >
-      <AktePage />
-    </QRGate>
+    <StageGate stage={1}>
+      <QRGate
+        token={AKTE_003_TOKEN}
+        storageKey="akte-003-unlocked"
+        title={<>Etappe 1 — QR-Code am Bahnhof scannen</>}
+        description="Diese Etappe ist versiegelt. Scanne den QR-Code, der am Bahnhof Grünwald für dich hinterlegt ist."
+      >
+        <AktePage />
+      </QRGate>
+    </StageGate>
   );
 }
 
