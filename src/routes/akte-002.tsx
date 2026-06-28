@@ -1,10 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PaperCard } from "@/components/case-file/PaperCard";
 import { Stamp } from "@/components/case-file/Stamp";
 import { CodeLock } from "@/components/case-file/CodeLock";
 import { QRGate } from "@/components/case-file/QRGate";
+import { StageGate } from "@/components/case-file/StageGate";
 import { HintSystem, type Hint } from "@/components/case-file/HintSystem";
+import { completeStage } from "@/lib/progress";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/akte-002")({
@@ -50,14 +52,16 @@ const HINTS_002: Hint[] = [
 
 function AkteGated() {
   return (
-    <QRGate
-      token={AKTE_002_TOKEN}
-      storageKey="akte-002-unlocked"
-      title={<>Etappe 3 — QR-Code an der Hütte scannen</>}
-      description="Diese Etappe ist versiegelt. Scanne den QR-Code an Elviras Beobachtungsposten auf der Lichtung."
-    >
-      <AktePage />
-    </QRGate>
+    <StageGate stage={3}>
+      <QRGate
+        token={AKTE_002_TOKEN}
+        storageKey="akte-002-unlocked"
+        title={<>Etappe 3 — QR-Code an der Hütte scannen</>}
+        description="Diese Etappe ist versiegelt. Scanne den QR-Code an Elviras Beobachtungsposten auf der Lichtung."
+      >
+        <AktePage />
+      </QRGate>
+    </StageGate>
   );
 }
 
@@ -74,6 +78,10 @@ const STEPS: { id: Step; label: string }[] = [
 function AktePage() {
   const [step, setStep] = useState<Step>("brief");
   const [unlockedSteps, setUnlockedSteps] = useState<Set<Step>>(new Set(["brief"]));
+
+  useEffect(() => {
+    if (step === "naechstes") completeStage(3);
+  }, [step]);
 
   const goto = (s: Step) => {
     setUnlockedSteps((prev) => new Set([...prev, s]));

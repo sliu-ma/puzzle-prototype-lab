@@ -1,5 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { Lock, CheckCircle2, RotateCcw } from "lucide-react";
 import { Stamp } from "@/components/case-file/Stamp";
+import {
+  START_CODE,
+  STAGES,
+  getTeam,
+  getCurrentStage,
+  registerTeam,
+  resetAll,
+} from "@/lib/progress";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -8,24 +19,45 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Ein Bildungs-Escape-Room zur Ökologie. Maja besucht ihre Grosstante Elvira in Grünwald — und muss bis zur Gemeinderatssitzung um 19:00 Uhr ein Gaskraftwerk verhindern.",
+          "Ein Bildungs-Escape-Room zur Ökologie. Fünf Etappen, ein Hearing — von Mobilität bis Energie.",
       },
     ],
   }),
   component: CoverPage,
 });
 
-const ETAPPEN = [
-  { nr: 1, to: "/akte-003", ort: "Bahnhof", thema: "Mobilität" },
-  { nr: 2, to: "/akte", ort: "Dorfladen", thema: "Konsum" },
-  { nr: 3, to: "/akte-002", ort: "Wald-Lichtung", thema: "Biodiversität" },
-  { nr: 4, to: "/akte-004", ort: "Elviras Haus", thema: "Wohnen" },
-  { nr: 5, to: "/akte-005", ort: "Wasserkraftwerk", thema: "Energie" },
-] as const;
-
 function CoverPage() {
+  const [ready, setReady] = useState(false);
+  const [team, setTeam] = useState<{ name: string; code: string } | null>(null);
+  const [stage, setStage] = useState(0);
+
+  useEffect(() => {
+    const sync = () => {
+      setTeam(getTeam());
+      setStage(getCurrentStage());
+    };
+    sync();
+    setReady(true);
+    window.addEventListener("maya-progress", sync);
+    window.addEventListener("storage", sync);
+    return () => {
+      window.removeEventListener("maya-progress", sync);
+      window.removeEventListener("storage", sync);
+    };
+  }, []);
+
+  if (!ready) {
+    return (
+      <main className="flex min-h-screen items-center justify-center px-4">
+        <p className="font-mono-typed text-xs uppercase tracking-[0.2em] text-muted-foreground">
+          Lade …
+        </p>
+      </main>
+    );
+  }
+
   return (
-    <main className="relative min-h-screen overflow-hidden px-4 py-10 sm:py-16">
+    <main className="relative min-h-screen overflow-hidden px-4 py-8 sm:py-14">
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 opacity-[0.06]"
@@ -42,7 +74,7 @@ function CoverPage() {
           </div>
 
           <article
-            className="paper-card paper-card-lift relative rounded-sm bg-card px-6 py-12 sm:px-14 sm:py-16"
+            className="paper-card paper-card-lift relative rounded-sm bg-card px-5 py-10 sm:px-14 sm:py-16"
             style={{ transform: "rotate(-0.4deg)" }}
           >
             <div className="absolute right-4 top-6 sm:right-10 sm:top-10">
@@ -55,7 +87,7 @@ function CoverPage() {
               Samstag · 14:12 Uhr · Grünwald, Dorfstrasse 4
             </p>
 
-            <h1 className="mt-6 font-serif text-5xl font-bold leading-[0.95] text-foreground sm:text-7xl">
+            <h1 className="mt-5 font-serif text-4xl font-bold leading-[0.95] text-foreground sm:text-7xl">
               Tante Elvira
               <br />
               <span className="relative inline-block">
@@ -68,84 +100,35 @@ function CoverPage() {
               </span>
             </h1>
 
-            <p className="mt-8 max-w-xl font-serif text-lg italic leading-relaxed text-foreground/80 sm:text-xl">
+            <p className="mt-6 max-w-xl font-serif text-base italic leading-relaxed text-foreground/80 sm:text-xl">
               Ein Bildungs-Escape-Room zur Ökologie.
               <br />
-              Für Klassen ab Stufe 8.
+              Fünf Etappen, ein Hearing — bis 19:00 Uhr.
             </p>
 
-            <div className="mt-10 grid gap-6 sm:grid-cols-[1.4fr_1fr]">
-              <div className="space-y-4 text-[15px] leading-relaxed text-foreground/90">
-                <p>
-                  <strong className="font-serif">Maja, 17,</strong> kommt am Samstagmorgen
-                  bei ihrer Grosstante <strong className="font-serif">Elvira</strong> in
-                  Grünwald an — wie jeden Sommer. Doch das Haus ist leer. Auf dem
-                  Küchentisch liegt ein Brief.
-                </p>
-                <p>
-                  Heute Abend, um <strong>19:00 Uhr</strong>, stimmt der Gemeinderat
-                  über ein neues <span className="ink-underline">Gaskraftwerk auf der
-                  Waldlichtung</span> ab. Elvira sammelt seit Wochen Daten dagegen — und
-                  hat eine Spur quer durchs Dorf gelegt.
-                </p>
-                <p className="font-serif italic text-foreground/70">
-                  Du übernimmst Majas Route. Fünf Etappen, fünf Orte — Bahnhof,
-                  Dorfladen, Wald, Haus, altes Wasserkraftwerk. Dann das Hearing
-                  im Gemeindesaal. Du hast bis 19:00 Uhr.
-                </p>
-              </div>
-
-              <aside
-                className="rounded-sm border border-border bg-secondary/50 p-4 text-sm"
-                style={{ transform: "rotate(1.2deg)" }}
-              >
-                <p className="font-mono-typed text-[10px] uppercase tracking-[0.2em] text-stamp">
-                  Brief von Tante Elvira
-                </p>
-                <p className="mt-3 font-serif italic leading-relaxed text-foreground/85">
-                  „Maja — falls du das liest, bin ich schon unterwegs. Heute
-                  Abend kippt die Abstimmung, und sie haben sich auf fehlerhafte
-                  Gutachten gestützt. Ich habe an fünf Orten im Dorf etwas für
-                  dich hinterlegt. <em>Folge den Hinweisen — Etappe für Etappe.
-                  Wir treffen uns vor dem Gemeindesaal."</em>
-                </p>
-                <p className="mt-2 font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
-                  — E.
-                </p>
-              </aside>
-            </div>
-
-            <div className="mt-12 flex flex-col items-start gap-4">
-              <Link
-                to="/akte-003"
-                className="group inline-flex items-center gap-3 rounded-sm bg-primary px-7 py-3.5 font-serif text-base font-semibold text-primary-foreground shadow-md transition-all hover:-translate-y-0.5 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background"
-              >
-                Etappe 1 starten · Bahnhof
-                <span aria-hidden className="transition-transform group-hover:translate-x-1">→</span>
-              </Link>
-
-              <div className="flex flex-wrap items-center gap-2">
-                {ETAPPEN.slice(1).map((e) => (
-                  <Link
-                    key={e.nr}
-                    to={e.to}
-                    className="group inline-flex items-center gap-2 rounded-sm border border-border bg-card px-4 py-2 font-mono-typed text-[11px] uppercase tracking-wider transition-all hover:-translate-y-0.5 hover:bg-secondary"
-                  >
-                    Etappe {e.nr} · {e.ort}
-                  </Link>
-                ))}
-                <Link
-                  to="/finale"
-                  className="group inline-flex items-center gap-2 rounded-sm border border-stamp/40 bg-stamp/5 px-4 py-2 font-mono-typed text-[11px] uppercase tracking-wider text-stamp transition-all hover:-translate-y-0.5 hover:bg-stamp/10"
-                >
-                  Finale · Gemeindesaal
-                </Link>
-              </div>
-
-              <p className="font-mono-typed text-xs uppercase tracking-[0.15em] text-muted-foreground">
-                5 Etappen · Mobilität · Konsum · Biodiversität · Wohnen · Energie · + Hearing
-              </p>
-            </div>
+            {team ? (
+              <ProgressPanel
+                teamName={team.name}
+                currentStage={stage}
+                onReset={() => {
+                  if (
+                    confirm(
+                      "Wirklich neu starten? Alle Etappen werden zurückgesetzt.",
+                    )
+                  ) {
+                    resetAll();
+                  }
+                }}
+              />
+            ) : (
+              <StartForm
+                onStart={(name, code) => {
+                  registerTeam(name, code);
+                  setTeam({ name, code });
+                  setStage(getCurrentStage());
+                }}
+              />
+            )}
           </article>
 
           <div
@@ -160,10 +143,279 @@ function CoverPage() {
           />
         </div>
 
-        <p className="mt-16 font-mono-typed text-[11px] uppercase tracking-[0.25em] text-muted-foreground">
-          Ein Lernspiel · Grünwald · v2
+        <p className="mt-12 font-mono-typed text-[11px] uppercase tracking-[0.25em] text-muted-foreground">
+          Grünwald · v3 · Linearer Ablauf
         </p>
       </div>
     </main>
+  );
+}
+
+/* -------------------------------------------------------- */
+/*  Startformular (Team & Code)                              */
+/* -------------------------------------------------------- */
+
+function StartForm({
+  onStart,
+}: {
+  onStart: (name: string, code: string) => void;
+}) {
+  const [name, setName] = useState("");
+  const [code, setCode] = useState("");
+  const [error, setError] = useState<string | null>(null);
+
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const cleanName = name.trim();
+    const cleanCode = code.trim().toUpperCase();
+    if (cleanName.length < 2) {
+      setError("Bitte gebt einen Teamnamen ein (mind. 2 Zeichen).");
+      return;
+    }
+    if (cleanCode !== START_CODE) {
+      setError("Der Startcode stimmt nicht. Frag deine Lehrperson.");
+      return;
+    }
+    setError(null);
+    onStart(cleanName, cleanCode);
+  };
+
+  return (
+    <div className="mt-8 grid gap-6 sm:grid-cols-[1.4fr_1fr]">
+      <div className="space-y-3 text-[15px] leading-relaxed text-foreground/90">
+        <p>
+          <strong className="font-serif">Maja, 17,</strong> findet das Haus
+          ihrer Grosstante leer. Auf dem Tisch ein Brief: Heute Abend stimmt der
+          Gemeinderat über ein <span className="ink-underline">Gaskraftwerk</span> ab.
+          Elvira hat fünf Hinweise im Dorf hinterlegt.
+        </p>
+        <p className="font-serif italic text-foreground/70">
+          Tragt euren Teamnamen und den Startcode eurer Lehrperson ein, um
+          Etappe 1 zu öffnen.
+        </p>
+      </div>
+
+      <form
+        onSubmit={submit}
+        className="space-y-3 rounded-sm border border-border bg-secondary/50 p-4"
+        style={{ transform: "rotate(1.2deg)" }}
+      >
+        <p className="font-mono-typed text-[10px] uppercase tracking-[0.2em] text-stamp">
+          Team registrieren
+        </p>
+        <div>
+          <label className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+            Teamname
+          </label>
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="z. B. Spürnasen 3a"
+            className="mt-1 w-full rounded-sm border border-border bg-paper px-3 py-2 font-serif text-[15px] focus:border-stamp focus:outline-none"
+          />
+        </div>
+        <div>
+          <label className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+            Startcode
+          </label>
+          <input
+            type="text"
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
+            placeholder="vom Lehrer / der Lehrerin"
+            autoCapitalize="characters"
+            className="mt-1 w-full rounded-sm border border-border bg-paper px-3 py-2 font-mono-typed text-sm uppercase tracking-wider focus:border-stamp focus:outline-none"
+          />
+        </div>
+        {error && (
+          <p className="rounded-sm border border-destructive/40 bg-destructive/10 p-2 text-xs text-destructive">
+            {error}
+          </p>
+        )}
+        <button
+          type="submit"
+          className="w-full rounded-sm bg-primary px-5 py-3 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
+        >
+          Ermittlung starten →
+        </button>
+      </form>
+    </div>
+  );
+}
+
+/* -------------------------------------------------------- */
+/*  Fortschritt – linearer Etappenpfad                       */
+/* -------------------------------------------------------- */
+
+function ProgressPanel({
+  teamName,
+  currentStage,
+  onReset,
+}: {
+  teamName: string;
+  currentStage: number;
+  onReset: () => void;
+}) {
+  const finished = currentStage >= 7;
+  const stageStations = STAGES.slice(0, 5); // ohne Finale
+  const finale = STAGES[5];
+
+  return (
+    <div className="mt-8 space-y-6">
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-sm border border-border bg-secondary/40 p-4">
+        <div>
+          <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
+            Team
+          </p>
+          <p className="mt-0.5 font-serif text-lg font-bold">{teamName}</p>
+        </div>
+        <div className="text-right">
+          <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
+            Fortschritt
+          </p>
+          <p className="mt-0.5 font-serif text-lg font-bold">
+            {Math.min(currentStage - 1, 5)} / 5 Etappen
+          </p>
+        </div>
+      </div>
+
+      <ol className="space-y-2">
+        {stageStations.map((s) => {
+          const status =
+            currentStage > s.nr
+              ? "done"
+              : currentStage === s.nr
+                ? "current"
+                : "locked";
+          return (
+            <li key={s.nr}>
+              {status === "current" ? (
+                <Link
+                  to={s.to}
+                  className="group flex items-center gap-3 rounded-sm border-2 border-stamp bg-stamp/5 px-4 py-3 transition-all hover:-translate-y-0.5 hover:shadow-md"
+                >
+                  <Badge n={s.nr} variant="current" />
+                  <div className="min-w-0 flex-1">
+                    <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
+                      Aktuelle Etappe
+                    </p>
+                    <p className="font-serif text-base font-bold">
+                      {s.ort} <span className="text-foreground/60">· {s.thema}</span>
+                    </p>
+                  </div>
+                  <span aria-hidden className="transition-transform group-hover:translate-x-1">→</span>
+                </Link>
+              ) : (
+                <div
+                  className={cn(
+                    "flex items-center gap-3 rounded-sm border px-4 py-3",
+                    status === "done"
+                      ? "border-emerald-500/40 bg-emerald-500/5"
+                      : "border-border bg-card opacity-60",
+                  )}
+                >
+                  <Badge n={s.nr} variant={status} />
+                  <div className="min-w-0 flex-1">
+                    <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+                      Etappe {s.nr}
+                    </p>
+                    <p className="font-serif text-base font-bold">
+                      {s.ort} <span className="text-foreground/60">· {s.thema}</span>
+                    </p>
+                  </div>
+                  {status === "done" ? (
+                    <CheckCircle2 className="h-5 w-5 text-emerald-600" />
+                  ) : (
+                    <Lock className="h-4 w-4 text-muted-foreground" />
+                  )}
+                </div>
+              )}
+            </li>
+          );
+        })}
+
+        {/* Finale */}
+        <li>
+          {currentStage >= 6 && !finished ? (
+            <Link
+              to="/finale"
+              className="group flex items-center gap-3 rounded-sm border-2 border-stamp bg-stamp/10 px-4 py-3 transition-all hover:-translate-y-0.5 hover:shadow-md"
+            >
+              <Badge n={6} variant="current" />
+              <div className="min-w-0 flex-1">
+                <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
+                  Hearing · Gemeindesaal
+                </p>
+                <p className="font-serif text-base font-bold">
+                  {finale.ort} <span className="text-foreground/60">· {finale.thema}</span>
+                </p>
+              </div>
+              <span aria-hidden className="transition-transform group-hover:translate-x-1">→</span>
+            </Link>
+          ) : finished ? (
+            <Link
+              to="/finale"
+              className="flex items-center gap-3 rounded-sm border border-emerald-500/40 bg-emerald-500/5 px-4 py-3"
+            >
+              <Badge n={6} variant="done" />
+              <div className="min-w-0 flex-1">
+                <p className="font-mono-typed text-[10px] uppercase tracking-wider text-emerald-700">
+                  Abgeschlossen
+                </p>
+                <p className="font-serif text-base font-bold">{finale.ort}</p>
+              </div>
+              <CheckCircle2 className="h-5 w-5 text-emerald-600" />
+            </Link>
+          ) : (
+            <div className="flex items-center gap-3 rounded-sm border border-border bg-card px-4 py-3 opacity-60">
+              <Badge n={6} variant="locked" />
+              <div className="min-w-0 flex-1">
+                <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+                  Finale · gesperrt
+                </p>
+                <p className="font-serif text-base font-bold">
+                  {finale.ort}{" "}
+                  <span className="text-foreground/60">
+                    · nach Etappe 5
+                  </span>
+                </p>
+              </div>
+              <Lock className="h-4 w-4 text-muted-foreground" />
+            </div>
+          )}
+        </li>
+      </ol>
+
+      <div className="flex justify-end">
+        <button
+          onClick={onReset}
+          className="inline-flex items-center gap-2 rounded-sm border border-border bg-card px-3 py-1.5 font-mono-typed text-[11px] uppercase tracking-wider text-muted-foreground hover:bg-secondary"
+        >
+          <RotateCcw className="h-3 w-3" /> Spiel zurücksetzen
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function Badge({
+  n,
+  variant,
+}: {
+  n: number;
+  variant: "done" | "current" | "locked";
+}) {
+  return (
+    <span
+      className={cn(
+        "flex h-9 w-9 shrink-0 items-center justify-center rounded-full font-mono-typed text-sm font-bold",
+        variant === "done" && "bg-emerald-600 text-white",
+        variant === "current" && "bg-stamp text-paper",
+        variant === "locked" && "bg-secondary text-muted-foreground",
+      )}
+    >
+      {n}
+    </span>
   );
 }
