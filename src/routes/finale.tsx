@@ -5,6 +5,7 @@ import { PaperCard } from "@/components/case-file/PaperCard";
 import { Stamp } from "@/components/case-file/Stamp";
 import { StageGate } from "@/components/case-file/StageGate";
 import { completeStage } from "@/lib/progress";
+import { getRatspersonByThema } from "@/lib/council";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/finale")({
