@@ -360,7 +360,14 @@ function FinalePage() {
         {status === "running" && started && (
           <div className="space-y-4" key={`run-${resetKey}`}>
             {/* Barometer */}
-            <div className="rounded-sm border border-border bg-card p-4">
+            <div
+              className={cn(
+                "rounded-sm border bg-card p-4 transition-colors",
+                meinErgebnis === true && "border-emerald-500/60",
+                meinErgebnis === false && "border-destructive/60 shake-x",
+                meinErgebnis === null && "border-border",
+              )}
+            >
               <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-2 font-mono-typed text-[11px] uppercase tracking-wider text-stamp">
                   <Gauge className="h-4 w-4" /> Überzeugungs-Barometer
@@ -369,10 +376,10 @@ function FinalePage() {
                   Frage {aktuell + 1} / {FRAGEN.length} · Fehler {fehler} / {MAX_FEHLER}
                 </div>
               </div>
-              <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-secondary">
+              <div className="mt-2 h-2.5 w-full overflow-hidden rounded-full bg-secondary">
                 <div
                   className={cn(
-                    "h-full transition-all",
+                    "h-full transition-[width,background-color] duration-700 ease-out",
                     fehler === 0 && "bg-emerald-500",
                     fehler === 1 && "bg-emerald-500/80",
                     fehler === 2 && "bg-amber-500",
@@ -384,15 +391,15 @@ function FinalePage() {
               </div>
             </div>
 
-            <PaperCard rotate={0.2}>
-              <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-                {frage.ratsmitglied} · Thema {frage.thema} · {typeLabel(frage.type)}
-              </p>
-              <h2 className="mt-2 font-serif text-xl font-bold sm:text-2xl">
-                „{frage.frage}"
-              </h2>
+            {/* Ratsperson + Sprechblase */}
+            <RatspersonFrage
+              key={`person-${frage.id}-${resetKey}`}
+              frage={frage}
+              meinErgebnis={meinErgebnis}
+            />
 
-              <div className="mt-5">
+            <PaperCard rotate={0.2}>
+              <div className="mt-1">
                 <FrageRenderer
                   key={`f-${frage.id}-${resetKey}`}
                   frage={frage}
