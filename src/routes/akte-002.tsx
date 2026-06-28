@@ -405,6 +405,12 @@ function AktePage() {
       {unlockedSteps.has("raetselkarte") && (step === "raetselkarte" || step === "code") && (
         <HintSystem hints={HINTS_002} storageKey="akte-002-hints-start" />
       )}
+
+      <EtappenStory
+        arc={STORY.biodiversitaet}
+        sessionKey="story-seen-akte-002"
+        successOn={unlockedSteps.has("input")}
+      />
     </main>
   );
 }
