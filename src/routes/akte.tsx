@@ -338,6 +338,12 @@ function AktePage() {
       {unlockedSteps.has("raetselkarte") && (step === "raetselkarte" || step === "shop") && (
         <HintSystem />
       )}
+
+      <EtappenStory
+        arc={STORY.konsum}
+        sessionKey="story-seen-akte"
+        successOn={unlockedSteps.has("input")}
+      />
     </main>
   );
 }
