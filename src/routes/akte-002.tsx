@@ -7,6 +7,8 @@ import { QRGate } from "@/components/case-file/QRGate";
 import { StageGate } from "@/components/case-file/StageGate";
 import { HintSystem, type Hint } from "@/components/case-file/HintSystem";
 import { completeStage } from "@/lib/progress";
+import { STORY } from "@/lib/story-beats";
+import { EtappenStory } from "@/components/story/EtappenStory";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/akte-002")({
@@ -403,6 +405,12 @@ function AktePage() {
       {unlockedSteps.has("raetselkarte") && (step === "raetselkarte" || step === "code") && (
         <HintSystem hints={HINTS_002} storageKey="akte-002-hints-start" />
       )}
+
+      <EtappenStory
+        arc={STORY.biodiversitaet}
+        sessionKey="story-seen-akte-002"
+        successOn={unlockedSteps.has("input")}
+      />
     </main>
   );
 }

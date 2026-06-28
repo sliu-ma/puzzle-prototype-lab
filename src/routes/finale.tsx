@@ -5,6 +5,7 @@ import { PaperCard } from "@/components/case-file/PaperCard";
 import { Stamp } from "@/components/case-file/Stamp";
 import { StageGate } from "@/components/case-file/StageGate";
 import { completeStage } from "@/lib/progress";
+import { getRatspersonByThema } from "@/lib/council";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/finale")({
@@ -359,7 +360,14 @@ function FinalePage() {
         {status === "running" && started && (
           <div className="space-y-4" key={`run-${resetKey}`}>
             {/* Barometer */}
-            <div className="rounded-sm border border-border bg-card p-4">
+            <div
+              className={cn(
+                "rounded-sm border bg-card p-4 transition-colors",
+                meinErgebnis === true && "border-emerald-500/60",
+                meinErgebnis === false && "border-destructive/60 shake-x",
+                meinErgebnis === null && "border-border",
+              )}
+            >
               <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-2 font-mono-typed text-[11px] uppercase tracking-wider text-stamp">
                   <Gauge className="h-4 w-4" /> Überzeugungs-Barometer
@@ -368,10 +376,10 @@ function FinalePage() {
                   Frage {aktuell + 1} / {FRAGEN.length} · Fehler {fehler} / {MAX_FEHLER}
                 </div>
               </div>
-              <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-secondary">
+              <div className="mt-2 h-2.5 w-full overflow-hidden rounded-full bg-secondary">
                 <div
                   className={cn(
-                    "h-full transition-all",
+                    "h-full transition-[width,background-color] duration-700 ease-out",
                     fehler === 0 && "bg-emerald-500",
                     fehler === 1 && "bg-emerald-500/80",
                     fehler === 2 && "bg-amber-500",
@@ -383,15 +391,15 @@ function FinalePage() {
               </div>
             </div>
 
-            <PaperCard rotate={0.2}>
-              <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-                {frage.ratsmitglied} · Thema {frage.thema} · {typeLabel(frage.type)}
-              </p>
-              <h2 className="mt-2 font-serif text-xl font-bold sm:text-2xl">
-                „{frage.frage}"
-              </h2>
+            {/* Ratsperson + Sprechblase */}
+            <RatspersonFrage
+              key={`person-${frage.id}-${resetKey}`}
+              frage={frage}
+              meinErgebnis={meinErgebnis}
+            />
 
-              <div className="mt-5">
+            <PaperCard rotate={0.2}>
+              <div className="mt-1">
                 <FrageRenderer
                   key={`f-${frage.id}-${resetKey}`}
                   frage={frage}
@@ -996,6 +1004,56 @@ function OrderView({
           Reihenfolge prüfen
         </button>
       )}
+    </div>
+  );
+}
+
+function RatspersonFrage({
+  frage,
+  meinErgebnis,
+}: {
+  frage: Frage;
+  meinErgebnis: boolean | null;
+}) {
+  const person = getRatspersonByThema(frage.thema);
+
+  return (
+    <div className="flex items-stretch gap-3 panel-pop">
+      {/* Avatar */}
+      <div className="flex shrink-0 flex-col items-center">
+        <div
+          className={cn(
+            "flex h-16 w-16 items-center justify-center rounded-full border-2 shadow-sm transition-transform sm:h-20 sm:w-20",
+            person.farbe,
+            person.rand,
+            meinErgebnis === true && "scale-105",
+            meinErgebnis === false && "shake-x",
+          )}
+        >
+          <span className="font-serif text-xl font-bold text-foreground sm:text-2xl">
+            {person.initialen}
+          </span>
+        </div>
+        <p className="mt-1 max-w-[5.5rem] text-center font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
+          {person.rolle.split(" · ")[0]}
+        </p>
+      </div>
+
+      {/* Sprechblase */}
+      <div className="relative flex-1">
+        <div
+          className="absolute left-[-7px] top-6 h-3.5 w-3.5 rotate-45 border-b border-l bg-card"
+          style={{ borderColor: "var(--color-border)" }}
+        />
+        <div className="rounded-lg border border-border bg-card p-3 shadow-sm sm:p-4">
+          <p className="font-mono-typed text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+            {person.name} · {typeLabel(frage.type)}
+          </p>
+          <p className="mt-1.5 font-serif text-base leading-snug sm:text-lg">
+            „{frage.frage}"
+          </p>
+        </div>
+      </div>
     </div>
   );
 }

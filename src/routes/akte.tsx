@@ -8,6 +8,8 @@ import { StageGate } from "@/components/case-file/StageGate";
 import { HintSystem } from "@/components/case-file/HintSystem";
 import { REZEPT, START_WARENKORB } from "@/lib/maya-data";
 import { completeStage } from "@/lib/progress";
+import { STORY } from "@/lib/story-beats";
+import { EtappenStory } from "@/components/story/EtappenStory";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/akte")({
@@ -336,6 +338,12 @@ function AktePage() {
       {unlockedSteps.has("raetselkarte") && (step === "raetselkarte" || step === "shop") && (
         <HintSystem />
       )}
+
+      <EtappenStory
+        arc={STORY.konsum}
+        sessionKey="story-seen-akte"
+        successOn={unlockedSteps.has("input")}
+      />
     </main>
   );
 }

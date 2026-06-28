@@ -10,6 +10,8 @@ import { RouteCards } from "@/components/case-file/RouteCards";
 import { RouteDetail } from "@/components/case-file/RouteDetail";
 import { VALID_START, VALID_ZIEL, type RouteOption } from "@/lib/mobility-data";
 import { completeStage } from "@/lib/progress";
+import { STORY } from "@/lib/story-beats";
+import { EtappenStory } from "@/components/story/EtappenStory";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/akte-003")({
@@ -502,6 +504,12 @@ function AktePage() {
         (step === "raetselkarte" || step === "eingabe" || step === "routen") && (
           <HintSystem hints={HINTS_003} storageKey="akte-003-hints-start" />
         )}
+
+      <EtappenStory
+        arc={STORY.mobilitaet}
+        sessionKey="story-seen-akte-003"
+        successOn={unlockedSteps.has("input")}
+      />
     </main>
   );
 }
