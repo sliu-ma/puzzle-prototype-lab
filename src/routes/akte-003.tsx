@@ -513,6 +513,13 @@ function AktePage() {
         (step === "raetselkarte" || step === "eingabe" || step === "routen") && (
           <HintSystem hints={HINTS_003} storageKey="akte-003-hints-start" />
         )}
+
+      <SuccessReaction
+        open={successOpen}
+        mood={STATION.bahnhof.success.mood}
+        text={STATION.bahnhof.success.text}
+        onClose={() => setSuccessOpen(false)}
+      />
     </main>
   );
 }
