@@ -6,9 +6,6 @@ import { GruenerMarkt } from "@/components/case-file/GruenerMarkt";
 import { QRGate } from "@/components/case-file/QRGate";
 import { StageGate } from "@/components/case-file/StageGate";
 import { HintSystem } from "@/components/case-file/HintSystem";
-import { EtappeIntro } from "@/components/narrative/EtappeIntro";
-import { SuccessReaction } from "@/components/narrative/SuccessReaction";
-import { STATION } from "@/lib/story-beats";
 import { REZEPT, START_WARENKORB } from "@/lib/maya-data";
 import { completeStage } from "@/lib/progress";
 import { cn } from "@/lib/utils";
@@ -36,13 +33,7 @@ function AkteGated() {
         title={<>Etappe 2 — QR-Code im Dorfladen scannen</>}
         description="Diese Etappe ist versiegelt. Scanne den QR-Code, den Frau Berger für dich bereitgelegt hat."
       >
-        <EtappeIntro
-          stationKey="dorfladen"
-          storageKey="story-dorfladen-seen"
-          title="Etappe 2 · Dorfladen Berger"
-        >
-          <AktePage />
-        </EtappeIntro>
+        <AktePage />
       </QRGate>
     </StageGate>
   );
@@ -61,11 +52,9 @@ const STEPS: { id: Step; label: string }[] = [
 function AktePage() {
   const [step, setStep] = useState<Step>("brief");
   const [unlockedSteps, setUnlockedSteps] = useState<Set<Step>>(new Set(["brief"]));
-  const [successOpen, setSuccessOpen] = useState(false);
 
   useEffect(() => {
     if (step === "naechstes") completeStage(2);
-    if (step === "input") setSuccessOpen(true);
   }, [step]);
 
   const goto = (s: Step) => {
@@ -347,13 +336,6 @@ function AktePage() {
       {unlockedSteps.has("raetselkarte") && (step === "raetselkarte" || step === "shop") && (
         <HintSystem />
       )}
-
-      <SuccessReaction
-        open={successOpen}
-        mood={STATION.dorfladen.success.mood}
-        text={STATION.dorfladen.success.text}
-        onClose={() => setSuccessOpen(false)}
-      />
     </main>
   );
 }

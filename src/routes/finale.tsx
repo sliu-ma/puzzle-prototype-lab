@@ -4,9 +4,6 @@ import { CheckCircle2, XCircle, Gauge, RefreshCw, ArrowUp, ArrowDown } from "luc
 import { PaperCard } from "@/components/case-file/PaperCard";
 import { Stamp } from "@/components/case-file/Stamp";
 import { StageGate } from "@/components/case-file/StageGate";
-import { RatspersonAvatar } from "@/components/narrative/RatspersonAvatar";
-import { SpeechBubble } from "@/components/narrative/SpeechBubble";
-import { RATSPERSONEN, ratspersonKey } from "@/lib/story-beats";
 import { completeStage } from "@/lib/progress";
 import { cn } from "@/lib/utils";
 
@@ -371,10 +368,10 @@ function FinalePage() {
                   Frage {aktuell + 1} / {FRAGEN.length} · Fehler {fehler} / {MAX_FEHLER}
                 </div>
               </div>
-              <div className="mt-2 h-3 w-full overflow-hidden rounded-full bg-secondary">
+              <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-secondary">
                 <div
                   className={cn(
-                    "h-full transition-[width,background-color] duration-700 ease-out",
+                    "h-full transition-all",
                     fehler === 0 && "bg-emerald-500",
                     fehler === 1 && "bg-emerald-500/80",
                     fehler === 2 && "bg-amber-500",
@@ -384,51 +381,15 @@ function FinalePage() {
                   style={{ width: `${ueberzeugung}%` }}
                 />
               </div>
-              {meinErgebnis !== null && (
-                <p
-                  key={`delta-${aktuell}-${resetKey}`}
-                  className={cn(
-                    "mt-2 flex items-center gap-1 font-mono-typed text-[11px] uppercase tracking-wider animate-fade-in",
-                    meinErgebnis ? "text-emerald-700" : "text-destructive",
-                  )}
-                >
-                  {meinErgebnis ? (
-                    <>
-                      <ArrowUp className="h-3.5 w-3.5" /> Barometer steigt
-                    </>
-                  ) : (
-                    <>
-                      <ArrowDown className="h-3.5 w-3.5" /> Barometer fällt
-                    </>
-                  )}
-                </p>
-              )}
             </div>
 
             <PaperCard rotate={0.2}>
               <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
                 {frage.ratsmitglied} · Thema {frage.thema} · {typeLabel(frage.type)}
               </p>
-
-              {/* Comic-Sprechblase der Ratsperson */}
-              {(() => {
-                const person = RATSPERSONEN[ratspersonKey(frage.ratsmitglied)];
-                return (
-                  <div className="mt-4 flex items-end gap-3">
-                    <RatspersonAvatar
-                      person={person}
-                      size={72}
-                      shake={meinErgebnis === false}
-                    />
-                    <div className="min-w-0 flex-1 pb-1">
-                      <SpeechBubble key={`q-${frage.id}-${resetKey}`} text={frage.frage} tail="left" speed={18} />
-                      <p className="mt-1 pl-1 font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
-                        {person.name} · {person.rolle}
-                      </p>
-                    </div>
-                  </div>
-                );
-              })()}
+              <h2 className="mt-2 font-serif text-xl font-bold sm:text-2xl">
+                „{frage.frage}"
+              </h2>
 
               <div className="mt-5">
                 <FrageRenderer

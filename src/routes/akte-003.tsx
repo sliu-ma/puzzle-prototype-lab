@@ -8,9 +8,6 @@ import { StageGate } from "@/components/case-file/StageGate";
 import { HintSystem, type Hint } from "@/components/case-file/HintSystem";
 import { RouteCards } from "@/components/case-file/RouteCards";
 import { RouteDetail } from "@/components/case-file/RouteDetail";
-import { EtappeIntro } from "@/components/narrative/EtappeIntro";
-import { SuccessReaction } from "@/components/narrative/SuccessReaction";
-import { STATION } from "@/lib/story-beats";
 import { VALID_START, VALID_ZIEL, type RouteOption } from "@/lib/mobility-data";
 import { completeStage } from "@/lib/progress";
 import { cn } from "@/lib/utils";
@@ -64,13 +61,7 @@ function AkteGated() {
         title={<>Etappe 1 — QR-Code am Bahnhof scannen</>}
         description="Diese Etappe ist versiegelt. Scanne den QR-Code, der am Bahnhof Grünwald für dich hinterlegt ist."
       >
-        <EtappeIntro
-          stationKey="bahnhof"
-          storageKey="story-bahnhof-seen"
-          title="Etappe 1 · Bahnhof Grünwald"
-        >
-          <AktePage />
-        </EtappeIntro>
+        <AktePage />
       </QRGate>
     </StageGate>
   );
@@ -98,11 +89,9 @@ const norm = (s: string) =>
 function AktePage() {
   const [step, setStep] = useState<Step>("brief");
   const [unlockedSteps, setUnlockedSteps] = useState<Set<Step>>(new Set(["brief"]));
-  const [successOpen, setSuccessOpen] = useState(false);
 
   useEffect(() => {
     if (step === "naechstes") completeStage(1);
-    if (step === "input") setSuccessOpen(true);
   }, [step]);
 
   const [start, setStart] = useState("");
@@ -513,13 +502,6 @@ function AktePage() {
         (step === "raetselkarte" || step === "eingabe" || step === "routen") && (
           <HintSystem hints={HINTS_003} storageKey="akte-003-hints-start" />
         )}
-
-      <SuccessReaction
-        open={successOpen}
-        mood={STATION.bahnhof.success.mood}
-        text={STATION.bahnhof.success.text}
-        onClose={() => setSuccessOpen(false)}
-      />
     </main>
   );
 }
