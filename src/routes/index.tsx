@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Lock, CheckCircle2, RotateCcw } from "lucide-react";
 import { Stamp } from "@/components/case-file/Stamp";
+import { IntroLetter } from "@/components/narrative/IntroLetter";
 import {
   START_CODE,
   STAGES,
@@ -11,6 +12,8 @@ import {
   resetAll,
 } from "@/lib/progress";
 import { cn } from "@/lib/utils";
+
+const INTRO_KEY = "story-intro-seen";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -30,6 +33,7 @@ function CoverPage() {
   const [ready, setReady] = useState(false);
   const [team, setTeam] = useState<{ name: string; code: string } | null>(null);
   const [stage, setStage] = useState(0);
+  const [showIntro, setShowIntro] = useState(false);
 
   useEffect(() => {
     const sync = () => {
@@ -52,6 +56,21 @@ function CoverPage() {
         <p className="font-mono-typed text-xs uppercase tracking-[0.2em] text-muted-foreground">
           Lade …
         </p>
+      </main>
+    );
+  }
+
+  if (showIntro) {
+    return (
+      <main className="relative min-h-screen px-4 py-10">
+        <IntroLetter
+          onDone={() => {
+            try {
+              localStorage.setItem(INTRO_KEY, "1");
+            } catch {}
+            setShowIntro(false);
+          }}
+        />
       </main>
     );
   }
