@@ -187,6 +187,7 @@ function FinalePage() {
     setAntworten(Array(FRAGEN.length).fill(null));
     setAktuell(0);
     setGezeigt(false);
+    setStarted(true);
     setFragenSet((n) => n + 1);
   };
 
