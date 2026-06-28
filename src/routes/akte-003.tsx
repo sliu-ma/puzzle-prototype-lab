@@ -504,6 +504,12 @@ function AktePage() {
         (step === "raetselkarte" || step === "eingabe" || step === "routen") && (
           <HintSystem hints={HINTS_003} storageKey="akte-003-hints-start" />
         )}
+
+      <EtappenStory
+        arc={STORY.mobilitaet}
+        sessionKey="story-seen-akte-003"
+        successOn={unlockedSteps.has("input")}
+      />
     </main>
   );
 }
