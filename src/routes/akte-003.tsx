@@ -98,9 +98,11 @@ const norm = (s: string) =>
 function AktePage() {
   const [step, setStep] = useState<Step>("brief");
   const [unlockedSteps, setUnlockedSteps] = useState<Set<Step>>(new Set(["brief"]));
+  const [successOpen, setSuccessOpen] = useState(false);
 
   useEffect(() => {
     if (step === "naechstes") completeStage(1);
+    if (step === "input") setSuccessOpen(true);
   }, [step]);
 
   const [start, setStart] = useState("");
