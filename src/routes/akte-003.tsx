@@ -64,7 +64,13 @@ function AkteGated() {
         title={<>Etappe 1 — QR-Code am Bahnhof scannen</>}
         description="Diese Etappe ist versiegelt. Scanne den QR-Code, der am Bahnhof Grünwald für dich hinterlegt ist."
       >
-        <AktePage />
+        <EtappeIntro
+          stationKey="bahnhof"
+          storageKey="story-bahnhof-seen"
+          title="Etappe 1 · Bahnhof Grünwald"
+        >
+          <AktePage />
+        </EtappeIntro>
       </QRGate>
     </StageGate>
   );
