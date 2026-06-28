@@ -266,10 +266,9 @@ function FinalePage() {
         ? "won"
         : "running";
 
-  if (status === "won") {
-    // Markiere Spiel als beendet
-    setTimeout(() => completeStage(6), 0);
-  }
+  useEffect(() => {
+    if (status === "won") completeStage(6);
+  }, [status]);
 
   const handleResult = (correct: boolean) => {
     setErgebnisse((prev) => {
