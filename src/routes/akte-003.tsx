@@ -90,6 +90,10 @@ function AktePage() {
   const [step, setStep] = useState<Step>("brief");
   const [unlockedSteps, setUnlockedSteps] = useState<Set<Step>>(new Set(["brief"]));
 
+  useEffect(() => {
+    if (step === "naechstes") completeStage(1);
+  }, [step]);
+
   const [start, setStart] = useState("");
   const [ziel, setZiel] = useState("");
   const [eingabeError, setEingabeError] = useState<string | null>(null);
