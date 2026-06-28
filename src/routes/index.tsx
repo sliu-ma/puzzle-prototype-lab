@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Lock, CheckCircle2, RotateCcw } from "lucide-react";
 import { Stamp } from "@/components/case-file/Stamp";
+import { IntroLetter } from "@/components/story/IntroLetter";
 import {
   START_CODE,
   STAGES,
