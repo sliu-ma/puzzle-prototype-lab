@@ -40,6 +40,11 @@
   --color-stamp: var(--stamp);
   --color-kraft: var(--kraft);
   --color-tape: var(--tape);
+  --color-forest: var(--forest);
+  --color-meadow: var(--meadow);
+  --color-sun: var(--sun);
+  --color-clay: var(--clay);
+  --color-bark: var(--bark);
   --font-serif: "Lora", Georgia, serif;
   --font-mono: "Special Elite", "Courier New", monospace;
   --font-sans: "Inter", -apple-system, sans-serif;
