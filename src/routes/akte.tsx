@@ -11,11 +11,11 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/akte")({
   head: () => ({
     meta: [
-      { title: "Akte 001 — Wo ist Maya?" },
+      { title: "Etappe 2 — Dorfladen Berger" },
       {
         name: "description",
         content:
-          "Kapitel 1: Maya ist verschwunden. Folge ihren Spuren durch den Grünen Markt und lerne, was nachhaltiger Einkauf wirklich bedeutet.",
+          "Etappe 2: Im alten Dorfladen wartet ein gepackter Einkaufskorb. Zwei Produkte stimmen nicht — finde sie und tausche sie aus.",
       },
     ],
   }),
@@ -27,26 +27,27 @@ function AkteGated() {
     <QRGate
       token="CpZk0z9RaQkL22gtiWoR"
       storageKey="akte-001-unlocked"
-      title={<>Akte 001 — QR-Code scannen</>}
+      title={<>Etappe 2 — QR-Code im Dorfladen scannen</>}
+      description="Diese Etappe ist versiegelt. Scanne den QR-Code, den Frau Berger für dich bereitgelegt hat."
     >
       <AktePage />
     </QRGate>
   );
 }
 
-type Step = "voicemail" | "raetselkarte" | "shop" | "input" | "naechstes";
+type Step = "brief" | "raetselkarte" | "shop" | "input" | "naechstes";
 
 const STEPS: { id: Step; label: string }[] = [
-  { id: "voicemail", label: "Sprachnachricht" },
+  { id: "brief", label: "Brief" },
   { id: "raetselkarte", label: "Rätselkarte" },
-  { id: "shop", label: "Grüner Markt" },
+  { id: "shop", label: "Einkaufskorb" },
   { id: "input", label: "Fachlicher Input" },
-  { id: "naechstes", label: "Nächstes Rätsel" },
+  { id: "naechstes", label: "Nächste Etappe" },
 ];
 
 function AktePage() {
-  const [step, setStep] = useState<Step>("voicemail");
-  const [unlockedSteps, setUnlockedSteps] = useState<Set<Step>>(new Set(["voicemail"]));
+  const [step, setStep] = useState<Step>("brief");
+  const [unlockedSteps, setUnlockedSteps] = useState<Set<Step>>(new Set(["brief"]));
 
   const goto = (s: Step) => {
     setUnlockedSteps((prev) => new Set([...prev, s]));
@@ -67,26 +68,24 @@ function AktePage() {
       />
 
       <div className="relative mx-auto max-w-5xl">
-        {/* Header */}
         <header className="mb-5 flex flex-wrap items-end justify-between gap-3 border-b border-border pb-4 sm:mb-8 sm:pb-5">
           <div className="min-w-0">
             <Link
               to="/"
               className="font-mono-typed text-[10px] uppercase tracking-[0.2em] text-muted-foreground hover:text-foreground sm:text-[11px]"
             >
-              ← Aktenmappe schließen
+              ← Zurück zur Übersicht
             </Link>
             <h1 className="mt-1.5 font-serif text-2xl font-bold leading-tight sm:mt-2 sm:text-5xl">
-              Akte 001 · Kapitel 1
+              Etappe 2 · Dorfladen
             </h1>
             <p className="mt-0.5 font-serif italic text-sm text-foreground/70 sm:text-base">
-              Der Einkauf
+              Frau Bergers Einkaufskorb
             </p>
           </div>
           <Stamp rotate={-6}>Vertraulich</Stamp>
         </header>
 
-        {/* Stepper */}
         <nav aria-label="Ablauf" className="mb-5 sm:mb-8">
           <ol className="-mx-3 flex items-center gap-1.5 overflow-x-auto px-3 pb-2 sm:mx-0 sm:flex-wrap sm:gap-2 sm:overflow-visible sm:px-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {STEPS.map((s, i) => {
@@ -116,9 +115,7 @@ function AktePage() {
                     <span className="whitespace-nowrap">{s.label}</span>
                   </button>
                   {i < STEPS.length - 1 && (
-                    <span className="text-muted-foreground" aria-hidden>
-                      →
-                    </span>
+                    <span className="text-muted-foreground" aria-hidden>→</span>
                   )}
                 </li>
               );
@@ -126,38 +123,31 @@ function AktePage() {
           </ol>
         </nav>
 
-        {/* Steps */}
-        {step === "voicemail" && (
+        {step === "brief" && (
           <PaperCard rotate={-0.4}>
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-              Beweis 01 · Sprachnachricht
+              Notiz 02 · Dorfladen Berger · auf dem Holztresen
             </p>
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-              Mayas letzte Nachricht an Lin
+              Frau Berger wartet schon.
             </h2>
             <p className="mt-1 font-mono-typed text-xs text-muted-foreground">
-              [Aufnahme · Mittwoch · 14:32 · 47 Sek.]
+              [Holztresen · gepackter Korb · 15:32 Uhr]
             </p>
             <blockquote className="mt-5 border-l-4 border-stamp pl-4 text-[15px] leading-relaxed">
-              „Lin, hör mal — ich glaub, ich hab's. Du weisst, was sie uns über das
-              Gaskraftwerk ‚Thermika Ost' erzählen — alles super grün, alles regional?
-              Hinter dem Konsortium ‚Helvetia Energie AG' stehen fünf Investoren. Einer
-              davon ist <strong>Roland Vetterli</strong>, der CEO der Frischmarkt AG.
-              Seine Supermärkte werben mit ‚regional &amp; saisonal'. Ich war eben auf
-              seiner Online-Plattform. Der Einkaufswagen, den ich da gesehen hab, war
-              alles andere als das."
+              Der alte Dorfladen ist eigentlich schon geschlossen, aber Frau
+              Berger, eine langjährige Freundin Elviras, lässt dich noch hinein.
+              „Deine Tante war hier jede Woche", sagt sie nachdenklich. „Sie hat
+              mal gesagt: <em>Wenn ich sehe, was die Leute kaufen, weiss ich
+              genau, was schiefläuft.</em>"
               <br />
               <br />
-              „Ich hab dir den Link geschickt. Auf dem Bildschirm liegt ein Rezept und ein
-              halb-fertiger Warenkorb. Schau dir das mal genau an — und mach es richtig.
-              Wenn du kapierst, wo der Haken ist, kommst du an die nächste Spur."
-              <br />
-              <br />
-              „Bis gleich. Ich fahr noch zur Redaktion."
+              Auf dem Holztresen steht ein gepackter Einkaufskorb. Frau Berger
+              zuckt mit den Schultern: „Komisch — sowas hätte Elvira eigentlich
+              nie selbst gekauft. Sie hat ihn wohl absichtlich so
+              zusammengestellt … sie meinte, du seist ziemlich gut im
+              Kombinieren."
             </blockquote>
-            <p className="mt-4 text-sm text-foreground/60">
-              <strong>Maya kam nie in der Redaktion an.</strong>
-            </p>
             <div className="mt-6 flex justify-end">
               <button
                 onClick={() => goto("raetselkarte")}
@@ -172,7 +162,7 @@ function AktePage() {
         {step === "raetselkarte" && (
           <PaperCard rotate={0.3} tape="top">
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-              Rätselkarte · Auftrag von Maya
+              Rätselkarte · Auftrag von Elvira
             </p>
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
               {REZEPT.emoji} {REZEPT.titel}
@@ -182,22 +172,21 @@ function AktePage() {
             </p>
             <ul className="mt-2 grid gap-1 sm:grid-cols-2">
               {REZEPT.zutaten.map((z) => (
-                <li key={z} className="text-[15px]">
-                  • {z}
-                </li>
+                <li key={z} className="text-[15px]">• {z}</li>
               ))}
             </ul>
             <div className="mt-6 rounded-sm border border-stamp/30 bg-stamp/5 p-4">
               <p className="font-serif italic leading-relaxed">
-                „Du möchtest gerade bezahlen — aber irgendetwas stimmt mit dem Warenkorb nicht. "
+                „Du möchtest gerade bezahlen — aber irgendetwas stimmt mit
+                dem Warenkorb nicht."
               </p>
               <p className="mt-2 font-mono-typed text-[11px] uppercase tracking-wider text-stamp">
-                — M.
+                — E.
               </p>
             </div>
             <div className="mt-6 flex justify-between">
               <button
-                onClick={() => setStep("voicemail")}
+                onClick={() => setStep("brief")}
                 className="rounded-sm border border-border bg-card px-4 py-2.5 font-serif text-sm hover:bg-secondary"
               >
                 ← Zurück
@@ -206,7 +195,7 @@ function AktePage() {
                 onClick={() => goto("shop")}
                 className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
               >
-                Zum Shop →
+                Zum Einkaufskorb →
               </button>
             </div>
           </PaperCard>
@@ -233,14 +222,14 @@ function AktePage() {
           <div className="space-y-6">
             <PaperCard rotate={-0.3}>
               <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-                Mayas Recherche · 3 Lernkarten
+                Fachlicher Input · 3 Lernkarten
               </p>
               <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
                 Was heißt eigentlich „nachhaltig einkaufen"?
               </h2>
               <p className="mt-3 text-foreground/80">
-                Drei Begriffe, die Maya immer wieder unterstrichen hat — und die du
-                gerade im Shop angewendet hast:
+                Drei Begriffe, die du gerade angewendet hast — und die der Rat
+                heute Abend hören will:
               </p>
 
               <div className="mt-5 grid gap-4 sm:grid-cols-3">
@@ -248,7 +237,7 @@ function AktePage() {
                   {
                     title: "Saisonal",
                     body: "Obst und Gemüse, das gerade in der Schweiz wächst und geerntet werden kann. Wer im März Erdbeeren kauft, kauft Ware aus dem Süden oder beheizten Tunneln — viel Energie für wenig Geschmack.",
-                    hint: "Im März in CH in Saison: Äpfel, Lauch, Karotten, Feldsalat …",
+                    hint: "Im Frühling in CH saisonal: Lauch, Karotten, Feldsalat …",
                   },
                   {
                     title: "Regional",
@@ -261,13 +250,8 @@ function AktePage() {
                     hint: "Schweizer Bio-Eier sind teurer, halten aber, was die Werbung verspricht.",
                   },
                 ].map((c) => (
-                  <div
-                    key={c.title}
-                    className="rounded-sm border border-border bg-paper p-4 shadow-sm"
-                  >
-                    <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
-                      Karte
-                    </p>
+                  <div key={c.title} className="rounded-sm border border-border bg-paper p-4 shadow-sm">
+                    <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">Karte</p>
                     <h4 className="mt-1 font-serif text-xl font-bold">{c.title}</h4>
                     <p className="mt-2 text-sm text-foreground/85">{c.body}</p>
                     <p className="mt-3 border-t border-dashed border-border pt-2 text-xs italic text-foreground/60">
@@ -283,13 +267,13 @@ function AktePage() {
                 onClick={() => setStep("shop")}
                 className="rounded-sm border border-border bg-card px-4 py-2.5 font-serif text-sm hover:bg-secondary"
               >
-                ← Zurück zum Shop
+                ← Zurück zum Korb
               </button>
               <button
                 onClick={() => goto("naechstes")}
                 className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
               >
-                Zum nächsten Rätsel →
+                Zur nächsten Etappe →
               </button>
             </div>
           </div>
@@ -298,51 +282,49 @@ function AktePage() {
         {step === "naechstes" && (
           <PaperCard rotate={-0.5} tape="top-left">
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-              Kapitel 2 · folgt bald
+              Etappe 3 · Wald-Lichtung
             </p>
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-              Der Wald hinter dem Kraftwerk
+              „Geh zur Lichtung im Wald."
             </h2>
             <div className="mt-4 rounded-sm border border-dashed border-stamp/40 bg-paper-deep/30 p-5">
               <p className="font-serif italic leading-relaxed">
-                „Vetterli ist nicht allein. Im Stiftungsrat seiner ‚Stiftung
-                WaldZukunft' sitzt <strong>Dr. Eva Brönnimann</strong> — Forstunternehmerin,
-                Investorin Nr. 2 der Helvetia Energie AG. Sie behauptet, sie schütze die
-                Artenvielfalt rund um den geplanten Kraftwerks-Standort."
-              </p>
-              <p className="mt-3 font-serif italic">
-                „Ich war heute Morgen draussen, im Wäldchen hinter dem Standort.
-                Was ich dort gehört habe — oder eben <em>nicht</em> gehört habe —
-                liegt im zweiten Umschlag. Öffne ihn, Lin."
+                Die alte Registrierkasse springt mit einem lauten Ping an und
+                druckt einen Bon. Frau Berger reicht ihn dir mit einem wissenden
+                Lächeln. Auf der Rückseite steht in Elviras Handschrift:
+                <br /><br />
+                „Gut gemacht! Geh zur Lichtung im Wald, wo wir früher Vögel
+                beobachtet haben. Dort findest du meinen Beobachtungsposten."
               </p>
               <p className="mt-3 font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
-                — M.
+                — E.
               </p>
             </div>
             <p className="mt-5 text-sm text-foreground/70">
-              In Kapitel 2 folgst du Mayas Spur in die Redaktion und entwirrst, wer
-              die Investoren des Gaskraftwerks wirklich sind.
+              Du denkst kurz an die Uhr. Noch ein paar Stunden bis 19:00.
             </p>
             <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
-              <span className="stamp-mark inline-block px-3 py-1 text-xs">
-                In Vorbereitung
-              </span>
+              <Link
+                to="/akte-002"
+                className="inline-flex items-center gap-2 rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
+              >
+                Etappe 3 öffnen →
+              </Link>
               <Link
                 to="/"
                 className="inline-flex items-center gap-2 rounded-sm border border-border bg-card px-5 py-2.5 font-serif text-sm font-semibold transition-colors hover:bg-secondary"
               >
-                ← Akte schließen
+                ← Übersicht
               </Link>
             </div>
           </PaperCard>
         )}
 
         <p className="mt-12 text-center font-mono-typed text-xs uppercase tracking-[0.2em] text-muted-foreground">
-          — Akte 001 · Wo ist Maya? —
+          — Etappe 2 · Dorfladen Berger —
         </p>
       </div>
 
-      {/* Tipp-System: aktiv ab Rätselkarte bis Shop abgeschlossen */}
       {unlockedSteps.has("raetselkarte") && (step === "raetselkarte" || step === "shop") && (
         <HintSystem />
       )}

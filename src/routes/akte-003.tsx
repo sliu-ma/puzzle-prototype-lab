@@ -13,11 +13,11 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/akte-003")({
   head: () => ({
     meta: [
-      { title: "Akte 003 — Spur in den Osten" },
+      { title: "Etappe 1 — Bahnhof Grünwald" },
       {
         name: "description",
         content:
-          "Kapitel 3: Mayas Spur führt quer durch die Schweiz. Rekonstruiere die nachhaltigste Route und lerne, was Mobilitätsentscheidungen wirklich kosten.",
+          "Etappe 1: Auf dem Bahnhof liegen Elviras alte Reisetickets. Welche Verbindung hat sie wirklich gewählt?",
       },
     ],
   }),
@@ -31,8 +31,8 @@ const HINTS_003: Hint[] = [
     id: 0,
     unlockMin: 3,
     label: "Tipp 1",
-    title: "Lies Mayas Hinweise noch einmal",
-    body: "Sie schreibt von einem 'See in der Westschweiz' und einem 'Dorf in den Appenzeller Hügeln, das nach einem Vorrat klingt'. Welche Stadt am Genfersee? Welches AR-Dorf?",
+    title: "Lies Elviras Notiz noch einmal",
+    body: "Sie schreibt vom 'See in der Westschweiz' und einem 'Dorf in den Appenzeller Hügeln, das nach einem Vorrat klingt'. Welche Stadt am Genfersee? Welches AR-Dorf?",
   },
   {
     id: 1,
@@ -55,23 +55,23 @@ function AkteGated() {
     <QRGate
       token={AKTE_003_TOKEN}
       storageKey="akte-003-unlocked"
-      title={<>Akte 003 — QR-Code scannen</>}
-      description="Akte 003 ist versiegelt. Scanne den beigelegten QR-Code aus deiner Mappe, um Mayas Spur weiterzuverfolgen."
+      title={<>Etappe 1 — QR-Code am Bahnhof scannen</>}
+      description="Diese Etappe ist versiegelt. Scanne den QR-Code, der am Bahnhof Grünwald für dich hinterlegt ist."
     >
       <AktePage />
     </QRGate>
   );
 }
 
-type Step = "voicemail" | "raetselkarte" | "eingabe" | "routen" | "input" | "naechstes";
+type Step = "brief" | "raetselkarte" | "eingabe" | "routen" | "input" | "naechstes";
 
 const STEPS: { id: Step; label: string }[] = [
-  { id: "voicemail", label: "Sprachnachricht" },
+  { id: "brief", label: "Brief" },
   { id: "raetselkarte", label: "Rätselkarte" },
   { id: "eingabe", label: "Start & Ziel" },
   { id: "routen", label: "Route wählen" },
   { id: "input", label: "Fachlicher Input" },
-  { id: "naechstes", label: "Nächstes Rätsel" },
+  { id: "naechstes", label: "Nächste Etappe" },
 ];
 
 const norm = (s: string) =>
@@ -83,14 +83,13 @@ const norm = (s: string) =>
     .replace(/[^a-z\s]/g, "");
 
 function AktePage() {
-  const [step, setStep] = useState<Step>("voicemail");
-  const [unlockedSteps, setUnlockedSteps] = useState<Set<Step>>(new Set(["voicemail"]));
+  const [step, setStep] = useState<Step>("brief");
+  const [unlockedSteps, setUnlockedSteps] = useState<Set<Step>>(new Set(["brief"]));
 
   const [start, setStart] = useState("");
   const [ziel, setZiel] = useState("");
   const [eingabeError, setEingabeError] = useState<string | null>(null);
 
-  // Routen-Phase: Liste vs. Detail einer Route
   const [selectedRouteId, setSelectedRouteId] = useState<string | null>(null);
   const [routeError, setRouteError] = useState<string | null>(null);
 
@@ -109,7 +108,7 @@ function AktePage() {
       setEingabeError(null);
       goto("routen");
     } else {
-      setEingabeError("Hm, das passt noch nicht. Lies Mayas Nachricht und ihre Notiz nochmal genau.");
+      setEingabeError("Hm, das passt noch nicht. Lies Elviras Brief und die Tickets nochmal genau.");
     }
   };
 
@@ -125,26 +124,24 @@ function AktePage() {
       />
 
       <div className="relative mx-auto max-w-5xl">
-        {/* Header */}
         <header className="mb-5 flex flex-wrap items-end justify-between gap-3 border-b border-border pb-4 sm:mb-8 sm:pb-5">
           <div className="min-w-0">
             <Link
               to="/"
               className="font-mono-typed text-[10px] uppercase tracking-[0.2em] text-muted-foreground hover:text-foreground sm:text-[11px]"
             >
-              ← Aktenmappe schließen
+              ← Zurück zur Übersicht
             </Link>
             <h1 className="mt-1.5 font-serif text-2xl font-bold leading-tight sm:mt-2 sm:text-5xl">
-              Akte 003 · Kapitel 3
+              Etappe 1 · Bahnhof
             </h1>
             <p className="mt-0.5 font-serif italic text-sm text-foreground/70 sm:text-base">
-              Spur in den Osten
+              Auf den Spuren einer alten Reise
             </p>
           </div>
           <Stamp rotate={-6}>Vertraulich</Stamp>
         </header>
 
-        {/* Stepper */}
         <nav aria-label="Ablauf" className="mb-5 sm:mb-8">
           <ol className="-mx-3 flex items-center gap-1.5 overflow-x-auto px-3 pb-2 sm:mx-0 sm:flex-wrap sm:gap-2 sm:overflow-visible sm:px-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {STEPS.map((s, i) => {
@@ -174,9 +171,7 @@ function AktePage() {
                     <span className="whitespace-nowrap">{s.label}</span>
                   </button>
                   {i < STEPS.length - 1 && (
-                    <span className="text-muted-foreground" aria-hidden>
-                      →
-                    </span>
+                    <span className="text-muted-foreground" aria-hidden>→</span>
                   )}
                 </li>
               );
@@ -184,35 +179,30 @@ function AktePage() {
           </ol>
         </nav>
 
-        {step === "voicemail" && (
+        {step === "brief" && (
           <PaperCard rotate={-0.4}>
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-              Beweis 03 · Sprachnachricht
+              Notiz 01 · Bahnhof Grünwald · Bank am Gleis 1
             </p>
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-              Mayas dritte Nachricht
+              Elviras alte Reisetickets
             </h2>
             <p className="mt-1 font-mono-typed text-xs text-muted-foreground">
-              [Aufnahme · Freitag · 22:47 · 52 Sek.]
+              [Zettel und drei Fahrkarten · gefunden 14:48 Uhr]
             </p>
             <blockquote className="mt-5 border-l-4 border-stamp pl-4 text-[15px] leading-relaxed">
-              „Lin, hör mal — ich hab heute mit einer ehemaligen Mitarbeiterin
-              von Marc Tissots AlpLogistik gesprochen. Sie wohnt in einem
-              kleinen Dorf in den Appenzeller Hügeln, das nach einem Vorrat
-              klingt. Sie hat Frachtpapiere — sie beweisen, wie das
-              Baumaterial fürs Kraftwerk wirklich transportiert wird."
+              „Maja — wenn du das liest, hast du den ersten Hinweis am
+              richtigen Ort gefunden. Vor ein paar Jahren bin ich zu einer
+              ehemaligen Mitarbeiterin einer Logistikfirma quer durch die
+              Schweiz gereist: vom <em>See in der Westschweiz</em> zu einem
+              Dorf hier oben in den Appenzeller Hügeln, das nach einem
+              Vorrat klingt. Drei Optionen lagen damals auf dem Tisch — Zug,
+              Auto, Inlandflug + Zug."
               <br />
               <br />
-              „Ich bin morgens von hier — also vom See in der Westschweiz, du
-              weisst schon — losgefahren. Die Frage ist: <em>wie</em> bin ich
-              gereist? Sie sagt, sie hat exakt geschaut, welche Route ich
-              genommen hab. Daran wird sie erkennen, ob du wirklich von mir
-              kommst."
-              <br />
-              <br />
-              „Drei Optionen lagen auf dem Tisch — Zug, Auto, Inlandflug
-              kombiniert. Ich hab die genommen, bei der ich nachts noch
-              schlafen kann. Du wirst es sehen."
+              „Ich habe genau eine davon genommen. Finde heraus welche — und
+              vor allem warum. Diese Frage ist genau die, die heute Abend im
+              Gemeinderat fehlt."
             </blockquote>
             <div className="mt-6 flex justify-end">
               <button
@@ -228,10 +218,10 @@ function AktePage() {
         {step === "raetselkarte" && (
           <PaperCard rotate={0.3} tape="top">
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-              Rätselkarte · Auftrag von Maya
+              Rätselkarte · Auftrag von Elvira
             </p>
             <h2 className="mt-2 flex items-center gap-2 font-serif text-2xl font-bold sm:text-3xl">
-              <MapIcon className="h-6 w-6 text-stamp" /> Welche Route hat Maya genommen?
+              <MapIcon className="h-6 w-6 text-stamp" /> Welche Route hat Elvira genommen?
             </h2>
 
             <div className="mt-5 grid gap-4 sm:grid-cols-2">
@@ -240,8 +230,8 @@ function AktePage() {
                   Schritt 1
                 </p>
                 <p className="mt-2 text-[15px]">
-                  Finde heraus, von wo Maya losgereist ist und wohin sie wollte.
-                  Beide Orte stehen versteckt in ihrer Sprachnachricht.
+                  Finde heraus, von wo Elvira losgereist ist und wohin sie wollte.
+                  Beide Orte stecken versteckt in ihrem Brief.
                 </p>
               </div>
               <div className="rounded-sm border border-border bg-paper p-4">
@@ -249,7 +239,7 @@ function AktePage() {
                   Schritt 2
                 </p>
                 <p className="mt-2 text-[15px]">
-                  Vergleiche die drei möglichen Routen. Wähle die, die Maya
+                  Vergleiche die drei möglichen Routen. Wähle die, die Elvira
                   selbst gewählt hätte — sie reist <strong>nachhaltig</strong>.
                 </p>
               </div>
@@ -261,13 +251,13 @@ function AktePage() {
                 Schau auf CO₂, nicht nur auf die Uhr."
               </p>
               <p className="mt-2 font-mono-typed text-[11px] uppercase tracking-wider text-stamp">
-                — M.
+                — E.
               </p>
             </div>
 
             <div className="mt-6 flex justify-between">
               <button
-                onClick={() => setStep("voicemail")}
+                onClick={() => setStep("brief")}
                 className="rounded-sm border border-border bg-card px-4 py-2.5 font-serif text-sm hover:bg-secondary"
               >
                 ← Zurück
@@ -285,14 +275,13 @@ function AktePage() {
         {step === "eingabe" && (
           <PaperCard rotate={-0.2} tape="top-right">
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-              Beweismittel analysieren
+              Tickets analysieren
             </p>
             <h2 className="mt-2 flex items-center gap-2 font-serif text-2xl font-bold sm:text-3xl">
-              <MapPin className="h-6 w-6 text-stamp" /> Rekonstruiere Mayas Reiseroute
+              <MapPin className="h-6 w-6 text-stamp" /> Rekonstruiere Elviras Reiseroute
             </h2>
             <p className="mt-3 text-[15px] text-foreground/80">
-              Hör dir die Sprachnachricht erneut an — beide Orte stecken in
-              ihren Beschreibungen.
+              Lies den Brief erneut — beide Orte stecken in ihren Beschreibungen.
             </p>
 
             <form onSubmit={handleEingabe} className="mt-6 space-y-4">
@@ -400,14 +389,14 @@ function AktePage() {
           <div className="space-y-6">
             <PaperCard rotate={-0.3}>
               <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-                Mayas Recherche · Nachhaltige Mobilität
+                Fachlicher Input · Nachhaltige Mobilität
               </p>
               <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
                 Wie wir reisen, formt das Klima
               </h2>
               <p className="mt-3 text-foreground/80">
                 Der Verkehr verursacht in der Schweiz rund ein Drittel aller
-                Treibhausgase. Drei Begriffe, die Maya unterstrichen hat:
+                Treibhausgase. Drei Begriffe, die du für das Hearing brauchst:
               </p>
 
               <div className="mt-5 grid gap-4 sm:grid-cols-3">
@@ -428,13 +417,8 @@ function AktePage() {
                     hint: "BFS: 50 % aller Pendlerwege < 5 km.",
                   },
                 ].map((c) => (
-                  <div
-                    key={c.title}
-                    className="rounded-sm border border-border bg-paper p-4 shadow-sm"
-                  >
-                    <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
-                      Karte
-                    </p>
+                  <div key={c.title} className="rounded-sm border border-border bg-paper p-4 shadow-sm">
+                    <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">Karte</p>
                     <h4 className="mt-1 font-serif text-xl font-bold">{c.title}</h4>
                     <p className="mt-2 text-sm text-foreground/85">{c.body}</p>
                     <p className="mt-3 border-t border-dashed border-border pt-2 text-xs italic text-foreground/60">
@@ -456,7 +440,7 @@ function AktePage() {
                 onClick={() => goto("naechstes")}
                 className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
               >
-                Zum nächsten Rätsel →
+                Zur nächsten Etappe →
               </button>
             </div>
           </div>
@@ -465,52 +449,47 @@ function AktePage() {
         {step === "naechstes" && (
           <PaperCard rotate={-0.5} tape="top-left">
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-              Kapitel 4 · folgt bald
+              Etappe 2 · Dorfladen
             </p>
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-              Das gute Quartier
+              „Geh zum alten Dorfladen."
             </h2>
             <div className="mt-4 rounded-sm border border-dashed border-stamp/40 bg-paper-deep/30 p-5">
               <p className="font-serif italic leading-relaxed">
-                „Tissots Greenwashing fliegt auf — aber er ist nur Nr. 3.
-                Investorin Nr. 4 heisst <strong>Sandra Keller</strong>,
-                Geschäftsführerin des ‚Helvetia Immobilien Fonds'. Sie
-                vermarktet das Quartier ‚Sonnenfeld' als Minergie-P-Vorzeige­
-                projekt — und liefert genau damit den Beweis, warum das
-                Gaskraftwerk angeblich nötig sei."
-              </p>
-              <p className="mt-3 font-serif italic">
-                „Schau dir den Plan in der nächsten Akte an. Es geht um's
-                <strong> Wohnen</strong>."
+                Auf der Rückseite des Bahntickets steht in Elviras Handschrift:
+                „Frau Berger im Dorfladen wartet schon. Sie hat etwas für dich
+                vorbereitet — sie meinte, du seist ziemlich gut im Kombinieren."
               </p>
               <p className="mt-3 font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
-                — M.
+                — E.
               </p>
             </div>
             <p className="mt-5 text-sm text-foreground/70">
-              In Kapitel 4 untersuchst du, wie Gebäude unseren ökologischen
-              Fussabdruck prägen — und welche Entscheidungen wirklich zählen.
+              In Etappe 2 wartet ein gepackter Einkaufskorb auf dich. Zwei
+              Produkte stimmen nicht.
             </p>
             <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
-              <span className="stamp-mark inline-block px-3 py-1 text-xs">
-                In Vorbereitung
-              </span>
+              <Link
+                to="/akte"
+                className="inline-flex items-center gap-2 rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
+              >
+                Etappe 2 öffnen →
+              </Link>
               <Link
                 to="/"
                 className="inline-flex items-center gap-2 rounded-sm border border-border bg-card px-5 py-2.5 font-serif text-sm font-semibold transition-colors hover:bg-secondary"
               >
-                ← Akte schließen
+                ← Übersicht
               </Link>
             </div>
           </PaperCard>
         )}
 
         <p className="mt-12 text-center font-mono-typed text-xs uppercase tracking-[0.2em] text-muted-foreground">
-          — Akte 003 · Spur in den Osten —
+          — Etappe 1 · Bahnhof Grünwald —
         </p>
       </div>
 
-      {/* Tipp-System: aktiv ab Rätselkarte bis Route gewählt */}
       {unlockedSteps.has("raetselkarte") &&
         (step === "raetselkarte" || step === "eingabe" || step === "routen") && (
           <HintSystem hints={HINTS_003} storageKey="akte-003-hints-start" />
