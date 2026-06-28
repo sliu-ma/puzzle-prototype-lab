@@ -9,11 +9,11 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/akte-004")({
   head: () => ({
     meta: [
-      { title: "Akte 004 — Das gläserne Haus" },
+      { title: "Etappe 4 — Elviras Haus" },
       {
         name: "description",
         content:
-          "Kapitel 4: Maya zeigt dir Vetterlis Show-Villa. Plane das Haus mit knappem Budget so um, dass es wirklich Energie spart.",
+          "Etappe 4: Zurück bei Elvira. Eine Querschnittszeichnung des Hauses, alte Rechnungen — und das Ziel: 8000 kWh einsparen.",
       },
     ],
   }),
@@ -27,27 +27,27 @@ function AkteGated() {
     <QRGate
       token={AKTE_004_TOKEN}
       storageKey="akte-004-unlocked"
-      title={<>Akte 004 — QR-Code scannen</>}
-      description="Akte 004 ist versiegelt. Scanne den beigelegten QR-Code aus deiner Mappe, um Mayas Spur weiterzuverfolgen."
+      title={<>Etappe 4 — QR-Code in Elviras Haus scannen</>}
+      description="Diese Etappe ist versiegelt. Scanne den QR-Code, der bei Elvira auf dem Küchentisch liegt."
     >
       <AktePage />
     </QRGate>
   );
 }
 
-type Step = "voicemail" | "raetselkarte" | "spiel" | "input" | "naechstes";
+type Step = "brief" | "raetselkarte" | "spiel" | "input" | "naechstes";
 
 const STEPS: { id: Step; label: string }[] = [
-  { id: "voicemail", label: "Sprachnachricht" },
+  { id: "brief", label: "Zettel" },
   { id: "raetselkarte", label: "Rätselkarte" },
   { id: "spiel", label: "Haus planen" },
   { id: "input", label: "Fachlicher Input" },
-  { id: "naechstes", label: "Nächstes Rätsel" },
+  { id: "naechstes", label: "Nächste Etappe" },
 ];
 
 function AktePage() {
-  const [step, setStep] = useState<Step>("voicemail");
-  const [unlockedSteps, setUnlockedSteps] = useState<Set<Step>>(new Set(["voicemail"]));
+  const [step, setStep] = useState<Step>("brief");
+  const [unlockedSteps, setUnlockedSteps] = useState<Set<Step>>(new Set(["brief"]));
 
   const goto = (s: Step) => {
     setUnlockedSteps((prev) => new Set([...prev, s]));
@@ -74,13 +74,13 @@ function AktePage() {
               to="/"
               className="font-mono-typed text-[10px] uppercase tracking-[0.2em] text-muted-foreground hover:text-foreground sm:text-[11px]"
             >
-              ← Aktenmappe schließen
+              ← Zurück zur Übersicht
             </Link>
             <h1 className="mt-1.5 font-serif text-2xl font-bold leading-tight sm:mt-2 sm:text-5xl">
-              Akte 004 · Kapitel 4
+              Etappe 4 · Zuhause
             </h1>
             <p className="mt-0.5 font-serif italic text-sm text-foreground/70 sm:text-base">
-              Das gläserne Haus
+              Elviras Haus, Querschnitt auf dem Küchentisch
             </p>
           </div>
           <Stamp rotate={-6}>Vertraulich</Stamp>
@@ -123,30 +123,30 @@ function AktePage() {
           </ol>
         </nav>
 
-        {step === "voicemail" && (
+        {step === "brief" && (
           <PaperCard rotate={-0.4}>
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-              Beweis 04 · Sprachnachricht
+              Notiz 04 · Küchentisch · neben der Zeichnung
             </p>
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-              Mayas vierte Nachricht
+              Eine Zeichnung und ein knapper Zettel
             </h2>
             <p className="mt-1 font-mono-typed text-xs text-muted-foreground">
-              [Aufnahme · Samstag · 18:09 · 41 Sek.]
+              [Hauszeichnung + Rechnungen aus der Kiste · 17:21 Uhr]
             </p>
             <blockquote className="mt-5 border-l-4 border-stamp pl-4 text-[15px] leading-relaxed">
-              „Lin — Investor Nr. 4 heisst <strong>Beat Schweri</strong>, CEO der
-              ‚NeuBau Helvetia AG'. Er baut Show-Villen im Mittelland und
-              wirbt mit Schweizer Minergie-Standard. Vorhin war ich in einem
-              davon, in Lindental: viel Glas, smart, ‚vollständig vernetzt'.
-              Schau dir die Räume an."
+              Du kommst ausser Atem zurück zu Elviras Haus. Auf dem Küchentisch
+              — genau dort, wo der erste Brief lag — liegt jetzt eine grosse
+              Zeichnung: eine Querschnittsansicht des Hauses mit Küche,
+              Badezimmer, Wohnzimmer, Schlafzimmer und Heizkeller. Daneben ein
+              Zettel:
               <br />
               <br />
-              „In jedem Raum stecken Geräte oder Gewohnheiten, die viel mehr
-              Strom fressen, als die Hochglanzbroschüre zugibt. Du hast{" "}
-              <strong>1'500.– CHF</strong> Investitions-Budget. Dein Auftrag:
-              hol mindestens <strong>8'000 kWh</strong> pro Jahr Ersparnis
-              raus — sonst hat Schweri recht und wir nicht."
+              „Ein neues Kraftwerk wird oft nur deshalb gebaut, weil wir im
+              Alltag unbemerkt zu viel Energie verbrauchen. Wenn wir zeigen
+              können, wie viel ein einziger Haushalt einsparen kann, bricht das
+              Hauptargument für den Neubau zusammen. Nimm die Rechnungen aus
+              der Kiste und finde heraus, welche Massnahmen am meisten bringen!"
             </blockquote>
             <div className="mt-6 flex justify-end">
               <button
@@ -162,10 +162,10 @@ function AktePage() {
         {step === "raetselkarte" && (
           <PaperCard rotate={0.3} tape="top">
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-              Rätselkarte · Auftrag von Maya
+              Rätselkarte · Auftrag von Elvira
             </p>
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-              🏠 Plane die Show-Villa um
+              Plane Elviras Haus um
             </h2>
             <div className="mt-5 grid gap-4 sm:grid-cols-2">
               <div className="rounded-sm border border-border bg-paper p-4">
@@ -173,7 +173,7 @@ function AktePage() {
                   Was du hast
                 </p>
                 <ul className="mt-2 space-y-1 text-[15px]">
-                  <li>· 10 Räume und Geräte</li>
+                  <li>· Querschnitt mit 5 Räumen</li>
                   <li>· 1'500.– CHF Budget</li>
                   <li>· Pro Gerät 2–3 Optionen</li>
                 </ul>
@@ -196,12 +196,12 @@ function AktePage() {
                 Gewohnheit die wirksamste."
               </p>
               <p className="mt-2 font-mono-typed text-[11px] uppercase tracking-wider text-stamp">
-                — M.
+                — E.
               </p>
             </div>
             <div className="mt-6 flex justify-between">
               <button
-                onClick={() => setStep("voicemail")}
+                onClick={() => setStep("brief")}
                 className="rounded-sm border border-border bg-card px-4 py-2.5 font-serif text-sm hover:bg-secondary"
               >
                 ← Zurück
@@ -234,14 +234,14 @@ function AktePage() {
           <div className="space-y-6">
             <PaperCard rotate={-0.3}>
               <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-                Mayas Recherche · Wohnen &amp; Energie
+                Fachlicher Input · Wohnen &amp; Energie
               </p>
               <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
                 Wo zuhause Energie versickert
               </h2>
               <p className="mt-3 text-foreground/80">
                 Rund 40 % des Schweizer Energieverbrauchs entstehen in Gebäuden.
-                Drei Begriffe, die Maya unterstrichen hat:
+                Drei Begriffe, die du fürs Hearing brauchst:
               </p>
 
               <div className="mt-5 grid gap-4 sm:grid-cols-3">
@@ -285,7 +285,7 @@ function AktePage() {
                 onClick={() => goto("naechstes")}
                 className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
               >
-                Zum nächsten Rätsel →
+                Zur nächsten Etappe →
               </button>
             </div>
           </div>
@@ -294,50 +294,50 @@ function AktePage() {
         {step === "naechstes" && (
           <PaperCard rotate={-0.5} tape="top-left">
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-              Kapitel 5 · der letzte Umschlag
+              Etappe 5 · altes Wasserkraftwerk
             </p>
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-              Die gefälschten Gutachten
+              „Komm zum alten Wasserkraftwerk."
             </h2>
             <div className="mt-4 rounded-sm border border-dashed border-stamp/40 bg-paper-deep/30 p-5">
               <p className="font-serif italic leading-relaxed">
-                „Lin, jetzt der fünfte und letzte Investor:{" "}
-                <strong>Marlene Vogt war einmal Praktikantin im Umweltamt</strong> —
-                heute ist sie die anonyme Quelle, die mir drei Gutachten zur
-                Energieversorgung zugespielt hat. Eines empfiehlt Gas, eines
-                Kohle, eines Solar."
-              </p>
-              <p className="mt-3 font-serif italic">
-                „In den Texten stecken genau <em>fünf Lügen</em>. Wenn du sie
-                findest, hast du den Beweis, dass das Konsortium die Gemeinde
-                belügt. Öffne den letzten Umschlag."
+                Es klickt leise im Flur. Die Abdeckung des alten
+                Sicherungskastens springt auf. Darin: eine Schlüsselkarte und
+                ein Zettel.
+                <br /><br />
+                „8000 kWh — genau der Beweis, den wir brauchen! Ich bin jetzt
+                beim alten Wasserkraftwerk am Dorfrand. Marlene Vogt,
+                Mitarbeiterin im kantonalen Umweltamt, wartet dort auf uns —
+                sie hat Zugang zu den offiziellen Gemeindegutachten und hilft
+                mir, die Fehler darin zu belegen. Komm schnell! Die Zeit läuft."
               </p>
               <p className="mt-3 font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
-                — M.
+                — E.
               </p>
             </div>
             <p className="mt-5 text-sm text-foreground/70">
-              In Kapitel 5 entlarvst du fünf falsche Aussagen in drei Energie-Gutachten.
+              In Etappe 5 prüfst du drei Gemeindegutachten und entlarvst die
+              fünf falschen Aussagen.
             </p>
             <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
               <Link
                 to="/akte-005"
                 className="inline-flex items-center gap-2 rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
               >
-                Akte 005 öffnen →
+                Etappe 5 öffnen →
               </Link>
               <Link
                 to="/"
                 className="inline-flex items-center gap-2 rounded-sm border border-border bg-card px-5 py-2.5 font-serif text-sm font-semibold transition-colors hover:bg-secondary"
               >
-                ← Akte schließen
+                ← Übersicht
               </Link>
             </div>
           </PaperCard>
         )}
 
         <p className="mt-12 text-center font-mono-typed text-xs uppercase tracking-[0.2em] text-muted-foreground">
-          — Akte 004 · Das gläserne Haus —
+          — Etappe 4 · Elviras Haus —
         </p>
       </div>
     </main>

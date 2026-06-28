@@ -9,11 +9,11 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/akte-005")({
   head: () => ({
     meta: [
-      { title: "Akte 005 — Die gefälschten Gutachten" },
+      { title: "Etappe 5 — Altes Wasserkraftwerk" },
       {
         name: "description",
         content:
-          "Kapitel 5: Drei Gutachten zur Energieversorgung. Finde die fünf Lügen, bevor die Bagger anrollen.",
+          "Etappe 5: Marlene Vogt vom Umweltamt zeigt dir drei Gutachten. Finde die fünf falschen Aussagen, bevor um 19:00 Uhr abgestimmt wird.",
       },
     ],
   }),
@@ -27,27 +27,27 @@ function AkteGated() {
     <QRGate
       token={AKTE_005_TOKEN}
       storageKey="akte-005-unlocked"
-      title={<>Akte 005 — QR-Code scannen</>}
-      description="Akte 005 ist versiegelt. Scanne den letzten QR-Code aus deiner Mappe."
+      title={<>Etappe 5 — QR-Code am Wasserkraftwerk scannen</>}
+      description="Letzte Etappe vor dem Hearing. Scanne den QR-Code am Tor des alten Wasserkraftwerks."
     >
       <AktePage />
     </QRGate>
   );
 }
 
-type Step = "voicemail" | "raetselkarte" | "spiel" | "input" | "naechstes";
+type Step = "brief" | "raetselkarte" | "spiel" | "input" | "naechstes";
 
 const STEPS: { id: Step; label: string }[] = [
-  { id: "voicemail", label: "Sprachnachricht" },
+  { id: "brief", label: "Treffen" },
   { id: "raetselkarte", label: "Rätselkarte" },
   { id: "spiel", label: "Gutachten prüfen" },
   { id: "input", label: "Fachlicher Input" },
-  { id: "naechstes", label: "Auflösung" },
+  { id: "naechstes", label: "Zum Hearing" },
 ];
 
 function AktePage() {
-  const [step, setStep] = useState<Step>("voicemail");
-  const [unlockedSteps, setUnlockedSteps] = useState<Set<Step>>(new Set(["voicemail"]));
+  const [step, setStep] = useState<Step>("brief");
+  const [unlockedSteps, setUnlockedSteps] = useState<Set<Step>>(new Set(["brief"]));
 
   const goto = (s: Step) => {
     setUnlockedSteps((prev) => new Set([...prev, s]));
@@ -74,13 +74,13 @@ function AktePage() {
               to="/"
               className="font-mono-typed text-[10px] uppercase tracking-[0.2em] text-muted-foreground hover:text-foreground sm:text-[11px]"
             >
-              ← Aktenmappe schließen
+              ← Zurück zur Übersicht
             </Link>
             <h1 className="mt-1.5 font-serif text-2xl font-bold leading-tight sm:mt-2 sm:text-5xl">
-              Akte 005 · Kapitel 5
+              Etappe 5 · Wasserkraftwerk
             </h1>
             <p className="mt-0.5 font-serif italic text-sm text-foreground/70 sm:text-base">
-              Die gefälschten Gutachten
+              Treffen mit Marlene Vogt
             </p>
           </div>
           <Stamp rotate={-6}>Vertraulich</Stamp>
@@ -123,35 +123,32 @@ function AktePage() {
           </ol>
         </nav>
 
-        {step === "voicemail" && (
+        {step === "brief" && (
           <PaperCard rotate={-0.4}>
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-              Beweis 05 · Sprachnachricht
+              Notiz 05 · staubiger Abstellraum · zwischen Aktenregalen
             </p>
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-              Mayas letzte Nachricht
+              Marlene Vogt vom Umweltamt
             </h2>
             <p className="mt-1 font-mono-typed text-xs text-muted-foreground">
-              [Aufnahme · Sonntag · 23:58 · 56 Sek.]
+              [Altes Wasserkraftwerk · 18:24 Uhr]
             </p>
             <blockquote className="mt-5 border-l-4 border-stamp pl-4 text-[15px] leading-relaxed">
-              „Lin — wenn du das hörst, hab ich es entweder geschafft, oder
-              sie haben mich. Marlene Vogt, die fünfte im Bunde, war
-              Praktikantin im Umweltamt. Sie hat mir <strong>drei
-              Gutachten</strong> zugespielt — alle zur Energieversorgung
-              Lindentals: Erdgas, Kohle, Bürger-Solarpark."
+              Du schleichst in den staubigen Abstellraum des alten
+              Wasserkraftwerks. Zwischen hohen Aktenregalen tritt eine Frau
+              hervor: <strong>Marlene Vogt</strong>, Mitarbeiterin im kantonalen
+              Umweltamt — ruhig, aber bestimmt.
               <br />
               <br />
-              „In den Texten stecken genau <strong>fünf falsche Aussagen</strong>.
-              Vergleiche jeden Satz mit dem Diagramm und der grünen
-              Faktenkarte. Markier nur die, die echt nicht stimmen können.
-              Erst wenn alle fünf richtig sind, hast du die Wahrheit."
-              <br />
-              <br />
-              „Das Konsortium heisst nicht zufällig ‚Helvetia Energie AG'.
-              Vetterli, Brönnimann, Tissot, Schweri — und der Fünfte,
-              der ganz oben sitzt: <strong>Dr. Helmut Lindner</strong>,
-              Verwaltungsrats-Präsident. Hol ihn dir."
+              „Schön, dass du da bist. Der Gemeinderat steht unter enormem
+              Zeitdruck und muss heute Abend entscheiden. Leider haben sie sich
+              dabei auf fehlerhafte Gutachten gestützt." Sie hält ein Dokument
+              hoch. „Drei Gutachten liegen vor — zu Solarenergie, Gaskraft und
+              Kohle. <strong>Fünf Aussagen darin sind nachweislich falsch.</strong>{" "}
+              Erst wenn alle fünf richtig markiert sind, können wir die Fehler
+              rechtzeitig aufdecken — und das Gaskraftwerk auf der Waldlichtung
+              verhindern."
             </blockquote>
             <div className="mt-6 flex justify-end">
               <button
@@ -167,14 +164,14 @@ function AktePage() {
         {step === "raetselkarte" && (
           <PaperCard rotate={0.3} tape="top">
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-              Rätselkarte · Auftrag von Maya
+              Rätselkarte · Auftrag von Marlene
             </p>
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-              📑 Finde die 5 Lügen
+              Finde die 5 Lügen
             </h2>
             <div className="mt-5 grid gap-4 sm:grid-cols-2">
               <div className="rounded-sm border border-border bg-paper p-4">
-                <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">In deiner Mappe</p>
+                <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">Was du hast</p>
                 <ul className="mt-2 space-y-1 text-[15px]">
                   <li>· 3 Gutachten (A, B, C)</li>
                   <li>· je 1 Diagramm pro Gutachten</li>
@@ -184,7 +181,7 @@ function AktePage() {
               <div className="rounded-sm border border-border bg-paper p-4">
                 <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">Dein Auftrag</p>
                 <ol className="mt-2 list-decimal space-y-1 pl-5 text-[15px]">
-                  <li>Wechsle zwischen den drei Akten.</li>
+                  <li>Wechsle zwischen den drei Gutachten.</li>
                   <li>Tippe verdächtige Sätze an.</li>
                   <li>Vergleiche mit Diagramm + Faktenkarte.</li>
                   <li>Markiere genau 5 falsche Aussagen.</li>
@@ -197,11 +194,11 @@ function AktePage() {
                 „Schau auf Zahlen, nicht auf Adjektive. ‚Nahezu klimaneutral'
                 ist kein Wert — 95 g CO₂/kWh schon."
               </p>
-              <p className="mt-2 font-mono-typed text-[11px] uppercase tracking-wider text-stamp">— M.</p>
+              <p className="mt-2 font-mono-typed text-[11px] uppercase tracking-wider text-stamp">— M. Vogt</p>
             </div>
             <div className="mt-6 flex justify-between">
               <button
-                onClick={() => setStep("voicemail")}
+                onClick={() => setStep("brief")}
                 className="rounded-sm border border-border bg-card px-4 py-2.5 font-serif text-sm hover:bg-secondary"
               >
                 ← Zurück
@@ -234,13 +231,14 @@ function AktePage() {
           <div className="space-y-6">
             <PaperCard rotate={-0.3}>
               <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-                Mayas Recherche · Energieträger
+                Fachlicher Input · Energieträger
               </p>
               <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
                 Was wirklich nachhaltig ist
               </h2>
               <p className="mt-3 text-foreground/80">
-                Drei Begriffe, an denen man jede Energiestudie messen kann:
+                Drei Begriffe, an denen du jede Energiestudie messen kannst —
+                und an denen das Hearing entschieden wird:
               </p>
 
               <div className="mt-5 grid gap-4 sm:grid-cols-3">
@@ -284,7 +282,7 @@ function AktePage() {
                 onClick={() => goto("naechstes")}
                 className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
               >
-                Auflösung →
+                Zum Hearing →
               </button>
             </div>
           </div>
@@ -293,44 +291,49 @@ function AktePage() {
         {step === "naechstes" && (
           <PaperCard rotate={-0.5} tape="top-left">
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-              Auflösung · Akte geschlossen
+              Finale · Hearing im Gemeindesaal
             </p>
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-              Die Wahrheit ist ein Schlüssel.
+              „Wir haben alles, was wir brauchen."
             </h2>
             <div className="mt-4 rounded-sm border border-dashed border-stamp/40 bg-paper-deep/30 p-5">
               <p className="font-serif italic leading-relaxed">
-                „Du hast alle fünf Lügen gefunden. Erdgas ist nicht klimaneutral.
-                Kohle ist nicht erneuerbar und nicht 78 % effizient. PV erreicht
-                in Lindental nicht 250, sondern 1'000 Volllaststunden — und ein
-                Bürger-Solarpark mit Speicher ist sehr wohl umsetzbar."
+                Mit den korrigierten Gutachten, den Rechnungen und Elviras
+                Notizen im Rucksack rennt ihr zum Gemeindesaal. Draussen stösst
+                euch auf den letzten Metern jemand entgegen — Tante Elvira,
+                atemlos, einen Stapel Papiere unterm Arm.
+                <br /><br />
+                „Maja! Ich dachte, du kommst vielleicht direkt hierher — ich
+                habe noch die letzten Messdaten vom Bachamt. Wir haben alles,
+                was wir brauchen!"
               </p>
-              <p className="mt-3 font-serif italic">
-                „Lin: jetzt sind die Akten vollständig. Bring sie zur Redaktion.
-                Wenn ich nicht zurückkomme, weisst du, was zu tun ist."
+              <p className="mt-3 font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
+                — E.
               </p>
-              <p className="mt-3 font-mono-typed text-[10px] uppercase tracking-wider text-stamp">— M.</p>
             </div>
-            <p className="mt-5 text-center font-serif text-3xl tracking-[0.4em] text-stamp sm:text-5xl">
-              WAHRHEIT
-            </p>
-            <p className="mt-4 text-center text-sm text-foreground/70">
-              Du hast Mayas fünf Akten gelöst. Das Konsortium ist enttarnt.
+            <p className="mt-5 text-sm text-foreground/70">
+              Im Hearing stellt der Rat dir zehn Fragen aus allen fünf Themen.
+              Max. 3 Fehler — sonst kippt die Abstimmung.
             </p>
             <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
-              <span className="stamp-mark inline-block px-3 py-1 text-xs">Fall abgeschlossen</span>
+              <Link
+                to="/finale"
+                className="inline-flex items-center gap-2 rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
+              >
+                Hearing starten →
+              </Link>
               <Link
                 to="/"
                 className="inline-flex items-center gap-2 rounded-sm border border-border bg-card px-5 py-2.5 font-serif text-sm font-semibold transition-colors hover:bg-secondary"
               >
-                ← Aktenmappe schließen
+                ← Übersicht
               </Link>
             </div>
           </PaperCard>
         )}
 
         <p className="mt-12 text-center font-mono-typed text-xs uppercase tracking-[0.2em] text-muted-foreground">
-          — Akte 005 · Die gefälschten Gutachten —
+          — Etappe 5 · Altes Wasserkraftwerk —
         </p>
       </div>
     </main>

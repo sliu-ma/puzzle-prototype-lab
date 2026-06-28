@@ -10,21 +10,18 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/akte-002")({
   head: () => ({
     meta: [
-      { title: "Akte 002 — Verschwundene Stimmen" },
+      { title: "Etappe 3 — Wald-Lichtung" },
       {
         name: "description",
         content:
-          "Kapitel 2: Wer fehlt im Wald? Sortiere die Tiere, entdecke versteckte Zahlen im Gedicht und folge Mayas Spur weiter.",
+          "Etappe 3: Auf der Lichtung steht Elviras Beobachtungsposten. Sortiere die Tiere und entschlüssele den Code des Zahlenschlosses.",
       },
     ],
   }),
   component: AkteGated,
 });
 
-// QR-Token bewusst nicht im UI sichtbar
 const AKTE_002_TOKEN = "Mn7YxQ2pVe9TbR4Ks0Lh";
-
-// Lösung: gefährdete Tiere → 3, 5, 7, 9 → aufsteigend = 3579
 const EXPECTED_CODE = "3579";
 
 const HINTS_002: Hint[] = [
@@ -56,27 +53,27 @@ function AkteGated() {
     <QRGate
       token={AKTE_002_TOKEN}
       storageKey="akte-002-unlocked"
-      title={<>Akte 002 — QR-Code scannen</>}
-      description="Akte 002 ist versiegelt. Scanne den beigelegten QR-Code aus deiner Mappe, um Mayas Spur weiterzuverfolgen."
+      title={<>Etappe 3 — QR-Code an der Hütte scannen</>}
+      description="Diese Etappe ist versiegelt. Scanne den QR-Code an Elviras Beobachtungsposten auf der Lichtung."
     >
       <AktePage />
     </QRGate>
   );
 }
 
-type Step = "voicemail" | "raetselkarte" | "code" | "input" | "naechstes";
+type Step = "brief" | "raetselkarte" | "code" | "input" | "naechstes";
 
 const STEPS: { id: Step; label: string }[] = [
-  { id: "voicemail", label: "Sprachnachricht" },
+  { id: "brief", label: "Beobachtungsbuch" },
   { id: "raetselkarte", label: "Rätselkarte" },
   { id: "code", label: "Code eintippen" },
   { id: "input", label: "Fachlicher Input" },
-  { id: "naechstes", label: "Nächstes Rätsel" },
+  { id: "naechstes", label: "Nächste Etappe" },
 ];
 
 function AktePage() {
-  const [step, setStep] = useState<Step>("voicemail");
-  const [unlockedSteps, setUnlockedSteps] = useState<Set<Step>>(new Set(["voicemail"]));
+  const [step, setStep] = useState<Step>("brief");
+  const [unlockedSteps, setUnlockedSteps] = useState<Set<Step>>(new Set(["brief"]));
 
   const goto = (s: Step) => {
     setUnlockedSteps((prev) => new Set([...prev, s]));
@@ -97,26 +94,24 @@ function AktePage() {
       />
 
       <div className="relative mx-auto max-w-5xl">
-        {/* Header */}
         <header className="mb-5 flex flex-wrap items-end justify-between gap-3 border-b border-border pb-4 sm:mb-8 sm:pb-5">
           <div className="min-w-0">
             <Link
               to="/"
               className="font-mono-typed text-[10px] uppercase tracking-[0.2em] text-muted-foreground hover:text-foreground sm:text-[11px]"
             >
-              ← Aktenmappe schließen
+              ← Zurück zur Übersicht
             </Link>
             <h1 className="mt-1.5 font-serif text-2xl font-bold leading-tight sm:mt-2 sm:text-5xl">
-              Akte 002 · Kapitel 2
+              Etappe 3 · Wald-Lichtung
             </h1>
             <p className="mt-0.5 font-serif italic text-sm text-foreground/70 sm:text-base">
-              Verschwundene Stimmen
+              Elviras Beobachtungsposten
             </p>
           </div>
           <Stamp rotate={-6}>Vertraulich</Stamp>
         </header>
 
-        {/* Stepper */}
         <nav aria-label="Ablauf" className="mb-5 sm:mb-8">
           <ol className="-mx-3 flex items-center gap-1.5 overflow-x-auto px-3 pb-2 sm:mx-0 sm:flex-wrap sm:gap-2 sm:overflow-visible sm:px-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {STEPS.map((s, i) => {
@@ -146,9 +141,7 @@ function AktePage() {
                     <span className="whitespace-nowrap">{s.label}</span>
                   </button>
                   {i < STEPS.length - 1 && (
-                    <span className="text-muted-foreground" aria-hidden>
-                      →
-                    </span>
+                    <span className="text-muted-foreground" aria-hidden>→</span>
                   )}
                 </li>
               );
@@ -156,32 +149,34 @@ function AktePage() {
           </ol>
         </nav>
 
-        {step === "voicemail" && (
+        {step === "brief" && (
           <PaperCard rotate={-0.4}>
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-              Beweis 02 · Sprachnachricht
+              Notiz 03 · Beobachtungsposten · Lichtung
             </p>
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-              Mayas zweite Nachricht
+              „Rodung ab Montag."
             </h2>
             <p className="mt-1 font-mono-typed text-xs text-muted-foreground">
-              [Aufnahme · Donnerstag · 06:11 · 38 Sek.]
+              [Aufgeschlagenes Beobachtungsbuch · 16:18 Uhr]
             </p>
             <blockquote className="mt-5 border-l-4 border-stamp pl-4 text-[15px] leading-relaxed">
-              „Lin — ich war heute Morgen draussen, im Wäldchen hinter dem
-              geplanten Kraftwerk. Genau dort, wo Brönnimanns ‚Stiftung
-              WaldZukunft' angeblich Artenschutz betreibt. Es ist still. Zu
-              still. Kein Wiedehopf, keine Kröte, nichts. Ich hab eine alte
-              Naturschutz-Mappe aus dem Gemeindearchiv dabei — Polaroids, ein
-              Gedicht hinten drauf. Schau dir das an."
+              Der Waldweg ist dir vertraut — aber heute sieht er anders aus.
+              Schon von Weitem siehst du es: rotes Band um die Bäume, ein Schild
+              mit der Aufschrift „Baubeginn — Zutritt verboten. Rodung ab
+              Montag." Du bleibst kurz stehen. <em>Montag. Das ist übermorgen.</em>
               <br />
               <br />
-              „Sortier die Tiere: Welche sind hier wirklich noch zuhause, welche
-              sind verschwunden? Auf den Rückseiten stehen Zahlen. Wenn du nur
-              die gefährdeten Tiere umdrehst und aufs Gedicht legst, siehst du
-              den Code. Klein nach gross, dann tippst du ihn ein. Wenn ich
-              recht hab, ist Brönnimanns Biodiversitäts-Gutachten fürs
-              Kraftwerk gefälscht."
+              Die Hütte steht noch, windschief wie immer. Am alten
+              Beobachtungsposten mit dem Fernglas liegen Fotokarten von Tieren,
+              die Elvira über Jahrzehnte hier gesichtet hat — daneben ihr
+              vollgeschriebenes Beobachtungsbuch. Auf der aufgeschlagenen Seite
+              steht in eiliger Handschrift:
+              <br />
+              <br />
+              „Manche dieser Tiere sind hier noch sicher — andere stehen kurz
+              vor dem Verschwinden. Trenne die gefährdeten von den nicht
+              gefährdeten Arten, um meinen Code zu entschlüsseln."
             </blockquote>
             <div className="mt-6 flex justify-end">
               <button
@@ -197,10 +192,10 @@ function AktePage() {
         {step === "raetselkarte" && (
           <PaperCard rotate={0.3} tape="top">
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-              Rätselkarte · Auftrag von Maya
+              Rätselkarte · Auftrag von Elvira
             </p>
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-              🦋 Wer fehlt im Wald?
+              Wer fehlt im Wald?
             </h2>
 
             <div className="mt-5 grid gap-4 sm:grid-cols-2">
@@ -210,7 +205,7 @@ function AktePage() {
                 </p>
                 <ul className="mt-2 space-y-1 text-[15px]">
                   <li>· 7 Polaroids von Tieren</li>
-                  <li>· 1 Blatt Papier mit Gedicht (Rückseite)</li>
+                  <li>· 1 Blatt mit Gedicht (Rückseite)</li>
                   <li>· Schere</li>
                 </ul>
               </div>
@@ -237,13 +232,13 @@ function AktePage() {
                 Wenn du sie richtig erkennst, gibt dir das Gedicht den Schlüssel."
               </p>
               <p className="mt-2 font-mono-typed text-[11px] uppercase tracking-wider text-stamp">
-                — M.
+                — E.
               </p>
             </div>
 
             <div className="mt-6 flex justify-between">
               <button
-                onClick={() => setStep("voicemail")}
+                onClick={() => setStep("brief")}
                 className="rounded-sm border border-border bg-card px-4 py-2.5 font-serif text-sm hover:bg-secondary"
               >
                 ← Zurück
@@ -261,7 +256,7 @@ function AktePage() {
         {step === "code" && (
           <PaperCard rotate={-0.2} tape="top-right">
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-              Schloss · 4-stelliger Code
+              Zahlenschloss · Ausrüstungskiste
             </p>
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
               Was sagt das Gedicht?
@@ -291,15 +286,14 @@ function AktePage() {
           <div className="space-y-6">
             <PaperCard rotate={-0.3}>
               <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-                Mayas Recherche · Biodiversität
+                Fachlicher Input · Biodiversität
               </p>
               <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
                 Warum Vielfalt zählt
               </h2>
               <p className="mt-3 text-foreground/80">
                 Die Schweiz gehört in Europa zu den Ländern mit dem grössten
-                Anteil bedrohter Arten. Drei Begriffe, die Maya immer wieder
-                unterstrichen hat:
+                Anteil bedrohter Arten. Drei Begriffe, die du für den Rat brauchst:
               </p>
 
               <div className="mt-5 grid gap-4 sm:grid-cols-3">
@@ -311,7 +305,7 @@ function AktePage() {
                   },
                   {
                     title: "Lebensraum",
-                    body: "Versiegelte Böden, intensive Landwirtschaft und Verkehr zerschneiden Wiesen, Hecken und Feuchtgebiete. Ohne Lebensraum keine Tiere — auch nicht im Wald hinter dem Schulhaus.",
+                    body: "Versiegelte Böden, intensive Landwirtschaft und Verkehr zerschneiden Wiesen, Hecken und Feuchtgebiete. Ohne Lebensraum keine Tiere — auch nicht auf der Lichtung hinter dem Dorf.",
                     hint: "Hecken, Trockenmauern und Tümpel sind echte Biodiversitäts-Hotspots.",
                   },
                   {
@@ -320,13 +314,8 @@ function AktePage() {
                     hint: "Stichwort: Wildtierkorridore und Renaturierung.",
                   },
                 ].map((c) => (
-                  <div
-                    key={c.title}
-                    className="rounded-sm border border-border bg-paper p-4 shadow-sm"
-                  >
-                    <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
-                      Karte
-                    </p>
+                  <div key={c.title} className="rounded-sm border border-border bg-paper p-4 shadow-sm">
+                    <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">Karte</p>
                     <h4 className="mt-1 font-serif text-xl font-bold">{c.title}</h4>
                     <p className="mt-2 text-sm text-foreground/85">{c.body}</p>
                     <p className="mt-3 border-t border-dashed border-border pt-2 text-xs italic text-foreground/60">
@@ -348,7 +337,7 @@ function AktePage() {
                 onClick={() => goto("naechstes")}
                 className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
               >
-                Zum nächsten Rätsel →
+                Zur nächsten Etappe →
               </button>
             </div>
           </div>
@@ -357,53 +346,52 @@ function AktePage() {
         {step === "naechstes" && (
           <PaperCard rotate={-0.5} tape="top-left">
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-              Kapitel 3 · folgt bald
+              Etappe 4 · Elviras Haus
             </p>
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-              Die Lieferkette
+              „Geh zurück ins Haus."
             </h2>
             <div className="mt-4 rounded-sm border border-dashed border-stamp/40 bg-paper-deep/30 p-5">
               <p className="font-serif italic leading-relaxed">
-                „Wer den Wald belügt, belügt auch beim Verkehr. Investor Nr. 3
-                heisst <strong>Marc Tissot</strong> — Verwaltungsrat der
-                ‚AlpLogistik SA' in Genf. Seine Firma transportiert das
-                Baumaterial fürs Kraftwerk und wirbt mit ‚CO₂-neutralen
-                Lieferketten'."
-              </p>
-              <p className="mt-3 font-serif italic">
-                „Ich fahre morgen früh zu einer Zeugin nach Speicher (AR).
-                Genf → Speicher. Frag dich, <em>wie</em> man so eine Strecke
-                wirklich nachhaltig macht. Den nächsten Umschlag findest du
-                in der Mappe."
+                In der Ausrüstungskiste findest du keine Forschungsausrüstung,
+                sondern eine Mappe mit alten Strom- und Heizrechnungen. Ein
+                Zettel obenauf:
+                <br /><br />
+                „Um diesen Ort zu bewahren, müssen wir das Problem an der Wurzel
+                packen — und das beginnt bei uns zuhause. Ich habe im Haus
+                Vorbereitungen getroffen. Nimm die Rechnungen mit und schau dir
+                die Räume ganz genau an."
               </p>
               <p className="mt-3 font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
-                — M.
+                — E.
               </p>
             </div>
             <p className="mt-5 text-sm text-foreground/70">
-              In Kapitel 3 geht es um <strong>Mobilität</strong>: Wege,
-              Verkehrsmittel und ihre Folgen für Mensch und Natur.
+              Du wirfst einen letzten Blick auf das Bauschild, greifst die
+              Mappe — und rennst los.
             </p>
             <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
-              <span className="stamp-mark inline-block px-3 py-1 text-xs">
-                In Vorbereitung
-              </span>
+              <Link
+                to="/akte-004"
+                className="inline-flex items-center gap-2 rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
+              >
+                Etappe 4 öffnen →
+              </Link>
               <Link
                 to="/"
                 className="inline-flex items-center gap-2 rounded-sm border border-border bg-card px-5 py-2.5 font-serif text-sm font-semibold transition-colors hover:bg-secondary"
               >
-                ← Akte schließen
+                ← Übersicht
               </Link>
             </div>
           </PaperCard>
         )}
 
         <p className="mt-12 text-center font-mono-typed text-xs uppercase tracking-[0.2em] text-muted-foreground">
-          — Akte 002 · Verschwundene Stimmen —
+          — Etappe 3 · Wald-Lichtung —
         </p>
       </div>
 
-      {/* Tipp-System: aktiv ab Rätselkarte bis Code geknackt */}
       {unlockedSteps.has("raetselkarte") && (step === "raetselkarte" || step === "code") && (
         <HintSystem hints={HINTS_002} storageKey="akte-002-hints-start" />
       )}
