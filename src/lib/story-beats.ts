@@ -36,7 +36,7 @@ export const STATION: Record<
     intro: [
       { setting: "dorfladen", mood: "neutral", text: "Der alte Dorfladen riecht nach Holz und Kaffee." },
       { setting: "portrait", mood: "denkend", text: "Frau Berger zeigt mir einen gepackten Korb." },
-      { setting: "brief", mood: "staunend", text: "„Den hätte Elvira nie so gekauft." Zwei Sachen stimmen nicht.\u00A0" },
+      { setting: "brief", mood: "staunend", text: "Frau Berger: „Den hätte Elvira nie so gekauft." Zwei Sachen stimmen nicht." },
     ],
     success: { mood: "freude", text: "Saisonal, regional, fair — Elvira hätte gestrahlt." },
   },
@@ -52,7 +52,7 @@ export const STATION: Record<
     intro: [
       { setting: "haus", mood: "denkend", text: "Elviras Haus. Heizungsrechnungen liegen offen auf dem Tisch." },
       { setting: "portrait", mood: "besorgt", text: "Zu viel Energie für zu wenig Wärme." },
-      { setting: "brief", mood: "neutral", text: "„Mach mein Haus fit — bevor du zum Kraftwerk gehst.\u00A0" },
+      { setting: "brief", mood: "neutral", text: "Elviras Notiz: Mach mein Haus fit — bevor du zum Kraftwerk gehst." },
     ],
     success: { mood: "freude", text: "Gedämmt, gelüftet, gespart. Das schaffen wir." },
   },
