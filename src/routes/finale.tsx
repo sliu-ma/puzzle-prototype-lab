@@ -4,6 +4,9 @@ import { CheckCircle2, XCircle, Gauge, RefreshCw, ArrowUp, ArrowDown } from "luc
 import { PaperCard } from "@/components/case-file/PaperCard";
 import { Stamp } from "@/components/case-file/Stamp";
 import { StageGate } from "@/components/case-file/StageGate";
+import { RatspersonAvatar } from "@/components/narrative/RatspersonAvatar";
+import { SpeechBubble } from "@/components/narrative/SpeechBubble";
+import { RATSPERSONEN, ratspersonKey } from "@/lib/story-beats";
 import { completeStage } from "@/lib/progress";
 import { cn } from "@/lib/utils";
 
@@ -387,9 +390,26 @@ function FinalePage() {
               <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
                 {frage.ratsmitglied} · Thema {frage.thema} · {typeLabel(frage.type)}
               </p>
-              <h2 className="mt-2 font-serif text-xl font-bold sm:text-2xl">
-                „{frage.frage}"
-              </h2>
+
+              {/* Comic-Sprechblase der Ratsperson */}
+              {(() => {
+                const person = RATSPERSONEN[ratspersonKey(frage.ratsmitglied)];
+                return (
+                  <div className="mt-4 flex items-end gap-3">
+                    <RatspersonAvatar
+                      person={person}
+                      size={72}
+                      shake={meinErgebnis === false}
+                    />
+                    <div className="min-w-0 flex-1 pb-1">
+                      <SpeechBubble key={`q-${frage.id}-${resetKey}`} text={frage.frage} tail="left" speed={18} />
+                      <p className="mt-1 pl-1 font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+                        {person.name} · {person.rolle}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })()}
 
               <div className="mt-5">
                 <FrageRenderer
