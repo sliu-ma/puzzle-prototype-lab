@@ -40,6 +40,11 @@
   --color-stamp: var(--stamp);
   --color-kraft: var(--kraft);
   --color-tape: var(--tape);
+  --color-forest: var(--forest);
+  --color-meadow: var(--meadow);
+  --color-sun: var(--sun);
+  --color-clay: var(--clay);
+  --color-bark: var(--bark);
   --font-serif: "Lora", Georgia, serif;
   --font-mono: "Special Elite", "Courier New", monospace;
   --font-sans: "Inter", -apple-system, sans-serif;
@@ -57,6 +62,13 @@
   --stamp: oklch(0.42 0.135 28);           /* #8a1f1f stamp red */
   --kraft: oklch(0.78 0.06 75);            /* tape/kraft brown */
   --tape: oklch(0.85 0.06 90 / 0.7);       /* translucent tape */
+
+  /* Story / Comic palette — warme Erdtöne */
+  --forest: oklch(0.48 0.08 150);          /* moosgrün */
+  --meadow: oklch(0.88 0.05 130);          /* hellgrün Wiese */
+  --sun:    oklch(0.85 0.14 85);           /* sonnengelb */
+  --clay:   oklch(0.62 0.12 45);           /* tonbraun-orange */
+  --bark:   oklch(0.38 0.06 50);           /* dunkles holz */
 
   /* Semantic mapping */
   --background: var(--paper);

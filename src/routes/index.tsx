@@ -106,6 +106,15 @@ function CoverPage() {
               Fünf Etappen, ein Hearing — bis 19:00 Uhr.
             </p>
 
+            <div className="mt-6">
+              <Link
+                to="/story"
+                className="inline-flex items-center gap-2 rounded-full border-[3px] border-ink bg-[color:var(--color-sun)] px-5 py-3 font-serif text-sm font-bold text-ink shadow-paper-lift transition-transform hover:-translate-y-0.5"
+              >
+                ✨ Neu: Story-Modus (Comic) öffnen →
+              </Link>
+            </div>
+
             {team ? (
               <ProgressPanel
                 teamName={team.name}
