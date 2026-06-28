@@ -48,13 +48,13 @@ export const STORY: Record<string, StoryArc> = {
       {
         badge: "15:32 · Holztresen",
         scene:
-          "Frau Berger schiebt einen gepackten Korb über den Tresen. „Den hat deine Tante so für dich zurückgelegt."",
+          "Frau Berger schiebt einen gepackten Korb über den Tresen. „Den hat deine Tante so für dich zurückgelegt.“",
         maja: "Da stimmt was nicht — sie hätte nie diese Eier gekauft.",
       },
       {
         badge: "Im Korb",
         scene:
-          "Zwischen den Produkten Elviras Rezept für Erdbeer-Törtchen. Daneben eine Notiz: „Erkennst du die zwei Fehler?"",
+          "Zwischen den Produkten Elviras Rezept für Erdbeer-Törtchen. Daneben eine Notiz: „Erkennst du die zwei Fehler?“",
         maja: "Zwei Produkte — und ich weiss schon, welche.",
       },
     ],
@@ -92,13 +92,13 @@ export const STORY: Record<string, StoryArc> = {
       {
         badge: "17:01 · Küchentisch",
         scene:
-          "Stromrechnungen, Heizpläne, Fensterprospekte — und ein Notizzettel: „Bring das Haus auf Kurs."",
+          "Stromrechnungen, Heizpläne, Fensterprospekte — und ein Notizzettel: „Bring das Haus auf Kurs.“",
         maja: "Mit dem Budget bleibt mir nicht viel Spielraum.",
       },
       {
         badge: "Erinnerung",
         scene:
-          "Elvira pflegte zu sagen: „Die billigste Kilowattstunde ist die, die du nie verbrauchst."",
+          "Elvira pflegte zu sagen: „Die billigste Kilowattstunde ist die, die du nie verbrauchst.“",
         maja: "Also: zuerst dämmen, dann erneuern.",
       },
     ],
