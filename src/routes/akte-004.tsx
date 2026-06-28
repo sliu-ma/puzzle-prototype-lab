@@ -350,6 +350,12 @@ function AktePage() {
           — Etappe 4 · Elviras Haus —
         </p>
       </div>
+
+      <EtappenStory
+        arc={STORY.wohnen}
+        sessionKey="story-seen-akte-004"
+        successOn={unlockedSteps.has("input")}
+      />
     </main>
   );
 }
