@@ -71,6 +71,7 @@ function CoverPage() {
 
   return (
     <main className="relative min-h-screen overflow-hidden px-4 py-8 sm:py-14">
+      <IntroLetter open={introOpen} onContinue={() => setIntroOpen(false)} />
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 opacity-[0.06]"
