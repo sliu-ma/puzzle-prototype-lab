@@ -222,7 +222,7 @@ function FinalePage() {
           <Stamp rotate={-6}>Live</Stamp>
         </header>
 
-        {status === "running" && aktuell === 0 && !gezeigt && beantwortet === 0 && (
+        {status === "running" && !started && (
           <PaperCard rotate={-0.4}>
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
               Einstieg · Die Saaltüren öffnen
@@ -247,14 +247,7 @@ function FinalePage() {
             </div>
             <div className="mt-6 flex justify-end">
               <button
-                onClick={() => setGezeigt(false /* noop, just enters quiz */)}
-                className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
-                style={{ display: "none" }}
-              >
-                Frage 1 →
-              </button>
-              <button
-                onClick={() => setAktuell(0)}
+                onClick={() => setStarted(true)}
                 className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
               >
                 Hearing beginnen →
@@ -263,7 +256,7 @@ function FinalePage() {
           </PaperCard>
         )}
 
-        {status === "running" && (
+        {status === "running" && started && (
           <div className="space-y-4" key={`run-${fragenSet}`}>
             {/* Barometer */}
             <div className="rounded-sm border border-border bg-card p-4">
