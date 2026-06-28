@@ -346,6 +346,12 @@ function AktePage() {
           — Etappe 5 · Altes Wasserkraftwerk —
         </p>
       </div>
+
+      <EtappenStory
+        arc={STORY.energie}
+        sessionKey="story-seen-akte-005"
+        successOn={unlockedSteps.has("input")}
+      />
     </main>
   );
 }
