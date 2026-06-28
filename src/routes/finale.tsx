@@ -152,6 +152,7 @@ type Result = "running" | "won" | "lost";
 
 function FinalePage() {
   const [fragenSet, setFragenSet] = useState(0); // bump to reset
+  const [started, setStarted] = useState(false);
   const [aktuell, setAktuell] = useState(0);
   const [antworten, setAntworten] = useState<(number | null)[]>(() => Array(FRAGEN.length).fill(null));
   const [gezeigt, setGezeigt] = useState(false);
