@@ -31,6 +31,7 @@ function CoverPage() {
   const [ready, setReady] = useState(false);
   const [team, setTeam] = useState<{ name: string; code: string } | null>(null);
   const [stage, setStage] = useState(0);
+  const [introOpen, setIntroOpen] = useState(false);
 
   useEffect(() => {
     const sync = () => {
@@ -39,6 +40,17 @@ function CoverPage() {
     };
     sync();
     setReady(true);
+    // Intro-Brief nur beim ersten Besuch (vor Team-Registrierung) automatisch öffnen
+    try {
+      const hasTeam = !!getTeam();
+      const seen = sessionStorage.getItem("intro-letter-seen");
+      if (!hasTeam && !seen) {
+        setIntroOpen(true);
+        sessionStorage.setItem("intro-letter-seen", "1");
+      }
+    } catch {
+      /* ignore */
+    }
     window.addEventListener("maya-progress", sync);
     window.addEventListener("storage", sync);
     return () => {
