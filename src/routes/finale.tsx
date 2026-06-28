@@ -371,10 +371,10 @@ function FinalePage() {
                   Frage {aktuell + 1} / {FRAGEN.length} · Fehler {fehler} / {MAX_FEHLER}
                 </div>
               </div>
-              <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-secondary">
+              <div className="mt-2 h-3 w-full overflow-hidden rounded-full bg-secondary">
                 <div
                   className={cn(
-                    "h-full transition-all",
+                    "h-full transition-[width,background-color] duration-700 ease-out",
                     fehler === 0 && "bg-emerald-500",
                     fehler === 1 && "bg-emerald-500/80",
                     fehler === 2 && "bg-amber-500",
@@ -384,6 +384,25 @@ function FinalePage() {
                   style={{ width: `${ueberzeugung}%` }}
                 />
               </div>
+              {meinErgebnis !== null && (
+                <p
+                  key={`delta-${aktuell}-${resetKey}`}
+                  className={cn(
+                    "mt-2 flex items-center gap-1 font-mono-typed text-[11px] uppercase tracking-wider animate-fade-in",
+                    meinErgebnis ? "text-emerald-700" : "text-destructive",
+                  )}
+                >
+                  {meinErgebnis ? (
+                    <>
+                      <ArrowUp className="h-3.5 w-3.5" /> Barometer steigt
+                    </>
+                  ) : (
+                    <>
+                      <ArrowDown className="h-3.5 w-3.5" /> Barometer fällt
+                    </>
+                  )}
+                </p>
+              )}
             </div>
 
             <PaperCard rotate={0.2}>
