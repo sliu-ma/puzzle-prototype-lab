@@ -36,7 +36,7 @@ export const STATION: Record<
     intro: [
       { setting: "dorfladen", mood: "neutral", text: "Der alte Dorfladen riecht nach Holz und Kaffee." },
       { setting: "portrait", mood: "denkend", text: "Frau Berger zeigt mir einen gepackten Korb." },
-      { setting: "brief", mood: "staunend", text: "Frau Berger: „Den hätte Elvira nie so gekauft." Zwei Sachen stimmen nicht." },
+      { setting: "brief", mood: "staunend", text: 'Frau Berger: „Den hätte Elvira nie so gekauft." Zwei Sachen stimmen nicht.' },
     ],
     success: { mood: "freude", text: "Saisonal, regional, fair — Elvira hätte gestrahlt." },
   },
