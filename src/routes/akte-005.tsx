@@ -5,6 +5,9 @@ import { Stamp } from "@/components/case-file/Stamp";
 import { QRGate } from "@/components/case-file/QRGate";
 import { StageGate } from "@/components/case-file/StageGate";
 import { GutachtenRaetsel } from "@/components/case-file/GutachtenRaetsel";
+import { EtappeIntro } from "@/components/narrative/EtappeIntro";
+import { SuccessReaction } from "@/components/narrative/SuccessReaction";
+import { STATION } from "@/lib/story-beats";
 import { completeStage } from "@/lib/progress";
 import { cn } from "@/lib/utils";
 
@@ -33,7 +36,13 @@ function AkteGated() {
         title={<>Etappe 5 — QR-Code am Wasserkraftwerk scannen</>}
         description="Letzte Etappe vor dem Hearing. Scanne den QR-Code am Tor des alten Wasserkraftwerks."
       >
-        <AktePage />
+        <EtappeIntro
+          stationKey="kraftwerk"
+          storageKey="story-kraftwerk-seen"
+          title="Etappe 5 · Altes Wasserkraftwerk"
+        >
+          <AktePage />
+        </EtappeIntro>
       </QRGate>
     </StageGate>
   );
@@ -52,9 +61,11 @@ const STEPS: { id: Step; label: string }[] = [
 function AktePage() {
   const [step, setStep] = useState<Step>("brief");
   const [unlockedSteps, setUnlockedSteps] = useState<Set<Step>>(new Set(["brief"]));
+  const [successOpen, setSuccessOpen] = useState(false);
 
   useEffect(() => {
     if (step === "naechstes") completeStage(5);
+    if (step === "input") setSuccessOpen(true);
   }, [step]);
 
   const goto = (s: Step) => {
@@ -344,6 +355,12 @@ function AktePage() {
           — Etappe 5 · Altes Wasserkraftwerk —
         </p>
       </div>
+      <SuccessReaction
+        open={successOpen}
+        mood={STATION.kraftwerk.success.mood}
+        text={STATION.kraftwerk.success.text}
+        onClose={() => setSuccessOpen(false)}
+      />
     </main>
   );
 }
