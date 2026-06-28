@@ -145,6 +145,9 @@ function CoverPage() {
                   registerTeam(name, code);
                   setTeam({ name, code });
                   setStage(getCurrentStage());
+                  try {
+                    if (!localStorage.getItem(INTRO_KEY)) setShowIntro(true);
+                  } catch {}
                 }}
               />
             )}
