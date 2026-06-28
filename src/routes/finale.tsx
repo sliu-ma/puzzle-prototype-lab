@@ -1007,3 +1007,61 @@ function OrderView({
     </div>
   );
 }
+
+function RatspersonFrage({
+  frage,
+  meinErgebnis,
+}: {
+  frage: Frage;
+  meinErgebnis: boolean | null;
+}) {
+  const person = getRatspersonByThema(frage.thema);
+  const initials = person
+    ? person.name
+        .split(" ")
+        .map((s) => s[0])
+        .join("")
+        .slice(0, 2)
+        .toUpperCase()
+    : "RP";
+  const accent = person?.accent ?? "#7c8c5a";
+
+  return (
+    <div className="flex items-stretch gap-3 panel-pop">
+      {/* Avatar */}
+      <div className="flex shrink-0 flex-col items-center">
+        <div
+          className={cn(
+            "flex h-16 w-16 items-center justify-center rounded-full border-2 shadow-sm transition-transform sm:h-20 sm:w-20",
+            meinErgebnis === true && "scale-105",
+            meinErgebnis === false && "shake-x",
+          )}
+          style={{ backgroundColor: accent, borderColor: "rgba(0,0,0,0.15)" }}
+        >
+          <span className="font-serif text-xl font-bold text-white sm:text-2xl">
+            {initials}
+          </span>
+        </div>
+        <p className="mt-1 text-center font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
+          {person?.rolle ?? frage.thema}
+        </p>
+      </div>
+
+      {/* Sprechblase */}
+      <div className="relative flex-1">
+        <div
+          className="absolute left-[-8px] top-6 h-4 w-4 rotate-45 border-b border-l bg-card"
+          style={{ borderColor: "var(--color-border)" }}
+        />
+        <div className="rounded-lg border border-border bg-card p-3 shadow-sm sm:p-4">
+          <p className="font-mono-typed text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+            {person?.name ?? frage.ratsmitglied} · {typeLabel(frage.type)}
+          </p>
+          <p className="mt-1.5 font-serif text-base leading-snug sm:text-lg">
+            „{frage.frage}"
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
