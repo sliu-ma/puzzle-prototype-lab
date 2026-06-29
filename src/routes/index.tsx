@@ -125,6 +125,7 @@ function CoverPage() {
               <ProgressPanel
                 teamName={team.name}
                 currentStage={stage}
+                onReplayIntro={() => setShowIntro(true)}
                 onReset={() => {
                   if (
                     confirm(
@@ -141,9 +142,15 @@ function CoverPage() {
                   registerTeam(name, code);
                   setTeam({ name, code });
                   setStage(getCurrentStage());
+                  try {
+                    if (!localStorage.getItem(INTRO_KEY)) setShowIntro(true);
+                  } catch {
+                    setShowIntro(true);
+                  }
                 }}
               />
             )}
+
           </article>
 
           <div
