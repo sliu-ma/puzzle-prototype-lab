@@ -206,8 +206,7 @@ function AktePage() {
               Was sagt das Gedicht?
             </h2>
             <p className="mt-3 text-[15px] text-foreground/80">
-              Lege die gefährdeten Tiere mit der Zahlenseite aufs Gedicht. Tippe
-              die vier Zahlen <strong>von der kleinsten zur grössten</strong>{" "}
+              Tippe die vier Zahlen <strong>von der kleinsten zur grössten</strong>{" "}
               ein.
             </p>
 
@@ -217,10 +216,10 @@ function AktePage() {
 
             <div className="mt-6 flex justify-start">
               <button
-                onClick={() => setStep("raetselkarte")}
+                onClick={() => setStep("brief")}
                 className="rounded-sm border border-border bg-card px-4 py-2.5 font-serif text-sm hover:bg-secondary"
               >
-                ← Rätselkarte erneut ansehen
+                ← Zurück
               </button>
             </div>
           </PaperCard>
@@ -336,7 +335,7 @@ function AktePage() {
         </p>
       </div>
 
-      {unlockedSteps.has("raetselkarte") && (step === "raetselkarte" || step === "code") && (
+      {step === "code" && (
         <HintSystem hints={HINTS_002} storageKey="akte-002-hints-start" />
       )}
     </main>
