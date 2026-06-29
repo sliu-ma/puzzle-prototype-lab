@@ -72,7 +72,10 @@ function CoverPage() {
   }
 
   return (
+    <>
+    {showIntro && <AktenIntro onComplete={completeIntro} />}
     <main className="relative min-h-screen overflow-hidden px-4 py-8 sm:py-14">
+
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 opacity-[0.06]"
