@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Lock, CheckCircle2, RotateCcw } from "lucide-react";
+import { Lock, CheckCircle2, RotateCcw, Play } from "lucide-react";
 import { Stamp } from "@/components/case-file/Stamp";
+import { AktenIntro } from "@/components/case-file/AktenIntro";
 import {
   START_CODE,
   STAGES,
@@ -11,6 +12,9 @@ import {
   resetAll,
 } from "@/lib/progress";
 import { cn } from "@/lib/utils";
+
+const INTRO_KEY = "maya-intro-seen";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
