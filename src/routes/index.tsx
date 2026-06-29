@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Lock, CheckCircle2, RotateCcw } from "lucide-react";
+import { Lock, CheckCircle2, RotateCcw, Play } from "lucide-react";
 import { Stamp } from "@/components/case-file/Stamp";
+import { AktenIntro } from "@/components/case-file/AktenIntro";
 import {
   START_CODE,
   STAGES,
@@ -11,6 +12,9 @@ import {
   resetAll,
 } from "@/lib/progress";
 import { cn } from "@/lib/utils";
+
+const INTRO_KEY = "maya-intro-seen";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -30,6 +34,7 @@ function CoverPage() {
   const [ready, setReady] = useState(false);
   const [team, setTeam] = useState<{ name: string; code: string } | null>(null);
   const [stage, setStage] = useState(0);
+  const [showIntro, setShowIntro] = useState(false);
 
   useEffect(() => {
     const sync = () => {
@@ -46,6 +51,16 @@ function CoverPage() {
     };
   }, []);
 
+  const completeIntro = () => {
+    try {
+      localStorage.setItem(INTRO_KEY, "1");
+    } catch {
+      /* ignore */
+    }
+    setShowIntro(false);
+  };
+
+
   if (!ready) {
     return (
       <main className="flex min-h-screen items-center justify-center px-4">
@@ -57,7 +72,10 @@ function CoverPage() {
   }
 
   return (
+    <>
+    {showIntro && <AktenIntro onComplete={completeIntro} />}
     <main className="relative min-h-screen overflow-hidden px-4 py-8 sm:py-14">
+
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 opacity-[0.06]"
@@ -110,6 +128,7 @@ function CoverPage() {
               <ProgressPanel
                 teamName={team.name}
                 currentStage={stage}
+                onReplayIntro={() => setShowIntro(true)}
                 onReset={() => {
                   if (
                     confirm(
@@ -126,9 +145,15 @@ function CoverPage() {
                   registerTeam(name, code);
                   setTeam({ name, code });
                   setStage(getCurrentStage());
+                  try {
+                    if (!localStorage.getItem(INTRO_KEY)) setShowIntro(true);
+                  } catch {
+                    setShowIntro(true);
+                  }
                 }}
               />
             )}
+
           </article>
 
           <div
@@ -148,6 +173,7 @@ function CoverPage() {
         </p>
       </div>
     </main>
+    </>
   );
 }
 
@@ -252,10 +278,12 @@ function ProgressPanel({
   teamName,
   currentStage,
   onReset,
+  onReplayIntro,
 }: {
   teamName: string;
   currentStage: number;
   onReset: () => void;
+  onReplayIntro: () => void;
 }) {
   const finished = currentStage >= 7;
   const stageStations = STAGES.slice(0, 5); // ohne Finale
@@ -387,7 +415,13 @@ function ProgressPanel({
         </li>
       </ol>
 
-      <div className="flex justify-end">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <button
+          onClick={onReplayIntro}
+          className="inline-flex items-center gap-2 rounded-sm border border-border bg-card px-3 py-1.5 font-mono-typed text-[11px] uppercase tracking-wider text-muted-foreground hover:bg-secondary"
+        >
+          <Play className="h-3 w-3" /> Briefing erneut ansehen
+        </button>
         <button
           onClick={onReset}
           className="inline-flex items-center gap-2 rounded-sm border border-border bg-card px-3 py-1.5 font-mono-typed text-[11px] uppercase tracking-wider text-muted-foreground hover:bg-secondary"

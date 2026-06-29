@@ -4,7 +4,8 @@ import { CheckCircle2, XCircle, Gauge, RefreshCw, ArrowUp, ArrowDown, Sparkles }
 import { PaperCard } from "@/components/case-file/PaperCard";
 import { Stamp } from "@/components/case-file/Stamp";
 import { StageGate } from "@/components/case-file/StageGate";
-import { completeStage } from "@/lib/progress";
+import { SiegOutro } from "@/components/case-file/SiegOutro";
+import { completeStage, getTeam } from "@/lib/progress";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/finale")({
@@ -450,54 +451,17 @@ function FinalePage() {
 
         {status === "won" && (
           <div className="animate-scale-in">
-            <PaperCard rotate={-0.3} tape="top-left">
-              <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-                Happy End · Abstimmung vertagt
-              </p>
-              <h2 className="mt-2 font-serif text-3xl font-bold sm:text-4xl">
-                Der Rat ist überzeugt.
-              </h2>
-              <p className="mt-4 text-[15px] leading-relaxed text-foreground/85">
-                „Antrag angenommen", sagt der Gemeindepräsident. „Die Abstimmung
-                wird auf nächsten Monat verschoben."
-              </p>
-
-              <div className="relative mt-6 overflow-hidden rounded-sm border border-emerald-500/40 bg-emerald-500/5 p-5 text-center">
-                <SuccessConfetti />
-                <Sparkles className="mx-auto h-10 w-10 text-emerald-600 animate-fade-in" />
-                <p className="mt-2 font-mono-typed text-[10px] uppercase tracking-[0.3em] text-emerald-700">
-                  Barometer · Endstand
-                </p>
-                <p className="mt-1 font-serif text-5xl font-bold text-emerald-700">
-                  {barometer}%
-                </p>
-              </div>
-
-              <div className="mt-6 grid gap-2 rounded-sm border border-border bg-paper p-4 sm:grid-cols-3">
-                <Stat label="Fragen" value={FRAGEN.length} />
-                <Stat label="Korrekt" value={correctCount} accent="emerald" />
-                <Stat label="Fehler" value={fehler} />
-              </div>
-              <p className="mt-6 text-center font-serif text-3xl tracking-[0.4em] text-stamp sm:text-5xl">
-                GEWONNEN
-              </p>
-              <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
-                <button
-                  onClick={reset}
-                  className="inline-flex items-center gap-2 rounded-sm border border-border bg-card px-4 py-2 font-serif text-sm hover:bg-secondary"
-                >
-                  <RefreshCw className="h-4 w-4" /> Nochmal spielen
-                </button>
-                <Link
-                  to="/"
-                  className="inline-flex items-center gap-2 rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground hover:-translate-y-0.5 hover:shadow-md"
-                >
-                  ← Übersicht
-                </Link>
-              </div>
-            </PaperCard>
+            <SiegOutro
+              teamName={getTeam()?.name ?? "Euer Team"}
+              barometer={barometer}
+              total={FRAGEN.length}
+              correct={correctCount}
+              fehler={fehler}
+              onRestart={reset}
+            />
           </div>
         )}
+
 
         {status === "lost" && (
           <PaperCard rotate={0.3} tape="top-right">
