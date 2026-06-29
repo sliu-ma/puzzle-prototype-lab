@@ -274,10 +274,12 @@ function ProgressPanel({
   teamName,
   currentStage,
   onReset,
+  onReplayIntro,
 }: {
   teamName: string;
   currentStage: number;
   onReset: () => void;
+  onReplayIntro: () => void;
 }) {
   const finished = currentStage >= 7;
   const stageStations = STAGES.slice(0, 5); // ohne Finale
