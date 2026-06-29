@@ -253,14 +253,29 @@ function FinalePage() {
     Array(FRAGEN.length).fill(null),
   );
   const [resetKey, setResetKey] = useState(0);
+  const [pulse, setPulse] = useState<null | "up" | "down">(null);
+  const pulseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  const correctCount = useMemo(
+    () => ergebnisse.filter((r) => r === true).length,
+    [ergebnisse],
+  );
   const fehler = useMemo(
     () => ergebnisse.filter((r) => r === false).length,
     [ergebnisse],
   );
-  const beantwortet = ergebnisse.filter((r) => r !== null).length;
+  const beantwortet = correctCount + fehler;
+
+  // Barometer: startet bei 50, +12 pro Treffer, -18 pro Fehler.
+  const STEP_UP = 12;
+  const STEP_DOWN = 18;
+  const barometer = Math.max(
+    0,
+    Math.min(100, 50 + correctCount * STEP_UP - fehler * STEP_DOWN),
+  );
+
   const status: Status =
-    fehler > MAX_FEHLER
+    barometer <= 0
       ? "lost"
       : beantwortet === FRAGEN.length
         ? "won"
@@ -276,6 +291,9 @@ function FinalePage() {
       next[aktuell] = correct;
       return next;
     });
+    setPulse(correct ? "up" : "down");
+    if (pulseTimer.current) clearTimeout(pulseTimer.current);
+    pulseTimer.current = setTimeout(() => setPulse(null), 1600);
   };
 
   const handleWeiter = () => {
@@ -287,12 +305,8 @@ function FinalePage() {
     setAktuell(0);
     setStarted(true);
     setResetKey((k) => k + 1);
+    setPulse(null);
   };
-
-  const ueberzeugung = Math.max(
-    0,
-    Math.round(100 - (fehler / MAX_FEHLER) * 60 - (fehler > 0 ? 5 : 0)),
-  );
 
   const frage = FRAGEN[aktuell];
   const meinErgebnis = ergebnisse[aktuell];
@@ -337,12 +351,13 @@ function FinalePage() {
             </h2>
             <p className="mt-4 text-[15px] leading-relaxed text-foreground/85">
               Mit den korrigierten Gutachten stossen Maja, Elvira und Marlene
-              Vogt die schwere Saaltür auf. Der Rat stellt zehn Fragen aus allen
-              fünf Themen — in unterschiedlicher Form.
+              Vogt die schwere Saaltür auf. Reihum stellt jedes Ratsmitglied
+              eine Frage — euer Überzeugungs-Barometer steigt mit jedem Treffer
+              und fällt mit jedem Fehler.
             </p>
             <div className="mt-4 rounded-sm border border-stamp/30 bg-stamp/5 p-4 text-sm">
               <p className="font-serif italic">
-                <strong>Mehr als {MAX_FEHLER} falsche Antworten — und die Abstimmung kippt.</strong>
+                <strong>Fällt das Barometer auf null — kippt die Abstimmung.</strong>
               </p>
             </div>
             <div className="mt-6 flex justify-end">
@@ -359,39 +374,29 @@ function FinalePage() {
         {status === "running" && started && (
           <div className="space-y-4" key={`run-${resetKey}`}>
             {/* Barometer */}
-            <div className="rounded-sm border border-border bg-card p-4">
-              <div className="flex items-center justify-between gap-3">
-                <div className="flex items-center gap-2 font-mono-typed text-[11px] uppercase tracking-wider text-stamp">
-                  <Gauge className="h-4 w-4" /> Überzeugungs-Barometer
-                </div>
-                <div className="font-mono-typed text-xs text-muted-foreground">
-                  Frage {aktuell + 1} / {FRAGEN.length} · Fehler {fehler} / {MAX_FEHLER}
-                </div>
-              </div>
-              <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-secondary">
-                <div
-                  className={cn(
-                    "h-full transition-all",
-                    fehler === 0 && "bg-emerald-500",
-                    fehler === 1 && "bg-emerald-500/80",
-                    fehler === 2 && "bg-amber-500",
-                    fehler === 3 && "bg-orange-500",
-                    fehler > 3 && "bg-destructive",
-                  )}
-                  style={{ width: `${ueberzeugung}%` }}
-                />
-              </div>
-            </div>
+            <Barometer
+              value={barometer}
+              pulse={pulse}
+              aktuell={aktuell}
+              total={FRAGEN.length}
+              treffer={correctCount}
+              fehler={fehler}
+            />
+
+            {/* Ratsperson mit Sprechblase */}
+            <CouncilSpeaker
+              key={`s-${frage.id}-${resetKey}`}
+              name={frage.ratsmitglied}
+              thema={frage.thema}
+              text={frage.frage}
+            />
 
             <PaperCard rotate={0.2}>
               <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-                {frage.ratsmitglied} · Thema {frage.thema} · {typeLabel(frage.type)}
+                Antwortformat · {typeLabel(frage.type)}
               </p>
-              <h2 className="mt-2 font-serif text-xl font-bold sm:text-2xl">
-                „{frage.frage}"
-              </h2>
 
-              <div className="mt-5">
+              <div className="mt-4">
                 <FrageRenderer
                   key={`f-${frage.id}-${resetKey}`}
                   frage={frage}
@@ -403,16 +408,23 @@ function FinalePage() {
               {meinErgebnis !== null && (
                 <div
                   className={cn(
-                    "mt-5 rounded-sm border p-4 text-sm",
+                    "mt-5 rounded-sm border p-4 text-sm animate-scale-in",
                     meinErgebnis
                       ? "border-emerald-500/40 bg-emerald-500/5"
                       : "border-destructive/40 bg-destructive/5",
                   )}
                 >
-                  <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
-                    {meinErgebnis ? "Treffer" : "Fehler"}
-                  </p>
-                  <p className="mt-1 text-foreground/85">{frage.erklaerung}</p>
+                  <div className="flex items-center gap-2">
+                    {meinErgebnis ? (
+                      <Sparkles className="h-4 w-4 text-emerald-600" />
+                    ) : (
+                      <XCircle className="h-4 w-4 text-destructive" />
+                    )}
+                    <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
+                      {meinErgebnis ? "Treffer · Barometer steigt" : "Fehler · Barometer fällt"}
+                    </p>
+                  </div>
+                  <p className="mt-2 text-foreground/85">{frage.erklaerung}</p>
                 </div>
               )}
 
@@ -437,40 +449,54 @@ function FinalePage() {
         )}
 
         {status === "won" && (
-          <PaperCard rotate={-0.3} tape="top-left">
-            <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-              Happy End · Abstimmung vertagt
-            </p>
-            <h2 className="mt-2 font-serif text-3xl font-bold sm:text-4xl">
-              Der Rat ist überzeugt.
-            </h2>
-            <p className="mt-4 text-[15px] leading-relaxed text-foreground/85">
-              „Antrag angenommen", sagt der Gemeindepräsident. „Die Abstimmung
-              wird auf nächsten Monat verschoben."
-            </p>
-            <div className="mt-6 grid gap-2 rounded-sm border border-border bg-paper p-4 sm:grid-cols-3">
-              <Stat label="Fragen" value={FRAGEN.length} />
-              <Stat label="Korrekt" value={FRAGEN.length - fehler} accent="emerald" />
-              <Stat label="Fehler" value={fehler} />
-            </div>
-            <p className="mt-6 text-center font-serif text-3xl tracking-[0.4em] text-stamp sm:text-5xl">
-              GEWONNEN
-            </p>
-            <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
-              <button
-                onClick={reset}
-                className="inline-flex items-center gap-2 rounded-sm border border-border bg-card px-4 py-2 font-serif text-sm hover:bg-secondary"
-              >
-                <RefreshCw className="h-4 w-4" /> Nochmal spielen
-              </button>
-              <Link
-                to="/"
-                className="inline-flex items-center gap-2 rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground hover:-translate-y-0.5 hover:shadow-md"
-              >
-                ← Übersicht
-              </Link>
-            </div>
-          </PaperCard>
+          <div className="animate-scale-in">
+            <PaperCard rotate={-0.3} tape="top-left">
+              <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
+                Happy End · Abstimmung vertagt
+              </p>
+              <h2 className="mt-2 font-serif text-3xl font-bold sm:text-4xl">
+                Der Rat ist überzeugt.
+              </h2>
+              <p className="mt-4 text-[15px] leading-relaxed text-foreground/85">
+                „Antrag angenommen", sagt der Gemeindepräsident. „Die Abstimmung
+                wird auf nächsten Monat verschoben."
+              </p>
+
+              <div className="relative mt-6 overflow-hidden rounded-sm border border-emerald-500/40 bg-emerald-500/5 p-5 text-center">
+                <SuccessConfetti />
+                <Sparkles className="mx-auto h-10 w-10 text-emerald-600 animate-fade-in" />
+                <p className="mt-2 font-mono-typed text-[10px] uppercase tracking-[0.3em] text-emerald-700">
+                  Barometer · Endstand
+                </p>
+                <p className="mt-1 font-serif text-5xl font-bold text-emerald-700">
+                  {barometer}%
+                </p>
+              </div>
+
+              <div className="mt-6 grid gap-2 rounded-sm border border-border bg-paper p-4 sm:grid-cols-3">
+                <Stat label="Fragen" value={FRAGEN.length} />
+                <Stat label="Korrekt" value={correctCount} accent="emerald" />
+                <Stat label="Fehler" value={fehler} />
+              </div>
+              <p className="mt-6 text-center font-serif text-3xl tracking-[0.4em] text-stamp sm:text-5xl">
+                GEWONNEN
+              </p>
+              <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
+                <button
+                  onClick={reset}
+                  className="inline-flex items-center gap-2 rounded-sm border border-border bg-card px-4 py-2 font-serif text-sm hover:bg-secondary"
+                >
+                  <RefreshCw className="h-4 w-4" /> Nochmal spielen
+                </button>
+                <Link
+                  to="/"
+                  className="inline-flex items-center gap-2 rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground hover:-translate-y-0.5 hover:shadow-md"
+                >
+                  ← Übersicht
+                </Link>
+              </div>
+            </PaperCard>
+          </div>
         )}
 
         {status === "lost" && (
@@ -482,9 +508,9 @@ function FinalePage() {
               „Versucht es erneut."
             </h2>
             <p className="mt-4 text-[15px] leading-relaxed text-foreground/85">
-              Drei Ratsmitglieder schütteln den Kopf. Die Argumente waren nicht
-              präzise genug. Geh die Etappen-Karten nochmals durch — besonders
-              die fachlichen Inputs am Ende jeder Etappe.
+              Das Barometer ist auf null gefallen. Geh die Etappen-Karten
+              nochmals durch — besonders die fachlichen Inputs am Ende jeder
+              Etappe.
             </p>
             <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
               <Link
@@ -504,6 +530,171 @@ function FinalePage() {
         )}
       </div>
     </main>
+  );
+}
+
+/* -------------------------------------------------- */
+/*  Barometer mit Steige-/Fall-Pulse                    */
+/* -------------------------------------------------- */
+
+function Barometer({
+  value,
+  pulse,
+  aktuell,
+  total,
+  treffer,
+  fehler,
+}: {
+  value: number;
+  pulse: null | "up" | "down";
+  aktuell: number;
+  total: number;
+  treffer: number;
+  fehler: number;
+}) {
+  const color =
+    value > 70
+      ? "bg-emerald-500"
+      : value > 45
+        ? "bg-emerald-500/80"
+        : value > 25
+          ? "bg-amber-500"
+          : value > 10
+            ? "bg-orange-500"
+            : "bg-destructive";
+
+  return (
+    <div className="sticky top-2 z-20 rounded-sm border border-border bg-card/95 p-4 shadow-sm backdrop-blur">
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2 font-mono-typed text-[11px] uppercase tracking-wider text-stamp">
+          <Gauge className="h-4 w-4" /> Überzeugungs-Barometer
+        </div>
+        <div className="flex items-center gap-2">
+          {pulse && (
+            <span
+              key={`${aktuell}-${pulse}`}
+              className={cn(
+                "inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-mono-typed text-[10px] font-bold animate-fade-in",
+                pulse === "up"
+                  ? "bg-emerald-500/15 text-emerald-700"
+                  : "bg-destructive/15 text-destructive",
+              )}
+            >
+              {pulse === "up" ? (
+                <>
+                  <ArrowUp className="h-3 w-3" /> +12
+                </>
+              ) : (
+                <>
+                  <ArrowDown className="h-3 w-3" /> −18
+                </>
+              )}
+            </span>
+          )}
+          <div className="font-mono-typed text-xs text-muted-foreground">
+            Frage {Math.min(aktuell + 1, total)} / {total}
+          </div>
+        </div>
+      </div>
+      <div className="mt-2 h-3 w-full overflow-hidden rounded-full bg-secondary">
+        <div
+          className={cn("h-full transition-all duration-500", color)}
+          style={{ width: `${value}%` }}
+        />
+      </div>
+      <div className="mt-1 flex items-center justify-between font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+        <span>0</span>
+        <span>{value}%</span>
+        <span className="flex items-center gap-3">
+          <span className="text-emerald-700">✓ {treffer}</span>
+          <span className="text-destructive">✕ {fehler}</span>
+        </span>
+      </div>
+    </div>
+  );
+}
+
+/* -------------------------------------------------- */
+/*  Ratsperson + Sprechblase                            */
+/* -------------------------------------------------- */
+
+const COUNCIL_COLORS: Record<string, { bg: string; ring: string }> = {
+  "Ratsmitglied Schmid": { bg: "bg-sky-200", ring: "ring-sky-400" },
+  "Ratsherr Brunner": { bg: "bg-amber-200", ring: "ring-amber-500" },
+  "Ratsfrau Lindenmann": { bg: "bg-emerald-200", ring: "ring-emerald-500" },
+  "Ratsherr Frei": { bg: "bg-rose-200", ring: "ring-rose-400" },
+  "Gemeindepräsident": { bg: "bg-violet-200", ring: "ring-violet-500" },
+};
+
+function initialsOf(name: string) {
+  const words = name.split(/\s+/).filter(Boolean);
+  const last = words[words.length - 1] ?? "";
+  return last.slice(0, 2).toUpperCase();
+}
+
+function CouncilSpeaker({
+  name,
+  thema,
+  text,
+}: {
+  name: string;
+  thema: string;
+  text: string;
+}) {
+  const c = COUNCIL_COLORS[name] ?? { bg: "bg-secondary", ring: "ring-border" };
+  return (
+    <div className="flex items-start gap-3 animate-fade-in">
+      <div
+        className={cn(
+          "flex h-14 w-14 shrink-0 items-center justify-center rounded-full font-serif text-lg font-bold text-foreground ring-2 ring-offset-2 ring-offset-paper",
+          c.bg,
+          c.ring,
+        )}
+        aria-hidden
+      >
+        {initialsOf(name)}
+      </div>
+      <div className="relative flex-1 rounded-2xl rounded-tl-sm border border-border bg-paper px-4 py-3 shadow-sm">
+        <span
+          aria-hidden
+          className="absolute -left-2 top-3 h-3 w-3 rotate-45 border-b border-l border-border bg-paper"
+        />
+        <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
+          {name} · {thema}
+        </p>
+        <p className="mt-1 font-serif text-[15px] leading-snug sm:text-base">
+          „{text}"
+        </p>
+      </div>
+    </div>
+  );
+}
+
+/* Kleine Konfetti-/Funken-Animation für die Auflösung */
+function SuccessConfetti() {
+  const dots = Array.from({ length: 14 });
+  return (
+    <div aria-hidden className="pointer-events-none absolute inset-0">
+      {dots.map((_, i) => {
+        const left = (i * 53) % 100;
+        const delay = (i % 7) * 80;
+        const colors = ["bg-emerald-500", "bg-amber-400", "bg-sky-400", "bg-rose-400"];
+        return (
+          <span
+            key={i}
+            className={cn(
+              "absolute top-0 h-2 w-2 rounded-sm opacity-80 animate-fade-in",
+              colors[i % colors.length],
+            )}
+            style={{
+              left: `${left}%`,
+              animationDelay: `${delay}ms`,
+              transform: `translateY(${(i % 5) * 6}px) rotate(${i * 18}deg)`,
+            }}
+          />
+        );
+      })}
+    </div>
   );
 }
 
