@@ -4,6 +4,7 @@ import { Lock } from "lucide-react";
 import { PaperCard } from "./PaperCard";
 import { Stamp } from "./Stamp";
 import { getCurrentStage, getTeam, STAGES } from "@/lib/progress";
+import { DEV_BYPASS } from "@/lib/dev-mode";
 
 type Props = {
   stage: number; // 1..6
@@ -16,6 +17,7 @@ type Props = {
  * gestartet (kein Team), wird auf die Startseite verwiesen.
  */
 export function StageGate({ stage, children }: Props) {
+  if (DEV_BYPASS) return <>{children}</>;
   const [ready, setReady] = useState(false);
   const [current, setCurrent] = useState(0);
   const [hasTeam, setHasTeam] = useState(false);
