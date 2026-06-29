@@ -411,7 +411,13 @@ function ProgressPanel({
         </li>
       </ol>
 
-      <div className="flex justify-end">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <button
+          onClick={onReplayIntro}
+          className="inline-flex items-center gap-2 rounded-sm border border-border bg-card px-3 py-1.5 font-mono-typed text-[11px] uppercase tracking-wider text-muted-foreground hover:bg-secondary"
+        >
+          <Play className="h-3 w-3" /> Briefing erneut ansehen
+        </button>
         <button
           onClick={onReset}
           className="inline-flex items-center gap-2 rounded-sm border border-border bg-card px-3 py-1.5 font-mono-typed text-[11px] uppercase tracking-wider text-muted-foreground hover:bg-secondary"
