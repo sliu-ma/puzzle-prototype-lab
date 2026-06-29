@@ -129,8 +129,8 @@ export const ROUTES: RouteOption[] = [
     titel: "Zug",
     iconKeys: ["train"],
     dauer: "4h 41min",
-    preis: "CHF 79–149",
-    co2Kg: 4,
+    preis: "CHF 59.20",
+    co2Kg: 3,
     beschreibung:
       "Direkt Genève → St. Gallen mit IC 1, Umstieg auf S21 nach Speicher. Eine Verbindung, ein Ticket.",
     correct: true,
@@ -194,8 +194,8 @@ export const ROUTES: RouteOption[] = [
     titel: "Auto · ca. 366 km",
     iconKeys: ["car"],
     dauer: "4h 13min",
-    preis: "CHF 58–84 (Treibstoff)",
-    co2Kg: 55,
+    preis: "CHF 271",
+    co2Kg: 92,
     beschreibung:
       "Mietwagen oder Privatauto via A1 — Lausanne, Bern, Zürich, St. Gallen.",
     correct: false,
@@ -233,8 +233,8 @@ export const ROUTES: RouteOption[] = [
     titel: "Zug + Flug + Zug",
     iconKeys: ["train", "plane", "train"],
     dauer: "4h 11min",
-    preis: "CHF 109–359",
-    co2Kg: 120,
+    preis: "CHF 276",
+    co2Kg: 140,
     beschreibung:
       "Genève → Flughafen, Inlandflug nach Zürich, dann mit IC 5 + S21 weiter. Klingt schnell — ist es kaum.",
     correct: false,

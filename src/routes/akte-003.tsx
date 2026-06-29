@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { Map as MapIcon, MapPin } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { MapPin } from "lucide-react";
 import { PaperCard } from "@/components/case-file/PaperCard";
 import { Stamp } from "@/components/case-file/Stamp";
 import { QRGate } from "@/components/case-file/QRGate";
@@ -67,11 +67,10 @@ function AkteGated() {
   );
 }
 
-type Step = "brief" | "raetselkarte" | "eingabe" | "routen" | "input" | "naechstes";
+type Step = "brief" | "eingabe" | "routen" | "input" | "naechstes";
 
 const STEPS: { id: Step; label: string }[] = [
   { id: "brief", label: "Brief" },
-  { id: "raetselkarte", label: "Rätselkarte" },
   { id: "eingabe", label: "Start & Ziel" },
   { id: "routen", label: "Route wählen" },
   { id: "input", label: "Fachlicher Input" },
@@ -100,6 +99,15 @@ function AktePage() {
 
   const [selectedRouteId, setSelectedRouteId] = useState<string | null>(null);
   const [routeError, setRouteError] = useState<string | null>(null);
+
+  const jetzt = useMemo(
+    () =>
+      new Date().toLocaleTimeString("de-CH", {
+        hour: "2-digit",
+        minute: "2-digit",
+      }) + " Uhr",
+    [],
+  );
 
   const goto = (s: Step) => {
     setUnlockedSteps((prev) => new Set([...prev, s]));
@@ -190,95 +198,36 @@ function AktePage() {
         {step === "brief" && (
           <PaperCard rotate={-0.4}>
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-              Notiz 01 · Bahnhof Grünwald · Bank am Gleis 1
+              Notiz 01 – Bahnhof Speicher – Bank am Gleis 1
             </p>
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
               Elviras alte Reisetickets
             </h2>
             <p className="mt-1 font-mono-typed text-xs text-muted-foreground">
-              [Zettel und drei Fahrkarten · gefunden 14:48 Uhr]
+              [Hinweis gefunden um {jetzt}]
             </p>
-            <blockquote className="mt-5 border-l-4 border-stamp pl-4 text-[15px] leading-relaxed">
-              „Maja — wenn du das liest, hast du den ersten Hinweis am
-              richtigen Ort gefunden. Vor ein paar Jahren bin ich zu einer
-              ehemaligen Mitarbeiterin einer Logistikfirma quer durch die
-              Schweiz gereist: vom <em>See in der Westschweiz</em> zu einem
-              Dorf hier oben in den Appenzeller Hügeln, das nach einem
-              Vorrat klingt. Drei Optionen lagen damals auf dem Tisch — Zug,
-              Auto, Inlandflug + Zug."
-              <br />
-              <br />
-              „Ich habe genau eine davon genommen. Finde heraus welche — und
-              vor allem warum. Diese Frage ist genau die, die heute Abend im
-              Gemeinderat fehlt."
+            <p className="mt-5 text-[15px] leading-relaxed">
+              Das alte Bahnhofsgebäude dient heute als kleines Heimatmuseum. Am
+              ehemaligen Fahrkartenschalter findet Maja ein Couvert, das an sie
+              adressiert ist. Darin: ein vergilbtes Zugticket, ein Flugticket
+              und eine Autobahnvignette, alle für dieselbe Strecke, für die
+              Elvira einst zu einer Umweltkonferenz gereist war.
+            </p>
+            <blockquote className="mt-4 border-l-4 border-stamp pl-4 font-serif italic text-[15px] leading-relaxed">
+              „Ich habe immer das gewählt, was am wenigsten Spuren hinterlässt.
+              Findest du heraus, welchen Weg ich genommen habe?"
             </blockquote>
             <div className="mt-6 flex justify-end">
-              <button
-                onClick={() => goto("raetselkarte")}
-                className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
-              >
-                Weiter zur Rätselkarte →
-              </button>
-            </div>
-          </PaperCard>
-        )}
-
-        {step === "raetselkarte" && (
-          <PaperCard rotate={0.3} tape="top">
-            <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-              Rätselkarte · Auftrag von Elvira
-            </p>
-            <h2 className="mt-2 flex items-center gap-2 font-serif text-2xl font-bold sm:text-3xl">
-              <MapIcon className="h-6 w-6 text-stamp" /> Welche Route hat Elvira genommen?
-            </h2>
-
-            <div className="mt-5 grid gap-4 sm:grid-cols-2">
-              <div className="rounded-sm border border-border bg-paper p-4">
-                <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
-                  Schritt 1
-                </p>
-                <p className="mt-2 text-[15px]">
-                  Finde heraus, von wo Elvira losgereist ist und wohin sie wollte.
-                  Beide Orte stecken versteckt in ihrem Brief.
-                </p>
-              </div>
-              <div className="rounded-sm border border-border bg-paper p-4">
-                <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
-                  Schritt 2
-                </p>
-                <p className="mt-2 text-[15px]">
-                  Vergleiche die drei möglichen Routen. Wähle die, die Elvira
-                  selbst gewählt hätte — sie reist <strong>nachhaltig</strong>.
-                </p>
-              </div>
-            </div>
-
-            <div className="mt-6 rounded-sm border border-stamp/30 bg-stamp/5 p-4">
-              <p className="font-serif italic leading-relaxed">
-                „Schnell und teuer sind nicht das Gleiche wie schnell und sauber.
-                Schau auf CO₂, nicht nur auf die Uhr."
-              </p>
-              <p className="mt-2 font-mono-typed text-[11px] uppercase tracking-wider text-stamp">
-                — E.
-              </p>
-            </div>
-
-            <div className="mt-6 flex justify-between">
-              <button
-                onClick={() => setStep("brief")}
-                className="rounded-sm border border-border bg-card px-4 py-2.5 font-serif text-sm hover:bg-secondary"
-              >
-                ← Zurück
-              </button>
               <button
                 onClick={() => goto("eingabe")}
                 className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
               >
-                Start & Ziel eintippen →
+                Weiter zum Rätsel →
               </button>
             </div>
           </PaperCard>
         )}
+
 
         {step === "eingabe" && (
           <PaperCard rotate={-0.2} tape="top-right">
@@ -289,7 +238,8 @@ function AktePage() {
               <MapPin className="h-6 w-6 text-stamp" /> Rekonstruiere Elviras Reiseroute
             </h2>
             <p className="mt-3 text-[15px] text-foreground/80">
-              Lies den Brief erneut — beide Orte stecken in ihren Beschreibungen.
+              Elvira hat ihre Hinweise gut versteckt. Vielleicht lohnt sich ein
+              zweiter Blick auf ihre Unterlagen.
             </p>
 
             <form onSubmit={handleEingabe} className="mt-6 space-y-4">
@@ -301,7 +251,7 @@ function AktePage() {
                   type="text"
                   value={start}
                   onChange={(e) => setStart(e.target.value)}
-                  placeholder="z. B. eine Stadt am See …"
+                  placeholder="Startort eintippen …"
                   className="mt-1 w-full rounded-sm border border-border bg-paper-deep/30 px-4 py-3 font-mono-typed text-sm focus:border-stamp focus:outline-none"
                 />
               </div>
@@ -313,7 +263,7 @@ function AktePage() {
                   type="text"
                   value={ziel}
                   onChange={(e) => setZiel(e.target.value)}
-                  placeholder="z. B. ein Dorf in AR …"
+                  placeholder="Zielort eintippen …"
                   className="mt-1 w-full rounded-sm border border-border bg-paper-deep/30 px-4 py-3 font-mono-typed text-sm focus:border-stamp focus:outline-none"
                 />
               </div>
@@ -334,7 +284,7 @@ function AktePage() {
 
             <div className="mt-6 flex justify-start">
               <button
-                onClick={() => setStep("raetselkarte")}
+                onClick={() => setStep("brief")}
                 className="rounded-sm border border-border bg-card px-4 py-2.5 font-serif text-sm hover:bg-secondary"
               >
                 ← Zurück
@@ -350,7 +300,7 @@ function AktePage() {
                 Verbindung identifiziert
               </p>
               <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-                Genève <span className="text-muted-foreground">›</span> Speicher
+                Genf <span className="text-muted-foreground">›</span> Speicher
               </h2>
               <p className="mt-1 text-sm text-foreground/70">
                 Drei Routen stehen zur Auswahl. Tippe eine an, um Karte, Verbindung
@@ -472,10 +422,6 @@ function AktePage() {
                 — E.
               </p>
             </div>
-            <p className="mt-5 text-sm text-foreground/70">
-              In Etappe 2 wartet ein gepackter Einkaufskorb auf dich. Zwei
-              Produkte stimmen nicht.
-            </p>
             <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
               <Link
                 to="/akte"
@@ -494,12 +440,12 @@ function AktePage() {
         )}
 
         <p className="mt-12 text-center font-mono-typed text-xs uppercase tracking-[0.2em] text-muted-foreground">
-          — Etappe 1 · Bahnhof Grünwald —
+          — Etappe 1 · Bahnhof Speicher —
         </p>
       </div>
 
-      {unlockedSteps.has("raetselkarte") &&
-        (step === "raetselkarte" || step === "eingabe" || step === "routen") && (
+      {unlockedSteps.has("eingabe") &&
+        (step === "eingabe" || step === "routen") && (
           <HintSystem hints={HINTS_003} storageKey="akte-003-hints-start" />
         )}
     </main>
