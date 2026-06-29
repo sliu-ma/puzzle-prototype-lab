@@ -100,6 +100,15 @@ function AktePage() {
   const [selectedRouteId, setSelectedRouteId] = useState<string | null>(null);
   const [routeError, setRouteError] = useState<string | null>(null);
 
+  const jetzt = useMemo(
+    () =>
+      new Date().toLocaleTimeString("de-CH", {
+        hour: "2-digit",
+        minute: "2-digit",
+      }) + " Uhr",
+    [],
+  );
+
   const goto = (s: Step) => {
     setUnlockedSteps((prev) => new Set([...prev, s]));
     setStep(s);
