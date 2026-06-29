@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Map as MapIcon, MapPin } from "lucide-react";
+import { MapPin } from "lucide-react";
 import { PaperCard } from "@/components/case-file/PaperCard";
 import { Stamp } from "@/components/case-file/Stamp";
 import { QRGate } from "@/components/case-file/QRGate";
