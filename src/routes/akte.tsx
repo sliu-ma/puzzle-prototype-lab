@@ -6,7 +6,7 @@ import { GruenerMarkt } from "@/components/case-file/GruenerMarkt";
 import { QRGate } from "@/components/case-file/QRGate";
 import { StageGate } from "@/components/case-file/StageGate";
 import { HintSystem } from "@/components/case-file/HintSystem";
-import { REZEPT, START_WARENKORB } from "@/lib/maya-data";
+import { START_WARENKORB } from "@/lib/maya-data";
 import { completeStage } from "@/lib/progress";
 import { cn } from "@/lib/utils";
 
@@ -159,48 +159,6 @@ function AktePage() {
             </blockquote>
             <div className="mt-6 flex justify-end">
               <button
-                onClick={() => goto("raetselkarte")}
-                className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
-              >
-                Weiter zur Rätselkarte →
-              </button>
-            </div>
-          </PaperCard>
-        )}
-
-        {step === "raetselkarte" && (
-          <PaperCard rotate={0.3} tape="top">
-            <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-              Rätselkarte · Auftrag von Elvira
-            </p>
-            <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-              {REZEPT.emoji} {REZEPT.titel}
-            </h2>
-            <p className="mt-3 text-sm font-mono-typed uppercase tracking-wider text-muted-foreground">
-              Zutaten:
-            </p>
-            <ul className="mt-2 grid gap-1 sm:grid-cols-2">
-              {REZEPT.zutaten.map((z) => (
-                <li key={z} className="text-[15px]">• {z}</li>
-              ))}
-            </ul>
-            <div className="mt-6 rounded-sm border border-stamp/30 bg-stamp/5 p-4">
-              <p className="font-serif italic leading-relaxed">
-                „Du möchtest gerade bezahlen — aber irgendetwas stimmt mit
-                dem Warenkorb nicht."
-              </p>
-              <p className="mt-2 font-mono-typed text-[11px] uppercase tracking-wider text-stamp">
-                — E.
-              </p>
-            </div>
-            <div className="mt-6 flex justify-between">
-              <button
-                onClick={() => setStep("brief")}
-                className="rounded-sm border border-border bg-card px-4 py-2.5 font-serif text-sm hover:bg-secondary"
-              >
-                ← Zurück
-              </button>
-              <button
                 onClick={() => goto("shop")}
                 className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
               >
@@ -218,10 +176,10 @@ function AktePage() {
             />
             <div className="flex justify-start">
               <button
-                onClick={() => setStep("raetselkarte")}
+                onClick={() => setStep("brief")}
                 className="rounded-sm border border-border bg-card px-4 py-2.5 font-serif text-sm hover:bg-secondary"
               >
-                ← Rätselkarte erneut ansehen
+                ← Zurück
               </button>
             </div>
           </div>
@@ -250,7 +208,7 @@ function AktePage() {
                   },
                   {
                     title: "Regional",
-                    body: "Lebensmittel aus deiner Umgebung — meist 50–100 km. Kurzer Transport, frischer, oft kleinere Höfe. Achtung: „Aus der Schweiz“ ist nicht automatisch regional. Region heißt: aus deiner Gegend.",
+                    body: "Lebensmittel aus deiner Umgebung — meist 50–100 km. Kurzer Transport, frischer, oft kleinere Höfe. Achtung: „Aus der Schweiz" ist nicht automatisch regional. Region heißt: aus deiner Gegend.",
                     hint: "Bio Suisse & IP-Suisse stehen für Schweizer Herkunft mit klaren Standards.",
                   },
                   {
@@ -334,7 +292,7 @@ function AktePage() {
         </p>
       </div>
 
-      {unlockedSteps.has("raetselkarte") && (step === "raetselkarte" || step === "shop") && (
+      {unlockedSteps.has("shop") && (step === "shop" || step === "input") && (
         <HintSystem />
       )}
     </main>
