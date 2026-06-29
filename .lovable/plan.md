@@ -1,46 +1,63 @@
-# Animiertes Intro & Sieg-Outro
+# Plan: Vollständige Read-me als DOCX
 
-Zwei neue, vollflächige Animationssequenzen im bestehenden Papier-Akte-Look (Stempel, getippter Text, Polaroids, Tape, Sepia). Keine neuen Fonts oder Bibliotheken — wir nutzen vorhandene Tailwind-Keyframes (`fade-in`, `scale-in`) plus ein paar zusätzliche in `src/styles.css` (typewriter, stamp-slam, paper-drop, ink-draw).
+Eine neue Datei `Maya_README_Tokens_v2.docx` unter `/mnt/documents/` erzeugen. Strukturierte Übersicht über alle fünf Akten — als Spickzettel für dich (nicht für die Spielenden).
 
----
+## Aufbau pro Akte
 
-## 1) Intro — „Akte wird geöffnet"
+Jede Akte erhält einen eigenen Abschnitt mit vier Blöcken:
 
-**Trigger:** Direkt nach erfolgreicher Team-Registrierung in `src/routes/index.tsx`, bevor Etappe 1 freigeschaltet wird. Überspringbar (Skip-Button oben rechts) und über einen kleinen „Briefing erneut ansehen"-Link im Fortschrittspanel wiederholbar. Status in `localStorage` (`maya-intro-seen`).
+1. **Beschreibung** — Worum geht es, was tut die*der Spielende?
+2. **QR-Token** — Klartext, der im QR-Code stehen muss, plus Storage-Key
+3. **Lösung** — Was ist die richtige Antwort / Code / Auswahl?
+4. **Tipps** — Die drei zeitgesteuerten Hinweise (3 / 6 / 9 Min), wie sie im Spiel erscheinen
 
-**Ablauf — 5 Beats, ~45 s gesamt, Auto-Advance + „Weiter"-Button:**
+## Inhalte (Quellen verifiziert im Code)
 
-1. **Stempel-Slam** — Schwarzer Fade, dann knallt der rote Stempel „VERTRAULICH · GRÜNWALD" mittig auf. Datum/Uhrzeit typewritert darunter.
-2. **Der Brief** — Polaroid-artiger Briefumschlag fällt auf den Tisch, öffnet sich, Zeile für Zeile getippt: „Samstag, 14:12. Tante Elvira ist weg. Auf dem Tisch ein Brief…". Roter Unterstrich wird unter „Gaskraftwerk" gezogen.
-3. **Maja (Polaroid)** — Polaroid mit Initiale „M" auf farbigem Hintergrund kippt herein, Bildunterschrift: „Maja, 17 — eure Spielfigur. Ihr seht, was sie sieht."
-4. **Elvira (Polaroid)** — Zweites Polaroid daneben: „Elvira, 71 — eure Grosstante. Verschwunden. Hat fünf Hinweise im Dorf hinterlegt."
-5. **Spielerklärung** — Drei kurze Karten staffeln sich ein: QR scannen → Rätsel lösen → nächste Etappe. Plus Hinweis auf Tipps nach 3/6/9 min. Abschluss: „Bereit?" + Button „Etappe 1 öffnen →" (führt zu `/akte-003`).
+```text
+Akte 001 — Wo ist Maya? (Grüner Markt)
+  Token:   CpZk0z9RaQkL22gtiWoR        Storage: akte-001-unlocked
+  Lösung:  Erdbeeren ES + Import-Eier raus → CH-Erdbeeren (IP-Suisse) + CH-Bio-Freiland-Eier rein
+  Tipps:   1) Warenkorb-Herkunft prüfen  2) Saisonal/regional vs. Import  3) Auflösung
 
-Pro Beat: Stempel/Polaroid mit `scale-in` + leichter Rotation, Text mit Typewriter-Cursor. Sepia-Hintergrund + dezente Papierfasern wie auf der Startseite. Skip-Button springt direkt zu Beat 5.
+Akte 002 — Biodiversität (Polaroid-Rätsel)
+  Token:   Mn7YxQ2pVe9TbR4Ks0Lh        Storage: akte-002-unlocked
+  Lösung:  Code 3579 (gefährdete Tiere aufsteigend:
+           Feldhase 3, Wiedehopf 5, Geburtshelferkröte 7, Apollofalter 9)
+  Tipps:   1) Tiere sortieren (4 gefährdet) 2) Karten umdrehen 3) Auflösung
 
-## 2) Outro — „Sieg im Gemeindesaal"
+Akte 003 — Mobilität (Routen-Vergleich)
+  Token:   Tz3PqW8nXmYr5JcLs6Vk        Storage: akte-003-unlocked
+  Lösung:  Start: Genf — Ziel: Speicher (AR)
+           Nachhaltigste Route: direkter Zug (IC 1 → S21), ca. 4 kg CO₂/Person
+  Tipps:   1) Hinweise nochmals lesen 2) CO₂ + realer Aufwand 3) Auflösung
 
-**Trigger:** Im `src/routes/finale.tsx`, wenn das Überzeugungsbarometer ≥ Sieg-Schwelle erreicht. Ersetzt die aktuelle Sieg-Karte; bestehendes Konfetti bleibt als Akzent. Verlierer-Endscreen bleibt unverändert.
+Akte 004 — Wohnen (Energie-Spiel Show-Villa)
+  Token:   Wb6Vc4Hn1ZqYpMr8Js3F        Storage: akte-004-unlocked
+  Lösung:  Mind. 8 000 kWh/Jahr sparen, ohne 1 500 CHF Budget zu sprengen
+           (Auswahl von Massnahmen pro Raum — Mehrere Kombinationen möglich)
+  Tipps:   (keine zeitgesteuerten Tipps definiert — Ziele oben dienen als Anker)
 
-**Ablauf — 5 Beats, ~30 s, Auto-Advance:**
+Akte 005 — Energie (Gutachten-Fact-Check)
+  Token:   Eg9LkRq2VhYbP4Mn7TcW        Storage: akte-005-unlocked
+  Lösung:  Genau 5 falsche Aussagen markieren (f1–f5):
+           f1: "Erdgas 95 g CO₂/kWh, nahezu klimaneutral"   (real ≈ 400)
+           f2: "Steinkohle 78 % Wirkungsgrad, besser als erneuerbar"
+           f3: "Kohle ist erneuerbare Brückentechnologie"
+           f4: "PV-Volllaststunden auf 250 h/Jahr korrigiert" (real ~1 000)
+           f5: "Versorgungssicherheit mit PV+Speicher nicht möglich"
+  Tipps:   (keine zeitgesteuerten Tipps definiert)
+```
 
-1. **Schlag des Hammers** — Schwarzer Fade, Stempel-Slam „ABGELEHNT" rot über stilisiertem Gemeinderats-Protokoll, Hammergeräusch ersetzt durch visuellen Stempel-Shake.
-2. **Schlagzeile** — Zeitungsausschnitt-Karte kippt herein, getippt: „Gemeinderat Grünwald lehnt Gaskraftwerk ab. Knappe Mehrheit nach Bürgerhearing."
-3. **Elvira lebt** — Polaroid „E" mit Notiz: „Danke, Maja. Du hast meine Hinweise gelesen." Tape oben.
-4. **Eure Bilanz** — Kompakte Karte mit Teamname, finalem Barometer-Wert, gelösten Etappen (5/5). Optional: Anzahl genutzter Tipps.
-5. **Abspann** — Headline „Akte 001–005 · Geschlossen", Untertitel „Ökologie ist viele kleine Entscheidungen.", Buttons „Zur Übersicht" und „Neues Spiel starten" (Reset).
+Zusätzlich vorne eine kurze **Übersichtstabelle** (Akte · Thema · Token · Lösung in einer Zeile) als schneller Spickzettel.
 
-Konfetti läuft während Beat 4–5 dezent im Hintergrund. Sieg-Status wird wie bisher persistiert.
+## Technisches
 
----
+- Erzeugen mit `docx` (Node, bereits in Skill-Doku beschrieben).
+- A4, 1″ Ränder, Arial 12 pt, H1/H2 fett, Bullet-Listen über `LevelFormat.BULLET`.
+- Tokens in Monospace-ähnlichem Stil (fett) damit sie beim Kopieren auffallen.
+- Datei: `/mnt/documents/Maya_README_Tokens_v2.docx` (Original bleibt erhalten).
+- Nach Erzeugung: validieren und als `<presentation-artifact>` einbetten.
 
-## Technische Umsetzung
+## Offene Frage
 
-- **Neu:** `src/components/case-file/AktenIntro.tsx` — selbstständige Vollbild-Sequenz mit Beat-Index, `useEffect`-Timer für Auto-Advance, Skip- und Weiter-Buttons. Props: `onComplete()`.
-- **Neu:** `src/components/case-file/SiegOutro.tsx` — analog, Props: `teamName`, `barometer`, `onRestart`, `onHome`.
-- **Neu:** `src/components/case-file/Polaroid.tsx` (klein, wiederverwendbar) — Initiale auf Farb-Hintergrund, Tape, Bildunterschrift.
-- **Edit `src/styles.css**` — Keyframes ergänzen: `typewriter` (width 0→100% + caret), `stamp-slam` (scale 1.6→1 + rotate + shadow), `paper-drop` (translateY -40px + rotate + fade), `ink-draw` (stroke-dashoffset für SVG-Linie). Plus Utility-Klassen.
-- **Edit `src/routes/index.tsx**` — Nach `registerTeam(...)` Intro-Overlay einblenden, statt direkt Progress-Panel. `localStorage`-Flag `maya-intro-seen`. Im `ProgressPanel` kleiner Link „Briefing erneut ansehen" (setzt Flag zurück und öffnet Overlay).
-- **Edit `src/routes/finale.tsx**` — Sieg-Branch rendert `<SiegOutro …/>` statt der aktuellen Erfolgs-Card. Niederlage bleibt wie bisher.
-
-Keine neuen Pakete, keine neuen Fonts, kein Backend.
+Soll die alte `Maya_README_Tokens.docx` gelöscht werden, oder beide nebeneinander stehen lassen? Standardmäßig: **beide behalten**, neue Version klar als v2.
