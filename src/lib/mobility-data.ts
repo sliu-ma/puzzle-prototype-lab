@@ -233,8 +233,8 @@ export const ROUTES: RouteOption[] = [
     titel: "Zug + Flug + Zug",
     iconKeys: ["train", "plane", "train"],
     dauer: "4h 11min",
-    preis: "CHF 109–359",
-    co2Kg: 120,
+    preis: "CHF 276",
+    co2Kg: 140,
     beschreibung:
       "Genève → Flughafen, Inlandflug nach Zürich, dann mit IC 5 + S21 weiter. Klingt schnell — ist es kaum.",
     correct: false,
