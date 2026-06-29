@@ -173,6 +173,7 @@ function CoverPage() {
         </p>
       </div>
     </main>
+    </>
   );
 }
 
