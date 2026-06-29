@@ -67,11 +67,10 @@ function AkteGated() {
   );
 }
 
-type Step = "brief" | "raetselkarte" | "eingabe" | "routen" | "input" | "naechstes";
+type Step = "brief" | "eingabe" | "routen" | "input" | "naechstes";
 
 const STEPS: { id: Step; label: string }[] = [
   { id: "brief", label: "Brief" },
-  { id: "raetselkarte", label: "Rätselkarte" },
   { id: "eingabe", label: "Start & Ziel" },
   { id: "routen", label: "Route wählen" },
   { id: "input", label: "Fachlicher Input" },
