@@ -116,7 +116,7 @@ export function RouteDetail({ routeId, onBack, onChoose, errorText }: Props) {
           onClick={onBack}
           className="inline-flex items-center gap-2 rounded-sm border border-border bg-card px-4 py-2.5 font-serif text-sm hover:bg-secondary"
         >
-          <ArrowLeft className="h-4 w-4" /> Andere Route ansehen
+          <ArrowLeft className="h-4 w-4" /> Andere Route
         </button>
         <button
           onClick={() => onChoose(route)}
