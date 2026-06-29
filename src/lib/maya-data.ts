@@ -21,7 +21,7 @@ import bioLogo from "@/assets/labels/bio.png.asset.json";
 import ipSuisseLogo from "@/assets/labels/ip-suisse.png.asset.json";
 import demeterLogo from "@/assets/labels/demeter.png.asset.json";
 
-export type Kategorie = "milch-eier" | "fruechte-gemuese" | "getreide-backen" | "fette" | "andere";
+export type Kategorie = "milch-eier" | "fruechte-gemuese" | "backzutaten" | "andere";
 
 export type SiegelKey = "bio" | "ip-suisse" | "demeter";
 
