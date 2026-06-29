@@ -422,10 +422,6 @@ function AktePage() {
                 — E.
               </p>
             </div>
-            <p className="mt-5 text-sm text-foreground/70">
-              In Etappe 2 wartet ein gepackter Einkaufskorb auf dich. Zwei
-              Produkte stimmen nicht.
-            </p>
             <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
               <Link
                 to="/akte"
