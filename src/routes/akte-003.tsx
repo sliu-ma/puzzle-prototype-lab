@@ -300,7 +300,7 @@ function AktePage() {
                 Verbindung identifiziert
               </p>
               <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-                Genève <span className="text-muted-foreground">›</span> Speicher
+                Genf <span className="text-muted-foreground">›</span> Speicher
               </h2>
               <p className="mt-1 text-sm text-foreground/70">
                 Drei Routen stehen zur Auswahl. Tippe eine an, um Karte, Verbindung
