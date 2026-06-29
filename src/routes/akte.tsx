@@ -145,16 +145,18 @@ function AktePage() {
             <blockquote className="mt-5 border-l-4 border-stamp pl-4 text-[15px] leading-relaxed">
               Der alte Dorfladen ist eigentlich schon geschlossen, aber Frau
               Berger, eine langjährige Freundin Elviras, lässt dich noch hinein.
+              <br /><br />
               „Deine Tante war hier jede Woche", sagt sie nachdenklich. „Sie hat
-              mal gesagt: <em>Wenn ich sehe, was die Leute kaufen, weiss ich
-              genau, was schiefläuft.</em>"
-              <br />
-              <br />
-              Auf dem Holztresen steht ein gepackter Einkaufskorb. Frau Berger
-              zuckt mit den Schultern: „Komisch — sowas hätte Elvira eigentlich
-              nie selbst gekauft. Sie hat ihn wohl absichtlich so
-              zusammengestellt … sie meinte, du seist ziemlich gut im
-              Kombinieren."
+              mal gesagt: Wenn ich sehe, was die Leute kaufen, weiss ich genau,
+              was schiefläuft."
+              <br /><br />
+              Du ziehst Elviras Einkaufsliste aus der Tasche und deutest auf den
+              Holztresen, wo ein gepackter Einkaufskorb steht. Du schaust rein,
+              dann auf die Liste. Alles stimmt überein, jedes einzelne Produkt.
+              Und genau das ist komisch.
+              <br /><br />
+              „Sie meinte, du seist ziemlich gut im Kombinieren." Frau Berger
+              lächelt. „Was fällt dir auf?"
             </blockquote>
             <div className="mt-6 flex justify-end">
               <button
