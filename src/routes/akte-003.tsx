@@ -33,8 +33,8 @@ const HINTS_003: Hint[] = [
     id: 0,
     unlockMin: 3,
     label: "Tipp 1",
-    title: "Lies Elviras Notiz noch einmal",
-    body: "Sie schreibt vom 'See in der Westschweiz' und einem 'Dorf in den Appenzeller Hügeln, das nach einem Vorrat klingt'. Welche Stadt am Genfersee? Welches AR-Dorf?",
+    title: "Schau dir die Unterlagen genau an",
+    body: "Wo hat Elvira geschlafen, und von wo aus ist sie am nächsten Morgen aufgebrochen?",
   },
   {
     id: 1,
