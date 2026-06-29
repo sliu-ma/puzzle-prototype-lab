@@ -394,6 +394,108 @@ export const PRODUKTE: Produkt[] = [
         "Speisesalz aus Schweizer Berggebieten — sehr kurze Wege, jodiert und fluoridiert. Kartonverpackung, kein zusätzliches Nachhaltigkeitslabel.",
     },
   },
+
+  // ── Neue Ergänzungen ────────────────────────────────────────────
+  {
+    id: "oatly-hafer",
+    name: "Oatly Haferdrink Barista 1L",
+    kategorie: "milch-eier",
+    herkunft: "Schweden",
+    preis: 3.4,
+    siegel: [],
+    saison: "ganzjahr",
+    emoji: "🥛",
+    bildUrl: oatlyAsset.url,
+    bewertung: "neutral",
+    nachhaltigkeit: {
+      regional: 1,
+      saisonal: 5,
+      verpackung: 3,
+      label: 2,
+      erklaerung:
+        "Pflanzenbasierter Haferdrink mit tiefem CO₂-Fussabdruck, aber importiert aus Schweden. Tetrapak-Verpackung, kein Bio-Label.",
+    },
+  },
+  {
+    id: "zitrone-za",
+    name: "Zitrone",
+    kategorie: "fruechte-gemuese",
+    herkunft: "Südafrika",
+    preis: 0.4,
+    siegel: [],
+    saison: "ganzjahr",
+    emoji: "🍋",
+    bildUrl: zitroneZaAsset.url,
+    bewertung: "neutral",
+    nachhaltigkeit: {
+      regional: 1,
+      saisonal: 3,
+      verpackung: 5,
+      label: 1,
+      erklaerung:
+        "Zitronen aus Südafrika werden per Schiff oder Flugzeug importiert — sehr lange Transportwege, kein Bio-Standard.",
+    },
+  },
+  {
+    id: "gurke-ch",
+    name: "Bio-Gurke",
+    kategorie: "fruechte-gemuese",
+    herkunft: "Schweiz",
+    preis: 2.3,
+    siegel: ["bio"],
+    saison: "in",
+    emoji: "🥒",
+    bildUrl: gurkeChAsset.url,
+    bewertung: "neutral",
+    nachhaltigkeit: {
+      regional: 5,
+      saisonal: 4,
+      verpackung: 3,
+      label: 5,
+      erklaerung:
+        "Schweizer Bio-Gurke aus regionalem Anbau, kurze Transportwege, Bio-Standard ohne synthetische Pestizide.",
+    },
+  },
+  {
+    id: "backpulver",
+    name: "Pâtissier Backpulver",
+    kategorie: "backzutaten",
+    herkunft: "Deutschland",
+    preis: 0.5,
+    siegel: [],
+    saison: "ganzjahr",
+    emoji: "🧁",
+    bildUrl: backpulverAsset.url,
+    bewertung: "neutral",
+    nachhaltigkeit: {
+      regional: 2,
+      saisonal: 5,
+      verpackung: 2,
+      label: 1,
+      erklaerung:
+        "Importiert aus Deutschland. Einzeln verpackte Portionsbeutel verursachen vergleichsweise viel Verpackungsmüll.",
+    },
+  },
+  {
+    id: "mandeln-ch",
+    name: "Bio-Mandeln gemahlen",
+    kategorie: "backzutaten",
+    herkunft: "Schweiz (verpackt)",
+    preis: 2.8,
+    siegel: ["bio"],
+    saison: "ganzjahr",
+    emoji: "🌰",
+    bildUrl: mandelnAsset.url,
+    bewertung: "neutral",
+    nachhaltigkeit: {
+      regional: 3,
+      saisonal: 5,
+      verpackung: 3,
+      label: 5,
+      erklaerung:
+        "Bio-Qualität nach EU-/Schweizer-Standard, in der Schweiz abgepackt. Mandeln selbst stammen meist aus Südeuropa.",
+    },
+  },
 ];
 
 export const REZEPT = {
