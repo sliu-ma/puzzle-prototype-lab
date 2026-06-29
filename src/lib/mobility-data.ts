@@ -129,8 +129,8 @@ export const ROUTES: RouteOption[] = [
     titel: "Zug",
     iconKeys: ["train"],
     dauer: "4h 41min",
-    preis: "CHF 79–149",
-    co2Kg: 4,
+    preis: "CHF 59.20",
+    co2Kg: 3,
     beschreibung:
       "Direkt Genève → St. Gallen mit IC 1, Umstieg auf S21 nach Speicher. Eine Verbindung, ein Ticket.",
     correct: true,
