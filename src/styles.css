@@ -99,10 +99,6 @@
     font-family: var(--font-serif);
     letter-spacing: -0.01em;
   }
-
-  input, textarea, select {
-    font-size: 16px;
-  }
 }
 
 @layer utilities {
@@ -143,52 +139,4 @@
     background-repeat: no-repeat;
     background-position: 0 100%;
   }
-
-  .stamp-slam {
-    animation: stamp-slam 0.55s cubic-bezier(0.18, 1.4, 0.4, 1) both;
-  }
-
-  .panel-pop {
-    animation: panel-pop 0.45s cubic-bezier(0.2, 1.1, 0.4, 1) both;
-  }
-
-  .shake-x {
-    animation: shake-x 0.45s ease-in-out both;
-  }
-
-  .typewriter-line {
-    overflow: hidden;
-    white-space: nowrap;
-    border-right: 2px solid var(--color-stamp);
-    animation: typewriter 1.6s steps(40, end) forwards, caret-blink 0.7s step-end 4;
-  }
-}
-
-@keyframes stamp-slam {
-  0%   { transform: scale(2.4) rotate(-12deg); opacity: 0; }
-  60%  { transform: scale(0.92) rotate(-2deg); opacity: 1; }
-  80%  { transform: scale(1.05) rotate(-5deg); }
-  100% { transform: scale(1) rotate(-4deg); opacity: 1; }
-}
-
-@keyframes panel-pop {
-  0%   { transform: translateY(14px) scale(0.96); opacity: 0; }
-  100% { transform: translateY(0) scale(1); opacity: 1; }
-}
-
-@keyframes shake-x {
-  0%, 100% { transform: translateX(0); }
-  20% { transform: translateX(-6px); }
-  40% { transform: translateX(6px); }
-  60% { transform: translateX(-4px); }
-  80% { transform: translateX(4px); }
-}
-
-@keyframes typewriter {
-  from { width: 0; }
-  to   { width: 100%; }
-}
-
-@keyframes caret-blink {
-  50% { border-color: transparent; }
 }

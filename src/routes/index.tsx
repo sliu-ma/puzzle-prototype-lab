@@ -2,7 +2,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Lock, CheckCircle2, RotateCcw } from "lucide-react";
 import { Stamp } from "@/components/case-file/Stamp";
-import { IntroLetter } from "@/components/story/IntroLetter";
 import {
   START_CODE,
   STAGES,
@@ -31,7 +30,6 @@ function CoverPage() {
   const [ready, setReady] = useState(false);
   const [team, setTeam] = useState<{ name: string; code: string } | null>(null);
   const [stage, setStage] = useState(0);
-  const [introOpen, setIntroOpen] = useState(false);
 
   useEffect(() => {
     const sync = () => {
@@ -40,17 +38,6 @@ function CoverPage() {
     };
     sync();
     setReady(true);
-    // Intro-Brief nur beim ersten Besuch (vor Team-Registrierung) automatisch öffnen
-    try {
-      const hasTeam = !!getTeam();
-      const seen = sessionStorage.getItem("intro-letter-seen");
-      if (!hasTeam && !seen) {
-        setIntroOpen(true);
-        sessionStorage.setItem("intro-letter-seen", "1");
-      }
-    } catch {
-      /* ignore */
-    }
     window.addEventListener("maya-progress", sync);
     window.addEventListener("storage", sync);
     return () => {
@@ -71,7 +58,6 @@ function CoverPage() {
 
   return (
     <main className="relative min-h-screen overflow-hidden px-4 py-8 sm:py-14">
-      <IntroLetter open={introOpen} onContinue={() => setIntroOpen(false)} />
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 opacity-[0.06]"

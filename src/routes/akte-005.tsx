@@ -6,8 +6,6 @@ import { QRGate } from "@/components/case-file/QRGate";
 import { StageGate } from "@/components/case-file/StageGate";
 import { GutachtenRaetsel } from "@/components/case-file/GutachtenRaetsel";
 import { completeStage } from "@/lib/progress";
-import { STORY } from "@/lib/story-beats";
-import { EtappenStory } from "@/components/story/EtappenStory";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/akte-005")({
@@ -346,12 +344,6 @@ function AktePage() {
           — Etappe 5 · Altes Wasserkraftwerk —
         </p>
       </div>
-
-      <EtappenStory
-        arc={STORY.energie}
-        sessionKey="story-seen-akte-005"
-        successOn={unlockedSteps.has("input")}
-      />
     </main>
   );
 }

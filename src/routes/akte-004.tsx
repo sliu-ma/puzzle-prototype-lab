@@ -6,8 +6,6 @@ import { QRGate } from "@/components/case-file/QRGate";
 import { StageGate } from "@/components/case-file/StageGate";
 import { EnergyGame } from "@/components/case-file/EnergyGame";
 import { completeStage } from "@/lib/progress";
-import { STORY } from "@/lib/story-beats";
-import { EtappenStory } from "@/components/story/EtappenStory";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/akte-004")({
@@ -350,12 +348,6 @@ function AktePage() {
           — Etappe 4 · Elviras Haus —
         </p>
       </div>
-
-      <EtappenStory
-        arc={STORY.wohnen}
-        sessionKey="story-seen-akte-004"
-        successOn={unlockedSteps.has("input")}
-      />
     </main>
   );
 }
