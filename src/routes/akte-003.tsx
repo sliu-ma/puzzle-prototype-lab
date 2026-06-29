@@ -251,7 +251,7 @@ function AktePage() {
                   type="text"
                   value={start}
                   onChange={(e) => setStart(e.target.value)}
-                  placeholder="z. B. eine Stadt am See …"
+                  placeholder="Startort eintippen …"
                   className="mt-1 w-full rounded-sm border border-border bg-paper-deep/30 px-4 py-3 font-mono-typed text-sm focus:border-stamp focus:outline-none"
                 />
               </div>
@@ -263,7 +263,7 @@ function AktePage() {
                   type="text"
                   value={ziel}
                   onChange={(e) => setZiel(e.target.value)}
-                  placeholder="z. B. ein Dorf in AR …"
+                  placeholder="Zielort eintippen …"
                   className="mt-1 w-full rounded-sm border border-border bg-paper-deep/30 px-4 py-3 font-mono-typed text-sm focus:border-stamp focus:outline-none"
                 />
               </div>
