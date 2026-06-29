@@ -12,6 +12,7 @@ import {
   resetAll,
 } from "@/lib/progress";
 import { cn } from "@/lib/utils";
+import { DEV_BYPASS } from "@/lib/dev-mode";
 
 const INTRO_KEY = "maya-intro-seen";
 
@@ -153,6 +154,8 @@ function CoverPage() {
                 }}
               />
             )}
+
+            {DEV_BYPASS && <DevJumpPanel />}
 
           </article>
 
