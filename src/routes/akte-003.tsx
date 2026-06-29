@@ -238,7 +238,8 @@ function AktePage() {
               <MapPin className="h-6 w-6 text-stamp" /> Rekonstruiere Elviras Reiseroute
             </h2>
             <p className="mt-3 text-[15px] text-foreground/80">
-              Lies den Brief erneut — beide Orte stecken in ihren Beschreibungen.
+              Elvira hat ihre Hinweise gut versteckt. Vielleicht lohnt sich ein
+              zweiter Blick auf ihre Unterlagen.
             </p>
 
             <form onSubmit={handleEingabe} className="mt-6 space-y-4">
