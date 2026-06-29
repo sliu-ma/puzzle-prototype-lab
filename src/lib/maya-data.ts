@@ -16,12 +16,17 @@ import vanillezuckerAsset from "@/assets/produkte/vanillezucker.webp.asset.json"
 import salzAsset from "@/assets/produkte/salz.webp.asset.json";
 import milchAsset from "@/assets/produkte/milch.webp.asset.json";
 import joghurtSchokoAsset from "@/assets/produkte/joghurt-schoko.webp.asset.json";
+import oatlyAsset from "@/assets/produkte/oatly-hafer.webp.asset.json";
+import gurkeChAsset from "@/assets/produkte/gurke-ch.webp.asset.json";
+import zitroneZaAsset from "@/assets/produkte/zitrone-za.jxl.asset.json";
+import backpulverAsset from "@/assets/produkte/backpulver.webp.asset.json";
+import mandelnAsset from "@/assets/produkte/mandeln.jxl.asset.json";
 
 import bioLogo from "@/assets/labels/bio.png.asset.json";
 import ipSuisseLogo from "@/assets/labels/ip-suisse.png.asset.json";
 import demeterLogo from "@/assets/labels/demeter.png.asset.json";
 
-export type Kategorie = "milch-eier" | "fruechte-gemuese" | "getreide-backen" | "fette" | "andere";
+export type Kategorie = "milch-eier" | "fruechte-gemuese" | "backzutaten" | "andere";
 
 export type SiegelKey = "bio" | "ip-suisse" | "demeter";
 
@@ -63,10 +68,9 @@ export interface Produkt {
 }
 
 export const KATEGORIEN: { id: Kategorie; label: string; emoji: string }[] = [
-  { id: "milch-eier", label: "Milch & Eier", emoji: "🥛" },
+  { id: "milch-eier", label: "Milchprodukte & Eier", emoji: "🥛" },
   { id: "fruechte-gemuese", label: "Früchte & Gemüse", emoji: "🍎" },
-  { id: "getreide-backen", label: "Getreide & Backen", emoji: "🌾" },
-  { id: "fette", label: "Öle & Fette", emoji: "🧈" },
+  { id: "backzutaten", label: "Backzutaten", emoji: "🌾" },
   { id: "andere", label: "Weiteres", emoji: "🛒" },
 ];
 
@@ -267,7 +271,7 @@ export const PRODUKTE: Produkt[] = [
   {
     id: "butter-ch",
     name: "Butter 250g",
-    kategorie: "fette",
+    kategorie: "milch-eier",
     herkunft: "Schweiz",
     preis: 3.85,
     siegel: ["ip-suisse"],
@@ -310,7 +314,7 @@ export const PRODUKTE: Produkt[] = [
   {
     id: "mehl-ch",
     name: "Weissmehl 1kg",
-    kategorie: "getreide-backen",
+    kategorie: "backzutaten",
     herkunft: "Schweiz",
     preis: 1.9,
     siegel: ["ip-suisse"],
@@ -330,7 +334,7 @@ export const PRODUKTE: Produkt[] = [
   {
     id: "zucker-ch",
     name: "Cristal Feinkristall-Zucker 1kg",
-    kategorie: "getreide-backen",
+    kategorie: "backzutaten",
     herkunft: "Schweiz",
     preis: 1.8,
     siegel: [],
@@ -350,7 +354,7 @@ export const PRODUKTE: Produkt[] = [
   {
     id: "vanillezucker",
     name: "Vanillezucker 10×8g",
-    kategorie: "getreide-backen",
+    kategorie: "backzutaten",
     herkunft: "Schweiz (verpackt)",
     preis: 0.45,
     siegel: [],
@@ -388,6 +392,108 @@ export const PRODUKTE: Produkt[] = [
       label: 2,
       erklaerung:
         "Speisesalz aus Schweizer Berggebieten — sehr kurze Wege, jodiert und fluoridiert. Kartonverpackung, kein zusätzliches Nachhaltigkeitslabel.",
+    },
+  },
+
+  // ── Neue Ergänzungen ────────────────────────────────────────────
+  {
+    id: "oatly-hafer",
+    name: "Oatly Haferdrink Barista 1L",
+    kategorie: "milch-eier",
+    herkunft: "Schweden",
+    preis: 3.4,
+    siegel: [],
+    saison: "ganzjahr",
+    emoji: "🥛",
+    bildUrl: oatlyAsset.url,
+    bewertung: "neutral",
+    nachhaltigkeit: {
+      regional: 1,
+      saisonal: 5,
+      verpackung: 3,
+      label: 2,
+      erklaerung:
+        "Pflanzenbasierter Haferdrink mit tiefem CO₂-Fussabdruck, aber importiert aus Schweden. Tetrapak-Verpackung, kein Bio-Label.",
+    },
+  },
+  {
+    id: "zitrone-za",
+    name: "Zitrone",
+    kategorie: "fruechte-gemuese",
+    herkunft: "Südafrika",
+    preis: 0.4,
+    siegel: [],
+    saison: "ganzjahr",
+    emoji: "🍋",
+    bildUrl: zitroneZaAsset.url,
+    bewertung: "neutral",
+    nachhaltigkeit: {
+      regional: 1,
+      saisonal: 3,
+      verpackung: 5,
+      label: 1,
+      erklaerung:
+        "Zitronen aus Südafrika werden per Schiff oder Flugzeug importiert — sehr lange Transportwege, kein Bio-Standard.",
+    },
+  },
+  {
+    id: "gurke-ch",
+    name: "Bio-Gurke",
+    kategorie: "fruechte-gemuese",
+    herkunft: "Schweiz",
+    preis: 2.3,
+    siegel: ["bio"],
+    saison: "in",
+    emoji: "🥒",
+    bildUrl: gurkeChAsset.url,
+    bewertung: "neutral",
+    nachhaltigkeit: {
+      regional: 5,
+      saisonal: 4,
+      verpackung: 3,
+      label: 5,
+      erklaerung:
+        "Schweizer Bio-Gurke aus regionalem Anbau, kurze Transportwege, Bio-Standard ohne synthetische Pestizide.",
+    },
+  },
+  {
+    id: "backpulver",
+    name: "Pâtissier Backpulver",
+    kategorie: "backzutaten",
+    herkunft: "Deutschland",
+    preis: 0.5,
+    siegel: [],
+    saison: "ganzjahr",
+    emoji: "🧁",
+    bildUrl: backpulverAsset.url,
+    bewertung: "neutral",
+    nachhaltigkeit: {
+      regional: 2,
+      saisonal: 5,
+      verpackung: 2,
+      label: 1,
+      erklaerung:
+        "Importiert aus Deutschland. Einzeln verpackte Portionsbeutel verursachen vergleichsweise viel Verpackungsmüll.",
+    },
+  },
+  {
+    id: "mandeln-ch",
+    name: "Bio-Mandeln gemahlen",
+    kategorie: "backzutaten",
+    herkunft: "Schweiz (verpackt)",
+    preis: 2.8,
+    siegel: ["bio"],
+    saison: "ganzjahr",
+    emoji: "🌰",
+    bildUrl: mandelnAsset.url,
+    bewertung: "neutral",
+    nachhaltigkeit: {
+      regional: 3,
+      saisonal: 5,
+      verpackung: 3,
+      label: 5,
+      erklaerung:
+        "Bio-Qualität nach EU-/Schweizer-Standard, in der Schweiz abgepackt. Mandeln selbst stammen meist aus Südeuropa.",
     },
   },
 ];
