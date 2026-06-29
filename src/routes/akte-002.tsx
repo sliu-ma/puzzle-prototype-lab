@@ -187,70 +187,6 @@ function AktePage() {
             </blockquote>
             <div className="mt-6 flex justify-end">
               <button
-                onClick={() => goto("raetselkarte")}
-                className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
-              >
-                Weiter zur Rätselkarte →
-              </button>
-            </div>
-          </PaperCard>
-        )}
-
-        {step === "raetselkarte" && (
-          <PaperCard rotate={0.3} tape="top">
-            <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-              Rätselkarte · Auftrag von Elvira
-            </p>
-            <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-              Wer fehlt im Wald?
-            </h2>
-
-            <div className="mt-5 grid gap-4 sm:grid-cols-2">
-              <div className="rounded-sm border border-border bg-paper p-4">
-                <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
-                  In deiner Mappe
-                </p>
-                <ul className="mt-2 space-y-1 text-[15px]">
-                  <li>· 7 Polaroids von Tieren</li>
-                  <li>· 1 Blatt mit Gedicht (Rückseite)</li>
-                  <li>· Schere</li>
-                </ul>
-              </div>
-              <div className="rounded-sm border border-border bg-paper p-4">
-                <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
-                  Dein Auftrag
-                </p>
-                <ol className="mt-2 list-decimal space-y-1 pl-5 text-[15px]">
-                  <li>Polaroids ausschneiden.</li>
-                  <li>Sortieren: gefährdet ↔ nicht gefährdet.</li>
-                  <li>Gefährdete Tiere umdrehen und aufs Gedicht legen.</li>
-                  <li>
-                    Zahlen ablesen — von der <strong>kleinsten</strong> zur{" "}
-                    <strong>grössten</strong>.
-                  </li>
-                  <li>Code unten eintippen.</li>
-                </ol>
-              </div>
-            </div>
-
-            <div className="mt-6 rounded-sm border border-stamp/30 bg-stamp/5 p-4">
-              <p className="font-serif italic leading-relaxed">
-                „Vier von sieben Tieren stehen auf der Roten Liste der Schweiz.
-                Wenn du sie richtig erkennst, gibt dir das Gedicht den Schlüssel."
-              </p>
-              <p className="mt-2 font-mono-typed text-[11px] uppercase tracking-wider text-stamp">
-                — E.
-              </p>
-            </div>
-
-            <div className="mt-6 flex justify-between">
-              <button
-                onClick={() => setStep("brief")}
-                className="rounded-sm border border-border bg-card px-4 py-2.5 font-serif text-sm hover:bg-secondary"
-              >
-                ← Zurück
-              </button>
-              <button
                 onClick={() => goto("code")}
                 className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
               >
@@ -259,6 +195,7 @@ function AktePage() {
             </div>
           </PaperCard>
         )}
+
 
         {step === "code" && (
           <PaperCard rotate={-0.2} tape="top-right">
