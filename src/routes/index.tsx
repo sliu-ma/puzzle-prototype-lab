@@ -456,3 +456,35 @@ function Badge({
     </span>
   );
 }
+
+/* -------------------------------------------------------- */
+/*  DEV: Direkt-Sprung zu allen Etappen (temporär)           */
+/* -------------------------------------------------------- */
+
+function DevJumpPanel() {
+  return (
+    <div className="mt-8 rounded-sm border-2 border-dashed border-amber-500/60 bg-amber-50/60 p-4">
+      <p className="font-mono-typed text-[10px] uppercase tracking-[0.2em] text-amber-700">
+        ⚠ Dev-Modus · Testsprung (vor Live deaktivieren)
+      </p>
+      <p className="mt-1 text-xs text-amber-900/80">
+        Alle Etappen sind ohne Team & QR-Scan direkt aufrufbar. Schalter:{" "}
+        <code className="rounded bg-amber-100 px-1 font-mono-typed text-[11px]">
+          DEV_BYPASS
+        </code>{" "}
+        in <code className="font-mono-typed text-[11px]">src/lib/dev-mode.ts</code>.
+      </p>
+      <div className="mt-3 flex flex-wrap gap-2">
+        {STAGES.map((s) => (
+          <Link
+            key={s.nr}
+            to={s.to}
+            className="rounded-sm border border-amber-600/40 bg-white px-3 py-1.5 font-serif text-xs font-semibold text-amber-900 hover:bg-amber-100"
+          >
+            {s.nr === 6 ? "🏛 Finale" : `${s.nr}. ${s.ort}`}
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+}
