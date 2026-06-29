@@ -34,6 +34,7 @@ function CoverPage() {
   const [ready, setReady] = useState(false);
   const [team, setTeam] = useState<{ name: string; code: string } | null>(null);
   const [stage, setStage] = useState(0);
+  const [showIntro, setShowIntro] = useState(false);
 
   useEffect(() => {
     const sync = () => {
@@ -49,6 +50,16 @@ function CoverPage() {
       window.removeEventListener("storage", sync);
     };
   }, []);
+
+  const completeIntro = () => {
+    try {
+      localStorage.setItem(INTRO_KEY, "1");
+    } catch {
+      /* ignore */
+    }
+    setShowIntro(false);
+  };
+
 
   if (!ready) {
     return (
