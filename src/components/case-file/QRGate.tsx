@@ -3,6 +3,7 @@ import { BrowserQRCodeReader, IScannerControls } from "@zxing/browser";
 import { PaperCard } from "./PaperCard";
 import { Stamp } from "./Stamp";
 import { cn } from "@/lib/utils";
+import { DEV_BYPASS } from "@/lib/dev-mode";
 
 // Default für Akte 001 — bewusst NICHT im UI angezeigt.
 const DEFAULT_TOKEN = "CpZk0z9RaQkL22gtiWoR";
@@ -32,6 +33,7 @@ export function QRGate({
   title,
   description,
 }: Props) {
+  if (DEV_BYPASS) return <>{children}</>;
   const EXPECTED_TOKEN = token;
   const STORAGE_KEY = storageKey;
   const [unlocked, setUnlocked] = useState<boolean | null>(null); // null = noch nicht geprüft
