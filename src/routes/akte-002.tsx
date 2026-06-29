@@ -203,7 +203,7 @@ function AktePage() {
               Zahlenschloss · Ausrüstungskiste
             </p>
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-              Was sagt das Gedicht?
+              Findest du den Code?
             </h2>
             <p className="mt-3 text-[15px] text-foreground/80">
               Tippe die vier Zahlen <strong>von der kleinsten zur grössten</strong>{" "}
