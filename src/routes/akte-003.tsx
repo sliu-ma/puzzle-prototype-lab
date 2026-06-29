@@ -440,12 +440,12 @@ function AktePage() {
         )}
 
         <p className="mt-12 text-center font-mono-typed text-xs uppercase tracking-[0.2em] text-muted-foreground">
-          — Etappe 1 · Bahnhof Grünwald —
+          — Etappe 1 · Bahnhof Speicher —
         </p>
       </div>
 
-      {unlockedSteps.has("raetselkarte") &&
-        (step === "raetselkarte" || step === "eingabe" || step === "routen") && (
+      {unlockedSteps.has("eingabe") &&
+        (step === "eingabe" || step === "routen") && (
           <HintSystem hints={HINTS_003} storageKey="akte-003-hints-start" />
         )}
     </main>
