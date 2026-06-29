@@ -16,6 +16,11 @@ import vanillezuckerAsset from "@/assets/produkte/vanillezucker.webp.asset.json"
 import salzAsset from "@/assets/produkte/salz.webp.asset.json";
 import milchAsset from "@/assets/produkte/milch.webp.asset.json";
 import joghurtSchokoAsset from "@/assets/produkte/joghurt-schoko.webp.asset.json";
+import oatlyAsset from "@/assets/produkte/oatly-hafer.webp.asset.json";
+import gurkeChAsset from "@/assets/produkte/gurke-ch.webp.asset.json";
+import zitroneZaAsset from "@/assets/produkte/zitrone-za.jxl.asset.json";
+import backpulverAsset from "@/assets/produkte/backpulver.webp.asset.json";
+import mandelnAsset from "@/assets/produkte/mandeln.jxl.asset.json";
 
 import bioLogo from "@/assets/labels/bio.png.asset.json";
 import ipSuisseLogo from "@/assets/labels/ip-suisse.png.asset.json";
