@@ -266,7 +266,7 @@ export const PRODUKTE: Produkt[] = [
   {
     id: "butter-ch",
     name: "Butter 250g",
-    kategorie: "fette",
+    kategorie: "milch-eier",
     herkunft: "Schweiz",
     preis: 3.85,
     siegel: ["ip-suisse"],
@@ -309,7 +309,7 @@ export const PRODUKTE: Produkt[] = [
   {
     id: "mehl-ch",
     name: "Weissmehl 1kg",
-    kategorie: "getreide-backen",
+    kategorie: "backzutaten",
     herkunft: "Schweiz",
     preis: 1.9,
     siegel: ["ip-suisse"],
@@ -329,7 +329,7 @@ export const PRODUKTE: Produkt[] = [
   {
     id: "zucker-ch",
     name: "Cristal Feinkristall-Zucker 1kg",
-    kategorie: "getreide-backen",
+    kategorie: "backzutaten",
     herkunft: "Schweiz",
     preis: 1.8,
     siegel: [],
@@ -349,7 +349,7 @@ export const PRODUKTE: Produkt[] = [
   {
     id: "vanillezucker",
     name: "Vanillezucker 10×8g",
-    kategorie: "getreide-backen",
+    kategorie: "backzutaten",
     herkunft: "Schweiz (verpackt)",
     preis: 0.45,
     siegel: [],
