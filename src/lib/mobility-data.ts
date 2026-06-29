@@ -194,8 +194,8 @@ export const ROUTES: RouteOption[] = [
     titel: "Auto · ca. 366 km",
     iconKeys: ["car"],
     dauer: "4h 13min",
-    preis: "CHF 58–84 (Treibstoff)",
-    co2Kg: 55,
+    preis: "CHF 271",
+    co2Kg: 92,
     beschreibung:
       "Mietwagen oder Privatauto via A1 — Lausanne, Bern, Zürich, St. Gallen.",
     correct: false,
