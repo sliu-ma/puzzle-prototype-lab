@@ -63,10 +63,9 @@ export interface Produkt {
 }
 
 export const KATEGORIEN: { id: Kategorie; label: string; emoji: string }[] = [
-  { id: "milch-eier", label: "Milch & Eier", emoji: "🥛" },
+  { id: "milch-eier", label: "Milchprodukte & Eier", emoji: "🥛" },
   { id: "fruechte-gemuese", label: "Früchte & Gemüse", emoji: "🍎" },
-  { id: "getreide-backen", label: "Getreide & Backen", emoji: "🌾" },
-  { id: "fette", label: "Öle & Fette", emoji: "🧈" },
+  { id: "backzutaten", label: "Backzutaten", emoji: "🌾" },
   { id: "andere", label: "Weiteres", emoji: "🛒" },
 ];
 
