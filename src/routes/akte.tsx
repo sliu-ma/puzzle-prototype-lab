@@ -149,10 +149,11 @@ function AktePage() {
               mal gesagt: Wenn ich sehe, was die Leute kaufen, weiss ich genau,
               was schiefläuft."
               <br /><br />
-              Du ziehst Elviras Einkaufsliste aus der Tasche und deutest auf den
-              Holztresen, wo ein gepackter Einkaufskorb steht. Du schaust rein,
-              dann auf die Liste. Alles stimmt überein, jedes einzelne Produkt.
-              Und genau das ist komisch.
+              Du ziehst Elviras Einkaufsliste hervor und zeigst sie Frau Berger.
+              Daraufhin holt sie einen Einkaufskorb hinter der Kasse hervor.
+              „Diesen hat Elvira gepackt." Du schaust rein, dann auf die Liste.
+              Alles stimmt überein, jedes einzelne Produkt. Und genau das ist
+              komisch.
               <br /><br />
               „Sie meinte, du seist ziemlich gut im Kombinieren." Frau Berger
               lächelt. „Was fällt dir auf?"
