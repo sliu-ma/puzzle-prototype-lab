@@ -39,7 +39,7 @@ const HINTS_002: Hint[] = [
     unlockMin: 6,
     label: "Tipp 2",
     title: "Dreh die Karten um",
-    body: "Die meisten Rückseiten sind leer — auch bei den gefährdeten Tieren. Nur hinter einer einzigen Karte verbergen sich gleich alle drei Zahlen des Codes. Such bei den am stärksten bedrohten Arten weiter.",
+    body: "Hinter einer einzigen Karte verbergen sich gleich alle drei Zahlen des Codes. Such bei den bedrohten Arten weiter.",
   },
   {
     id: 2,
