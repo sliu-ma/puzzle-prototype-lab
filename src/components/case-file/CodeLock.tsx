@@ -85,7 +85,7 @@ export function CodeLock({ expected, onUnlock }: CodeLockProps) {
       <div className="min-h-[1.5rem] text-center">
         {status === "wrong" && (
           <p className="font-mono-typed text-sm text-stamp">
-            ✗ Falscher Code. Schau dir den Bon noch einmal genau an…
+            ✗ Falscher Code. Schau noch einmal genau hin…
           </p>
         )}
         {status === "correct" && (
