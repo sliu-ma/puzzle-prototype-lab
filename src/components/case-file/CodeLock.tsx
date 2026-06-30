@@ -34,7 +34,7 @@ export function CodeLock({ expected, onUnlock }: CodeLockProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const code = digits.join("");
-    if (code.length < 4) return;
+    if (code.length < length) return;
     if (code === expected) {
       setStatus("correct");
       setTimeout(onUnlock, 600);
