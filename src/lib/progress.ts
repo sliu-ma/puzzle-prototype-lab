@@ -13,6 +13,8 @@ export const START_CODE = "OEKOLOGIE";
 const KEY_TEAM = "maya-team-name";
 const KEY_CODE = "maya-team-code";
 const KEY_STAGE = "maya-current-stage";
+export const KEY_START_TS = "maya-start-ts";
+export const TIMER_DURATION_MIN = 90;
 
 export type StageInfo = {
   nr: number;
@@ -48,8 +50,23 @@ export function registerTeam(name: string, code: string) {
     if (!localStorage.getItem(KEY_STAGE)) {
       localStorage.setItem(KEY_STAGE, "1");
     }
+    if (!localStorage.getItem(KEY_START_TS)) {
+      localStorage.setItem(KEY_START_TS, String(Date.now()));
+    }
+    window.dispatchEvent(new Event("maya-progress"));
   } catch {
     /* ignore */
+  }
+}
+
+export function getStartTs(): number | null {
+  try {
+    const v = localStorage.getItem(KEY_START_TS);
+    if (!v) return null;
+    const n = parseInt(v, 10);
+    return Number.isFinite(n) ? n : null;
+  } catch {
+    return null;
   }
 }
 
@@ -87,6 +104,8 @@ export function resetAll() {
       "akte-004-unlocked",
       "akte-005-unlocked",
     ].forEach((k) => localStorage.removeItem(k));
+    localStorage.removeItem(KEY_START_TS);
+    localStorage.removeItem("maya-timer-shown");
     window.dispatchEvent(new Event("maya-progress"));
   } catch {
     /* ignore */
