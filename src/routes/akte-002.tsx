@@ -24,7 +24,7 @@ export const Route = createFileRoute("/akte-002")({
 });
 
 const AKTE_002_TOKEN = "Mn7YxQ2pVe9TbR4Ks0Lh";
-const EXPECTED_CODE = "456";
+const EXPECTED_CODE = "123";
 
 const HINTS_002: Hint[] = [
   {
