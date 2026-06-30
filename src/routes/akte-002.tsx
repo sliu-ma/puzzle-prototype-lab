@@ -181,9 +181,11 @@ function AktePage() {
               steht in eiliger Handschrift:
               <br />
               <br />
-              „Manche dieser Tiere sind hier noch sicher — andere stehen kurz
-              vor dem Verschwinden. Trenne die gefährdeten von den nicht
-              gefährdeten Arten, um meinen Code zu entschlüsseln."
+              „Hier liegen acht Fotokarten von Tieren, die in unseren Wäldern
+              vorkommen. Manche sind in der Schweiz noch sicher — andere stehen
+              auf der Roten Liste. Trenne die gefährdeten Arten von den nicht
+              gefährdeten. Hinter einer einzigen Karte verbirgt sich mein
+              Code."
             </blockquote>
             <div className="mt-6 flex justify-end">
               <button
