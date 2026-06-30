@@ -46,7 +46,7 @@ const HINTS_002: Hint[] = [
     unlockMin: 9,
     label: "Auflösung",
     title: "So geht's",
-    body: "Hinter der Kreuzotter (in der Schweiz stark gefährdet) stehen die Zahlen 4, 5 und 6. Aufsteigend ergibt das den Code 4 — 5 — 6.",
+    body: "Hinter der Kreuzotter (in der Schweiz stark gefährdet) stehen die Zahlen 1, 2 und 3. Aufsteigend ergibt das den Code 1 — 2 — 3.",
   },
 ];
 
