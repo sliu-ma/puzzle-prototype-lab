@@ -104,6 +104,8 @@ export function resetAll() {
       "akte-004-unlocked",
       "akte-005-unlocked",
     ].forEach((k) => localStorage.removeItem(k));
+    localStorage.removeItem(KEY_START_TS);
+    localStorage.removeItem("maya-timer-shown");
     window.dispatchEvent(new Event("maya-progress"));
   } catch {
     /* ignore */
