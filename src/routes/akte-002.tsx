@@ -208,7 +208,7 @@ function AktePage() {
               Findest du den Code?
             </h2>
             <p className="mt-3 text-[15px] text-foreground/80">
-              Tippe die vier Zahlen <strong>von der kleinsten zur grössten</strong>{" "}
+              Tippe die drei Zahlen <strong>von der kleinsten zur grössten</strong>{" "}
               ein.
             </p>
 
