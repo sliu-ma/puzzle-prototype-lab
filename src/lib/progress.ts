@@ -50,8 +50,23 @@ export function registerTeam(name: string, code: string) {
     if (!localStorage.getItem(KEY_STAGE)) {
       localStorage.setItem(KEY_STAGE, "1");
     }
+    if (!localStorage.getItem(KEY_START_TS)) {
+      localStorage.setItem(KEY_START_TS, String(Date.now()));
+    }
+    window.dispatchEvent(new Event("maya-progress"));
   } catch {
     /* ignore */
+  }
+}
+
+export function getStartTs(): number | null {
+  try {
+    const v = localStorage.getItem(KEY_START_TS);
+    if (!v) return null;
+    const n = parseInt(v, 10);
+    return Number.isFinite(n) ? n : null;
+  } catch {
+    return null;
   }
 }
 
