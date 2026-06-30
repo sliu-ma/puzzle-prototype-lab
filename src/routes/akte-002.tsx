@@ -168,24 +168,25 @@ function AktePage() {
               [Aufgeschlagenes Beobachtungsbuch · 16:18 Uhr]
             </p>
             <blockquote className="mt-5 border-l-4 border-stamp pl-4 text-[15px] leading-relaxed">
-              Der Waldweg ist dir vertraut — aber heute sieht er anders aus.
-              Schon von Weitem siehst du es: rotes Band um die Bäume, ein Schild
-              mit der Aufschrift „Baubeginn — Zutritt verboten. Rodung ab
-              Montag." Du bleibst kurz stehen. <em>Montag. Das ist übermorgen.</em>
+              Der Waldweg ist ihr vertraut aber heute sieht er anders aus. Schon
+              von Weitem sieht Maja es: rotes Band um die Bäume, ein Schild mit
+              der Aufschrift „Baubeginn – Zutritt verboten. Rodung ab Montag."
+              Sie bleibt kurz stehen. Montag. Das ist übermorgen.
               <br />
+              &nbsp;&nbsp;&nbsp;
               <br />
               Die Hütte steht noch, windschief wie immer. Am alten
               Beobachtungsposten mit dem Fernglas liegen Fotokarten von Tieren,
-              die Elvira über Jahrzehnte hier gesichtet hat — daneben ihr
-              vollgeschriebenes Beobachtungsbuch. Auf der aufgeschlagenen Seite
-              steht in eiliger Handschrift:
+              die Elvira über Jahrzehnte hier gesichtet hat – daneben ihr
+              vollgeschriebenes Beobachtungsbuch. Die letzten Einträge sind
+              kürzer geworden. Manche Arten kommen seit Jahren nicht mehr vor.
               <br />
+              &nbsp;&nbsp;&nbsp;
               <br />
-              „Hier liegen acht Fotokarten von Tieren, die in unseren Wäldern
-              vorkommen. Manche sind in der Schweiz noch sicher — andere stehen
-              auf der Roten Liste. Trenne die gefährdeten Arten von den nicht
-              gefährdeten. Hinter einer einzigen Karte verbirgt sich mein
-              Code."
+              Auf der aufgeschlagenen Seite steht in eiliger Handschrift:
+              „Manche dieser Tiere sind hier noch sicher andere stehen kurz vor
+              dem Verschwinden. Trenne die gefährdeten von den nicht gefährdeten
+              Arten, um meinen Code zu entschlüsseln."
             </blockquote>
             <div className="mt-6 flex justify-end">
               <button
