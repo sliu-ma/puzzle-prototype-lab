@@ -2,12 +2,13 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 
 interface CodeLockProps {
-  expected: string; // 4-digit string e.g. "3241"
+  expected: string; // digit string, length defines field count
   onUnlock: () => void;
 }
 
 export function CodeLock({ expected, onUnlock }: CodeLockProps) {
-  const [digits, setDigits] = useState<string[]>(["", "", "", ""]);
+  const length = expected.length;
+  const [digits, setDigits] = useState<string[]>(() => Array(length).fill(""));
   const [status, setStatus] = useState<"idle" | "wrong" | "correct">("idle");
   const [shake, setShake] = useState(false);
 
@@ -17,7 +18,7 @@ export function CodeLock({ expected, onUnlock }: CodeLockProps) {
     next[i] = cleaned;
     setDigits(next);
     setStatus("idle");
-    if (cleaned && i < 3) {
+    if (cleaned && i < length - 1) {
       const el = document.getElementById(`lock-d-${i + 1}`);
       el?.focus();
     }
@@ -33,7 +34,7 @@ export function CodeLock({ expected, onUnlock }: CodeLockProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const code = digits.join("");
-    if (code.length < 4) return;
+    if (code.length < length) return;
     if (code === expected) {
       setStatus("correct");
       setTimeout(onUnlock, 600);
@@ -84,7 +85,7 @@ export function CodeLock({ expected, onUnlock }: CodeLockProps) {
       <div className="min-h-[1.5rem] text-center">
         {status === "wrong" && (
           <p className="font-mono-typed text-sm text-stamp">
-            ✗ Falscher Code. Schau dir den Bon noch einmal genau an…
+            ✗ Falscher Code. Schau noch einmal genau hin…
           </p>
         )}
         {status === "correct" && (

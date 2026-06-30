@@ -24,7 +24,7 @@ export const Route = createFileRoute("/akte-002")({
 });
 
 const AKTE_002_TOKEN = "Mn7YxQ2pVe9TbR4Ks0Lh";
-const EXPECTED_CODE = "3579";
+const EXPECTED_CODE = "456";
 
 const HINTS_002: Hint[] = [
   {
@@ -32,21 +32,21 @@ const HINTS_002: Hint[] = [
     unlockMin: 3,
     label: "Tipp 1",
     title: "Sortier zuerst die Tiere",
-    body: "Lege die sieben Polaroids vor dich. Welche Tiere sind in der Schweiz akut gefährdet? Tipp: Es sind genau vier davon. Drei gelten als ungefährdet.",
+    body: "Lege die acht Polaroids vor dich. Welche dieser Tiere sind in der Schweiz bedroht (Rote Liste BAFU — von potentiell gefährdet bis vom Aussterben bedroht)? Tipp: Fünf davon sind in der Schweiz in irgendeiner Form gefährdet, drei sind nicht gefährdet.",
   },
   {
     id: 1,
     unlockMin: 6,
     label: "Tipp 2",
     title: "Dreh die Karten um",
-    body: "Auf der Rückseite jedes Polaroids siehst du eine Zahl. Lege nur die gefährdeten Tiere mit der Zahlenseite nach oben aufs Gedicht — die Zahlen erscheinen in den Lücken.",
+    body: "Die meisten Rückseiten sind leer — auch bei den gefährdeten Tieren. Nur hinter einer einzigen Karte verbergen sich gleich alle drei Zahlen des Codes. Such bei den am stärksten bedrohten Arten weiter.",
   },
   {
     id: 2,
     unlockMin: 9,
     label: "Auflösung",
     title: "So geht's",
-    body: "Gefährdet sind: Feldhase (3), Wiedehopf (5), Geburtshelferkröte (7) und Apollofalter (9). Aufsteigend ergibt das den Code 3 — 5 — 7 — 9.",
+    body: "Hinter der Kreuzotter (in der Schweiz stark gefährdet) stehen die Zahlen 4, 5 und 6. Aufsteigend ergibt das den Code 4 — 5 — 6.",
   },
 ];
 
@@ -181,9 +181,11 @@ function AktePage() {
               steht in eiliger Handschrift:
               <br />
               <br />
-              „Manche dieser Tiere sind hier noch sicher — andere stehen kurz
-              vor dem Verschwinden. Trenne die gefährdeten von den nicht
-              gefährdeten Arten, um meinen Code zu entschlüsseln."
+              „Hier liegen acht Fotokarten von Tieren, die in unseren Wäldern
+              vorkommen. Manche sind in der Schweiz noch sicher — andere stehen
+              auf der Roten Liste. Trenne die gefährdeten Arten von den nicht
+              gefährdeten. Hinter einer einzigen Karte verbirgt sich mein
+              Code."
             </blockquote>
             <div className="mt-6 flex justify-end">
               <button
@@ -206,7 +208,7 @@ function AktePage() {
               Findest du den Code?
             </h2>
             <p className="mt-3 text-[15px] text-foreground/80">
-              Tippe die vier Zahlen <strong>von der kleinsten zur grössten</strong>{" "}
+              Tippe die drei Zahlen <strong>von der kleinsten zur grössten</strong>{" "}
               ein.
             </p>
 

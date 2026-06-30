@@ -1,36 +1,42 @@
-# Plan: Texte-Überblick als DOCX
+# Etappe 3 — Neue Tiere & 3-stelliger Code (456)
 
-Erzeuge `/mnt/documents/Maya_Texte_Überblick.docx` — eine vollständige Sammlung aller im Spiel vorkommenden Texte, sortiert nach Etappe. Dient dir als Spickzettel / Druckvorlage für Lehrpersonen.
+## Rätsel-Update
 
-## Aufbau
+- 8 Polaroids statt 7, neue Mechanik: **nur hinter der Kreuzotter** stehen alle drei Zahlen (4, 5, 6). Hinter den anderen gefährdeten Tieren steht nichts.
+- Code wird **3-stellig: 456** (aufsteigend sortiert).
+- Gefährdungslage explizit **bezogen auf die Schweiz** (Rote Liste BAFU) in allen Texten und Hinweisen.
 
-**Kopf:** Titel, kurzer Hinweis ("Stand: heute", "interner Überblick").
+### Tierliste (Schweiz)
 
-**Pro Etappe (1 Bahnhof → 2 Dorfladen → 3 Wald → 4 Haus → 5 Wasserkraftwerk → 6 Finale) jeweils 4 Blöcke:**
+| Tier | Status |
+|---|---|
+| Kreuzotter | stark gefährdet — **Code 456 dahinter** |
+| Teichmolch | stark gefährdet |
+| Luchs | stark gefährdet |
+| Moor-Wiesenvögelchen | vom Aussterben bedroht |
+| Waldeidechse | potentiell gefährdet |
+| Reh | nicht gefährdet |
+| Rotkehlchen | nicht gefährdet |
+| Biber | nicht gefährdet |
 
-1. **Story / Narrative Beats** — Briefe, Sprachnachrichten, Tagebucheinträge, Notizen von Elvira (wörtlich aus dem Code).
-2. **Rätselkarte** — Aufgabenstellung an die Schüler:innen + Rätselmechanik kurz erklärt.
-3. **Fachlicher Input / Fakten** — Lernkarten-Texte (z. B. Saisonal/Regional/Bio in Etappe 2, Biodiv-Fakten in Etappe 3 etc.).
-4. **Übergang zur nächsten Etappe** — Auflösungstext + Hinweis auf nächsten Ort.
+## Änderungen
 
-Für das **Finale** zusätzlich: alle 10 Fragen (Frage, Antwortoptionen, richtige Lösung, Feedback-Text der Ratsperson).
+### `src/components/case-file/CodeLock.tsx`
+- Code-Länge dynamisch machen: neue Prop `length?: number` (default 4). State-Array und Index-Logik nutzen `expected.length`.
+- Fokus-/Backspace-Navigation auf neue Länge anpassen.
 
-## Quellen im Code
+### `src/routes/akte-002.tsx`
+- `EXPECTED_CODE = "456"`, `<CodeLock expected={EXPECTED_CODE} />` bleibt (Länge wird abgeleitet).
+- Brief-Text (Beobachtungsbuch) leicht anpassen: Hinweis auf 8 Tiere und „**in der Schweiz** gefährdet vs. nicht gefährdet" sowie neue Mechanik („hinter einer einzigen Karte verbirgt sich der ganze Code").
+- „Code eintippen"-Screen: Hinweistext anpassen („drei Zahlen", Schweiz-Kontext).
+- Hinweise (`HINTS_002`) neu formuliert:
+  - **Tipp 1 (3 Min):** Schweiz-Kontext betonen — gemäss Roter Liste der Schweiz (BAFU). Aufgabe: 8 Polaroids in gefährdet (inkl. potentiell gefährdet & vom Aussterben bedroht) vs. nicht gefährdet trennen. Hinweis: 5 davon sind in der Schweiz in irgendeiner Form bedroht, 3 nicht.
+  - **Tipp 2 (6 Min):** Karten umdrehen — die meisten Rückseiten sind leer. Nur hinter **einer** der gefährdeten Karten stehen drei Zahlen versteckt.
+  - **Tipp 3 (9 Min, Auflösung):** Hinter der **Kreuzotter** stehen die Zahlen 4, 5 und 6. Aufsteigend ergibt das den Code **456**.
 
-Texte werden 1:1 extrahiert aus:
-- `src/routes/akte.tsx`, `akte-002.tsx`, `akte-003.tsx`, `akte-004.tsx`, `akte-005.tsx`, `finale.tsx`
-- `src/lib/maya-data.ts` (Rezept, Produkte)
-- `src/lib/mobility-data.ts` (Routen)
-- `src/lib/energy-data.ts` (Massnahmen)
-- StoryBeat- / Hint-Inhalte aus den jeweiligen Komponenten
+### Optional: Input-Karten (Etappe 3)
+Falls in den Fachinput-Karten konkrete Tier-Beispiele genannt werden (Feldhase, Apollofalter), durch die neuen Arten ersetzen oder neutraler formulieren. Werde ich beim Umsetzen prüfen und nur bei Bedarf anpassen.
 
-## Technisches
-
-- Erzeugen mit `docx` (Node), gemäss DOCX-Skill.
-- A4, Arial 11 pt, H1 pro Etappe, H2 pro Block, Zitate/Sprachnachrichten kursiv mit linkem Rand.
-- Tipps und Lösungen in einem dezent grauen Kasten (Tabelle 1×1 mit Shading).
-- Datei: `/mnt/documents/Maya_Texte_Überblick.docx`, danach Validierung + Vorschau pro Seite.
-
-## Offene Frage
-
-Soll ich auch die **drei zeitgesteuerten Tipps** (3/6/9 Min) pro Etappe mit aufnehmen, oder nur Story + Rätsel + Fakten + Übergang? Standard: **Tipps mit aufnehmen** (am Ende jedes Etappenblocks), da sie sonst nirgends gebündelt stehen.
+## Out of scope
+- Polaroid-/Bild-Assets bleibt beim Lehrer (Druckvorlage).
+- Andere Etappen werden nicht angefasst.
