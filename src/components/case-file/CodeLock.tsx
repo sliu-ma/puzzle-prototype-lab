@@ -2,12 +2,13 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 
 interface CodeLockProps {
-  expected: string; // 4-digit string e.g. "3241"
+  expected: string; // digit string, length defines field count
   onUnlock: () => void;
 }
 
 export function CodeLock({ expected, onUnlock }: CodeLockProps) {
-  const [digits, setDigits] = useState<string[]>(["", "", "", ""]);
+  const length = expected.length;
+  const [digits, setDigits] = useState<string[]>(() => Array(length).fill(""));
   const [status, setStatus] = useState<"idle" | "wrong" | "correct">("idle");
   const [shake, setShake] = useState(false);
 
