@@ -18,7 +18,7 @@ export function CodeLock({ expected, onUnlock }: CodeLockProps) {
     next[i] = cleaned;
     setDigits(next);
     setStatus("idle");
-    if (cleaned && i < 3) {
+    if (cleaned && i < length - 1) {
       const el = document.getElementById(`lock-d-${i + 1}`);
       el?.focus();
     }
