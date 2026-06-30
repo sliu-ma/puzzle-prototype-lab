@@ -32,7 +32,7 @@ const HINTS_002: Hint[] = [
     unlockMin: 3,
     label: "Tipp 1",
     title: "Sortier zuerst die Tiere",
-    body: "Lege die acht Polaroids vor dich. Welche dieser Tiere sind in der Schweiz bedroht (Rote Liste BAFU — von potentiell gefährdet bis vom Aussterben bedroht)? Tipp: Fünf davon sind in der Schweiz in irgendeiner Form gefährdet, drei sind nicht gefährdet.",
+    body: "Lege die acht Polaroids vor dich. Welche dieser Tiere sind in der Schweiz bedroht? Tipp: Fünf davon sind in der Schweiz in irgendeiner Form gefährdet, drei sind nicht gefährdet.",
   },
   {
     id: 1,
