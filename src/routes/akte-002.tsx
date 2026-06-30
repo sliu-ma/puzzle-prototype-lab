@@ -24,7 +24,7 @@ export const Route = createFileRoute("/akte-002")({
 });
 
 const AKTE_002_TOKEN = "Mn7YxQ2pVe9TbR4Ks0Lh";
-const EXPECTED_CODE = "456";
+const EXPECTED_CODE = "123";
 
 const HINTS_002: Hint[] = [
   {
@@ -46,7 +46,7 @@ const HINTS_002: Hint[] = [
     unlockMin: 9,
     label: "Auflösung",
     title: "So geht's",
-    body: "Hinter der Kreuzotter (in der Schweiz stark gefährdet) stehen die Zahlen 4, 5 und 6. Aufsteigend ergibt das den Code 4 — 5 — 6.",
+    body: "Hinter der Kreuzotter (in der Schweiz stark gefährdet) stehen die Zahlen 1, 2 und 3. Aufsteigend ergibt das den Code 1 — 2 — 3.",
   },
 ];
 
