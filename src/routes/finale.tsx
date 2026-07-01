@@ -119,11 +119,11 @@ const FRAGEN: Frage[] = [
     thema: "Konsum",
     ratsmitglied: "Ratsherr Brunner",
     frage:
-      "Ordne jedes Label seinem Zweck zu. Tippe links ein Label an, dann rechts den passenden Zweck.",
+      "Ordne jedes Label seinem Zweck zu. Ziehe das Label per Drag & Drop auf den passenden Zweck.",
     links: [
-      { id: "biosuisse", label: "Bio Suisse (Knospe)" },
-      { id: "ipsuisse", label: "IP-Suisse (Marienkäfer)" },
-      { id: "demeter", label: "Demeter" },
+      { id: "biosuisse", label: "Bio Suisse", icon: bioLogo.url },
+      { id: "ipsuisse", label: "IP-Suisse", icon: ipSuisseLogo.url },
+      { id: "demeter", label: "Demeter", icon: demeterLogo.url },
     ],
     rechts: [
       { id: "ch-bio", label: "Schweizer Bio-Landwirtschaft" },
@@ -132,7 +132,7 @@ const FRAGEN: Frage[] = [
     ],
     paare: { biosuisse: "ch-bio", ipsuisse: "ch-ip", demeter: "biodyn" },
     erklaerung:
-      "Bio Suisse (Knospe) = CH-Bio; IP-Suisse = integrierte Produktion; Demeter = biologisch-dynamisch (strengster Anbau).",
+      "Bio Suisse = CH-Bio; IP-Suisse = integrierte Produktion; Demeter = biologisch-dynamisch (strengster Anbau).",
   },
   {
     id: 4,
