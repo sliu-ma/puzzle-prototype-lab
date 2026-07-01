@@ -33,7 +33,9 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
   const warenkorbProdukte = warenkorb.map((id) => produktById[id]).filter(Boolean);
   const total = warenkorbProdukte.reduce((s, p) => s + p.preis, 0);
 
-  const kategorieProdukte = PRODUKTE.filter((p) => p.kategorie === aktiveKat);
+  const kategorieProdukte = PRODUKTE.filter((p) => p.kategorie === aktiveKat)
+    .slice()
+    .sort((a, b) => a.name.localeCompare(b.name, "de"));
 
   const inKorb = (id: string) => warenkorb.includes(id);
 
