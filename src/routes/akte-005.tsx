@@ -25,6 +25,30 @@ export const Route = createFileRoute("/akte-005")({
 
 const AKTE_005_TOKEN = "Eg9LkRq2VhYbP4Mn7TcW";
 
+const HINTS_005: Hint[] = [
+  {
+    id: 0,
+    unlockMin: 3,
+    label: "Tipp 1",
+    title: "Vergleich statt Bauch",
+    body: "Lies jedes Gutachten Satz für Satz und halte die Aussagen gegen Marlenes Faktenkarte und das Diagramm daneben. Insgesamt musst du genau 5 Aussagen markieren.",
+  },
+  {
+    id: 1,
+    unlockMin: 6,
+    label: "Tipp 2",
+    title: "Wo Marlene stutzig wurde",
+    body: "Die falschen Aussagen verteilen sich über alle drei Gutachten (Gas, Kohle, Solar). Achte besonders auf konkrete Zahlen (CO₂, Wirkungsgrad, Volllaststunden) und auf Grundsatzbegriffe wie „erneuerbar" oder „nicht schutzwürdig".",
+  },
+  {
+    id: 2,
+    unlockMin: 9,
+    label: "Auflösung",
+    title: "Die fünf Fehler",
+    body: "Gutachten A (Gas): „95 g CO₂/kWh — nahezu klimaneutral" und „Der Wald weist keine besondere Schutzwürdigkeit auf". Gutachten B (Kohle): „78 % Wirkungsgrad" und „Kohle ist eine erneuerbare Brückentechnologie". Gutachten C (Solar): „Volllaststunden im Schweizer Mittelland 250 h/Jahr" (real ≈ 900–1'100 h/Jahr).",
+  },
+];
+
 function AkteGated() {
   return (
     <StageGate stage={5}>
