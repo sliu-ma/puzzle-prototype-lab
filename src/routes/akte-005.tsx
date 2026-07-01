@@ -45,7 +45,7 @@ const HINTS_005: Hint[] = [
     unlockMin: 9,
     label: "Auflösung",
     title: "Die fünf Fehler",
-    body: "Gutachten A (Gas): „95 g CO₂/kWh — nahezu klimaneutral" und „Der Wald weist keine besondere Schutzwürdigkeit auf". Gutachten B (Kohle): „78 % Wirkungsgrad" und „Kohle ist eine erneuerbare Brückentechnologie". Gutachten C (Solar): „Volllaststunden im Schweizer Mittelland 250 h/Jahr" (real ≈ 900–1'100 h/Jahr).",
+    body: 'Gutachten A (Gas): „95 g CO₂/kWh — nahezu klimaneutral" und „Der Wald weist keine besondere Schutzwürdigkeit auf". Gutachten B (Kohle): „78 % Wirkungsgrad" und „Kohle ist eine erneuerbare Brückentechnologie". Gutachten C (Solar): „Volllaststunden im Schweizer Mittelland 250 h/Jahr" (real ≈ 900–1\'100 h/Jahr).',
   },
 ];
 
