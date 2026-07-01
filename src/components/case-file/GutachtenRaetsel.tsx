@@ -164,7 +164,7 @@ const gutachten: Gutachten[] = [
     fakten: [
       { groesse: "Volllaststunden PV (Schweizer Mittelland)", wert: "≈ 900–1'100 h/Jahr" },
       { groesse: "CO₂ Photovoltaik (Betrieb)", wert: "0 g/kWh" },
-      { groesse: "Batteriespeicher (Li-Ion)", wert: "≈ 15–25 Jahre Lebensdauer" },
+      { groesse: "Batteriespeicher (Li-Ion)", wert: "≈ 15–25 Jahre \nLebensdauer" },
       { groesse: "Erneuerbar?", wert: "JA, Sonnenenergie" },
     ],
   },
