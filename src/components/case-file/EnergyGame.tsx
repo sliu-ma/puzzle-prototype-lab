@@ -43,6 +43,7 @@ export function EnergyGame({ onErfolg }: { onErfolg: () => void }) {
 
   const setChoice = (deviceId: string, optId: string) => {
     setChoices((c) => ({ ...c, [deviceId]: optId }));
+    setOpen(null);
   };
 
   const reset = () => {
