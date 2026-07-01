@@ -373,10 +373,10 @@ function FinalePage() {
               „Geben Sie uns fünf Minuten."
             </h2>
             <p className="mt-4 text-[15px] leading-relaxed text-foreground/85">
-              Mit den korrigierten Gutachten stossen Maja, Elvira und Marlene
-              Vogt die schwere Saaltür auf. Reihum stellt jedes Ratsmitglied
-              eine Frage — euer Überzeugungs-Barometer steigt mit jedem Treffer
-              und fällt mit jedem Fehler.
+              Mit den korrigierten Unterlagen stossen Maja und Elvira die
+              schwere Saaltür auf. Reihum stellt jedes Ratsmitglied eine Frage
+              — euer Überzeugungs-Barometer steigt mit jedem Treffer und fällt
+              mit jedem Fehler.
             </p>
             <div className="mt-4 rounded-sm border border-stamp/30 bg-stamp/5 p-4 text-sm">
               <p className="font-serif italic">
