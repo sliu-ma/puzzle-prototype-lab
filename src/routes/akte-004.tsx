@@ -5,8 +5,33 @@ import { Stamp } from "@/components/case-file/Stamp";
 import { QRGate } from "@/components/case-file/QRGate";
 import { StageGate } from "@/components/case-file/StageGate";
 import { EnergyGame } from "@/components/case-file/EnergyGame";
+import { HintSystem, type Hint } from "@/components/case-file/HintSystem";
 import { completeStage } from "@/lib/progress";
 import { cn } from "@/lib/utils";
+
+const HINTS_004: Hint[] = [
+  {
+    id: 0,
+    unlockMin: 3,
+    label: "Tipp 1",
+    title: "Wo steckt der grösste Verbrauch?",
+    body: "Öffne zuerst die grossen Posten: Heizung, Warmwasser, Dusche und Fenster. Dort schlummern die meisten kWh — nicht bei Fernseher oder Lampe.",
+  },
+  {
+    id: 1,
+    unlockMin: 6,
+    label: "Tipp 2",
+    title: "Nicht jedes teure Upgrade lohnt sich",
+    body: "Verhalten kostet 0 CHF und bringt viel: kurz duschen, Wasserhahn zudrehen, stosslüften statt Kippfenster. Behalte das Budget im Blick — die teuersten Geräte sind selten die effizientesten pro Franken.",
+  },
+  {
+    id: 2,
+    unlockMin: 9,
+    label: "Auflösung",
+    title: "So erreichst du die 8'000 kWh",
+    body: "Kombiniere günstige Verhaltensoptionen mit gezielten Upgrades: Sparbrause + kurz duschen (2'700), Wasserhahn-Perlator (900), Stosslüften (1'600), Wärmepumpe (5'200), Warmwasser-Wärmepumpe (1'900), Steckerleiste beim TV (320), LED (410). Damit bleibst du im Budget und knackst die 8'000 kWh locker.",
+  },
+];
 
 export const Route = createFileRoute("/akte-004")({
   head: () => ({
