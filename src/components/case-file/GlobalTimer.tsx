@@ -130,9 +130,15 @@ export function GlobalTimer() {
   const remaining = startTs + totalMs - now;
   const isOver = remaining <= 0;
   const isFinal = remaining <= 15 * 60_000;
+  const hearing = getHearingClock() ?? "19:00";
+  const popupTitle = popup
+    ? `Maja · ${formatClock(new Date(startTs + popup.at * 60_000))}`
+    : "";
+  const popupBody = popup ? popup.body(hearing) : "";
 
   return (
     <>
+      {isOver && <TimeUpOverlay />}
       <div
         className={cn(
           "fixed right-3 top-3 z-40 flex items-center gap-2 rounded-sm border bg-card/95 px-3 py-1.5 font-mono-typed text-sm shadow-md backdrop-blur",
@@ -164,10 +170,10 @@ export function GlobalTimer() {
               )}
             >
               {popup?.urgent ? "⚠ " : "✉ "}
-              {popup?.title}
+              {popupTitle}
             </DialogTitle>
             <DialogDescription className="pt-3 font-serif text-base italic leading-relaxed text-foreground/85">
-              „{popup?.body}"
+              „{popupBody}"
             </DialogDescription>
           </DialogHeader>
           <button
@@ -181,3 +187,4 @@ export function GlobalTimer() {
     </>
   );
 }
+
