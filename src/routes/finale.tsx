@@ -1168,10 +1168,14 @@ function MatchView({
       )}
 
       {/* Drag ghost */}
-      {dragging && ghost && dragged && (
+      {dragging && ghost && grab && dragged && (
         <div
-          className="pointer-events-none fixed z-50 rounded-sm border border-stamp bg-paper px-3 py-2 shadow-lg"
-          style={{ left: ghost.x + 12, top: ghost.y + 12 }}
+          className="pointer-events-none fixed left-0 top-0 z-50 rounded-sm border border-stamp bg-paper px-3 py-2 shadow-lg"
+          style={{
+            width: grab.w,
+            height: grab.h,
+            transform: `translate(${ghost.x - grab.dx}px, ${ghost.y - grab.dy}px)`,
+          }}
         >
           <div className="flex items-center gap-2">
             {dragged.icon && (
