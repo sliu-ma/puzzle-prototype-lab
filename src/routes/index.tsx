@@ -37,11 +37,13 @@ function CoverPage() {
   const [stage, setStage] = useState(0);
   const [showIntro, setShowIntro] = useState(false);
   const [introSeen, setIntroSeen] = useState(false);
+  const [devMode, setDevModeState] = useState(isDevMode());
 
   useEffect(() => {
     const sync = () => {
       setTeam(getTeam());
       setStage(getCurrentStage());
+      setDevModeState(isDevMode());
     };
     sync();
     setIntroSeen(hasSeenIntro());
