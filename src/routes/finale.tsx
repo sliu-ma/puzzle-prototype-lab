@@ -1000,6 +1000,7 @@ function MatchView({
   const [submitted, setSubmitted] = useState(false);
   const [dragging, setDragging] = useState<string | null>(null);
   const [ghost, setGhost] = useState<{ x: number; y: number } | null>(null);
+  const dragOffset = useRef<{ dx: number; dy: number; w: number; h: number }>({ dx: 0, dy: 0, w: 0, h: 0 });
   const [hoverRight, setHoverRight] = useState<string | null>(null);
   const rightRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
