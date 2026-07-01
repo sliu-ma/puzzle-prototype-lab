@@ -160,19 +160,17 @@ const FRAGEN: Frage[] = [
   // Biodiversität
   {
     id: 5,
-    type: "order",
+    type: "multi",
     thema: "Biodiversität",
     ratsmitglied: "Ratsfrau Lindenmann",
-    frage:
-      "Sortiert diese vier Massnahmen für Biodiversität — von der wirksamsten (oben) zur am wenigsten wirksamen.",
-    items: [
-      { id: "vernetzung", label: "Vernetzung von Lebensräumen (Korridore, Hecken)" },
-      { id: "renaturierung", label: "Renaturierung von Bächen und Waldrändern" },
-      { id: "blumenwiese", label: "Blühstreifen am Feldrand anlegen" },
-      { id: "monokultur", label: "Aufforstung mit einer einzigen Baumart" },
+    frage: "Was sind Massnahmen zur Förderung der Biodiversität?",
+    optionen: [
+      "Vernetzung von Lebensräumen (Korridore, Hecken)",
+      "Renaturierung von Bächen und Waldrändern",
+      "Blühstreifen am Feldrand anlegen",
+      "Aufforstung mit einer einzigen Baumart",
     ],
-    reihenfolge: ["vernetzung", "renaturierung", "blumenwiese", "monokultur"],
-    hint: "Vernetzung > Renaturierung > Einzelelement > Monokultur.",
+    korrekt: [0, 1, 2],
     erklaerung:
       "Vernetzung und Renaturierung schaffen ganze Lebensraum-Systeme, Blühstreifen sind punktuell hilfreich, Monokulturen schaden der Biodiversität sogar.",
   },
