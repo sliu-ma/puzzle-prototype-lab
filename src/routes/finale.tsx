@@ -4,7 +4,7 @@ import { CheckCircle2, XCircle, Gauge, RefreshCw, ArrowUp, ArrowDown, Sparkles }
 import { PaperCard } from "@/components/case-file/PaperCard";
 import { Stamp } from "@/components/case-file/Stamp";
 import { StageGate } from "@/components/case-file/StageGate";
-import { completeStage } from "@/lib/progress";
+import { completeStage, getHearingClock } from "@/lib/progress";
 import { cn } from "@/lib/utils";
 import bioLogo from "@/assets/labels/bio.png.asset.json";
 import ipSuisseLogo from "@/assets/labels/ip-suisse.png.asset.json";
@@ -358,7 +358,7 @@ function FinalePage() {
               Finale · Hearing
             </h1>
             <p className="mt-0.5 font-serif italic text-sm text-foreground/70 sm:text-base">
-              Gemeindesaal Grünwald · 19:02 Uhr
+              Gemeindesaal Grünwald · {getHearingClock() ?? "19:00"} Uhr
             </p>
           </div>
           <Stamp rotate={-6}>Live</Stamp>
