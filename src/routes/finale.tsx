@@ -103,7 +103,7 @@ const FRAGEN: Frage[] = [
       "Welche dieser Aussagen zum Verkehr in der Schweiz stimmen? (Mehrfachauswahl)",
     optionen: [
       "Rund die Hälfte aller Pendlerwege ist kürzer als 5 km.",
-      "Ein voll besetztes Auto ist klimafreundlicher als ein leerer Zug.",
+      "Ein voll besetztes Auto ist klimafreundlicher als ein voller Zug.",
       "Velo und zu Fuss verursachen praktisch kein CO₂.",
       "Der Verkehr ist für unter 5 % der CH-Treibhausgase verantwortlich.",
     ],
