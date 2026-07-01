@@ -1302,6 +1302,7 @@ function BucketView({
   const [submitted, setSubmitted] = useState(false);
   const [dragging, setDragging] = useState<string | null>(null);
   const [ghost, setGhost] = useState<{ x: number; y: number } | null>(null);
+  const [grab, setGrab] = useState<{ dx: number; dy: number; w: number; h: number } | null>(null);
   const [hoverTarget, setHoverTarget] = useState<string | null>(null);
   const bucketRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const poolRef = useRef<HTMLDivElement | null>(null);
@@ -1323,6 +1324,13 @@ function BucketView({
     if (submitted) return;
     e.preventDefault();
     (e.target as Element).setPointerCapture?.(e.pointerId);
+    const rect = e.currentTarget.getBoundingClientRect();
+    setGrab({
+      dx: e.clientX - rect.left,
+      dy: e.clientY - rect.top,
+      w: rect.width,
+      h: rect.height,
+    });
     setDragging(itemId);
     setGhost({ x: e.clientX, y: e.clientY });
   };
