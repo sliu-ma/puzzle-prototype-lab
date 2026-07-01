@@ -373,10 +373,10 @@ function FinalePage() {
               „Geben Sie uns fünf Minuten."
             </h2>
             <p className="mt-4 text-[15px] leading-relaxed text-foreground/85">
-              Mit den korrigierten Gutachten stossen Maja, Elvira und Marlene
-              Vogt die schwere Saaltür auf. Reihum stellt jedes Ratsmitglied
-              eine Frage — euer Überzeugungs-Barometer steigt mit jedem Treffer
-              und fällt mit jedem Fehler.
+              Mit den korrigierten Unterlagen stossen Maja und Elvira die
+              schwere Saaltür auf. Reihum stellt jedes Ratsmitglied eine Frage
+              — euer Überzeugungs-Barometer steigt mit jedem Treffer und fällt
+              mit jedem Fehler.
             </p>
             <div className="mt-4 rounded-sm border border-stamp/30 bg-stamp/5 p-4 text-sm">
               <p className="font-serif italic">
@@ -1444,6 +1444,9 @@ function OutroScreen({
   onReset: () => void;
 }) {
   const [step, setStep] = useState(0);
+  const [bubble, setBubble] = useState(0);
+  const totalSteps = 3;
+
   const nowClock =
     typeof window !== "undefined"
       ? new Date().toLocaleTimeString("de-CH", {
@@ -1452,56 +1455,159 @@ function OutroScreen({
         })
       : "19:04";
 
+  const reaktionen: {
+    name: string;
+    rolle: string;
+    text: string;
+    side: "left" | "right";
+    tone: "emerald" | "amber" | "stamp";
+  }[] = [
+    {
+      name: "Ratsfrau Schmid",
+      rolle: "Ressort Verkehr",
+      side: "left",
+      tone: "emerald",
+      text:
+        "„Ich beantrage, die Abstimmung zu vertagen und die neuen Unterlagen zu prüfen.“",
+    },
+    {
+      name: "Ratsherr Brunner",
+      rolle: "Ressort Landwirtschaft",
+      side: "right",
+      tone: "amber",
+      text:
+        "„Die Zahlen sind sauber. Damit können wir arbeiten — nicht mit dem alten Gutachten.“",
+    },
+    {
+      name: "Ratsfrau Lindenmann",
+      rolle: "Ressort Umwelt",
+      side: "left",
+      tone: "emerald",
+      text:
+        "„Ein Gaskraftwerk mitten im Waldreservat? Das hätte ich fast durchgewinkt. Danke.“",
+    },
+    {
+      name: "Gemeindepräsident",
+      rolle: "Vorsitz",
+      side: "right",
+      tone: "stamp",
+      text:
+        "„Antrag angenommen. Die Abstimmung wird auf nächsten Monat verschoben.“",
+    },
+  ];
+
+  const canNextBubble = bubble < reaktionen.length - 1;
+
   return (
     <div className="animate-scale-in">
+      {/* Fortschrittspunkte */}
+      <div className="mb-3 flex items-center justify-end gap-1.5">
+        {Array.from({ length: totalSteps }).map((_, i) => (
+          <span
+            key={i}
+            className={`h-1.5 w-6 rounded-full ${
+              i <= step ? "bg-stamp" : "bg-border"
+            }`}
+          />
+        ))}
+      </div>
+
+      {/* STEP 0 — Reaktionen im Saal als Sprechblasen */}
       {step === 0 && (
         <PaperCard rotate={-0.3} tape="top-left">
           <div className="absolute right-4 top-6 sm:right-8 sm:top-8">
-            <Stamp rotate={8}>Auflösung</Stamp>
+            <Stamp rotate={8}>Im Saal</Stamp>
           </div>
           <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-            Im Saal
+            Reaktionen des Gemeinderats
           </p>
           <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-            „Antrag angenommen."
+            Stille. Dann geht ein Raunen durch den Saal.
           </h2>
 
-          <div className="mt-5 space-y-4 font-serif text-[15px] leading-relaxed text-foreground/90">
-            <p>Der Gemeindepräsident lehnt sich zurück. Stille im Saal.</p>
-            <p>
-              Dann nickt Ratsmitglied Frau Schmid langsam:{" "}
-              <em>
-                „Ich beantrage, die Abstimmung zu vertagen und die neuen
-                Unterlagen zu prüfen."
-              </em>{" "}
-              Ein zweites Ratsmitglied hebt die Hand. Dann ein drittes.
-            </p>
-            <p>
-              <em>„Antrag angenommen"</em>, sagt der Gemeindepräsident. „Die
-              Abstimmung wird auf nächsten Monat verschoben."
-            </p>
-            <p>
-              Draussen vor dem Saal atmen Maja, Elvira und Marlene gleichzeitig
-              aus. Elvira legt ihrer Grossnichte die Hand auf die Schulter und
-              sagt nichts. Sie müssen nichts sagen.
-            </p>
-            <p>
-              Maja schaut auf ihr Handy. <strong>{nowClock} Uhr.</strong> Dann
-              schaut sie Elvira an. <em>„Gehen wir zur Hütte?"</em>
-            </p>
-            <p>
-              Elvira lacht leise. <em>„Klar, das ist eine gute Idee."</em>
-            </p>
-            <p>
-              Sie gehen zu dritt den Waldweg hinauf, die Sonne noch warm auf
-              der Haut. Das rote Band hängt noch an den Bäumen. Aber heute
-              stört es niemanden.
-            </p>
+          <div className="mt-6 space-y-3">
+            {reaktionen.slice(0, bubble + 1).map((r, i) => (
+              <SpeechBubble
+                key={i}
+                name={r.name}
+                rolle={r.rolle}
+                side={r.side}
+                tone={r.tone}
+              >
+                {r.text}
+              </SpeechBubble>
+            ))}
           </div>
 
           <div className="mt-6 flex justify-end">
+            {canNextBubble ? (
+              <button
+                onClick={() => setBubble(bubble + 1)}
+                className="rounded-sm border border-border bg-card px-4 py-2 font-serif text-sm hover:bg-secondary"
+              >
+                Weitere Reaktion →
+              </button>
+            ) : (
+              <button
+                onClick={() => setStep(1)}
+                className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
+              >
+                Nach draussen →
+              </button>
+            )}
+          </div>
+        </PaperCard>
+      )}
+
+      {/* STEP 1 — Nach dem Saal, Maja & Elvira */}
+      {step === 1 && (
+        <PaperCard rotate={0.2} tape="top-right">
+          <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
+            Vor dem Gemeindesaal
+          </p>
+          <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
+            Ausatmen.
+          </h2>
+
+          <div className="mt-5 space-y-4 font-serif text-[15px] leading-relaxed text-foreground/90">
+            <p>
+              Draussen atmen Maja und Elvira gleichzeitig aus. Elvira legt
+              ihrer Grossnichte die Hand auf die Schulter und sagt nichts. Sie
+              müssen nichts sagen.
+            </p>
+            <p>
+              Maja schaut auf ihr Handy. <strong>{nowClock} Uhr.</strong> Dann
+              schaut sie Elvira an.
+            </p>
+          </div>
+
+          <div className="mt-4 space-y-3">
+            <SpeechBubble name="Maja" side="left" tone="amber">
+              „Gehen wir zur Hütte?“
+            </SpeechBubble>
+            <SpeechBubble name="Elvira" side="right" tone="emerald">
+              „Klar. Das ist eine gute Idee.“
+            </SpeechBubble>
+          </div>
+
+          <p className="mt-5 font-serif text-[15px] leading-relaxed text-foreground/90">
+            Sie gehen zu zweit den Waldweg hinauf, die Sonne noch warm auf der
+            Haut. Das rote Band hängt noch an den Bäumen. Aber heute stört es
+            niemanden.
+          </p>
+
+          <div className="mt-6 flex justify-between gap-3">
             <button
-              onClick={() => setStep(1)}
+              onClick={() => {
+                setStep(0);
+                setBubble(reaktionen.length - 1);
+              }}
+              className="font-mono-typed text-[11px] uppercase tracking-wider text-muted-foreground hover:text-foreground"
+            >
+              ← Zurück
+            </button>
+            <button
+              onClick={() => setStep(2)}
               className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
             >
               Euer Ergebnis →
@@ -1510,20 +1616,28 @@ function OutroScreen({
         </PaperCard>
       )}
 
-      {step === 1 && (
-        <PaperCard rotate={0.3} tape="top-right">
+      {/* STEP 2 — Abschluss der gesamten Ermittlung */}
+      {step === 2 && (
+        <PaperCard rotate={-0.3} tape="top-left">
+          <div className="absolute right-4 top-6 sm:right-8 sm:top-8">
+            <Stamp rotate={-6}>Fall gelöst</Stamp>
+          </div>
           <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-            Statistik · Hearing
+            Abschluss der Ermittlung
           </p>
           <h2 className="mt-2 font-serif text-3xl font-bold sm:text-4xl">
             Ihr habt es geschafft.
           </h2>
+          <p className="mt-3 text-[15px] leading-relaxed text-foreground/85">
+            Fünf Etappen, ein Hearing — und eine Gemeinde, die zum ersten Mal
+            genau hingeschaut hat. Das war eure Arbeit.
+          </p>
 
           <div className="relative mt-6 overflow-hidden rounded-sm border border-emerald-500/40 bg-emerald-500/5 p-5 text-center">
             <SuccessConfetti />
             <Sparkles className="mx-auto h-10 w-10 text-emerald-600 animate-fade-in" />
             <p className="mt-2 font-mono-typed text-[10px] uppercase tracking-[0.3em] text-emerald-700">
-              Barometer · Endstand
+              Überzeugungs-Barometer · Endstand
             </p>
             <p className="mt-1 font-serif text-5xl font-bold text-emerald-700">
               {barometer}%
@@ -1537,7 +1651,7 @@ function OutroScreen({
           </div>
 
           <p className="mt-6 text-center font-serif text-3xl tracking-[0.4em] text-stamp sm:text-5xl">
-            GEWONNEN
+            ENDE
           </p>
 
           <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
@@ -1551,7 +1665,7 @@ function OutroScreen({
               to="/"
               className="inline-flex items-center gap-2 rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground hover:-translate-y-0.5 hover:shadow-md"
             >
-              ← Übersicht
+              ← Zur Übersicht
             </Link>
           </div>
         </PaperCard>
@@ -1559,3 +1673,67 @@ function OutroScreen({
     </div>
   );
 }
+
+/* ---------- Sprechblase ---------- */
+
+function SpeechBubble({
+  name,
+  rolle,
+  side,
+  tone,
+  children,
+}: {
+  name: string;
+  rolle?: string;
+  side: "left" | "right";
+  tone: "emerald" | "amber" | "stamp";
+  children: React.ReactNode;
+}) {
+  const toneMap = {
+    emerald: "border-emerald-500/40 bg-emerald-500/5",
+    amber: "border-amber-500/40 bg-amber-500/5",
+    stamp: "border-stamp/40 bg-stamp/5",
+  } as const;
+
+  const initials = name
+    .split(" ")
+    .map((w) => w[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+
+  const isLeft = side === "left";
+
+  return (
+    <div
+      className={cn(
+        "flex items-end gap-2 animate-fade-in",
+        isLeft ? "justify-start" : "justify-end flex-row-reverse",
+      )}
+    >
+      <div
+        className={cn(
+          "flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border bg-paper font-serif text-xs font-bold text-foreground/70",
+        )}
+      >
+        {initials}
+      </div>
+      <div
+        className={cn(
+          "max-w-[85%] rounded-2xl border px-4 py-2.5 shadow-sm",
+          toneMap[tone],
+          isLeft ? "rounded-bl-sm" : "rounded-br-sm",
+        )}
+      >
+        <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp/80">
+          {name}
+          {rolle ? <span className="text-muted-foreground"> · {rolle}</span> : null}
+        </p>
+        <p className="mt-0.5 font-serif text-[15px] leading-relaxed text-foreground/90">
+          {children}
+        </p>
+      </div>
+    </div>
+  );
+}
+
