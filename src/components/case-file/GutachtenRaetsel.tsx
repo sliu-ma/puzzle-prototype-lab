@@ -35,7 +35,7 @@ const D = (id: string, value: string): Chunk => ({ kind: "decoy", id, value });
 const gutachten: Gutachten[] = [
   {
     id: "A",
-    titel: 'Erdgaskraftwerk "Thermika Ost"',
+    titel: 'Erdgas-Kraftwerk "Thermika Ost"',
     art: "Fossil",
     akzent: "bg-sky-900",
     auftraggeber: "Helvetia Energie AG",
@@ -43,19 +43,19 @@ const gutachten: Gutachten[] = [
     datum: "14. März 2025",
     body: [
       {
-        heading: "1. Zusammenfassung / Technische Bewertung",
+        heading: "1. Technische Bewertung",
         chunks: [
-          D("a1", "Der Bau eines modernen Gas- und Dampfkraftwerks gilt als schnellste verfügbare Lösung."),
           E("f1", "Erdgas verursacht im Betrieb lediglich 95 g CO₂/kWh und ist damit nahezu klimaneutral."),
-          D("a2", "Die Inbetriebnahme ist innerhalb von 24 Monaten möglich."),
+          D("a1", "Die Inbetriebnahme ist innerhalb von 24 Monaten möglich."),
+          D("a2", "Der Wirkungsgrad einer GuD-Anlage liegt bei rund 60 %."),
         ],
       },
       {
         heading: "2. Standortbewertung",
         chunks: [
-          D("a3", "Die Rodung von 4,2 ha Mischwald ist aus gutachterlicher Sicht vertretbar."),
-          D("a4", "Der Wald weise laut beigefügter Kartierung keine besondere Schutzwürdigkeit auf."),
-          D("a5", "Eine Anbindung an das bestehende Gasnetz ist über 2,1 km möglich."),
+          D("a3", "Eine Anbindung an das bestehende Gasnetz ist über 2,1 km möglich."),
+          D("a4", "Die Rodung von 4,2 ha Mischwald ist für den Bau notwendig."),
+          E("f5", "Der Wald weist laut Kartierung keine besondere Schutzwürdigkeit auf."),
         ],
       },
     ],
@@ -87,19 +87,19 @@ const gutachten: Gutachten[] = [
     datum: "27. März 2025",
     body: [
       {
-        heading: "1. Zusammenfassung / Technische Bewertung",
+        heading: "1. Technische Bewertung",
         chunks: [
-          E("f2", "Moderne Steinkohleblöcke erreichen einen Wirkungsgrad von 78 % und sind damit erneuerbaren Erzeugungsformen überlegen."),
-          E("f3", "Kohle ist eine erneuerbare Brückentechnologie, die kurzfristig die Versorgungssicherheit garantieren kann."),
-          D("b1", "Die geplante Anlage verfügt über eine Rauchgasentschwefelung nach Stand der Technik."),
+          E("f2", "Moderne Steinkohlekraftwerke erreichen einen Wirkungsgrad von 78 % und sind damit erneuerbaren Erzeugungsformen überlegen."),
+          E("f3", "Kohle ist eine erneuerbare Brückentechnologie."),
+          D("b1", "CO₂-Ausstoss von Steinkohle beträgt rund 820 g/kWh."),
         ],
       },
       {
         heading: "2. Standortbewertung",
         chunks: [
-          D("b2", "Der Brennstoff kann über bestehende Bahnstrecken zuverlässig angeliefert werden."),
-          D("b3", "Die Bewertung stützt sich massgeblich auf die Studie EnerCon 2023 (S. 117)."),
-          D("b4", "Die Studie warnt ausdrücklich vor einem zu schnellen Kohleausstieg."),
+          D("b2", "Die Anlage benötigt eine eigene Zufahrtsstrasse für Schwertransporte."),
+          D("b3", "Der Betrieb erfordert eine Genehmigung nach kantonalem Luftreinhaltegesetz."),
+          D("b4", "Der Standort liegt ausserhalb der Gewässerschutzzonen."),
         ],
       },
     ],
@@ -120,7 +120,7 @@ const gutachten: Gutachten[] = [
     fakten: [
       { groesse: "Wirkungsgrad Kohle-KW (real)", wert: "≈ 43–46 %" },
       { groesse: "CO₂ Steinkohle", wert: "≈ 820 g/kWh" },
-      { groesse: "Erneuerbar?", wert: "NEIN — fossiler Träger" },
+      { groesse: "Erneuerbar?", wert: "NEIN, fossiler Träger" },
     ],
   },
   {
@@ -133,30 +133,30 @@ const gutachten: Gutachten[] = [
     datum: "02. April 2025",
     body: [
       {
-        heading: "1. Zusammenfassung / Technische Bewertung",
+        heading: "1. Technische Bewertung",
         chunks: [
-          D("c1", "Geplant ist ein 18-MW-Solarpark auf bereits versiegelter Fläche, kombiniert mit einem 12-MWh-Batteriespeicher."),
-          D("c2", "CO₂-Ausstoss im Betrieb: 0 g/kWh. Lebensdauer der Module: 25–30 Jahre."),
-          D("c5", "Die Amortisationszeit der Gesamtanlage (PV + Speicher) beträgt rund 8 Jahre."),
+          E("f4", "Die Volllaststunden der Photovoltaik betragen im Schweizer Mittelland im Durchschnitt 250 h/Jahr."),
+          D("c1", "CO₂-Ausstoss im Betrieb: 0 g/kWh."),
+          D("c2", "Die Amortisationszeit der Gesamtanlage beträgt rund 8 Jahre."),
         ],
       },
       {
         heading: "2. Standortbewertung",
         chunks: [
-          E("f4", "Die Volllaststunden der Photovoltaik wurden auf den realistischen Wert von 250 h/Jahr korrigiert."),
-          D("c3", "Daraus ergebe sich rechnerisch eine ungenügende Jahreserzeugung."),
-          E("f5", "Die Versorgungssicherheit kann selbst mit Batteriespeicher nicht im gleichen Masse wie durch fossile Träger gewährleistet werden — eine Umsetzung sei daher nicht zu verantworten."),
+          D("c3", "Die Anlage wird auf bereits versiegelter Fläche errichtet, ohne Rodung."),
+          D("c4", "Ein 12-MWh-Batteriespeicher erhöht die Verfügbarkeit ausserhalb der Sonnenstunden."),
+          D("c5", "Die Lebensdauer der Batteriespeicher beträgt 15–25 Jahre."),
         ],
       },
     ],
     empfehlungText: "Das Projekt wird auf Grundlage der überarbeiteten Ertragsrechnung zur Ablehnung empfohlen.",
     chart: {
-      kind: "radial",
+      kind: "bar",
       titel: "Volllaststunden Photovoltaik",
       einheit: "h/Jahr",
       daten: [
         { label: "Standort (Gutachten)", value: 250, suspekt: true },
-        { label: "Ø Schweizer Mittelland", value: 1000 },
+        { label: "Ø Schweizer Mittelland (real)", value: 1000 },
         { label: "Alpenstandorte", value: 1400 },
       ],
       hinweis: "Diagramm C-1",
@@ -165,8 +165,8 @@ const gutachten: Gutachten[] = [
     fakten: [
       { groesse: "Volllaststunden PV (CH, real)", wert: "≈ 900–1'100 h/Jahr" },
       { groesse: "CO₂ Photovoltaik (Betrieb)", wert: "0 g/kWh" },
-      { groesse: "Batteriespeicher (Li-Ion)", wert: "≈ 15 Jahre Lebensdauer" },
-      { groesse: "Erneuerbar?", wert: "JA — Sonnenenergie" },
+      { groesse: "Batteriespeicher (Li-Ion)", wert: "≈ 15–25 Jahre Lebensdauer" },
+      { groesse: "Erneuerbar?", wert: "JA, Sonnenenergie" },
     ],
   },
 ];
