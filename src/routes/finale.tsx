@@ -1051,6 +1051,7 @@ function MatchView({
     }
     setDragging(null);
     setGhost(null);
+    setGrab(null);
     setHoverRight(null);
   };
 
