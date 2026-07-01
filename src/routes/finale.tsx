@@ -1396,22 +1396,24 @@ function BucketView({
 /*  Outro (Auflösung + Statistiken)                     */
 /* -------------------------------------------------- */
 
-function OutroScreen({
-  barometer,
-  treffer,
-  fehler,
-  total,
-  onReset,
-}: {
-  barometer: number;
-  treffer: number;
-  fehler: number;
-  total: number;
-  onReset: () => void;
-}) {
+function OutroScreen() {
   const [step, setStep] = useState(0);
   const [bubble, setBubble] = useState(0);
   const totalSteps = 3;
+
+  // Benötigte Zeit einmalig beim Mount einfrieren.
+  const elapsedLabel = useState(() => {
+    const start = getStartTs();
+    if (!start) return "–";
+    const ms = Math.max(0, Date.now() - start);
+    const totalSec = Math.floor(ms / 1000);
+    const h = Math.floor(totalSec / 3600);
+    const m = Math.floor((totalSec % 3600) / 60);
+    const s = totalSec % 60;
+    if (h > 0) return `${h} h ${String(m).padStart(2, "0")} min`;
+    return `${m} min ${String(s).padStart(2, "0")} s`;
+  })[0];
+
 
   const nowClock =
     typeof window !== "undefined"
