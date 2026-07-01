@@ -1,10 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { CheckCircle2, XCircle, Gauge, RefreshCw, ArrowUp, ArrowDown, Sparkles } from "lucide-react";
+import { CheckCircle2, XCircle, Gauge, RefreshCw, ArrowUp, ArrowDown, Sparkles, Clock } from "lucide-react";
 import { PaperCard } from "@/components/case-file/PaperCard";
 import { Stamp } from "@/components/case-file/Stamp";
 import { StageGate } from "@/components/case-file/StageGate";
-import { completeStage, getHearingClock } from "@/lib/progress";
+import { completeStage, getHearingClock, getStartTs } from "@/lib/progress";
 import { cn } from "@/lib/utils";
 import bioLogo from "@/assets/labels/bio.png.asset.json";
 import ipSuisseLogo from "@/assets/labels/ip-suisse.png.asset.json";
@@ -365,33 +365,7 @@ function FinalePage() {
         </header>
 
         {status === "running" && !started && (
-          <PaperCard rotate={-0.4}>
-            <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-              Einstieg
-            </p>
-            <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-              „Geben Sie uns fünf Minuten."
-            </h2>
-            <p className="mt-4 text-[15px] leading-relaxed text-foreground/85">
-              Mit den korrigierten Unterlagen stossen Maja und Elvira die
-              schwere Saaltür auf. Reihum stellt jedes Ratsmitglied eine Frage
-              — euer Überzeugungs-Barometer steigt mit jedem Treffer und fällt
-              mit jedem Fehler.
-            </p>
-            <div className="mt-4 rounded-sm border border-stamp/30 bg-stamp/5 p-4 text-sm">
-              <p className="font-serif italic">
-                <strong>Fällt das Barometer auf null — kippt die Abstimmung.</strong>
-              </p>
-            </div>
-            <div className="mt-6 flex justify-end">
-              <button
-                onClick={() => setStarted(true)}
-                className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
-              >
-                Hearing beginnen →
-              </button>
-            </div>
-          </PaperCard>
+          <IntroConversation onStart={() => setStarted(true)} />
         )}
 
         {status === "running" && started && (
@@ -471,15 +445,7 @@ function FinalePage() {
           </div>
         )}
 
-        {status === "won" && (
-          <OutroScreen
-            barometer={barometer}
-            treffer={correctCount}
-            fehler={fehler}
-            total={FRAGEN.length}
-            onReset={reset}
-          />
-        )}
+        {status === "won" && <OutroScreen />}
 
         {status === "lost" && (
           <PaperCard rotate={0.3} tape="top-right">
@@ -1430,22 +1396,24 @@ function BucketView({
 /*  Outro (Auflösung + Statistiken)                     */
 /* -------------------------------------------------- */
 
-function OutroScreen({
-  barometer,
-  treffer,
-  fehler,
-  total,
-  onReset,
-}: {
-  barometer: number;
-  treffer: number;
-  fehler: number;
-  total: number;
-  onReset: () => void;
-}) {
+function OutroScreen() {
   const [step, setStep] = useState(0);
   const [bubble, setBubble] = useState(0);
   const totalSteps = 3;
+
+  // Benötigte Zeit einmalig beim Mount einfrieren.
+  const elapsedLabel = useState(() => {
+    const start = getStartTs();
+    if (!start) return "–";
+    const ms = Math.max(0, Date.now() - start);
+    const totalSec = Math.floor(ms / 1000);
+    const h = Math.floor(totalSec / 3600);
+    const m = Math.floor((totalSec % 3600) / 60);
+    const s = totalSec % 60;
+    if (h > 0) return `${h} h ${String(m).padStart(2, "0")} min`;
+    return `${m} min ${String(s).padStart(2, "0")} s`;
+  })[0];
+
 
   const nowClock =
     typeof window !== "undefined"
@@ -1618,7 +1586,8 @@ function OutroScreen({
 
       {/* STEP 2 — Abschluss der gesamten Ermittlung */}
       {step === 2 && (
-        <PaperCard rotate={-0.3} tape="top-left">
+        <PaperCard rotate={-0.3} tape="top-left" className="relative overflow-hidden">
+          <SuccessConfetti />
           <div className="absolute right-4 top-6 sm:right-8 sm:top-8">
             <Stamp rotate={-6}>Fall gelöst</Stamp>
           </div>
@@ -1633,42 +1602,27 @@ function OutroScreen({
             genau hingeschaut hat. Das war eure Arbeit.
           </p>
 
-          <div className="relative mt-6 overflow-hidden rounded-sm border border-emerald-500/40 bg-emerald-500/5 p-5 text-center">
-            <SuccessConfetti />
-            <Sparkles className="mx-auto h-10 w-10 text-emerald-600 animate-fade-in" />
-            <p className="mt-2 font-mono-typed text-[10px] uppercase tracking-[0.3em] text-emerald-700">
-              Überzeugungs-Barometer · Endstand
+          <div className="mt-8 flex flex-col items-center gap-2 rounded-sm border border-emerald-500/40 bg-emerald-500/5 p-6 text-center animate-scale-in">
+            <Clock className="h-8 w-8 text-emerald-600 animate-pulse" />
+            <p className="font-mono-typed text-[10px] uppercase tracking-[0.3em] text-emerald-700">
+              Benötigte Zeit
             </p>
-            <p className="mt-1 font-serif text-5xl font-bold text-emerald-700">
-              {barometer}%
+            <p className="font-serif text-4xl font-bold text-emerald-700 tabular-nums sm:text-5xl">
+              {elapsedLabel}
             </p>
           </div>
 
-          <div className="mt-6 grid gap-2 rounded-sm border border-border bg-paper p-4 sm:grid-cols-3">
-            <Stat label="Fragen" value={total} />
-            <Stat label="Korrekt" value={treffer} accent="emerald" />
-            <Stat label="Fehler" value={fehler} />
-          </div>
-
-          <p className="mt-6 text-center font-serif text-3xl tracking-[0.4em] text-stamp sm:text-5xl">
-            ENDE
-          </p>
-
-          <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
-            <button
-              onClick={onReset}
-              className="inline-flex items-center gap-2 rounded-sm border border-border bg-card px-4 py-2 font-serif text-sm hover:bg-secondary"
-            >
-              <RefreshCw className="h-4 w-4" /> Nochmal spielen
-            </button>
+          <div className="mt-8 flex justify-center">
             <Link
               to="/"
-              className="inline-flex items-center gap-2 rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground hover:-translate-y-0.5 hover:shadow-md"
+              className="group inline-flex w-full items-center justify-center gap-2 rounded-sm bg-primary px-6 py-3.5 font-serif text-base font-semibold text-primary-foreground shadow-lg transition-all hover:-translate-y-0.5 hover:shadow-xl animate-fade-in sm:w-auto"
             >
-              ← Zur Übersicht
+              <Sparkles className="h-4 w-4 animate-pulse" />
+              Zurück zum Start
             </Link>
           </div>
         </PaperCard>
+
       )}
     </div>
   );
@@ -1734,6 +1688,128 @@ function SpeechBubble({
         </p>
       </div>
     </div>
+  );
+}
+
+/* -------------------------------------------------- */
+/*  Intro-Konversation vor dem Hearing                  */
+/* -------------------------------------------------- */
+
+type IntroStep =
+  | { kind: "narration"; text: string }
+  | {
+      kind: "bubble";
+      name: string;
+      rolle?: string;
+      side: "left" | "right";
+      tone: "emerald" | "amber" | "stamp";
+      text: string;
+      lead?: string;
+    };
+
+const INTRO_SEQUENCE: IntroStep[] = [
+  {
+    kind: "narration",
+    text: "Drinnen herrscht gedämpfte Stimmung. Der Gemeindepräsident steht am Rednerpult.",
+  },
+  {
+    kind: "bubble",
+    name: "Gemeindepräsident",
+    rolle: "Vorsitz",
+    side: "right",
+    tone: "stamp",
+    text: "„Dann kommen wir nun zur finalen Abstimmung über das Projekt Waldlichtung–“",
+  },
+  {
+    kind: "narration",
+    text: "Maja geht nach vorne.",
+  },
+  {
+    kind: "bubble",
+    name: "Maja",
+    side: "left",
+    tone: "amber",
+    text: "„Entschuldigung – dürfen wir kurz das Wort ergreifen? Wir haben neue Daten, die für die Abstimmung relevant sind.“",
+  },
+  {
+    kind: "bubble",
+    name: "Ratsmitglied Schmid",
+    rolle: "Ressort Verkehr",
+    side: "right",
+    tone: "emerald",
+    lead: "Ein Ratsmitglied verschränkt die Arme.",
+    text: "„Das Verfahren läuft seit Monaten. Was soll das jetzt noch ändern?“",
+  },
+  {
+    kind: "narration",
+    text: "Maja legt die Unterlagen auf den Tisch. Der Saal wird still. Reihum stellt jetzt jedes Ratsmitglied eine Frage — jede richtige Antwort bringt euch näher an eine Vertagung.",
+  },
+];
+
+function IntroConversation({ onStart }: { onStart: () => void }) {
+  const [visible, setVisible] = useState(1);
+  const total = INTRO_SEQUENCE.length;
+  const done = visible >= total;
+
+  return (
+    <PaperCard rotate={-0.3} tape="top-left">
+      <div className="absolute right-4 top-6 sm:right-8 sm:top-8">
+        <Stamp rotate={6}>Saal</Stamp>
+      </div>
+      <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
+        Vor der Abstimmung
+      </p>
+      <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
+        Im Gemeindesaal.
+      </h2>
+
+      <div className="mt-6 space-y-3">
+        {INTRO_SEQUENCE.slice(0, visible).map((s, i) =>
+          s.kind === "narration" ? (
+            <p
+              key={i}
+              className="font-serif text-[15px] italic leading-relaxed text-foreground/80 animate-fade-in"
+            >
+              {s.text}
+            </p>
+          ) : (
+            <div key={i} className="space-y-1.5 animate-fade-in">
+              {s.lead && (
+                <p className="font-serif text-[13px] italic text-muted-foreground">
+                  {s.lead}
+                </p>
+              )}
+              <SpeechBubble
+                name={s.name}
+                rolle={s.rolle}
+                side={s.side}
+                tone={s.tone}
+              >
+                {s.text}
+              </SpeechBubble>
+            </div>
+          ),
+        )}
+      </div>
+
+      <div className="mt-6 flex justify-end">
+        {!done ? (
+          <button
+            onClick={() => setVisible((v) => Math.min(total, v + 1))}
+            className="rounded-sm border border-border bg-card px-4 py-2 font-serif text-sm hover:bg-secondary"
+          >
+            Weiter →
+          </button>
+        ) : (
+          <button
+            onClick={onStart}
+            className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md animate-fade-in"
+          >
+            Fragen beantworten →
+          </button>
+        )}
+      </div>
+    </PaperCard>
   );
 }
 
