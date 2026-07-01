@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Check, RotateCcw } from "lucide-react";
+import { Check, RotateCcw, Wallet, Zap } from "lucide-react";
 import { BUDGET, DEVICES, formatNumber, type EnergyDevice } from "@/lib/energy-data";
 import houseBg from "@/assets/house-bg.jpg";
 import coin from "@/assets/coin.png";
@@ -63,13 +63,19 @@ export function EnergyGame({ onErfolg }: { onErfolg: () => void }) {
           <span className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
             Budget
           </span>
-          <Coin value={`${formatNumber(totals.invested)} / ${formatNumber(BUDGET)}`} />
+          <span className="inline-flex items-center gap-1.5 font-bold tabular-nums">
+            <Wallet className="h-4 w-4 text-stamp" />
+            {formatNumber(totals.invested)} / {formatNumber(BUDGET)}
+          </span>
         </div>
         <div className="flex items-center gap-3">
           <span className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
             Ersparnis
           </span>
-          <Coin value={`${formatNumber(totals.energy)} kWh`} variant="energy" />
+          <span className="inline-flex items-center gap-1.5 font-bold tabular-nums">
+            <Zap className="h-4 w-4 text-emerald-600" />
+            {formatNumber(totals.energy)} kWh
+          </span>
         </div>
       </div>
 
@@ -120,7 +126,7 @@ export function EnergyGame({ onErfolg }: { onErfolg: () => void }) {
       </div>
 
       {/* Footer */}
-      <div className="mt-4 flex items-center justify-end gap-3">
+      <div className="mt-4 flex items-center justify-between gap-3">
         <button
           onClick={reset}
           aria-label="Zurücksetzen"
