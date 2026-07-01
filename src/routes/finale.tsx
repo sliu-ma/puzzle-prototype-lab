@@ -352,7 +352,7 @@ function FinalePage() {
               to="/"
               className="font-mono-typed text-[10px] uppercase tracking-[0.2em] text-muted-foreground hover:text-foreground sm:text-[11px]"
             >
-              ← Zurück zur Übersicht
+              ← Zurück zum Start
             </Link>
             <h1 className="mt-1.5 font-serif text-2xl font-bold leading-tight sm:mt-2 sm:text-5xl">
               Finale · Hearing
@@ -465,7 +465,7 @@ function FinalePage() {
                 to="/"
                 className="inline-flex items-center gap-2 rounded-sm border border-border bg-card px-4 py-2 font-serif text-sm hover:bg-secondary"
               >
-                ← Übersicht
+                ← Zurück zum Start
               </Link>
               <button
                 onClick={reset}
@@ -1764,32 +1764,35 @@ function IntroConversation({ onStart }: { onStart: () => void }) {
       </h2>
 
       <div className="mt-6 space-y-3">
-        {INTRO_SEQUENCE.slice(0, visible).map((s, i) =>
-          s.kind === "narration" ? (
-            <p
-              key={i}
-              className="font-serif text-[15px] italic leading-relaxed text-foreground/80 animate-fade-in"
-            >
-              {s.text}
-            </p>
-          ) : (
-            <div key={i} className="space-y-1.5 animate-fade-in">
-              {s.lead && (
-                <p className="font-serif text-[13px] italic text-muted-foreground">
-                  {s.lead}
-                </p>
-              )}
-              <SpeechBubble
-                name={s.name}
-                rolle={s.rolle}
-                side={s.side}
-                tone={s.tone}
+        {(() => {
+          let bubbleIdx = 0;
+          return INTRO_SEQUENCE.slice(0, visible).map((s, i) =>
+            s.kind === "narration" ? (
+              <p
+                key={i}
+                className="font-serif text-[15px] italic leading-relaxed text-foreground/80 animate-fade-in"
               >
                 {s.text}
-              </SpeechBubble>
-            </div>
-          ),
-        )}
+              </p>
+            ) : (
+              <div key={i} className="space-y-1.5 animate-fade-in">
+                {s.lead && (
+                  <p className="font-serif text-[13px] italic text-muted-foreground">
+                    {s.lead}
+                  </p>
+                )}
+                <SpeechBubble
+                  name={s.name}
+                  rolle={s.rolle}
+                  side={bubbleIdx++ % 2 === 0 ? "left" : "right"}
+                  tone={s.tone}
+                >
+                  {s.text}
+                </SpeechBubble>
+              </div>
+            ),
+          );
+        })()}
       </div>
 
       <div className="mt-6 flex justify-end">
