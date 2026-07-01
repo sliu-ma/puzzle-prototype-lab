@@ -1674,16 +1674,46 @@ function SpeechBubble({
       </div>
       <div
         className={cn(
-          "max-w-[85%] rounded-2xl border px-4 py-2.5 shadow-sm",
+          "relative max-w-[85%] rounded-2xl border px-4 py-2.5 shadow-sm",
           toneMap[tone],
-          isLeft ? "rounded-bl-sm" : "rounded-br-sm",
+          isLeft ? "rounded-bl-sm text-left" : "rounded-br-sm text-right",
         )}
       >
-        <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp/80">
+        <span
+          aria-hidden
+          className={cn(
+            "absolute bottom-3 h-2.5 w-2.5 rotate-45 border",
+            isLeft
+              ? "-left-1.5 border-b border-l"
+              : "-right-1.5 border-t border-r",
+            tone === "emerald" && "border-emerald-500/40",
+            tone === "amber" && "border-amber-500/40",
+            tone === "stamp" && "border-stamp/40",
+          )}
+          style={{
+            backgroundColor:
+              tone === "emerald"
+                ? "rgba(16, 185, 129, 0.05)"
+                : tone === "amber"
+                  ? "rgba(245, 158, 11, 0.05)"
+                  : "rgba(120, 113, 108, 0.05)",
+          }}
+        />
+        <p
+          className={cn(
+            "font-mono-typed text-[10px] uppercase tracking-wider text-stamp/80",
+            isLeft ? "text-left" : "text-right",
+          )}
+        >
           {name}
           {rolle ? <span className="text-muted-foreground"> · {rolle}</span> : null}
         </p>
-        <p className="mt-0.5 font-serif text-[15px] leading-relaxed text-foreground/90">
+        <p
+          className={cn(
+            "mt-0.5 font-serif text-[15px] leading-relaxed text-foreground/90",
+            isLeft ? "text-left" : "text-right",
+          )}
+        >
           {children}
         </p>
       </div>
