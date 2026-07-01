@@ -49,7 +49,6 @@ export function QRGate({
       const expected = await sha256(EXPECTED_TOKEN);
       if (!mounted) return;
       setExpectedHash(expected);
-      }
       try {
         const stored = localStorage.getItem(STORAGE_KEY);
         setUnlocked(stored === expected);
