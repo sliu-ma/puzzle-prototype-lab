@@ -1,14 +1,14 @@
 ## Ziel
-Kapitel 5 (Altes Wasserkraftwerk) erhält dasselbe zeitgesteuerte Tippsystem wie Akten 002 und 003 — drei Hinweise, die nach 3, 6 und 9 Minuten freischalten und danach jederzeit wieder öffenbar sind.
+Etappe 4 (Elviras Haus / EnergyGame) erhält dasselbe zeitgesteuerte Tippsystem wie die anderen Kapitel — drei Hinweise, die nach 3, 6 und 9 Minuten freischalten und danach jederzeit erneut öffenbar sind.
 
-## Änderungen in `src/routes/akte-005.tsx`
+## Änderungen in `src/routes/akte-004.tsx`
 
 1. Import ergänzen: `HintSystem` und Typ `Hint` aus `@/components/case-file/HintSystem`.
-2. `HINTS_005: Hint[]` definieren, passend zum Gutachten-Rätsel:
-   - **Tipp 1 (3 min)** — „Vergleich statt Bauch": Hinweis, jedes Gutachten neben der Faktenkarte und dem Diagramm zu prüfen; genau 5 Aussagen sind zu markieren.
-   - **Tipp 2 (6 min)** — „Wo Marlene stutzig wurde": Hinweis, dass die falschen Aussagen sich über alle drei Gutachten verteilen (Gas, Kohle, Solar) und meist mit Zahlen oder Grundsatzbegriffen wie „erneuerbar" spielen.
-   - **Auflösung (9 min)** — Die 5 Fehler explizit auflösen: Gas — „95 g CO₂/kWh" und „keine Schutzwürdigkeit"; Kohle — „78 % Wirkungsgrad" und „erneuerbare Brückentechnologie"; Solar — „250 h/Jahr Volllaststunden".
-3. `HintSystem` innerhalb `<main>` (nach dem Content-Container) einbinden — nur wenn `step === "spiel"`, analog zum Muster in Akte 002/003. `storageKey="akte-005-hints-start"`.
+2. `HINTS_004: Hint[]` definieren, passend zum Haus-Planungs-Rätsel:
+   - **Tipp 1 (3 min)** — „Wo steckt der grösste Verbrauch": Hinweis, zuerst grosse Posten wie Heizung/Warmwasser/Kühlschrank anzusehen — dort liegen die grössten Ersparnisse pro Franken.
+   - **Tipp 2 (6 min)** — „Nicht jedes Upgrade lohnt sich": Verhalten (kurz duschen, Standby, 1 °C weniger heizen) kostet nichts und bringt oft mehr kWh als das teuerste Gerät. Budget im Blick behalten.
+   - **Auflösung (9 min)** — Konkrete Empfehlung pro Gerät, mit der die 8'000 kWh sicher erreicht werden (günstige Verhaltensoptionen + gezielte Effizienz-Upgrades bei Heizung/Boiler, teure Neugeräte vermeiden).
+3. `HintSystem` innerhalb `<main>` einbinden — nur wenn `step === "spiel"`, analog zu Akte 002/003/005. `storageKey="akte-004-hints-start"`.
 
 ## Nicht angepasst
-- `GutachtenRaetsel.tsx`, Storyline-Texte, andere Akten und Layout bleiben unverändert.
+- `EnergyGame.tsx`, Storyline-Texte, andere Akten und Layout bleiben unverändert.
