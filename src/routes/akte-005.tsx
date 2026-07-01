@@ -31,7 +31,7 @@ const HINTS_005: Hint[] = [
     unlockMin: 3,
     label: "Tipp 1",
     title: "Vergleich statt Bauch",
-    body: "Lies jedes Gutachten Satz für Satz und halte die Aussagen gegen Marlenes Faktenkarte und das Diagramm daneben. Insgesamt musst du genau 5 Aussagen markieren.",
+    body: "Lies jedes Gutachten Satz für Satz und halte die Aussagen gegen Marlenes Faktenkarte daneben. Insgesamt musst du genau 5 Aussagen markieren.",
   },
   {
     id: 1,
