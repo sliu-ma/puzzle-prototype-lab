@@ -365,33 +365,7 @@ function FinalePage() {
         </header>
 
         {status === "running" && !started && (
-          <PaperCard rotate={-0.4}>
-            <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-              Einstieg
-            </p>
-            <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-              „Geben Sie uns fünf Minuten."
-            </h2>
-            <p className="mt-4 text-[15px] leading-relaxed text-foreground/85">
-              Mit den korrigierten Unterlagen stossen Maja und Elvira die
-              schwere Saaltür auf. Reihum stellt jedes Ratsmitglied eine Frage
-              — euer Überzeugungs-Barometer steigt mit jedem Treffer und fällt
-              mit jedem Fehler.
-            </p>
-            <div className="mt-4 rounded-sm border border-stamp/30 bg-stamp/5 p-4 text-sm">
-              <p className="font-serif italic">
-                <strong>Fällt das Barometer auf null — kippt die Abstimmung.</strong>
-              </p>
-            </div>
-            <div className="mt-6 flex justify-end">
-              <button
-                onClick={() => setStarted(true)}
-                className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
-              >
-                Hearing beginnen →
-              </button>
-            </div>
-          </PaperCard>
+          <IntroConversation onStart={() => setStarted(true)} />
         )}
 
         {status === "running" && started && (
