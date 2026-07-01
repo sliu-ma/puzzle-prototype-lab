@@ -222,15 +222,30 @@ const FRAGEN: Frage[] = [
   // Energie
   {
     id: 9,
-    type: "multi",
+    type: "bucket",
     thema: "Energie",
     ratsmitglied: "Gemeindepräsident",
-    frage:
-      "Welche Energiequellen sind im Betrieb CO₂-frei oder nahezu CO₂-frei? (Mehrfachauswahl)",
-    optionen: ["Photovoltaik", "Wasserkraft", "Erdgas", "Steinkohle", "Windkraft"],
-    korrekt: [0, 1, 4],
+    frage: "Ordne die Energiequellen in erneuerbare und nicht erneuerbare ein.",
+    items: [
+      { id: "pv", label: "Photovoltaik" },
+      { id: "wasser", label: "Wasserkraft" },
+      { id: "gas", label: "Erdgas" },
+      { id: "kohle", label: "Steinkohle" },
+      { id: "wind", label: "Windkraft" },
+    ],
+    buckets: [
+      { id: "erneuerbar", label: "Erneuerbar" },
+      { id: "nicht", label: "Nicht erneuerbar" },
+    ],
+    solution: {
+      pv: "erneuerbar",
+      wasser: "erneuerbar",
+      wind: "erneuerbar",
+      gas: "nicht",
+      kohle: "nicht",
+    },
     erklaerung:
-      "Photovoltaik, Wasserkraft und Wind sind im Betrieb CO₂-frei. Erdgas (~400 g/kWh) und Kohle (~820 g/kWh) sind fossil.",
+      "Photovoltaik, Wasserkraft und Windkraft sind erneuerbar. Erdgas und Steinkohle sind fossile Brennstoffe und nicht erneuerbar.",
   },
   {
     id: 10,
