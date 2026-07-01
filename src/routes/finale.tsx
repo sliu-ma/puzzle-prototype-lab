@@ -1301,6 +1301,7 @@ function BucketView({
   const [submitted, setSubmitted] = useState(false);
   const [dragging, setDragging] = useState<string | null>(null);
   const [ghost, setGhost] = useState<{ x: number; y: number } | null>(null);
+  const dragOffset = useRef<{ dx: number; dy: number; w: number; h: number }>({ dx: 0, dy: 0, w: 0, h: 0 });
   const [hoverTarget, setHoverTarget] = useState<string | null>(null);
   const bucketRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const poolRef = useRef<HTMLDivElement | null>(null);
