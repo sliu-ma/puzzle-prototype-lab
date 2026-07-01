@@ -1352,6 +1352,7 @@ function BucketView({
     }
     setDragging(null);
     setGhost(null);
+    setGrab(null);
     setHoverTarget(null);
   };
 
