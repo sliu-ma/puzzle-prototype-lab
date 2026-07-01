@@ -1000,6 +1000,7 @@ function MatchView({
   const [submitted, setSubmitted] = useState(false);
   const [dragging, setDragging] = useState<string | null>(null);
   const [ghost, setGhost] = useState<{ x: number; y: number } | null>(null);
+  const [grab, setGrab] = useState<{ dx: number; dy: number; w: number; h: number } | null>(null);
   const [hoverRight, setHoverRight] = useState<string | null>(null);
   const rightRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
@@ -1020,6 +1021,13 @@ function MatchView({
     if (submitted) return;
     e.preventDefault();
     (e.target as Element).setPointerCapture?.(e.pointerId);
+    const rect = e.currentTarget.getBoundingClientRect();
+    setGrab({
+      dx: e.clientX - rect.left,
+      dy: e.clientY - rect.top,
+      w: rect.width,
+      h: rect.height,
+    });
     setDragging(lid);
     setGhost({ x: e.clientX, y: e.clientY });
   };
