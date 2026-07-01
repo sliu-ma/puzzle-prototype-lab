@@ -34,6 +34,7 @@ function CoverPage() {
   const [team, setTeam] = useState<{ name: string; code: string } | null>(null);
   const [stage, setStage] = useState(0);
   const [showIntro, setShowIntro] = useState(false);
+  const [introSeen, setIntroSeen] = useState(false);
 
   useEffect(() => {
     const sync = () => {
@@ -41,6 +42,7 @@ function CoverPage() {
       setStage(getCurrentStage());
     };
     sync();
+    setIntroSeen(hasSeenIntro());
     setReady(true);
     window.addEventListener("maya-progress", sync);
     window.addEventListener("storage", sync);
@@ -64,9 +66,18 @@ function CoverPage() {
     return <IntroScreen teamName={team.name} onDone={() => setShowIntro(false)} />;
   }
 
-  if (team && !hasSeenIntro()) {
-    return <IntroScreen teamName={team.name} onDone={() => setStage(getCurrentStage())} />;
+  if (team && !introSeen) {
+    return (
+      <IntroScreen
+        teamName={team.name}
+        onDone={() => {
+          setIntroSeen(true);
+          setStage(getCurrentStage());
+        }}
+      />
+    );
   }
+
 
   return (
     <main className="relative min-h-screen overflow-hidden px-4 py-8 sm:py-14">
