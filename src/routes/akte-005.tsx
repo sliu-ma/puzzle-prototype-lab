@@ -6,7 +6,7 @@ import { QRGate } from "@/components/case-file/QRGate";
 import { StageGate } from "@/components/case-file/StageGate";
 import { GutachtenRaetsel } from "@/components/case-file/GutachtenRaetsel";
 import { HintSystem, type Hint } from "@/components/case-file/HintSystem";
-import { completeStage } from "@/lib/progress";
+import { completeStage, getFrozenClock, getHearingClock } from "@/lib/progress";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/akte-005")({
@@ -16,7 +16,7 @@ export const Route = createFileRoute("/akte-005")({
       {
         name: "description",
         content:
-          "Etappe 5: Marlene Vogt vom Umweltamt zeigt dir drei Gutachten. Finde die fünf falschen Aussagen, bevor um 19:00 Uhr abgestimmt wird.",
+          "Etappe 5: Marlene Vogt vom Umweltamt zeigt dir drei Gutachten. Finde die fünf falschen Aussagen, bevor im Gemeindesaal abgestimmt wird.",
       },
     ],
   }),
@@ -164,7 +164,7 @@ function AktePage() {
               Marlene Vogt vom Umweltamt
             </h2>
             <p className="mt-1 font-mono-typed text-xs text-muted-foreground">
-              [Altes Wasserkraftwerk · 18:24 Uhr]
+              [Altes Wasserkraftwerk · {getFrozenClock("maya-clock-akte-005")} Uhr]
             </p>
             <blockquote className="mt-5 border-l-4 border-stamp pl-4 text-[15px] leading-relaxed">
               Du schleichst in den staubigen Abstellraum des alten

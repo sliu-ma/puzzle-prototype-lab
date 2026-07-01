@@ -6,7 +6,7 @@ import { QRGate } from "@/components/case-file/QRGate";
 import { StageGate } from "@/components/case-file/StageGate";
 import { EnergyGame } from "@/components/case-file/EnergyGame";
 import { HintSystem, type Hint } from "@/components/case-file/HintSystem";
-import { completeStage } from "@/lib/progress";
+import { completeStage, getFrozenClock } from "@/lib/progress";
 import { cn } from "@/lib/utils";
 
 const HINTS_004: Hint[] = [
@@ -165,7 +165,7 @@ function AktePage() {
               Eine Zeichnung und ein knapper Zettel
             </h2>
             <p className="mt-1 font-mono-typed text-xs text-muted-foreground">
-              [Hauszeichnung + Rechnungen aus der Kiste · 17:21 Uhr]
+              [Hauszeichnung + Rechnungen aus der Kiste · {getFrozenClock("maya-clock-akte-004")} Uhr]
             </p>
             <blockquote className="mt-5 border-l-4 border-stamp pl-4 text-[15px] leading-relaxed">
               Du kommst ausser Atem zurück zu Elviras Haus. Auf dem Küchentisch
