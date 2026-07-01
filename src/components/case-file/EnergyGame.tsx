@@ -126,7 +126,7 @@ export function EnergyGame({ onErfolg }: { onErfolg: () => void }) {
       </div>
 
       {/* Footer */}
-      <div className="mt-4 flex items-center justify-end gap-3">
+      <div className="mt-4 flex items-center justify-between gap-3">
         <button
           onClick={reset}
           aria-label="Zurücksetzen"
