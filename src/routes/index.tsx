@@ -11,8 +11,6 @@ import {
   resetAll,
   getNowClock,
   getHearingClock,
-  isDevMode,
-  setDevMode,
 } from "@/lib/progress";
 import { IntroScreen, hasSeenIntro } from "@/components/case-file/IntroScreen";
 import { cn } from "@/lib/utils";
@@ -37,13 +35,11 @@ function CoverPage() {
   const [stage, setStage] = useState(0);
   const [showIntro, setShowIntro] = useState(false);
   const [introSeen, setIntroSeen] = useState(false);
-  const [devMode, setDevModeState] = useState(isDevMode());
 
   useEffect(() => {
     const sync = () => {
       setTeam(getTeam());
       setStage(getCurrentStage());
-      setDevModeState(isDevMode());
     };
     sync();
     setIntroSeen(hasSeenIntro());
@@ -174,17 +170,6 @@ function CoverPage() {
           Speicher · v3 · Linearer Ablauf
         </p>
 
-        <button
-          onClick={() => {
-            const next = !devMode;
-            setDevMode(next);
-            setDevModeState(next);
-            setStage(getCurrentStage());
-          }}
-          className="mt-4 rounded-sm border border-dashed border-muted-foreground/30 px-2 py-1 font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground/50 hover:border-stamp hover:text-stamp"
-        >
-          {devMode ? "Dev-Modus: AUS" : "Dev-Modus: EIN"}
-        </button>
       </div>
     </main>
   );
