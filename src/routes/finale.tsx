@@ -4,7 +4,7 @@ import { CheckCircle2, XCircle, Gauge, RefreshCw, ArrowUp, ArrowDown, Sparkles }
 import { PaperCard } from "@/components/case-file/PaperCard";
 import { Stamp } from "@/components/case-file/Stamp";
 import { StageGate } from "@/components/case-file/StageGate";
-import { completeStage, getHearingClock } from "@/lib/progress";
+import { completeStage, getHearingClock, getStartTs } from "@/lib/progress";
 import { cn } from "@/lib/utils";
 import bioLogo from "@/assets/labels/bio.png.asset.json";
 import ipSuisseLogo from "@/assets/labels/ip-suisse.png.asset.json";
