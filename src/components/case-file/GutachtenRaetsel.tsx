@@ -155,8 +155,7 @@ const gutachten: Gutachten[] = [
       titel: "Volllaststunden Photovoltaik",
       einheit: "h/Jahr",
       daten: [
-        { label: "Standort (Gutachten)", value: 250, suspekt: true },
-        { label: "Ø Schweizer Mittelland (real)", value: 1000 },
+        { label: "Schweizer Mittelland (Gutachten)", value: 250, suspekt: true },
         { label: "Alpenstandorte", value: 1400 },
       ],
       hinweis: "Diagramm C-1",
@@ -476,7 +475,7 @@ function Faktenkasten({ fakten }: { fakten: Fakt[] }) {
       </p>
       <div className="divide-y divide-emerald-700/20">
         {fakten.map((f, i) => (
-          <div key={i} className="flex justify-between gap-2 py-1.5 text-[12px]">
+          <div key={i} className="flex items-start justify-between gap-2 py-1.5 text-[12px]">
             <span className="text-emerald-900/80">{f.groesse}</span>
             <span className="font-semibold text-emerald-950">{f.wert}</span>
           </div>
