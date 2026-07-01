@@ -7,67 +7,60 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { getStartTs, TIMER_DURATION_MIN } from "@/lib/progress";
+import {
+  getStartTs,
+  TIMER_DURATION_MIN,
+  formatClock,
+  getHearingClock,
+} from "@/lib/progress";
 import { cn } from "@/lib/utils";
+import { TimeUpOverlay } from "./TimeUpOverlay";
 
 // Marker (Minuten seit Start), bei denen ein Maja-Popup erscheint.
 // Erste 75 Min: alle 15 Min. Letzte 15 Min: alle 5 Min.
-type MajaBeat = { at: number; title: string; body: string; urgent?: boolean };
+type MajaBeat = { at: number; body: (hearing: string) => string; urgent?: boolean };
 
 const BEATS: MajaBeat[] = [
   {
     at: 15,
-    title: "Maja · 14:27",
-    body:
+    body: () =>
       "Erste Viertelstunde rum. Ich bin am Bahnhof angekommen — alles ruhig. Bleibt dran, jede Spur zählt.",
   },
   {
     at: 30,
-    title: "Maja · 14:42",
-    body:
-      "Eine halbe Stunde. Elviras Notizen ergeben langsam Sinn. Hearing ist um 19:00 — wir haben Zeit, aber nicht ewig.",
+    body: (h) =>
+      `Eine halbe Stunde. Elviras Notizen ergeben langsam Sinn. Hearing ist um ${h} — wir haben Zeit, aber nicht ewig.`,
   },
   {
     at: 45,
-    title: "Maja · 14:57",
-    body:
+    body: () =>
       "Halbzeit. Die Hälfte der 90 Minuten ist weg. Wenn ihr feststeckt: lest die Hinweise noch einmal in Ruhe.",
   },
   {
     at: 60,
-    title: "Maja · 15:12",
-    body:
+    body: () =>
       "Eine Stunde. Im Gemeindesaal stellen sie schon die Stühle. Wir müssen die Argumente bis dahin zusammen haben.",
   },
   {
     at: 75,
-    title: "Maja · 15:27",
-    body:
+    body: () =>
       "Noch 15 Minuten. Ab jetzt melde ich mich häufiger. Konzentriert euch auf das Wesentliche.",
     urgent: true,
   },
   {
     at: 80,
-    title: "Maja · 15:32",
-    body:
+    body: () =>
       "10 Minuten. Vetterli wartet nicht. Falls die Lösung nahe ist — jetzt durchziehen.",
     urgent: true,
   },
   {
     at: 85,
-    title: "Maja · 15:37",
-    body:
+    body: () =>
       "Nur noch 5 Minuten! Wenn ihr beim Hearing seid: gebt euer Bestes. Wenn nicht: macht den letzten Schritt jetzt.",
     urgent: true,
   },
-  {
-    at: 90,
-    title: "Maja · 15:42",
-    body:
-      "Zeit ist um. Das Hearing beginnt. Was ihr habt, müsst ihr jetzt einsetzen — ich vertraue auf euch.",
-    urgent: true,
-  },
 ];
+
 
 const SHOWN_KEY = "maya-timer-shown";
 
