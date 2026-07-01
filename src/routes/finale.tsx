@@ -445,15 +445,7 @@ function FinalePage() {
           </div>
         )}
 
-        {status === "won" && (
-          <OutroScreen
-            barometer={barometer}
-            treffer={correctCount}
-            fehler={fehler}
-            total={FRAGEN.length}
-            onReset={reset}
-          />
-        )}
+        {status === "won" && <OutroScreen />}
 
         {status === "lost" && (
           <PaperCard rotate={0.3} tape="top-right">
