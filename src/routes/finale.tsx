@@ -803,6 +803,7 @@ function SingleView({
   answered: boolean;
   onResult: (c: boolean) => void;
 }) {
+  const order = useMemo(() => shuffleIndices(frage.optionen.length), [frage]);
   const [mine, setMine] = useState<number | null>(null);
   const choose = (i: number) => {
     if (mine !== null) return;
@@ -811,7 +812,8 @@ function SingleView({
   };
   return (
     <div className="grid gap-2">
-      {frage.optionen.map((opt, i) => {
+      {order.map((i) => {
+        const opt = frage.optionen[i];
         const isMine = mine === i;
         const isCorrect = i === frage.korrekt;
         const reveal = mine !== null;
