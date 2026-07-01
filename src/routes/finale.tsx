@@ -1268,3 +1268,187 @@ function OrderView({
     </div>
   );
 }
+
+/* ---- Bucket Sort (Drag & Drop) ---- */
+function BucketView({
+  frage,
+  answered,
+  onResult,
+}: {
+  frage: BucketFrage;
+  answered: boolean;
+  onResult: (c: boolean) => void;
+}) {
+  const [placements, setPlacements] = useState<Record<string, string | null>>(() => {
+    const initial: Record<string, string | null> = {};
+    frage.items.forEach((it) => {
+      initial[it.id] = null;
+    });
+    return initial;
+  });
+  const [submitted, setSubmitted] = useState(false);
+  const [dragging, setDragging] = useState<string | null>(null);
+  const [ghost, setGhost] = useState<{ x: number; y: number } | null>(null);
+  const [hoverTarget, setHoverTarget] = useState<string | null>(null);
+  const bucketRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const poolRef = useRef<HTMLDivElement | null>(null);
+
+  const findTarget = (x: number, y: number): string | null => {
+    for (const [bid, el] of Object.entries(bucketRefs.current)) {
+      if (!el) continue;
+      const r = el.getBoundingClientRect();
+      if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) return bid;
+    }
+    if (poolRef.current) {
+      const r = poolRef.current.getBoundingClientRect();
+      if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) return "__pool__";
+    }
+    return null;
+  };
+
+  const startDrag = (itemId: string) => (e: React.PointerEvent) => {
+    if (submitted) return;
+    e.preventDefault();
+    (e.target as Element).setPointerCapture?.(e.pointerId);
+    setDragging(itemId);
+    setGhost({ x: e.clientX, y: e.clientY });
+  };
+
+  const onMove = (e: React.PointerEvent) => {
+    if (!dragging) return;
+    setGhost({ x: e.clientX, y: e.clientY });
+    setHoverTarget(findTarget(e.clientX, e.clientY));
+  };
+
+  const endDrag = (e: React.PointerEvent) => {
+    if (!dragging) return;
+    const target = findTarget(e.clientX, e.clientY);
+    if (target) {
+      setPlacements((prev) => ({
+        ...prev,
+        [dragging]: target === "__pool__" ? null : target,
+      }));
+    }
+    setDragging(null);
+    setGhost(null);
+    setHoverTarget(null);
+  };
+
+  const allDone = frage.items.every((it) => placements[it.id] !== null);
+
+  const submit = () => {
+    if (submitted || answered) return;
+    const ok = frage.items.every((it) => placements[it.id] === frage.solution[it.id]);
+    setSubmitted(true);
+    onResult(ok);
+  };
+
+  const draggedItem = dragging ? frage.items.find((it) => it.id === dragging) : null;
+
+  const itemsInBucket = (bucketId: string) =>
+    frage.items.filter((it) => placements[it.id] === bucketId);
+  const itemsInPool = frage.items.filter((it) => placements[it.id] === null);
+
+  return (
+    <div className="space-y-3" onPointerMove={onMove} onPointerUp={endDrag} onPointerCancel={endDrag}>
+      <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+        Ziehe jeden Begriff in die passende Spalte.
+      </p>
+
+      {/* Buckets */}
+      <div className="grid grid-cols-2 gap-3">
+        {frage.buckets.map((bucket) => {
+          const isHover = hoverTarget === bucket.id && dragging;
+          const assigned = itemsInBucket(bucket.id);
+          return (
+            <div
+              key={bucket.id}
+              ref={(el) => {
+                bucketRefs.current[bucket.id] = el;
+              }}
+              className={cn(
+                "flex flex-col rounded-sm border-2 border-dashed px-2 py-3 transition-colors min-h-[140px]",
+                isHover ? "border-stamp bg-stamp/15" : "border-border/70 bg-paper",
+              )}
+            >
+              <h3 className="mb-2 text-center font-serif text-[13px] font-bold">{bucket.label}</h3>
+              <div className="flex-1 space-y-1.5">
+                {assigned.map((it) => {
+                  const correct = submitted && placements[it.id] === frage.solution[it.id];
+                  const wrong = submitted && !correct;
+                  return (
+                    <div
+                      key={it.id}
+                      onPointerDown={startDrag(it.id)}
+                      className={cn(
+                        "select-none touch-none rounded-sm border px-2 py-1.5 text-center font-serif text-[13px] transition-colors",
+                        submitted ? "cursor-default" : "cursor-grab active:cursor-grabbing",
+                        dragging === it.id && "opacity-40",
+                        !submitted && !correct && !wrong && "border-border bg-paper-deep/60",
+                        correct && "border-emerald-500/60 bg-emerald-500/10",
+                        wrong && "border-destructive/60 bg-destructive/10",
+                      )}
+                    >
+                      {it.label}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Pool */}
+      <div
+        ref={poolRef}
+        className={cn(
+          "rounded-sm border-2 border-dashed px-2 py-3 transition-colors",
+          hoverTarget === "__pool__" && dragging
+            ? "border-stamp bg-stamp/15"
+            : "border-border/70 bg-paper/50",
+        )}
+      >
+        <h3 className="mb-2 text-center font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+          Unzugeordnet
+        </h3>
+        <div className="flex flex-wrap gap-2">
+          {itemsInPool.map((it) => (
+            <div
+              key={it.id}
+              onPointerDown={startDrag(it.id)}
+              className={cn(
+                "select-none touch-none rounded-sm border px-3 py-2 font-serif text-[14px]",
+                submitted ? "cursor-default" : "cursor-grab active:cursor-grabbing",
+                dragging === it.id && "opacity-40",
+                !submitted && "border-border bg-paper hover:bg-secondary",
+              )}
+            >
+              {it.label}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {!submitted && (
+        <button
+          onClick={submit}
+          disabled={!allDone}
+          className="w-full rounded-sm border border-border bg-card px-4 py-2.5 font-serif text-sm hover:bg-secondary disabled:opacity-50"
+        >
+          Zuordnung prüfen
+        </button>
+      )}
+
+      {/* Ghost */}
+      {dragging && ghost && draggedItem && (
+        <div
+          className="pointer-events-none fixed z-50 rounded-sm border border-stamp bg-paper px-3 py-2 shadow-lg"
+          style={{ left: ghost.x + 12, top: ghost.y + 12 }}
+        >
+          <div className="font-serif text-[14px] font-bold">{draggedItem.label}</div>
+        </div>
+      )}
+    </div>
+  );
+}
