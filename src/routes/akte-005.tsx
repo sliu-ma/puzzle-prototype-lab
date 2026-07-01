@@ -322,6 +322,10 @@ function AktePage() {
           — Etappe 5 · Altes Wasserkraftwerk —
         </p>
       </div>
+
+      {step === "spiel" && (
+        <HintSystem hints={HINTS_005} storageKey="akte-005-hints-start" />
+      )}
     </main>
   );
 }
