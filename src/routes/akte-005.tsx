@@ -39,10 +39,11 @@ function AkteGated() {
   );
 }
 
-type Step = "brief" | "spiel" | "input" | "naechstes";
+type Step = "brief" | "raetselkarte" | "spiel" | "input" | "naechstes";
 
 const STEPS: { id: Step; label: string }[] = [
   { id: "brief", label: "Treffen" },
+  { id: "raetselkarte", label: "Rätselkarte" },
   { id: "spiel", label: "Gutachten prüfen" },
   { id: "input", label: "Fachlicher Input" },
   { id: "naechstes", label: "Zum Hearing" },
@@ -142,15 +143,74 @@ function AktePage() {
               [Altes Wasserkraftwerk · 18:24 Uhr]
             </p>
             <blockquote className="mt-5 border-l-4 border-stamp pl-4 text-[15px] leading-relaxed">
-              „Du schleichst in den staubigen Abstellraum des alten Wasserkraftwerks. Zwischen hohen Aktenregalen tritt eine Frau hervor: <strong>Marlene Vogt</strong>, Mitarbeiterin im kantonalen Umweltamt, ruhig, aber bestimmt.
+              Du schleichst in den staubigen Abstellraum des alten
+              Wasserkraftwerks. Zwischen hohen Aktenregalen tritt eine Frau
+              hervor: <strong>Marlene Vogt</strong>, Mitarbeiterin im kantonalen
+              Umweltamt — ruhig, aber bestimmt.
               <br />
               <br />
-              „Schön, dass du da bist. Der Gemeinderat steht unter enormem Zeitdruck und muss heute Abend entscheiden. Leider haben sie sich dabei auf fehlerhafte Gutachten gestützt." Sie legt einen Stapel Blätter auf den Tisch. „Ich habe die letzten Stunden damit verbracht, die wichtigsten Zahlen gegenzuprüfen und meine Fakten dazugelegt. Nutz sie."
-              <br />
-              <br />
-              Sie hält ein Dokument hoch. „Drei Gutachten liegen vor, zu Solarenergie, Gaskraft und Kohle. <strong>Fünf Aussagen darin sind nachweislich falsch.</strong> Erst wenn alle fünf richtig markiert sind, können wir die Fehler rechtzeitig aufdecken und das Gaskraftwerk auf der Waldlichtung verhindern."
+              „Schön, dass du da bist. Der Gemeinderat steht unter enormem
+              Zeitdruck und muss heute Abend entscheiden. Leider haben sie sich
+              dabei auf fehlerhafte Gutachten gestützt." Sie hält ein Dokument
+              hoch. „Drei Gutachten liegen vor — zu Solarenergie, Gaskraft und
+              Kohle. <strong>Fünf Aussagen darin sind nachweislich falsch.</strong>{" "}
+              Erst wenn alle fünf richtig markiert sind, können wir die Fehler
+              rechtzeitig aufdecken — und das Gaskraftwerk auf der Waldlichtung
+              verhindern."
             </blockquote>
             <div className="mt-6 flex justify-end">
+              <button
+                onClick={() => goto("raetselkarte")}
+                className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
+              >
+                Weiter zur Rätselkarte →
+              </button>
+            </div>
+          </PaperCard>
+        )}
+
+        {step === "raetselkarte" && (
+          <PaperCard rotate={0.3} tape="top">
+            <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
+              Rätselkarte · Auftrag von Marlene
+            </p>
+            <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
+              Finde die 5 Lügen
+            </h2>
+            <div className="mt-5 grid gap-4 sm:grid-cols-2">
+              <div className="rounded-sm border border-border bg-paper p-4">
+                <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">Was du hast</p>
+                <ul className="mt-2 space-y-1 text-[15px]">
+                  <li>· 3 Gutachten (A, B, C)</li>
+                  <li>· je 1 Diagramm pro Gutachten</li>
+                  <li>· grüne Faktenkarte mit Vergleichswerten</li>
+                </ul>
+              </div>
+              <div className="rounded-sm border border-border bg-paper p-4">
+                <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">Dein Auftrag</p>
+                <ol className="mt-2 list-decimal space-y-1 pl-5 text-[15px]">
+                  <li>Wechsle zwischen den drei Gutachten.</li>
+                  <li>Tippe verdächtige Sätze an.</li>
+                  <li>Vergleiche mit Diagramm + Faktenkarte.</li>
+                  <li>Markiere genau 5 falsche Aussagen.</li>
+                  <li>Tippe auf „Prüfen".</li>
+                </ol>
+              </div>
+            </div>
+            <div className="mt-6 rounded-sm border border-stamp/30 bg-stamp/5 p-4">
+              <p className="font-serif italic leading-relaxed">
+                „Schau auf Zahlen, nicht auf Adjektive. ‚Nahezu klimaneutral'
+                ist kein Wert — 95 g CO₂/kWh schon."
+              </p>
+              <p className="mt-2 font-mono-typed text-[11px] uppercase tracking-wider text-stamp">— M. Vogt</p>
+            </div>
+            <div className="mt-6 flex justify-between">
+              <button
+                onClick={() => setStep("brief")}
+                className="rounded-sm border border-border bg-card px-4 py-2.5 font-serif text-sm hover:bg-secondary"
+              >
+                ← Zurück
+              </button>
               <button
                 onClick={() => goto("spiel")}
                 className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
@@ -163,19 +223,13 @@ function AktePage() {
 
         {step === "spiel" && (
           <div className="space-y-4">
-            <div className="rounded-sm border border-stamp/30 bg-stamp/5 p-4">
-              <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">Faktenkarte · M. Vogt</p>
-              <p className="mt-2 font-serif italic leading-relaxed">
-                „Schau auf Zahlen, nicht auf Adjektive. ‚Nahezu klimaneutral' ist kein Wert — 95 g CO₂/kWh schon."
-              </p>
-            </div>
             <GutachtenRaetsel onErfolg={() => goto("input")} />
             <div className="flex justify-start">
               <button
-                onClick={() => setStep("brief")}
+                onClick={() => setStep("raetselkarte")}
                 className="rounded-sm border border-border bg-card px-4 py-2.5 font-serif text-sm hover:bg-secondary"
               >
-                ← Zurück zum Brief
+                ← Rätselkarte erneut ansehen
               </button>
             </div>
           </div>
