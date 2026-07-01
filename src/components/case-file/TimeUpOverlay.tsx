@@ -1,5 +1,4 @@
 import { AlertTriangle } from "lucide-react";
-import { Link } from "@tanstack/react-router";
 
 /**
  * Vollbild-Overlay wenn die 90 Minuten abgelaufen sind.
@@ -27,12 +26,6 @@ export function TimeUpOverlay() {
       <p className="max-w-sm font-serif text-base text-foreground/70">
         Begebt euch zurück zur Schule.
       </p>
-      <Link
-        to="/"
-        className="mt-2 rounded-sm bg-primary px-6 py-3 font-serif text-base font-semibold text-primary-foreground shadow-md transition-all hover:-translate-y-0.5 hover:shadow-lg"
-      >
-        Zurück zum Start
-      </Link>
     </div>
   );
 }

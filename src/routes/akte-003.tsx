@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/akte-003")({
   head: () => ({
     meta: [
-      { title: "Etappe 1 — Bahnhof Speicher" },
+      { title: "Etappe 1 — Bahnhof Grünwald" },
       {
         name: "description",
         content:
@@ -59,7 +59,7 @@ function AkteGated() {
         token={AKTE_003_TOKEN}
         storageKey="akte-003-unlocked"
         title={<>Etappe 1 — QR-Code am Bahnhof scannen</>}
-        description="Diese Etappe ist versiegelt. Scanne den QR-Code, der am Bahnhof Speicher für dich hinterlegt ist."
+        description="Diese Etappe ist versiegelt. Scanne den QR-Code, der am Bahnhof Grünwald für dich hinterlegt ist."
       >
         <AktePage />
       </QRGate>
