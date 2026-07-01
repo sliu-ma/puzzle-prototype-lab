@@ -1021,6 +1021,13 @@ function MatchView({
     if (submitted) return;
     e.preventDefault();
     (e.target as Element).setPointerCapture?.(e.pointerId);
+    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    dragOffset.current = {
+      dx: e.clientX - rect.left,
+      dy: e.clientY - rect.top,
+      w: rect.width,
+      h: rect.height,
+    };
     setDragging(lid);
     setGhost({ x: e.clientX, y: e.clientY });
   };
