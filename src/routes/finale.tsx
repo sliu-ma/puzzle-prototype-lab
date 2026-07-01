@@ -1691,3 +1691,125 @@ function SpeechBubble({
   );
 }
 
+/* -------------------------------------------------- */
+/*  Intro-Konversation vor dem Hearing                  */
+/* -------------------------------------------------- */
+
+type IntroStep =
+  | { kind: "narration"; text: string }
+  | {
+      kind: "bubble";
+      name: string;
+      rolle?: string;
+      side: "left" | "right";
+      tone: "emerald" | "amber" | "stamp";
+      text: string;
+      lead?: string;
+    };
+
+const INTRO_SEQUENCE: IntroStep[] = [
+  {
+    kind: "narration",
+    text: "Drinnen herrscht gedämpfte Stimmung. Der Gemeindepräsident steht am Rednerpult.",
+  },
+  {
+    kind: "bubble",
+    name: "Gemeindepräsident",
+    rolle: "Vorsitz",
+    side: "right",
+    tone: "stamp",
+    text: "„Dann kommen wir nun zur finalen Abstimmung über das Projekt Waldlichtung–“",
+  },
+  {
+    kind: "narration",
+    text: "Maja geht nach vorne.",
+  },
+  {
+    kind: "bubble",
+    name: "Maja",
+    side: "left",
+    tone: "amber",
+    text: "„Entschuldigung – dürfen wir kurz das Wort ergreifen? Wir haben neue Daten, die für die Abstimmung relevant sind.“",
+  },
+  {
+    kind: "bubble",
+    name: "Ratsmitglied Schmid",
+    rolle: "Ressort Verkehr",
+    side: "right",
+    tone: "emerald",
+    lead: "Ein Ratsmitglied verschränkt die Arme.",
+    text: "„Das Verfahren läuft seit Monaten. Was soll das jetzt noch ändern?“",
+  },
+  {
+    kind: "narration",
+    text: "Maja legt die Unterlagen auf den Tisch. Der Saal wird still. Reihum stellt jetzt jedes Ratsmitglied eine Frage — jede richtige Antwort bringt euch näher an eine Vertagung.",
+  },
+];
+
+function IntroConversation({ onStart }: { onStart: () => void }) {
+  const [visible, setVisible] = useState(1);
+  const total = INTRO_SEQUENCE.length;
+  const done = visible >= total;
+
+  return (
+    <PaperCard rotate={-0.3} tape="top-left">
+      <div className="absolute right-4 top-6 sm:right-8 sm:top-8">
+        <Stamp rotate={6}>Saal</Stamp>
+      </div>
+      <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
+        Vor der Abstimmung
+      </p>
+      <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
+        Im Gemeindesaal.
+      </h2>
+
+      <div className="mt-6 space-y-3">
+        {INTRO_SEQUENCE.slice(0, visible).map((s, i) =>
+          s.kind === "narration" ? (
+            <p
+              key={i}
+              className="font-serif text-[15px] italic leading-relaxed text-foreground/80 animate-fade-in"
+            >
+              {s.text}
+            </p>
+          ) : (
+            <div key={i} className="space-y-1.5 animate-fade-in">
+              {s.lead && (
+                <p className="font-serif text-[13px] italic text-muted-foreground">
+                  {s.lead}
+                </p>
+              )}
+              <SpeechBubble
+                name={s.name}
+                rolle={s.rolle}
+                side={s.side}
+                tone={s.tone}
+              >
+                {s.text}
+              </SpeechBubble>
+            </div>
+          ),
+        )}
+      </div>
+
+      <div className="mt-6 flex justify-end">
+        {!done ? (
+          <button
+            onClick={() => setVisible((v) => Math.min(total, v + 1))}
+            className="rounded-sm border border-border bg-card px-4 py-2 font-serif text-sm hover:bg-secondary"
+          >
+            Weiter →
+          </button>
+        ) : (
+          <button
+            onClick={onStart}
+            className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md animate-fade-in"
+          >
+            Fragen beantworten →
+          </button>
+        )}
+      </div>
+    </PaperCard>
+  );
+}
+
