@@ -43,6 +43,7 @@ export function EnergyGame({ onErfolg }: { onErfolg: () => void }) {
 
   const setChoice = (deviceId: string, optId: string) => {
     setChoices((c) => ({ ...c, [deviceId]: optId }));
+    setOpen(null);
   };
 
   const reset = () => {
@@ -249,7 +250,7 @@ function DeviceModal({
           >
             ← Zurück
           </button>
-          <div className="text-xs text-foreground/70">
+          <div className="flex items-center gap-1 text-xs text-foreground/70">
             Konto: <Coin value={formatNumber(remaining)} />
           </div>
         </div>
