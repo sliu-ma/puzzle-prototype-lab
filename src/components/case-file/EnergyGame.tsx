@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Check, RotateCcw } from "lucide-react";
+import { Check, RotateCcw, Wallet, Zap } from "lucide-react";
 import { BUDGET, DEVICES, formatNumber, type EnergyDevice } from "@/lib/energy-data";
 import houseBg from "@/assets/house-bg.jpg";
 import coin from "@/assets/coin.png";
