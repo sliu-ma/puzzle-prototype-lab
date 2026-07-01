@@ -113,32 +113,9 @@ export function getFrozenClock(key: string): string {
 }
 
 
-const DEV_KEY = "maya-dev-unlock";
-
-export function isDevMode(): boolean {
-  try {
-    return localStorage.getItem(DEV_KEY) === "true";
-  } catch {
-    return false;
-  }
-}
-
-export function setDevMode(active: boolean) {
-  try {
-    if (active) {
-      localStorage.setItem(DEV_KEY, "true");
-    } else {
-      localStorage.removeItem(DEV_KEY);
-    }
-    window.dispatchEvent(new Event("maya-progress"));
-  } catch {
-    /* ignore */
-  }
-}
 
 export function getCurrentStage(): number {
   try {
-    if (isDevMode()) return 7;
     const s = parseInt(localStorage.getItem(KEY_STAGE) ?? "0", 10);
     return Number.isFinite(s) && s > 0 ? s : 0;
   } catch {

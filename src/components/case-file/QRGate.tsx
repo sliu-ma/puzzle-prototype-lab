@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import { BrowserQRCodeReader, IScannerControls } from "@zxing/browser";
 import { PaperCard } from "./PaperCard";
 import { Stamp } from "./Stamp";
-import { isDevMode } from "@/lib/progress";
 import { cn } from "@/lib/utils";
 
 // Default für Akte 001 — bewusst NICHT im UI angezeigt.
@@ -50,9 +49,6 @@ export function QRGate({
       const expected = await sha256(EXPECTED_TOKEN);
       if (!mounted) return;
       setExpectedHash(expected);
-      if (isDevMode()) {
-        setUnlocked(true);
-        return;
       }
       try {
         const stored = localStorage.getItem(STORAGE_KEY);
