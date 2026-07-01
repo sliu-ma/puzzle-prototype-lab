@@ -469,10 +469,10 @@ function Faktenkasten({ fakten }: { fakten: Fakt[] }) {
   return (
     <aside className="relative rounded-sm border-2 border-dashed border-emerald-700/60 bg-emerald-50 p-3 shadow-sm">
       <div className="absolute -top-3 left-3 flex items-center gap-1 rounded bg-emerald-700 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-white">
-        ✓ Faktenkarte
+        ✓ Marlenes Faktenkarte
       </div>
       <p className="mb-2 mt-1 text-[11px] italic text-emerald-900/80">
-        Geprüfte Vergleichswerte aus „EnergieWissen 2025" (BFE).
+        Von Marlene gegengeprüfte Vergleichswerte (Quelle: BFE, „EnergieWissen 2025").
       </p>
       <div className="divide-y divide-emerald-700/20">
         {fakten.map((f, i) => (
