@@ -214,7 +214,7 @@ export function GutachtenRaetsel({ onErfolg }: { onErfolg: () => void }) {
       {/* Header */}
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <p className="text-sm text-foreground/80">
-          Markiere die <strong>{MAX_MARKIERUNGEN} Aussagen</strong>, die nicht stimmen können. Jeder Satz in den Abschnitten 1 und 2 ist anklickbar.
+          Markiere die <strong>{MAX_MARKIERUNGEN} Aussagen</strong>, die nicht stimmen können.&nbsp;
         </p>
         <div className="flex items-center gap-2">
           <div
