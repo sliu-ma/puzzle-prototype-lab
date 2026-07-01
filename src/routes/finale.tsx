@@ -1000,6 +1000,7 @@ function MatchView({
   const [submitted, setSubmitted] = useState(false);
   const [dragging, setDragging] = useState<string | null>(null);
   const [ghost, setGhost] = useState<{ x: number; y: number } | null>(null);
+  const [grab, setGrab] = useState<{ dx: number; dy: number; w: number; h: number } | null>(null);
   const [hoverRight, setHoverRight] = useState<string | null>(null);
   const rightRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
@@ -1020,6 +1021,13 @@ function MatchView({
     if (submitted) return;
     e.preventDefault();
     (e.target as Element).setPointerCapture?.(e.pointerId);
+    const rect = e.currentTarget.getBoundingClientRect();
+    setGrab({
+      dx: e.clientX - rect.left,
+      dy: e.clientY - rect.top,
+      w: rect.width,
+      h: rect.height,
+    });
     setDragging(lid);
     setGhost({ x: e.clientX, y: e.clientY });
   };
@@ -1043,6 +1051,7 @@ function MatchView({
     }
     setDragging(null);
     setGhost(null);
+    setGrab(null);
     setHoverRight(null);
   };
 
@@ -1159,10 +1168,14 @@ function MatchView({
       )}
 
       {/* Drag ghost */}
-      {dragging && ghost && dragged && (
+      {dragging && ghost && grab && dragged && (
         <div
-          className="pointer-events-none fixed z-50 rounded-sm border border-stamp bg-paper px-3 py-2 shadow-lg"
-          style={{ left: ghost.x + 12, top: ghost.y + 12 }}
+          className="pointer-events-none fixed left-0 top-0 z-50 rounded-sm border border-stamp bg-paper px-3 py-2 shadow-lg"
+          style={{
+            width: grab.w,
+            height: grab.h,
+            transform: `translate(${ghost.x - grab.dx}px, ${ghost.y - grab.dy}px)`,
+          }}
         >
           <div className="flex items-center gap-2">
             {dragged.icon && (
@@ -1289,6 +1302,7 @@ function BucketView({
   const [submitted, setSubmitted] = useState(false);
   const [dragging, setDragging] = useState<string | null>(null);
   const [ghost, setGhost] = useState<{ x: number; y: number } | null>(null);
+  const [grab, setGrab] = useState<{ dx: number; dy: number; w: number; h: number } | null>(null);
   const [hoverTarget, setHoverTarget] = useState<string | null>(null);
   const bucketRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const poolRef = useRef<HTMLDivElement | null>(null);
@@ -1310,6 +1324,13 @@ function BucketView({
     if (submitted) return;
     e.preventDefault();
     (e.target as Element).setPointerCapture?.(e.pointerId);
+    const rect = e.currentTarget.getBoundingClientRect();
+    setGrab({
+      dx: e.clientX - rect.left,
+      dy: e.clientY - rect.top,
+      w: rect.width,
+      h: rect.height,
+    });
     setDragging(itemId);
     setGhost({ x: e.clientX, y: e.clientY });
   };
@@ -1331,6 +1352,7 @@ function BucketView({
     }
     setDragging(null);
     setGhost(null);
+    setGrab(null);
     setHoverTarget(null);
   };
 
@@ -1441,10 +1463,14 @@ function BucketView({
       )}
 
       {/* Ghost */}
-      {dragging && ghost && draggedItem && (
+      {dragging && ghost && grab && draggedItem && (
         <div
-          className="pointer-events-none fixed z-50 rounded-sm border border-stamp bg-paper px-3 py-2 shadow-lg"
-          style={{ left: ghost.x + 12, top: ghost.y + 12 }}
+          className="pointer-events-none fixed left-0 top-0 z-50 flex items-center justify-center rounded-sm border border-stamp bg-paper px-3 py-2 shadow-lg"
+          style={{
+            width: grab.w,
+            height: grab.h,
+            transform: `translate(${ghost.x - grab.dx}px, ${ghost.y - grab.dy}px)`,
+          }}
         >
           <div className="font-serif text-[14px] font-bold">{draggedItem.label}</div>
         </div>
