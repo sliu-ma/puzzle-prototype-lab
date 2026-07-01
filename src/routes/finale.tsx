@@ -962,7 +962,7 @@ function ShortView({
   );
 }
 
-/* ---- Match ---- */
+/* ---- Match (Drag & Drop) ---- */
 function MatchView({
   frage,
   answered,
@@ -973,27 +973,53 @@ function MatchView({
   onResult: (c: boolean) => void;
 }) {
   const [pairs, setPairs] = useState<Record<string, string>>({});
-  const [activeLeft, setActiveLeft] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
+  const [dragging, setDragging] = useState<string | null>(null);
+  const [ghost, setGhost] = useState<{ x: number; y: number } | null>(null);
+  const [hoverRight, setHoverRight] = useState<string | null>(null);
+  const rightRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   const usedRight = new Set(Object.values(pairs));
+  const leftById = Object.fromEntries(frage.links.map((l) => [l.id, l]));
+  const rechtsById = Object.fromEntries(frage.rechts.map((r) => [r.id, r.label]));
 
-  const pickLeft = (id: string) => {
-    if (submitted) return;
-    setActiveLeft(id === activeLeft ? null : id);
+  const findRightAt = (x: number, y: number): string | null => {
+    for (const [rid, el] of Object.entries(rightRefs.current)) {
+      if (!el) continue;
+      const r = el.getBoundingClientRect();
+      if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) return rid;
+    }
+    return null;
   };
 
-  const pickRight = (rid: string) => {
+  const startDrag = (lid: string) => (e: React.PointerEvent) => {
     if (submitted) return;
-    if (!activeLeft) return;
-    setPairs((prev) => {
-      const next = { ...prev };
-      // entferne, falls dieses rechts schon woanders zugeordnet ist
-      for (const [l, r] of Object.entries(next)) if (r === rid) delete next[l];
-      next[activeLeft] = rid;
-      return next;
-    });
-    setActiveLeft(null);
+    e.preventDefault();
+    (e.target as Element).setPointerCapture?.(e.pointerId);
+    setDragging(lid);
+    setGhost({ x: e.clientX, y: e.clientY });
+  };
+
+  const onMove = (e: React.PointerEvent) => {
+    if (!dragging) return;
+    setGhost({ x: e.clientX, y: e.clientY });
+    setHoverRight(findRightAt(e.clientX, e.clientY));
+  };
+
+  const endDrag = (e: React.PointerEvent) => {
+    if (!dragging) return;
+    const rid = findRightAt(e.clientX, e.clientY);
+    if (rid) {
+      setPairs((prev) => {
+        const next = { ...prev };
+        for (const [l, r] of Object.entries(next)) if (r === rid) delete next[l];
+        next[dragging] = rid;
+        return next;
+      });
+    }
+    setDragging(null);
+    setGhost(null);
+    setHoverRight(null);
   };
 
   const clear = (lid: string) => {
@@ -1014,41 +1040,52 @@ function MatchView({
     onResult(ok);
   };
 
-  const rechtsById = Object.fromEntries(frage.rechts.map((r) => [r.id, r.label]));
+  const dragged = dragging ? leftById[dragging] : null;
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-3" onPointerMove={onMove} onPointerUp={endDrag} onPointerCancel={endDrag}>
       <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
-        Tippe links ein Element, dann rechts den passenden Partner.
+        Ziehe jedes Label auf den passenden Zweck.
       </p>
       <div className="grid gap-3 sm:grid-cols-2">
-        {/* Links */}
+        {/* Links (draggable) */}
         <div className="space-y-2">
           {frage.links.map((l) => {
             const paired = pairs[l.id];
-            const isActive = activeLeft === l.id;
+            const isDragging = dragging === l.id;
             const correct = submitted && paired === frage.paare[l.id];
             const wrong = submitted && paired && paired !== frage.paare[l.id];
             return (
-              <button
+              <div
                 key={l.id}
-                onClick={() => pickLeft(l.id)}
-                disabled={submitted}
+                onPointerDown={startDrag(l.id)}
                 className={cn(
-                  "w-full rounded-sm border px-3 py-2 text-left font-serif text-[14px] transition-colors",
-                  isActive && "border-stamp bg-stamp/10",
-                  !isActive && !submitted && "border-border bg-paper hover:bg-secondary",
+                  "select-none touch-none rounded-sm border px-3 py-2 text-left font-serif text-[14px] transition-colors",
+                  submitted ? "cursor-default" : "cursor-grab active:cursor-grabbing",
+                  isDragging && "opacity-40",
+                  !submitted && !isDragging && "border-border bg-paper hover:bg-secondary",
                   correct && "border-emerald-500/60 bg-emerald-500/10",
                   wrong && "border-destructive/60 bg-destructive/10",
                 )}
               >
-                <div className="font-bold">{l.label}</div>
+                <div className="flex items-center gap-2">
+                  {l.icon && (
+                    <img
+                      src={l.icon}
+                      alt=""
+                      className="h-8 w-8 shrink-0 object-contain"
+                      draggable={false}
+                    />
+                  )}
+                  <div className="font-bold">{l.label}</div>
+                </div>
                 {paired && (
                   <div className="mt-1 flex items-center justify-between gap-2 text-xs text-foreground/70">
                     <span>→ {rechtsById[paired]}</span>
                     {!submitted && (
                       <span
                         role="button"
+                        onPointerDown={(e) => e.stopPropagation()}
                         onClick={(e) => {
                           e.stopPropagation();
                           clear(l.id);
@@ -1060,30 +1097,29 @@ function MatchView({
                     )}
                   </div>
                 )}
-              </button>
+              </div>
             );
           })}
         </div>
-        {/* Rechts */}
+        {/* Rechts (drop targets) */}
         <div className="space-y-2">
           {frage.rechts.map((r) => {
             const used = usedRight.has(r.id);
+            const isHover = hoverRight === r.id && dragging;
             return (
-              <button
+              <div
                 key={r.id}
-                onClick={() => pickRight(r.id)}
-                disabled={submitted || !activeLeft}
+                ref={(el) => {
+                  rightRefs.current[r.id] = el;
+                }}
                 className={cn(
-                  "w-full rounded-sm border px-3 py-2 text-left font-serif text-[14px] transition-colors",
-                  !submitted &&
-                    activeLeft &&
-                    "border-stamp/40 bg-paper hover:bg-stamp/10",
-                  !submitted && !activeLeft && "border-border bg-paper opacity-70",
-                  used && !submitted && "opacity-70",
+                  "rounded-sm border-2 border-dashed px-3 py-2 text-left font-serif text-[14px] transition-colors",
+                  isHover ? "border-stamp bg-stamp/15" : "border-border/70 bg-paper",
+                  used && !isHover && "opacity-70",
                 )}
               >
                 {r.label}
-              </button>
+              </div>
             );
           })}
         </div>
@@ -1096,6 +1132,21 @@ function MatchView({
         >
           Zuordnung prüfen
         </button>
+      )}
+
+      {/* Drag ghost */}
+      {dragging && ghost && dragged && (
+        <div
+          className="pointer-events-none fixed z-50 rounded-sm border border-stamp bg-paper px-3 py-2 shadow-lg"
+          style={{ left: ghost.x + 12, top: ghost.y + 12 }}
+        >
+          <div className="flex items-center gap-2">
+            {dragged.icon && (
+              <img src={dragged.icon} alt="" className="h-8 w-8 shrink-0 object-contain" />
+            )}
+            <div className="font-serif text-[14px] font-bold">{dragged.label}</div>
+          </div>
+        </div>
       )}
     </div>
   );
