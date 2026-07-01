@@ -149,6 +149,17 @@ export function resetAll() {
     ].forEach((k) => localStorage.removeItem(k));
     localStorage.removeItem(KEY_START_TS);
     localStorage.removeItem("maya-timer-shown");
+    // Eingefrorene Zeitstempel der Akten löschen
+    try {
+      const toRemove: string[] = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k && k.startsWith("maya-clock-")) toRemove.push(k);
+      }
+      toRemove.forEach((k) => localStorage.removeItem(k));
+    } catch {
+      /* ignore */
+    }
     window.dispatchEvent(new Event("maya-progress"));
   } catch {
     /* ignore */
