@@ -6,6 +6,9 @@ import { Stamp } from "@/components/case-file/Stamp";
 import { StageGate } from "@/components/case-file/StageGate";
 import { completeStage } from "@/lib/progress";
 import { cn } from "@/lib/utils";
+import bioLogo from "@/assets/labels/bio.png.asset.json";
+import ipSuisseLogo from "@/assets/labels/ip-suisse.png.asset.json";
+import demeterLogo from "@/assets/labels/demeter.png.asset.json";
 
 export const Route = createFileRoute("/finale")({
   head: () => ({
