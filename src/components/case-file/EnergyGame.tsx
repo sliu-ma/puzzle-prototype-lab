@@ -120,12 +120,19 @@ export function EnergyGame({ onErfolg }: { onErfolg: () => void }) {
       </div>
 
       {/* Footer */}
-      <div className="mt-4 flex justify-end">
+      <div className="mt-4 flex flex-col items-end gap-2">
         <button
           onClick={pruefen}
           className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
         >
           Entscheidung prüfen →
+        </button>
+        <button
+          onClick={reset}
+          aria-label="Zurücksetzen"
+          className="inline-flex items-center gap-1 rounded-sm border border-border bg-paper px-3 py-1.5 text-xs hover:bg-secondary"
+        >
+          <RotateCcw className="h-3 w-3" /> Reset
         </button>
       </div>
 
