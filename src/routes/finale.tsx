@@ -733,6 +733,8 @@ function typeLabel(t: Frage["type"]) {
       return "Zuordnen";
     case "order":
       return "Reihenfolge";
+    case "bucket":
+      return "Zuordnen";
   }
 }
 
@@ -786,6 +788,8 @@ function FrageRenderer({
       return <MatchView frage={frage} answered={answered} onResult={onResult} />;
     case "order":
       return <OrderView frage={frage} answered={answered} onResult={onResult} />;
+    case "bucket":
+      return <BucketView frage={frage} answered={answered} onResult={onResult} />;
   }
 }
 
