@@ -33,6 +33,7 @@ function CoverPage() {
   const [ready, setReady] = useState(false);
   const [team, setTeam] = useState<{ name: string; code: string } | null>(null);
   const [stage, setStage] = useState(0);
+  const [showIntro, setShowIntro] = useState(false);
 
   useEffect(() => {
     const sync = () => {
@@ -57,6 +58,14 @@ function CoverPage() {
         </p>
       </main>
     );
+  }
+
+  if (team && showIntro) {
+    return <IntroScreen teamName={team.name} onDone={() => setShowIntro(false)} />;
+  }
+
+  if (team && !hasSeenIntro()) {
+    return <IntroScreen teamName={team.name} onDone={() => setStage(getCurrentStage())} />;
   }
 
   return (
