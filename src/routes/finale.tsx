@@ -852,6 +852,7 @@ function MultiView({
   answered: boolean;
   onResult: (c: boolean) => void;
 }) {
+  const order = useMemo(() => shuffleIndices(frage.optionen.length), [frage]);
   const [selected, setSelected] = useState<Set<number>>(new Set());
   const [submitted, setSubmitted] = useState(false);
 
