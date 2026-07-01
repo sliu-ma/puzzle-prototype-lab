@@ -1658,35 +1658,48 @@ function SpeechBubble({
 
   const isLeft = side === "left";
 
+  const avatar = (
+    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border bg-paper font-serif text-xs font-bold text-foreground/70">
+      {initials}
+    </div>
+  );
+
+  const bubble = (
+    <div
+      className={cn(
+        "max-w-[85%] rounded-2xl border px-4 py-2.5 shadow-sm",
+        toneMap[tone],
+        isLeft ? "rounded-bl-sm" : "rounded-br-sm",
+      )}
+    >
+      <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp/80">
+        {name}
+        {rolle ? <span className="text-muted-foreground"> · {rolle}</span> : null}
+      </p>
+      <p className="mt-0.5 font-serif text-[15px] leading-relaxed text-foreground/90">
+        {children}
+      </p>
+    </div>
+  );
+
   return (
     <div
       className={cn(
         "flex items-end gap-2 animate-fade-in",
-        isLeft ? "justify-start" : "justify-end flex-row-reverse",
+        isLeft ? "justify-start" : "justify-end",
       )}
     >
-      <div
-        className={cn(
-          "flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border bg-paper font-serif text-xs font-bold text-foreground/70",
-        )}
-      >
-        {initials}
-      </div>
-      <div
-        className={cn(
-          "max-w-[85%] rounded-2xl border px-4 py-2.5 shadow-sm",
-          toneMap[tone],
-          isLeft ? "rounded-bl-sm" : "rounded-br-sm",
-        )}
-      >
-        <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp/80">
-          {name}
-          {rolle ? <span className="text-muted-foreground"> · {rolle}</span> : null}
-        </p>
-        <p className="mt-0.5 font-serif text-[15px] leading-relaxed text-foreground/90">
-          {children}
-        </p>
-      </div>
+      {isLeft ? (
+        <>
+          {avatar}
+          {bubble}
+        </>
+      ) : (
+        <>
+          {bubble}
+          {avatar}
+        </>
+      )}
     </div>
   );
 }
