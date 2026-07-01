@@ -249,7 +249,7 @@ function DeviceModal({
           >
             ← Zurück
           </button>
-          <div className="text-xs text-foreground/70">
+          <div className="flex items-center gap-1 text-xs text-foreground/70">
             Konto: <Coin value={formatNumber(remaining)} />
           </div>
         </div>
