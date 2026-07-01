@@ -12,6 +12,7 @@ import {
   getNowClock,
   getHearingClock,
 } from "@/lib/progress";
+import { IntroScreen, hasSeenIntro } from "@/components/case-file/IntroScreen";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/")({
