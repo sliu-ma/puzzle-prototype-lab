@@ -1,0 +1,233 @@
+import { useState } from "react";
+import { Mail, User2, ArrowRight, Compass, Clock, Search } from "lucide-react";
+import { PaperCard } from "@/components/case-file/PaperCard";
+import { Stamp } from "@/components/case-file/Stamp";
+import { getHearingClock } from "@/lib/progress";
+
+const KEY = "maya-intro-seen";
+
+export function hasSeenIntro(): boolean {
+  try {
+    return localStorage.getItem(KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+export function markIntroSeen() {
+  try {
+    localStorage.setItem(KEY, "1");
+  } catch {
+    /* ignore */
+  }
+}
+
+export function IntroScreen({
+  teamName,
+  onDone,
+}: {
+  teamName: string;
+  onDone: () => void;
+}) {
+  const [step, setStep] = useState(0);
+  const total = 3;
+
+  const next = () => {
+    if (step < total - 1) setStep(step + 1);
+    else {
+      markIntroSeen();
+      onDone();
+    }
+  };
+
+  return (
+    <main className="relative min-h-screen overflow-hidden px-4 py-8 sm:py-14">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-[0.06]"
+        style={{
+          backgroundImage:
+            "repeating-linear-gradient(0deg, var(--color-ink) 0, var(--color-ink) 1px, transparent 1px, transparent 28px)",
+        }}
+      />
+
+      <div className="relative mx-auto max-w-2xl">
+        <div className="mb-4 flex items-center justify-between">
+          <p className="font-mono-typed text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
+            Team {teamName} · Briefing
+          </p>
+          <div className="flex gap-1.5">
+            {Array.from({ length: total }).map((_, i) => (
+              <span
+                key={i}
+                className={`h-1.5 w-6 rounded-full ${
+                  i <= step ? "bg-stamp" : "bg-border"
+                }`}
+              />
+            ))}
+          </div>
+        </div>
+
+        {step === 0 && (
+          <PaperCard rotate={-0.4}>
+            <div className="absolute right-4 top-6 sm:right-8 sm:top-8">
+              <Stamp rotate={8}>Briefing</Stamp>
+            </div>
+            <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
+              So spielt ihr
+            </p>
+            <h2 className="mt-2 font-serif text-3xl font-bold sm:text-4xl">
+              Fünf Etappen. Ein Hearing.
+            </h2>
+            <p className="mt-4 text-[15px] leading-relaxed text-foreground/85">
+              Ihr habt bis <strong>{getHearingClock() ?? "19:00"} Uhr</strong>,
+              um Majas Grosstante Elvira zu helfen. An jedem Ort im Dorf
+              wartet ein Rätsel. Löst ihr es, schaltet sich die nächste Etappe frei.
+            </p>
+            <ul className="mt-5 space-y-3 text-[15px]">
+              <li className="flex gap-3">
+                <Compass className="mt-0.5 h-5 w-5 shrink-0 text-stamp" />
+                <span>
+                  <strong>QR-Code scannen</strong> – jede Etappe startet mit einem
+                  Code, den ihr im Dorf findet.
+                </span>
+              </li>
+              <li className="flex gap-3">
+                <Search className="mt-0.5 h-5 w-5 shrink-0 text-stamp" />
+                <span>
+                  <strong>Rätsel lösen</strong> – lest genau, wählt bewusst.
+                  Nach 3, 6 und 9 Minuten gibt es Tipps.
+                </span>
+              </li>
+              <li className="flex gap-3">
+                <Clock className="mt-0.5 h-5 w-5 shrink-0 text-stamp" />
+                <span>
+                  <strong>Zeit im Blick</strong> – um{" "}
+                  {getHearingClock() ?? "19:00"} Uhr beginnt die
+                  Gemeinderatssitzung. Bis dahin müsst ihr im Saal sein.
+                </span>
+              </li>
+            </ul>
+          </PaperCard>
+        )}
+
+        {step === 1 && (
+          <PaperCard rotate={0.3}>
+            <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
+              Die Personen
+            </p>
+            <h2 className="mt-2 font-serif text-3xl font-bold sm:text-4xl">
+              Wer ist wer?
+            </h2>
+
+            <div className="mt-5 space-y-4">
+              <div className="flex gap-4 rounded-sm border border-border bg-paper p-4">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-stamp/10">
+                  <User2 className="h-6 w-6 text-stamp" />
+                </div>
+                <div>
+                  <p className="font-serif text-lg font-bold">Maja, 17</p>
+                  <p className="text-sm text-foreground/80">
+                    Letzter Sommer vor der Matura. Zu Besuch bei ihrer Grosstante
+                    Elvira. <em>Das seid ihr.</em>
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-4 rounded-sm border border-border bg-paper p-4">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-stamp/10">
+                  <User2 className="h-6 w-6 text-stamp" />
+                </div>
+                <div>
+                  <p className="font-serif text-lg font-bold">Elvira</p>
+                  <p className="text-sm text-foreground/80">
+                    Majas Grosstante. Kennt Speicher wie ihre Westentasche.
+                    Sammelt gerade Daten für die Sitzung heute Abend – und ist
+                    verschwunden.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-4 rounded-sm border border-border bg-paper p-4">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-stamp/10">
+                  <User2 className="h-6 w-6 text-stamp" />
+                </div>
+                <div>
+                  <p className="font-serif text-lg font-bold">Marlene Vogt</p>
+                  <p className="text-sm text-foreground/80">
+                    Ingenieurin im alten Wasserkraftwerk. Kennt die technischen
+                    Gutachten – und ihre Schwachstellen.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </PaperCard>
+        )}
+
+        {step === 2 && (
+          <PaperCard rotate={-0.2} tape="top-left">
+            <div className="absolute right-4 top-6 sm:right-8 sm:top-8">
+              <Stamp rotate={-8}>Küchentisch</Stamp>
+            </div>
+            <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
+              Der Brief
+            </p>
+            <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
+              Maja sitzt im Zug nach Speicher …
+            </h2>
+            <p className="mt-3 text-[15px] leading-relaxed text-foreground/85">
+              Ihr letzter Sommer vor der Matura. Grosstante Elvira hat sie zu
+              sich aufs Land eingeladen. Doch als sie ankommt, ist das Haus
+              leer. Auf dem Küchentisch liegt nur ein Brief:
+            </p>
+
+            <div
+              className="mt-5 rounded-sm border border-border bg-paper-deep/40 p-5 font-serif text-[15px] leading-relaxed text-foreground/90 shadow-inner"
+              style={{ transform: "rotate(-0.4deg)" }}
+            >
+              <Mail className="mb-2 h-4 w-4 text-stamp" />
+              <p>
+                „Liebe Maja, falls du das liest, bin ich gerade im Dorf
+                unterwegs. Du erinnerst dich an unsere Hütte im Wald – dort, wo
+                wir als Kind stundenlang Vögel beobachtet haben? Die Gemeinde
+                sucht wegen drohender Stromengpässe dringend nach Lösungen und
+                plant dort ein neues <strong>Gaskraftwerk</strong>. Heute Abend
+                um <strong>{getHearingClock() ?? "19:00"} Uhr</strong> findet
+                die Gemeinderatssitzung statt – dann wird abgestimmt.
+              </p>
+              <p className="mt-3">
+                Ich bin sicher, dass wir mit den richtigen Fakten eine viel
+                nachhaltigere Lösung für Speicher zeigen können! Ich bin
+                unterwegs und sammle die letzten Daten. Kannst du mir helfen?
+                Fang am <strong>alten Bahnhof</strong> an – dort liegt ein
+                Hinweis für dich."
+              </p>
+              <p className="mt-4 text-right italic text-foreground/70">
+                – Elvira
+              </p>
+            </div>
+          </PaperCard>
+        )}
+
+        <div className="mt-6 flex items-center justify-between gap-3">
+          <button
+            onClick={() => {
+              markIntroSeen();
+              onDone();
+            }}
+            className="font-mono-typed text-[11px] uppercase tracking-wider text-muted-foreground hover:text-foreground"
+          >
+            Überspringen
+          </button>
+          <button
+            onClick={next}
+            className="inline-flex items-center gap-2 rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
+          >
+            {step < total - 1 ? "Weiter" : "Ermittlung starten"}
+            <ArrowRight className="h-4 w-4" />
+          </button>
+        </div>
+      </div>
+    </main>
+  );
+}
