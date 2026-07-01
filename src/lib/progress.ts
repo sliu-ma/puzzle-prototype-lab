@@ -149,6 +149,7 @@ export function resetAll() {
     ].forEach((k) => localStorage.removeItem(k));
     localStorage.removeItem(KEY_START_TS);
     localStorage.removeItem("maya-timer-shown");
+    localStorage.removeItem("maya-intro-seen");
     // Eingefrorene Zeitstempel der Akten löschen
     try {
       const toRemove: string[] = [];
