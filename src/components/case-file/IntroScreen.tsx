@@ -1,5 +1,14 @@
 import { useState } from "react";
-import { Mail, User2, ArrowRight, Compass, Clock, Search } from "lucide-react";
+import {
+  Mail,
+  ArrowRight,
+  Compass,
+  Clock,
+  Search,
+  Camera,
+  Bird,
+  ChevronDown,
+} from "lucide-react";
 import { PaperCard } from "@/components/case-file/PaperCard";
 import { Stamp } from "@/components/case-file/Stamp";
 import { getHearingClock } from "@/lib/progress";
@@ -22,6 +31,82 @@ export function markIntroSeen() {
   }
 }
 
+/* ---------- Interaktive Personenkarte ---------- */
+
+type Persona = {
+  id: string;
+  name: string;
+  alter: string;
+  rolle: string;
+  icon: React.ReactNode;
+  fact: string;
+  color: string;
+};
+
+function PersonCard({
+  p,
+  open,
+  onToggle,
+}: {
+  p: Persona;
+  open: boolean;
+  onToggle: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onToggle}
+      className="group block w-full text-left"
+    >
+      <div className="flex gap-4 rounded-sm border border-border bg-paper p-4 transition-all hover:-translate-y-0.5 hover:shadow-md">
+        <div
+          className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-full ${p.color}`}
+        >
+          {p.icon}
+        </div>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-baseline justify-between gap-2">
+            <p className="font-serif text-lg font-bold">
+              {p.name}
+              <span className="ml-2 font-mono-typed text-[11px] uppercase tracking-wider text-muted-foreground">
+                {p.alter}
+              </span>
+            </p>
+            <ChevronDown
+              className={`h-4 w-4 shrink-0 text-muted-foreground transition-transform ${
+                open ? "rotate-180" : ""
+              }`}
+            />
+          </div>
+          <p className="mt-0.5 text-sm text-foreground/75">{p.rolle}</p>
+
+          <div
+            className={`grid transition-all duration-300 ease-out ${
+              open
+                ? "mt-3 grid-rows-[1fr] opacity-100"
+                : "grid-rows-[0fr] opacity-0"
+            }`}
+          >
+            <div className="overflow-hidden">
+              <div className="rounded-sm border border-dashed border-stamp/40 bg-stamp/5 p-3 font-serif italic text-[14px] leading-relaxed text-foreground/85">
+                {p.fact}
+              </div>
+            </div>
+          </div>
+
+          {!open && (
+            <p className="mt-2 font-mono-typed text-[10px] uppercase tracking-wider text-stamp/80">
+              Tippen für ein Detail
+            </p>
+          )}
+        </div>
+      </div>
+    </button>
+  );
+}
+
+/* ---------- Screen ---------- */
+
 export function IntroScreen({
   teamName,
   onDone,
@@ -30,7 +115,31 @@ export function IntroScreen({
   onDone: () => void;
 }) {
   const [step, setStep] = useState(0);
+  const [openPerson, setOpenPerson] = useState<string | null>(null);
   const total = 3;
+
+  const personen: Persona[] = [
+    {
+      id: "maja",
+      name: "Maja",
+      alter: "17",
+      rolle: "Das seid ihr.",
+      color: "bg-amber-100 text-amber-700",
+      icon: <Camera className="h-6 w-6" />,
+      fact:
+        "Fotografiert am liebsten mit einer alten Analogkamera vom Flohmarkt. Trägt immer ein zerknittertes Notizbuch mit Filmrollen-Nummern dabei.",
+    },
+    {
+      id: "elvira",
+      name: "Elvira",
+      alter: "68",
+      rolle: "Majas Grosstante.",
+      color: "bg-emerald-100 text-emerald-700",
+      icon: <Bird className="h-6 w-6" />,
+      fact:
+        "War 40 Jahre lang Biologielehrerin an der Kanti. Steht seit ihrer Pensionierung fast täglich vor Sonnenaufgang auf, um Vögel zu zählen — und hat einen Ordner voller handgezeichneter Karten von Speicher.",
+    },
+  ];
 
   const next = () => {
     if (step < total - 1) setStep(step + 1);
@@ -119,47 +228,21 @@ export function IntroScreen({
             <h2 className="mt-2 font-serif text-3xl font-bold sm:text-4xl">
               Wer ist wer?
             </h2>
+            <p className="mt-2 text-sm text-foreground/70">
+              Tippt auf eine Karte, um ein Detail zu entdecken.
+            </p>
 
-            <div className="mt-5 space-y-4">
-              <div className="flex gap-4 rounded-sm border border-border bg-paper p-4">
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-stamp/10">
-                  <User2 className="h-6 w-6 text-stamp" />
-                </div>
-                <div>
-                  <p className="font-serif text-lg font-bold">Maja, 17</p>
-                  <p className="text-sm text-foreground/80">
-                    Letzter Sommer vor der Matura. Zu Besuch bei ihrer Grosstante
-                    Elvira. <em>Das seid ihr.</em>
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex gap-4 rounded-sm border border-border bg-paper p-4">
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-stamp/10">
-                  <User2 className="h-6 w-6 text-stamp" />
-                </div>
-                <div>
-                  <p className="font-serif text-lg font-bold">Elvira</p>
-                  <p className="text-sm text-foreground/80">
-                    Majas Grosstante. Kennt Speicher wie ihre Westentasche.
-                    Sammelt gerade Daten für die Sitzung heute Abend – und ist
-                    verschwunden.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex gap-4 rounded-sm border border-border bg-paper p-4">
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-stamp/10">
-                  <User2 className="h-6 w-6 text-stamp" />
-                </div>
-                <div>
-                  <p className="font-serif text-lg font-bold">Marlene Vogt</p>
-                  <p className="text-sm text-foreground/80">
-                    Ingenieurin im alten Wasserkraftwerk. Kennt die technischen
-                    Gutachten – und ihre Schwachstellen.
-                  </p>
-                </div>
-              </div>
+            <div className="mt-5 space-y-3">
+              {personen.map((p) => (
+                <PersonCard
+                  key={p.id}
+                  p={p}
+                  open={openPerson === p.id}
+                  onToggle={() =>
+                    setOpenPerson(openPerson === p.id ? null : p.id)
+                  }
+                />
+              ))}
             </div>
           </PaperCard>
         )}
