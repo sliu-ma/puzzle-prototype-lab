@@ -155,8 +155,7 @@ const gutachten: Gutachten[] = [
       titel: "Volllaststunden Photovoltaik",
       einheit: "h/Jahr",
       daten: [
-        { label: "Standort (Gutachten)", value: 250, suspekt: true },
-        { label: "Ø Schweizer Mittelland (real)", value: 1000 },
+        { label: "Schweizer Mittelland (Gutachten)", value: 250, suspekt: true },
         { label: "Alpenstandorte", value: 1400 },
       ],
       hinweis: "Diagramm C-1",
