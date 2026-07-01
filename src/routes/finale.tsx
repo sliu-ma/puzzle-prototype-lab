@@ -1464,9 +1464,13 @@ function BucketView({
       {dragging && ghost && draggedItem && (
         <div
           className="pointer-events-none fixed z-50 rounded-sm border border-stamp bg-paper px-3 py-2 shadow-lg"
-          style={{ left: ghost.x + 12, top: ghost.y + 12 }}
+          style={{
+            left: ghost.x - dragOffset.current.dx,
+            top: ghost.y - dragOffset.current.dy,
+            width: dragOffset.current.w,
+          }}
         >
-          <div className="font-serif text-[14px] font-bold">{draggedItem.label}</div>
+          <div className="text-center font-serif text-[14px] font-bold">{draggedItem.label}</div>
         </div>
       )}
     </div>
