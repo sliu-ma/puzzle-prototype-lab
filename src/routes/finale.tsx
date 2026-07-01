@@ -881,7 +881,8 @@ function MultiView({
         Mehrere Antworten möglich
       </p>
       <div className="grid gap-2">
-        {frage.optionen.map((opt, i) => {
+        {order.map((i) => {
+          const opt = frage.optionen[i];
           const isSel = selected.has(i);
           const isCorrect = frage.korrekt.includes(i);
           const reveal = submitted;
@@ -916,6 +917,7 @@ function MultiView({
           );
         })}
       </div>
+
       {!submitted && (
         <button
           onClick={submit}
