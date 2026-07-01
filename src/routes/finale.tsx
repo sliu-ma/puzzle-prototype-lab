@@ -63,7 +63,7 @@ type ShortFrage = Base & {
 
 type MatchFrage = Base & {
   type: "match";
-  links: { id: string; label: string }[];
+  links: { id: string; label: string; icon?: string }[];
   rechts: { id: string; label: string }[];
   paare: Record<string, string>; // linkId -> rechtsId
 };
