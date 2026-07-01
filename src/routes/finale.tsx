@@ -1425,3 +1425,137 @@ function BucketView({
     </div>
   );
 }
+
+/* -------------------------------------------------- */
+/*  Outro (Auflösung + Statistiken)                     */
+/* -------------------------------------------------- */
+
+function OutroScreen({
+  barometer,
+  treffer,
+  fehler,
+  total,
+  onReset,
+}: {
+  barometer: number;
+  treffer: number;
+  fehler: number;
+  total: number;
+  onReset: () => void;
+}) {
+  const [step, setStep] = useState(0);
+  const nowClock =
+    typeof window !== "undefined"
+      ? new Date().toLocaleTimeString("de-CH", {
+          hour: "2-digit",
+          minute: "2-digit",
+        })
+      : "19:04";
+
+  return (
+    <div className="animate-scale-in">
+      {step === 0 && (
+        <PaperCard rotate={-0.3} tape="top-left">
+          <div className="absolute right-4 top-6 sm:right-8 sm:top-8">
+            <Stamp rotate={8}>Auflösung</Stamp>
+          </div>
+          <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
+            Im Saal
+          </p>
+          <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
+            „Antrag angenommen."
+          </h2>
+
+          <div className="mt-5 space-y-4 font-serif text-[15px] leading-relaxed text-foreground/90">
+            <p>Der Gemeindepräsident lehnt sich zurück. Stille im Saal.</p>
+            <p>
+              Dann nickt Ratsmitglied Frau Schmid langsam:{" "}
+              <em>
+                „Ich beantrage, die Abstimmung zu vertagen und die neuen
+                Unterlagen zu prüfen."
+              </em>{" "}
+              Ein zweites Ratsmitglied hebt die Hand. Dann ein drittes.
+            </p>
+            <p>
+              <em>„Antrag angenommen"</em>, sagt der Gemeindepräsident. „Die
+              Abstimmung wird auf nächsten Monat verschoben."
+            </p>
+            <p>
+              Draussen vor dem Saal atmen Maja, Elvira und Marlene gleichzeitig
+              aus. Elvira legt ihrer Grossnichte die Hand auf die Schulter und
+              sagt nichts. Sie müssen nichts sagen.
+            </p>
+            <p>
+              Maja schaut auf ihr Handy. <strong>{nowClock} Uhr.</strong> Dann
+              schaut sie Elvira an. <em>„Gehen wir zur Hütte?"</em>
+            </p>
+            <p>
+              Elvira lacht leise. <em>„Klar, das ist eine gute Idee."</em>
+            </p>
+            <p>
+              Sie gehen zu dritt den Waldweg hinauf, die Sonne noch warm auf
+              der Haut. Das rote Band hängt noch an den Bäumen. Aber heute
+              stört es niemanden.
+            </p>
+          </div>
+
+          <div className="mt-6 flex justify-end">
+            <button
+              onClick={() => setStep(1)}
+              className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
+            >
+              Euer Ergebnis →
+            </button>
+          </div>
+        </PaperCard>
+      )}
+
+      {step === 1 && (
+        <PaperCard rotate={0.3} tape="top-right">
+          <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
+            Statistik · Hearing
+          </p>
+          <h2 className="mt-2 font-serif text-3xl font-bold sm:text-4xl">
+            Ihr habt es geschafft.
+          </h2>
+
+          <div className="relative mt-6 overflow-hidden rounded-sm border border-emerald-500/40 bg-emerald-500/5 p-5 text-center">
+            <SuccessConfetti />
+            <Sparkles className="mx-auto h-10 w-10 text-emerald-600 animate-fade-in" />
+            <p className="mt-2 font-mono-typed text-[10px] uppercase tracking-[0.3em] text-emerald-700">
+              Barometer · Endstand
+            </p>
+            <p className="mt-1 font-serif text-5xl font-bold text-emerald-700">
+              {barometer}%
+            </p>
+          </div>
+
+          <div className="mt-6 grid gap-2 rounded-sm border border-border bg-paper p-4 sm:grid-cols-3">
+            <Stat label="Fragen" value={total} />
+            <Stat label="Korrekt" value={treffer} accent="emerald" />
+            <Stat label="Fehler" value={fehler} />
+          </div>
+
+          <p className="mt-6 text-center font-serif text-3xl tracking-[0.4em] text-stamp sm:text-5xl">
+            GEWONNEN
+          </p>
+
+          <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
+            <button
+              onClick={onReset}
+              className="inline-flex items-center gap-2 rounded-sm border border-border bg-card px-4 py-2 font-serif text-sm hover:bg-secondary"
+            >
+              <RefreshCw className="h-4 w-4" /> Nochmal spielen
+            </button>
+            <Link
+              to="/"
+              className="inline-flex items-center gap-2 rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground hover:-translate-y-0.5 hover:shadow-md"
+            >
+              ← Übersicht
+            </Link>
+          </div>
+        </PaperCard>
+      )}
+    </div>
+  );
+}
