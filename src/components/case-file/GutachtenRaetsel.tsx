@@ -162,7 +162,7 @@ const gutachten: Gutachten[] = [
     },
     unterschrift: "i. A. d. Energiewende e.V.",
     fakten: [
-      { groesse: "Volllaststunden PV (CH, real)", wert: "≈ 900–1'100 h/Jahr" },
+      { groesse: "Volllaststunden PV (Schweizer Mittelland)", wert: "≈ 900–1'100 h/Jahr" },
       { groesse: "CO₂ Photovoltaik (Betrieb)", wert: "0 g/kWh" },
       { groesse: "Batteriespeicher (Li-Ion)", wert: "≈ 15–25 Jahre Lebensdauer" },
       { groesse: "Erneuerbar?", wert: "JA, Sonnenenergie" },
