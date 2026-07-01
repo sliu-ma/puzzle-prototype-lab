@@ -1764,32 +1764,35 @@ function IntroConversation({ onStart }: { onStart: () => void }) {
       </h2>
 
       <div className="mt-6 space-y-3">
-        {INTRO_SEQUENCE.slice(0, visible).map((s, i) =>
-          s.kind === "narration" ? (
-            <p
-              key={i}
-              className="font-serif text-[15px] italic leading-relaxed text-foreground/80 animate-fade-in"
-            >
-              {s.text}
-            </p>
-          ) : (
-            <div key={i} className="space-y-1.5 animate-fade-in">
-              {s.lead && (
-                <p className="font-serif text-[13px] italic text-muted-foreground">
-                  {s.lead}
-                </p>
-              )}
-              <SpeechBubble
-                name={s.name}
-                rolle={s.rolle}
-                side={s.side}
-                tone={s.tone}
+        {(() => {
+          let bubbleIdx = 0;
+          return INTRO_SEQUENCE.slice(0, visible).map((s, i) =>
+            s.kind === "narration" ? (
+              <p
+                key={i}
+                className="font-serif text-[15px] italic leading-relaxed text-foreground/80 animate-fade-in"
               >
                 {s.text}
-              </SpeechBubble>
-            </div>
-          ),
-        )}
+              </p>
+            ) : (
+              <div key={i} className="space-y-1.5 animate-fade-in">
+                {s.lead && (
+                  <p className="font-serif text-[13px] italic text-muted-foreground">
+                    {s.lead}
+                  </p>
+                )}
+                <SpeechBubble
+                  name={s.name}
+                  rolle={s.rolle}
+                  side={bubbleIdx++ % 2 === 0 ? "left" : "right"}
+                  tone={s.tone}
+                >
+                  {s.text}
+                </SpeechBubble>
+              </div>
+            ),
+          );
+        })()}
       </div>
 
       <div className="mt-6 flex justify-end">
