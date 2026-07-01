@@ -6,7 +6,7 @@ import { CodeLock } from "@/components/case-file/CodeLock";
 import { QRGate } from "@/components/case-file/QRGate";
 import { StageGate } from "@/components/case-file/StageGate";
 import { HintSystem, type Hint } from "@/components/case-file/HintSystem";
-import { completeStage } from "@/lib/progress";
+import { completeStage, getFrozenClock } from "@/lib/progress";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/akte-002")({
@@ -165,7 +165,7 @@ function AktePage() {
               „Rodung ab Montag."
             </h2>
             <p className="mt-1 font-mono-typed text-xs text-muted-foreground">
-              [Aufgeschlagenes Beobachtungsbuch · 16:18 Uhr]
+              [Aufgeschlagenes Beobachtungsbuch · {getFrozenClock("maya-clock-akte-003")} Uhr]
             </p>
             <blockquote className="mt-5 border-l-4 border-stamp pl-4 text-[15px] leading-relaxed">
               Der Waldweg ist ihr vertraut aber heute sieht er anders aus. Schon

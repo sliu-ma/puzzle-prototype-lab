@@ -7,7 +7,7 @@ import { QRGate } from "@/components/case-file/QRGate";
 import { StageGate } from "@/components/case-file/StageGate";
 import { HintSystem } from "@/components/case-file/HintSystem";
 import { START_WARENKORB } from "@/lib/maya-data";
-import { completeStage } from "@/lib/progress";
+import { completeStage, getFrozenClock, getHearingClock } from "@/lib/progress";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/akte")({
@@ -139,7 +139,7 @@ function AktePage() {
               Frau Berger wartet schon.
             </h2>
             <p className="mt-1 font-mono-typed text-xs text-muted-foreground">
-              [Holztresen · gepackter Korb · 15:32 Uhr]
+              [Holztresen · gepackter Korb · {getFrozenClock("maya-clock-akte-002")} Uhr]
             </p>
             <blockquote className="mt-5 border-l-4 border-stamp pl-4 text-[15px] leading-relaxed">
               Der alte Dorfladen ist eigentlich schon geschlossen, aber Frau
@@ -269,7 +269,7 @@ function AktePage() {
               </p>
             </div>
             <p className="mt-5 text-sm text-foreground/70">
-              Du denkst kurz an die Uhr. Noch ein paar Stunden bis 19:00.
+              Du denkst kurz an die Uhr. Bis {getHearingClock() ?? "19:00"} Uhr bleibt noch Zeit.
             </p>
             <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
               <Link

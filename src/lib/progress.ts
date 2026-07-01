@@ -70,6 +70,49 @@ export function getStartTs(): number | null {
   }
 }
 
+// ---- Adaptive Zeit-Helfer ---------------------------------------------------
+export function formatClock(d: Date): string {
+  return d.toLocaleTimeString("de-CH", { hour: "2-digit", minute: "2-digit" });
+}
+
+/** Aktuelle Uhrzeit im Format "HH:MM". */
+export function getNowClock(): string {
+  return formatClock(new Date());
+}
+
+/** Uhrzeit, zu der das Hearing endet (Start + 90 min). Null falls kein Start. */
+export function getHearingClock(): string | null {
+  const ts = getStartTs();
+  if (!ts) return null;
+  return formatClock(new Date(ts + TIMER_DURATION_MIN * 60_000));
+}
+
+/** True, wenn die 90 Minuten seit Registrierung abgelaufen sind. */
+export function isTimeUp(): boolean {
+  const ts = getStartTs();
+  if (!ts) return false;
+  return Date.now() >= ts + TIMER_DURATION_MIN * 60_000;
+}
+
+/**
+ * Einmalig eingefrorene Uhrzeit pro Schlüssel (localStorage).
+ * Beim ersten Aufruf wird die aktuelle Zeit gespeichert und
+ * bei weiteren Aufrufen zurückgegeben — so bleibt ein Zeitstempel
+ * in einer Akte stabil, auch wenn die Karte erneut geöffnet wird.
+ */
+export function getFrozenClock(key: string): string {
+  try {
+    const existing = localStorage.getItem(key);
+    if (existing) return existing;
+    const now = getNowClock();
+    localStorage.setItem(key, now);
+    return now;
+  } catch {
+    return getNowClock();
+  }
+}
+
+
 export function getCurrentStage(): number {
   try {
     const s = parseInt(localStorage.getItem(KEY_STAGE) ?? "0", 10);
@@ -106,6 +149,17 @@ export function resetAll() {
     ].forEach((k) => localStorage.removeItem(k));
     localStorage.removeItem(KEY_START_TS);
     localStorage.removeItem("maya-timer-shown");
+    // Eingefrorene Zeitstempel der Akten löschen
+    try {
+      const toRemove: string[] = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k && k.startsWith("maya-clock-")) toRemove.push(k);
+      }
+      toRemove.forEach((k) => localStorage.removeItem(k));
+    } catch {
+      /* ignore */
+    }
     window.dispatchEvent(new Event("maya-progress"));
   } catch {
     /* ignore */

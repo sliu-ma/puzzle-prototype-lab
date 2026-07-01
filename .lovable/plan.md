@@ -1,14 +1,31 @@
-## Ziel
-Etappe 4 (Elviras Haus / EnergyGame) erhält dasselbe zeitgesteuerte Tippsystem wie die anderen Kapitel — drei Hinweise, die nach 3, 6 und 9 Minuten freischalten und danach jederzeit erneut öffenbar sind.
+## Adaptive Zeitangaben im Spiel
 
-## Änderungen in `src/routes/akte-004.tsx`
+### Prinzip
+- **Fixe Zeit:** Nur das Hearing-Ende = `startTs + 90 Minuten` (Deadline aus dem globalen Timer).
+- **Dynamische Zeiten:** Alle narrativen Zeitstempel innerhalb der Akten (Briefe, Notizen, "Noch X Stunden bis...", Voicemail-Timestamps beim Öffnen etc.) verwenden die **aktuelle Uhrzeit** beim Rendern — nicht hochgerechnet vom Start.
+- **Time-Up:** Wenn 90 Minuten abgelaufen sind → Vollbild-Overlay "Die Zeit ist leider um. Begebe dich zurück zur Schule." Spielabbruch.
 
-1. Import ergänzen: `HintSystem` und Typ `Hint` aus `@/components/case-file/HintSystem`.
-2. `HINTS_004: Hint[]` definieren, passend zum Haus-Planungs-Rätsel:
-   - **Tipp 1 (3 min)** — „Wo steckt der grösste Verbrauch": Hinweis, zuerst grosse Posten wie Heizung/Warmwasser/Kühlschrank anzusehen — dort liegen die grössten Ersparnisse pro Franken.
-   - **Tipp 2 (6 min)** — „Nicht jedes Upgrade lohnt sich": Verhalten (kurz duschen, Standby, 1 °C weniger heizen) kostet nichts und bringt oft mehr kWh als das teuerste Gerät. Budget im Blick behalten.
-   - **Auflösung (9 min)** — Konkrete Empfehlung pro Gerät, mit der die 8'000 kWh sicher erreicht werden (günstige Verhaltensoptionen + gezielte Effizienz-Upgrades bei Heizung/Boiler, teure Neugeräte vermeiden).
-3. `HintSystem` innerhalb `<main>` einbinden — nur wenn `step === "spiel"`, analog zu Akte 002/003/005. `storageKey="akte-004-hints-start"`.
+### Umsetzung
 
-## Nicht angepasst
-- `EnergyGame.tsx`, Storyline-Texte, andere Akten und Layout bleiben unverändert.
+**1. `src/lib/progress.ts`** — neue Helfer:
+- `formatClock(date)` → `"HH:MM"`
+- `getNow()` → aktuelle Uhrzeit als `"HH:MM"`
+- `getHearingClock()` → `startTs + 90min` als `"HH:MM"` (fix ab Registration)
+- `isTimeUp()` → boolean (jetzt > startTs + 90min)
+
+**2. `src/components/case-file/TimeUpOverlay.tsx`** (neu)
+- Vollbild, nicht schließbar, dunkler Hintergrund
+- Text: "Die Zeit ist leider um." + "Begebe dich zurück zur Schule."
+- Verhindert Interaktion mit dem Spiel dahinter
+
+**3. `src/components/case-file/GlobalTimer.tsx`**
+- Prüft `isTimeUp()` im Interval — rendert `<TimeUpOverlay />` wenn abgelaufen
+- Stoppt weitere Pop-Ups nach Ablauf
+
+**4. Narrative Texte in Routen aktualisieren**
+Ersetzt hartcodierte Uhrzeiten durch dynamische Werte:
+- `akte.tsx`, `akte-002.tsx`, `akte-003.tsx`, `akte-004.tsx`, `akte-005.tsx`: Zeitstempel in Briefen/Notizen/Sprachnachrichten → `getNow()` beim Mount (einmalig via `useState(() => getNow())`, damit die Zeit beim Neurendern der Karte stabil bleibt).
+- `finale.tsx`: "Noch ein paar Stunden bis 19:00" → "Noch Zeit bis **{getHearingClock()}**" (fix, weil das die echte Deadline ist).
+
+### Offene Frage
+Bei Voicemails/Briefen soll die Zeit beim **ersten Öffnen der Akte** eingefroren werden (via `localStorage` pro Akte), oder darf sie sich beim erneuten Öffnen auf die dann-aktuelle Zeit updaten? Ich würde **einfrieren pro Akte** empfehlen, damit die Erzählung konsistent bleibt.

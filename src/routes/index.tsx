@@ -9,6 +9,8 @@ import {
   getCurrentStage,
   registerTeam,
   resetAll,
+  getNowClock,
+  getHearingClock,
 } from "@/lib/progress";
 import { cn } from "@/lib/utils";
 
@@ -84,7 +86,7 @@ function CoverPage() {
             </div>
 
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
-              Samstag · 14:12 Uhr · Grünwald, Dorfstrasse 4
+              Samstag · {getNowClock()} Uhr · Grünwald, Dorfstrasse 4
             </p>
 
             <h1 className="mt-5 font-serif text-4xl font-bold leading-[0.95] text-foreground sm:text-7xl">
@@ -103,7 +105,7 @@ function CoverPage() {
             <p className="mt-6 max-w-xl font-serif text-base italic leading-relaxed text-foreground/80 sm:text-xl">
               Ein Bildungs-Escape-Room zur Ökologie.
               <br />
-              Fünf Etappen, ein Hearing — bis 19:00 Uhr.
+              Fünf Etappen, ein Hearing — bis {getHearingClock() ?? "19:00"} Uhr.
             </p>
 
             {team ? (
