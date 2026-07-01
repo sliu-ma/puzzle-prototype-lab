@@ -738,6 +738,15 @@ function typeLabel(t: Frage["type"]) {
   }
 }
 
+function shuffleIndices(n: number): number[] {
+  const arr: number[] = Array.from({ length: n }, (_, i) => i);
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
 function Stat({
   label,
   value,
@@ -803,6 +812,7 @@ function SingleView({
   answered: boolean;
   onResult: (c: boolean) => void;
 }) {
+  const order = useMemo(() => shuffleIndices(frage.optionen.length), [frage]);
   const [mine, setMine] = useState<number | null>(null);
   const choose = (i: number) => {
     if (mine !== null) return;
@@ -811,7 +821,8 @@ function SingleView({
   };
   return (
     <div className="grid gap-2">
-      {frage.optionen.map((opt, i) => {
+      {order.map((i) => {
+        const opt = frage.optionen[i];
         const isMine = mine === i;
         const isCorrect = i === frage.korrekt;
         const reveal = mine !== null;
@@ -850,6 +861,7 @@ function MultiView({
   answered: boolean;
   onResult: (c: boolean) => void;
 }) {
+  const order = useMemo(() => shuffleIndices(frage.optionen.length), [frage]);
   const [selected, setSelected] = useState<Set<number>>(new Set());
   const [submitted, setSubmitted] = useState(false);
 
@@ -879,7 +891,8 @@ function MultiView({
         Mehrere Antworten möglich
       </p>
       <div className="grid gap-2">
-        {frage.optionen.map((opt, i) => {
+        {order.map((i) => {
+          const opt = frage.optionen[i];
           const isSel = selected.has(i);
           const isCorrect = frage.korrekt.includes(i);
           const reveal = submitted;
@@ -914,6 +927,7 @@ function MultiView({
           );
         })}
       </div>
+
       {!submitted && (
         <button
           onClick={submit}
