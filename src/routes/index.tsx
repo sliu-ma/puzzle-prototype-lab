@@ -173,6 +173,18 @@ function CoverPage() {
         <p className="mt-12 font-mono-typed text-[11px] uppercase tracking-[0.25em] text-muted-foreground">
           Speicher · v3 · Linearer Ablauf
         </p>
+
+        <button
+          onClick={() => {
+            const next = !devMode;
+            setDevMode(next);
+            setDevModeState(next);
+            setStage(getCurrentStage());
+          }}
+          className="mt-4 rounded-sm border border-dashed border-muted-foreground/30 px-2 py-1 font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground/50 hover:border-stamp hover:text-stamp"
+        >
+          {devMode ? "Dev-Modus: AUS" : "Dev-Modus: EIN"}
+        </button>
       </div>
     </main>
   );
