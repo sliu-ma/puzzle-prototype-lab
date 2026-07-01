@@ -477,7 +477,7 @@ function Faktenkasten({ fakten }: { fakten: Fakt[] }) {
         {fakten.map((f, i) => (
           <div key={i} className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-2 py-1.5 text-[12px]">
             <span className="text-emerald-900/80">{f.groesse}</span>
-            <span className="shrink-0 text-right font-semibold text-emerald-950">{f.wert}</span>
+            <span className="shrink-0 text-right font-semibold text-emerald-950 whitespace-pre-line">{f.wert}</span>
           </div>
         ))}
       </div>
