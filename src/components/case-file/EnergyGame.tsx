@@ -127,10 +127,7 @@ export function EnergyGame({ onErfolg }: { onErfolg: () => void }) {
       </div>
 
       {/* Footer */}
-      <div className="mt-4 flex flex-wrap items-center justify-between gap-2">
-        <div className="text-xs text-foreground/70">
-          Konto: <Coin value={formatNumber(remaining)} />
-        </div>
+      <div className="mt-4 flex justify-end">
         <button
           onClick={pruefen}
           className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
