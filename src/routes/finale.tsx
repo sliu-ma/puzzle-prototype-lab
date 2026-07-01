@@ -1586,7 +1586,8 @@ function OutroScreen() {
 
       {/* STEP 2 — Abschluss der gesamten Ermittlung */}
       {step === 2 && (
-        <PaperCard rotate={-0.3} tape="top-left">
+        <PaperCard rotate={-0.3} tape="top-left" className="relative overflow-hidden">
+          <SuccessConfetti />
           <div className="absolute right-4 top-6 sm:right-8 sm:top-8">
             <Stamp rotate={-6}>Fall gelöst</Stamp>
           </div>
@@ -1601,42 +1602,27 @@ function OutroScreen() {
             genau hingeschaut hat. Das war eure Arbeit.
           </p>
 
-          <div className="relative mt-6 overflow-hidden rounded-sm border border-emerald-500/40 bg-emerald-500/5 p-5 text-center">
-            <SuccessConfetti />
-            <Sparkles className="mx-auto h-10 w-10 text-emerald-600 animate-fade-in" />
-            <p className="mt-2 font-mono-typed text-[10px] uppercase tracking-[0.3em] text-emerald-700">
-              Überzeugungs-Barometer · Endstand
+          <div className="mt-8 flex flex-col items-center gap-2 rounded-sm border border-emerald-500/40 bg-emerald-500/5 p-6 text-center animate-scale-in">
+            <Clock className="h-8 w-8 text-emerald-600 animate-pulse" />
+            <p className="font-mono-typed text-[10px] uppercase tracking-[0.3em] text-emerald-700">
+              Benötigte Zeit
             </p>
-            <p className="mt-1 font-serif text-5xl font-bold text-emerald-700">
-              {barometer}%
+            <p className="font-serif text-4xl font-bold text-emerald-700 tabular-nums sm:text-5xl">
+              {elapsedLabel}
             </p>
           </div>
 
-          <div className="mt-6 grid gap-2 rounded-sm border border-border bg-paper p-4 sm:grid-cols-3">
-            <Stat label="Fragen" value={total} />
-            <Stat label="Korrekt" value={treffer} accent="emerald" />
-            <Stat label="Fehler" value={fehler} />
-          </div>
-
-          <p className="mt-6 text-center font-serif text-3xl tracking-[0.4em] text-stamp sm:text-5xl">
-            ENDE
-          </p>
-
-          <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
-            <button
-              onClick={onReset}
-              className="inline-flex items-center gap-2 rounded-sm border border-border bg-card px-4 py-2 font-serif text-sm hover:bg-secondary"
-            >
-              <RefreshCw className="h-4 w-4" /> Nochmal spielen
-            </button>
+          <div className="mt-8 flex justify-center">
             <Link
               to="/"
-              className="inline-flex items-center gap-2 rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground hover:-translate-y-0.5 hover:shadow-md"
+              className="group inline-flex w-full items-center justify-center gap-2 rounded-sm bg-primary px-6 py-3.5 font-serif text-base font-semibold text-primary-foreground shadow-lg transition-all hover:-translate-y-0.5 hover:shadow-xl animate-fade-in sm:w-auto"
             >
-              ← Zur Übersicht
+              <Sparkles className="h-4 w-4 animate-pulse" />
+              Zurück zum Start
             </Link>
           </div>
         </PaperCard>
+
       )}
     </div>
   );
