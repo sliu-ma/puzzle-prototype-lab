@@ -5,6 +5,7 @@ import { Stamp } from "@/components/case-file/Stamp";
 import { QRGate } from "@/components/case-file/QRGate";
 import { StageGate } from "@/components/case-file/StageGate";
 import { GutachtenRaetsel } from "@/components/case-file/GutachtenRaetsel";
+import { HintSystem, type Hint } from "@/components/case-file/HintSystem";
 import { completeStage } from "@/lib/progress";
 import { cn } from "@/lib/utils";
 
