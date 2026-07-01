@@ -39,11 +39,10 @@ function AkteGated() {
   );
 }
 
-type Step = "brief" | "raetselkarte" | "spiel" | "input" | "naechstes";
+type Step = "brief" | "spiel" | "input" | "naechstes";
 
 const STEPS: { id: Step; label: string }[] = [
   { id: "brief", label: "Treffen" },
-  { id: "raetselkarte", label: "Rätselkarte" },
   { id: "spiel", label: "Gutachten prüfen" },
   { id: "input", label: "Fachlicher Input" },
   { id: "naechstes", label: "Zum Hearing" },
