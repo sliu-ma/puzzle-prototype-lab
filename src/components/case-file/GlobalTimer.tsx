@@ -24,7 +24,7 @@ const BEATS: MajaBeat[] = [
   {
     at: 15,
     body: () =>
-      "Erste Viertelstunde rum. Ich bin am Bahnhof angekommen — alles ruhig. Bleibt dran, jede Spur zählt.",
+      "Erste Viertelstunde rum. Ich bin unterwegs — alles ruhig. Bleibt dran, jede Spur zählt.",
   },
   {
     at: 30,
