@@ -63,13 +63,19 @@ export function EnergyGame({ onErfolg }: { onErfolg: () => void }) {
           <span className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
             Budget
           </span>
-          <Coin value={`${formatNumber(totals.invested)} / ${formatNumber(BUDGET)}`} />
+          <span className="inline-flex items-center gap-1.5 font-bold tabular-nums">
+            <Wallet className="h-4 w-4 text-stamp" />
+            {formatNumber(totals.invested)} / {formatNumber(BUDGET)}
+          </span>
         </div>
         <div className="flex items-center gap-3">
           <span className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
             Ersparnis
           </span>
-          <Coin value={`${formatNumber(totals.energy)} kWh`} variant="energy" />
+          <span className="inline-flex items-center gap-1.5 font-bold tabular-nums">
+            <Zap className="h-4 w-4 text-emerald-600" />
+            {formatNumber(totals.energy)} kWh
+          </span>
         </div>
       </div>
 
