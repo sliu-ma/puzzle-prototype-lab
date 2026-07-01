@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { BrowserQRCodeReader, IScannerControls } from "@zxing/browser";
 import { PaperCard } from "./PaperCard";
 import { Stamp } from "./Stamp";
+import { isDevMode } from "@/lib/progress";
 import { cn } from "@/lib/utils";
 
 // Default für Akte 001 — bewusst NICHT im UI angezeigt.
