@@ -1000,6 +1000,7 @@ function MatchView({
   const [submitted, setSubmitted] = useState(false);
   const [dragging, setDragging] = useState<string | null>(null);
   const [ghost, setGhost] = useState<{ x: number; y: number } | null>(null);
+  const dragOffset = useRef<{ dx: number; dy: number; w: number; h: number }>({ dx: 0, dy: 0, w: 0, h: 0 });
   const [hoverRight, setHoverRight] = useState<string | null>(null);
   const rightRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
@@ -1020,6 +1021,13 @@ function MatchView({
     if (submitted) return;
     e.preventDefault();
     (e.target as Element).setPointerCapture?.(e.pointerId);
+    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    dragOffset.current = {
+      dx: e.clientX - rect.left,
+      dy: e.clientY - rect.top,
+      w: rect.width,
+      h: rect.height,
+    };
     setDragging(lid);
     setGhost({ x: e.clientX, y: e.clientY });
   };
@@ -1162,7 +1170,11 @@ function MatchView({
       {dragging && ghost && dragged && (
         <div
           className="pointer-events-none fixed z-50 rounded-sm border border-stamp bg-paper px-3 py-2 shadow-lg"
-          style={{ left: ghost.x + 12, top: ghost.y + 12 }}
+          style={{
+            left: ghost.x - dragOffset.current.dx,
+            top: ghost.y - dragOffset.current.dy,
+            width: dragOffset.current.w,
+          }}
         >
           <div className="flex items-center gap-2">
             {dragged.icon && (
@@ -1289,6 +1301,7 @@ function BucketView({
   const [submitted, setSubmitted] = useState(false);
   const [dragging, setDragging] = useState<string | null>(null);
   const [ghost, setGhost] = useState<{ x: number; y: number } | null>(null);
+  const dragOffset = useRef<{ dx: number; dy: number; w: number; h: number }>({ dx: 0, dy: 0, w: 0, h: 0 });
   const [hoverTarget, setHoverTarget] = useState<string | null>(null);
   const bucketRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const poolRef = useRef<HTMLDivElement | null>(null);
@@ -1310,6 +1323,13 @@ function BucketView({
     if (submitted) return;
     e.preventDefault();
     (e.target as Element).setPointerCapture?.(e.pointerId);
+    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    dragOffset.current = {
+      dx: e.clientX - rect.left,
+      dy: e.clientY - rect.top,
+      w: rect.width,
+      h: rect.height,
+    };
     setDragging(itemId);
     setGhost({ x: e.clientX, y: e.clientY });
   };
@@ -1444,9 +1464,13 @@ function BucketView({
       {dragging && ghost && draggedItem && (
         <div
           className="pointer-events-none fixed z-50 rounded-sm border border-stamp bg-paper px-3 py-2 shadow-lg"
-          style={{ left: ghost.x + 12, top: ghost.y + 12 }}
+          style={{
+            left: ghost.x - dragOffset.current.dx,
+            top: ghost.y - dragOffset.current.dy,
+            width: dragOffset.current.w,
+          }}
         >
-          <div className="font-serif text-[14px] font-bold">{draggedItem.label}</div>
+          <div className="text-center font-serif text-[14px] font-bold">{draggedItem.label}</div>
         </div>
       )}
     </div>
