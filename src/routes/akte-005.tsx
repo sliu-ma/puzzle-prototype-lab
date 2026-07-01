@@ -38,7 +38,7 @@ const HINTS_005: Hint[] = [
     unlockMin: 6,
     label: "Tipp 2",
     title: "Wo Marlene stutzig wurde",
-    body: "Die falschen Aussagen verteilen sich über alle drei Gutachten (Gas, Kohle, Solar). Achte besonders auf konkrete Zahlen (CO₂, Wirkungsgrad, Volllaststunden) und auf Grundsatzbegriffe wie „erneuerbar" oder „nicht schutzwürdig".",
+    body: 'Die falschen Aussagen verteilen sich über alle drei Gutachten (Gas, Kohle, Solar). Achte besonders auf konkrete Zahlen (CO₂, Wirkungsgrad, Volllaststunden) und auf Grundsatzbegriffe wie „erneuerbar" oder „nicht schutzwürdig".',
   },
   {
     id: 2,
