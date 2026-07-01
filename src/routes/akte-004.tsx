@@ -373,6 +373,10 @@ function AktePage() {
           — Etappe 4 · Elviras Haus —
         </p>
       </div>
+
+      {step === "spiel" && (
+        <HintSystem hints={HINTS_004} storageKey="akte-004-hints-start" />
+      )}
     </main>
   );
 }
