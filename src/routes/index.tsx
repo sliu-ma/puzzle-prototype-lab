@@ -126,7 +126,7 @@ function CoverPage() {
             <p className="mt-6 max-w-xl font-serif text-base italic leading-relaxed text-foreground/80 sm:text-xl">
               Ein Bildungs-Escape-Room zur Ökologie.
               <br />
-              Fünf Etappen, ein Hearing — bis {getHearingClock() ?? "19:00"} Uhr.
+              Fünf Etappen, ein Hearing.
             </p>
 
             {team ? (
