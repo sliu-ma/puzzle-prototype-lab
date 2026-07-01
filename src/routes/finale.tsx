@@ -78,7 +78,14 @@ type OrderFrage = Base & {
   hint: string;
 };
 
-type Frage = SingleFrage | MultiFrage | ShortFrage | MatchFrage | OrderFrage;
+type BucketFrage = Base & {
+  type: "bucket";
+  items: { id: string; label: string }[];
+  buckets: { id: string; label: string }[];
+  solution: Record<string, string>; // itemId -> bucketId
+};
+
+type Frage = SingleFrage | MultiFrage | ShortFrage | MatchFrage | OrderFrage | BucketFrage;
 
 const FRAGEN: Frage[] = [
   // Mobilität
