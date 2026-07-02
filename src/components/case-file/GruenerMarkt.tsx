@@ -157,9 +157,6 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
             <p className="font-mono-typed text-[10px] uppercase tracking-wider text-emerald-800">
               ✓ Einkauf nachhaltig abgeschlossen
             </p>
-            <p className="mt-1 text-foreground/80">
-              Maya wäre stolz. Lade nun den fachlichen Input …
-            </p>
           </div>
         )}
       </div>
