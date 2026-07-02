@@ -187,7 +187,9 @@ function AktePage() {
                     <span className="whitespace-nowrap">{s.label}</span>
                   </button>
                   {i < STEPS.length - 1 && (
-                    <span className="text-muted-foreground" aria-hidden>→</span>
+                    <span className="text-muted-foreground" aria-hidden>
+                      →
+                    </span>
                   )}
                 </li>
               );
@@ -200,22 +202,16 @@ function AktePage() {
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
               Notiz 01 – Bahnhof Speicher – Bank am Gleis 1
             </p>
-            <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-              Elviras alte Reisetickets
-            </h2>
-            <p className="mt-1 font-mono-typed text-xs text-muted-foreground">
-              [Hinweis gefunden um {jetzt}]
-            </p>
+            <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">Elviras alte Reisetickets</h2>
+            <p className="mt-1 font-mono-typed text-xs text-muted-foreground">[Hinweis gefunden um {jetzt}]</p>
             <p className="mt-5 text-[15px] leading-relaxed">
-              Das alte Bahnhofsgebäude dient heute als kleines Heimatmuseum. Am
-              ehemaligen Fahrkartenschalter findet Maja ein Couvert, das an sie
-              adressiert ist. Darin: ein vergilbtes Zugticket, ein Flugticket
-              und eine Autobahnvignette, alle für dieselbe Strecke, für die
-              Elvira einst zu einer Umweltkonferenz gereist war.
+              Das alte Bahnhofsgebäude dient heute als kleines Heimatmuseum. Am ehemaligen Fahrkartenschalter findet
+              Maja ein Couvert, das an sie adressiert ist. Darin: ein vergilbtes Zugticket, ein Flugticket und eine
+              Autobahnvignette, alle für dieselbe Strecke, für die Elvira einst zu einer Umweltkonferenz gereist war.
             </p>
             <blockquote className="mt-4 border-l-4 border-stamp pl-4 font-serif italic text-[15px] leading-relaxed">
-              „Ich habe immer das gewählt, was am wenigsten Spuren hinterlässt.
-              Findest du heraus, welchen Weg ich genommen habe?"
+              „Ich habe immer das gewählt, was am wenigsten Spuren hinterlässt. Findest du heraus, welchen Weg ich nach
+              Hause genommen habe?"
             </blockquote>
             <div className="mt-6 flex justify-end">
               <button
@@ -228,25 +224,19 @@ function AktePage() {
           </PaperCard>
         )}
 
-
         {step === "eingabe" && (
           <PaperCard rotate={-0.2} tape="top-right">
-            <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-              Tickets analysieren
-            </p>
+            <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">Tickets analysieren</p>
             <h2 className="mt-2 flex items-center gap-2 font-serif text-2xl font-bold sm:text-3xl">
               <MapPin className="h-6 w-6 text-stamp" /> Rekonstruiere Elviras Reiseroute
             </h2>
             <p className="mt-3 text-[15px] text-foreground/80">
-              Elvira hat ihre Hinweise gut versteckt. Vielleicht lohnt sich ein
-              zweiter Blick auf ihre Unterlagen.
+              Elvira hat ihre Hinweise gut versteckt. Vielleicht lohnt sich ein zweiter Blick auf ihre Unterlagen.
             </p>
 
             <form onSubmit={handleEingabe} className="mt-6 space-y-4">
               <div>
-                <label className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
-                  Startort
-                </label>
+                <label className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">Startort</label>
                 <input
                   type="text"
                   value={start}
@@ -256,9 +246,7 @@ function AktePage() {
                 />
               </div>
               <div>
-                <label className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
-                  Zielort
-                </label>
+                <label className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">Zielort</label>
                 <input
                   type="text"
                   value={ziel}
@@ -303,8 +291,7 @@ function AktePage() {
                 Genf <span className="text-muted-foreground">›</span> Speicher
               </h2>
               <p className="mt-1 text-sm text-foreground/70">
-                Drei Routen stehen zur Auswahl. Tippe eine an, um Karte, Verbindung
-                und CO₂-Werte im Detail zu sehen.
+                Drei Routen stehen zur Auswahl. Tippe eine an, um Karte, Verbindung und CO₂-Werte im Detail zu sehen.
               </p>
               <div className="mt-5">
                 <RouteCards onSelect={(id) => setSelectedRouteId(id)} />
@@ -349,12 +336,10 @@ function AktePage() {
               <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
                 Fachlicher Input · Nachhaltige Mobilität
               </p>
-              <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-                Wie wir reisen, formt das Klima
-              </h2>
+              <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">Wie wir reisen, formt das Klima</h2>
               <p className="mt-3 text-foreground/80">
-                Der Verkehr verursacht in der Schweiz rund ein Drittel aller
-                Treibhausgase. Drei Begriffe, die du für das Hearing brauchst:
+                Der Verkehr verursacht in der Schweiz rund ein Drittel aller Treibhausgase. Drei Begriffe, die du für
+                das Hearing brauchst:
               </p>
 
               <div className="mt-5 grid gap-4 sm:grid-cols-3">
@@ -406,21 +391,14 @@ function AktePage() {
 
         {step === "naechstes" && (
           <PaperCard rotate={-0.5} tape="top-left">
-            <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-              Etappe 2 · Dorfladen
-            </p>
-            <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-              „Geh zum alten Dorfladen."
-            </h2>
+            <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">Etappe 2 · Dorfladen</p>
+            <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">„Geh zum alten Dorfladen."</h2>
             <div className="mt-4 rounded-sm border border-dashed border-stamp/40 bg-paper-deep/30 p-5">
               <p className="font-serif italic leading-relaxed">
-                Auf der Rückseite des Bahntickets steht in Elviras Handschrift:
-                „Frau Berger im Dorfladen wartet schon. Sie hat etwas für dich
-                vorbereitet — sie meinte, du seist ziemlich gut im Kombinieren."
+                Auf der Rückseite des Bahntickets steht in Elviras Handschrift: „Frau Berger im Dorfladen wartet schon.
+                Sie hat etwas für dich vorbereitet — sie meinte, du seist ziemlich gut im Kombinieren."
               </p>
-              <p className="mt-3 font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
-                — E.
-              </p>
+              <p className="mt-3 font-mono-typed text-[10px] uppercase tracking-wider text-stamp">— E.</p>
             </div>
             <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
               <Link
@@ -444,10 +422,9 @@ function AktePage() {
         </p>
       </div>
 
-      {unlockedSteps.has("eingabe") &&
-        (step === "eingabe" || step === "routen") && (
-          <HintSystem hints={HINTS_003} storageKey="akte-003-hints-start" />
-        )}
+      {unlockedSteps.has("eingabe") && (step === "eingabe" || step === "routen") && (
+        <HintSystem hints={HINTS_003} storageKey="akte-003-hints-start" />
+      )}
     </main>
   );
 }
