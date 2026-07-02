@@ -14,7 +14,7 @@ function Coin({ value, variant = "coin" }: { value: string | number; variant?: "
   );
 }
 
-const ENERGY_TARGET = 8000; // kWh/Jahr Mindestziel
+const ENERGY_TARGET = 10000; // kWh/Jahr Mindestziel
 
 type Choices = Record<string, string>;
 

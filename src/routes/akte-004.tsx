@@ -40,7 +40,7 @@ export const Route = createFileRoute("/akte-004")({
       {
         name: "description",
         content:
-          "Etappe 4: Zurück bei Elvira. Eine Querschnittszeichnung des Hauses, alte Rechnungen — und das Ziel: 8000 kWh einsparen.",
+          "Etappe 4: Zurück bei Elvira. Eine Querschnittszeichnung des Hauses, alte Rechnungen — und das Ziel: 10'000 kWh einsparen.",
       },
     ],
   }),
@@ -338,7 +338,7 @@ function AktePage() {
                 Sicherungskastens springt auf. Darin: eine Schlüsselkarte und
                 ein Zettel.
                 <br /><br />
-                „8000 kWh — genau der Beweis, den wir brauchen! Ich bin jetzt
+                „10'000 kWh — genau der Beweis, den wir brauchen! Ich bin jetzt
                 beim alten Wasserkraftwerk am Dorfrand. Marlene Vogt,
                 Mitarbeiterin im kantonalen Umweltamt, wartet dort auf uns —
                 sie hat Zugang zu den offiziellen Gemeindegutachten und hilft
