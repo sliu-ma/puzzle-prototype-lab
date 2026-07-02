@@ -360,7 +360,7 @@ function AktePage() {
               Polaroids richtig zuzuordnen.
             </DialogDescription>
           </DialogHeader>
-          <div className="mt-4 flex justify-end">
+          <div className="mt-2 flex justify-center">
             <button
               onClick={() => {
                 setShowCodeHint(false);
