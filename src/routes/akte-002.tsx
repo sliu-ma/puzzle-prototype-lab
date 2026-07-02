@@ -8,6 +8,13 @@ import { StageGate } from "@/components/case-file/StageGate";
 import { HintSystem, type Hint } from "@/components/case-file/HintSystem";
 import { completeStage, getFrozenClock } from "@/lib/progress";
 import { cn } from "@/lib/utils";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 export const Route = createFileRoute("/akte-002")({
   head: () => ({
