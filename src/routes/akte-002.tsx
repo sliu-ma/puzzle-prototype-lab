@@ -84,6 +84,7 @@ const STEPS: { id: Step; label: string }[] = [
 function AktePage() {
   const [step, setStep] = useState<Step>("brief");
   const [unlockedSteps, setUnlockedSteps] = useState<Set<Step>>(new Set(["brief"]));
+  const [showCodeHint, setShowCodeHint] = useState(false);
 
   useEffect(() => {
     if (step === "naechstes") completeStage(3);
