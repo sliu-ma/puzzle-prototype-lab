@@ -198,7 +198,7 @@ function AktePage() {
             </blockquote>
             <div className="mt-6 flex justify-end">
               <button
-                onClick={() => goto("code")}
+                onClick={() => setShowCodeHint(true)}
                 className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
               >
                 Code eintippen →
@@ -349,6 +349,30 @@ function AktePage() {
       {step === "code" && (
         <HintSystem hints={HINTS_002} storageKey="akte-002-hints-start" />
       )}
+
+      <Dialog open={showCodeHint} onOpenChange={setShowCodeHint}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Recherche-Tipp</DialogTitle>
+            <DialogDescription>
+              Falls du dir nicht sicher bist, ob ein Tier in der Schweiz
+              gefährdet ist: Recherchiere im Internet. Das hilft dir, die
+              Polaroids richtig zuzuordnen.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="mt-4 flex justify-end">
+            <button
+              onClick={() => {
+                setShowCodeHint(false);
+                goto("code");
+              }}
+              className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
+            >
+              Zum Zahlenschloss →
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </main>
   );
 }
