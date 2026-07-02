@@ -8,6 +8,13 @@ import { StageGate } from "@/components/case-file/StageGate";
 import { HintSystem, type Hint } from "@/components/case-file/HintSystem";
 import { completeStage, getFrozenClock } from "@/lib/progress";
 import { cn } from "@/lib/utils";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 export const Route = createFileRoute("/akte-002")({
   head: () => ({
@@ -77,6 +84,7 @@ const STEPS: { id: Step; label: string }[] = [
 function AktePage() {
   const [step, setStep] = useState<Step>("brief");
   const [unlockedSteps, setUnlockedSteps] = useState<Set<Step>>(new Set(["brief"]));
+  const [showCodeHint, setShowCodeHint] = useState(false);
 
   useEffect(() => {
     if (step === "naechstes") completeStage(3);
@@ -190,7 +198,7 @@ function AktePage() {
             </blockquote>
             <div className="mt-6 flex justify-end">
               <button
-                onClick={() => goto("code")}
+                onClick={() => setShowCodeHint(true)}
                 className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
               >
                 Code eintippen →
@@ -341,6 +349,30 @@ function AktePage() {
       {step === "code" && (
         <HintSystem hints={HINTS_002} storageKey="akte-002-hints-start" />
       )}
+
+      <Dialog open={showCodeHint} onOpenChange={setShowCodeHint}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Recherche-Tipp</DialogTitle>
+            <DialogDescription>
+              Falls du dir nicht sicher bist, ob ein Tier in der Schweiz
+              gefährdet ist: Recherchiere im Internet. Das hilft dir, die
+              Polaroids richtig zuzuordnen.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="mt-4 flex justify-end">
+            <button
+              onClick={() => {
+                setShowCodeHint(false);
+                goto("code");
+              }}
+              className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
+            >
+              Zum Zahlenschloss →
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </main>
   );
 }
