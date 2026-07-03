@@ -121,7 +121,7 @@ export function QRGate({
     return (
       <main className="flex min-h-screen items-center justify-center px-4">
         <p className="font-mono-typed text-xs uppercase tracking-[0.2em] text-muted-foreground">
-          Lade Akte …
+          Lade Etappe …
         </p>
       </main>
     );
