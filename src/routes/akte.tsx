@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { PaperCard } from "@/components/case-file/PaperCard";
 import { Stamp } from "@/components/case-file/Stamp";
@@ -9,7 +9,7 @@ import { HintSystem } from "@/components/case-file/HintSystem";
 import { START_WARENKORB } from "@/lib/maya-data";
 import { completeStage, getFrozenClock, getHearingClock } from "@/lib/progress";
 import { cn } from "@/lib/utils";
-import { EnvelopeHeader, EnvelopeHint } from "@/components/case-file/EnvelopeBanner";
+import { useEnvelopePrompt } from "@/components/case-file/EnvelopeDialog";
 
 
 export const Route = createFileRoute("/akte")({
@@ -52,6 +52,8 @@ const STEPS: { id: Step; label: string }[] = [
 ];
 
 function AktePage() {
+  const navigate = useNavigate();
+  const envelope = useEnvelopePrompt();
   const [step, setStep] = useState<Step>("brief");
   const [unlockedSteps, setUnlockedSteps] = useState<Set<Step>>(new Set(["brief"]));
 
@@ -233,31 +235,26 @@ function AktePage() {
               </div>
             </PaperCard>
 
-            <div className="flex flex-col gap-3">
-              <EnvelopeHint nr={3} />
-              <div className="flex justify-between">
-                <button
-                  onClick={() => setStep("shop")}
-                  className="rounded-sm border border-border bg-card px-4 py-2.5 font-serif text-sm hover:bg-secondary"
-                >
-                  ← Zurück zum Korb
-                </button>
-                <button
-                  onClick={() => goto("naechstes")}
-                  className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
-                >
-                  📩 Umschlag 3 öffnen →
-                </button>
-              </div>
+            <div className="flex justify-between">
+              <button
+                onClick={() => setStep("shop")}
+                className="rounded-sm border border-border bg-card px-4 py-2.5 font-serif text-sm hover:bg-secondary"
+              >
+                ← Zurück zum Korb
+              </button>
+              <button
+                onClick={() => goto("naechstes")}
+                className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
+              >
+                Weiter →
+              </button>
             </div>
           </div>
         )}
 
         {step === "naechstes" && (
           <PaperCard rotate={-0.5} tape="top-left">
-            <EnvelopeHeader nr={3} ort="Wald-Lichtung" />
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-
               Etappe 3 · Wald-Lichtung
             </p>
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
@@ -280,12 +277,19 @@ function AktePage() {
               Du denkst kurz an die Uhr. Bis {getHearingClock() ?? "19:00"} Uhr bleibt noch Zeit.
             </p>
             <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
-              <Link
-                to="/akte-002"
+              <button
+                onClick={() =>
+                  envelope.ask({
+                    nr: 3,
+                    ort: "Wald-Lichtung · Etappe 3",
+                    etappeLabel: "Etappe 3 · Wald-Lichtung",
+                    onConfirm: () => navigate({ to: "/akte-002" }),
+                  })
+                }
                 className="inline-flex items-center gap-2 rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
               >
                 Etappe 3 öffnen →
-              </Link>
+              </button>
               <Link
                 to="/"
                 className="inline-flex items-center gap-2 rounded-sm border border-border bg-card px-5 py-2.5 font-serif text-sm font-semibold transition-colors hover:bg-secondary"
@@ -295,6 +299,7 @@ function AktePage() {
             </div>
           </PaperCard>
         )}
+        {envelope.dialog}
 
         <p className="mt-12 text-center font-mono-typed text-xs uppercase tracking-[0.2em] text-muted-foreground">
           — Etappe 2 · Dorfladen Berger —
