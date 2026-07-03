@@ -4,7 +4,7 @@ import { PaperCard } from "./PaperCard";
 import { Stamp } from "./Stamp";
 import { cn } from "@/lib/utils";
 
-// Default für Akte 001 — bewusst NICHT im UI angezeigt.
+// Default für Etappe 1 — bewusst NICHT im UI angezeigt.
 const DEFAULT_TOKEN = "CpZk0z9RaQkL22gtiWoR";
 const DEFAULT_STORAGE_KEY = "akte-001-unlocked";
 
@@ -23,6 +23,7 @@ type Props = {
   storageKey?: string;
   title?: React.ReactNode;
   description?: string;
+  label?: string;
 };
 
 export function QRGate({
@@ -31,6 +32,7 @@ export function QRGate({
   storageKey = DEFAULT_STORAGE_KEY,
   title,
   description,
+  label = "Etappe · Versiegelt",
 }: Props) {
   const EXPECTED_TOKEN = token;
   const STORAGE_KEY = storageKey;
@@ -89,7 +91,7 @@ export function QRGate({
               setScanning(false);
               setError(null);
             } else {
-              setError("Zugriff verweigert. Dieser QR-Code passt nicht zur Akte.");
+              setError("Zugriff verweigert. Dieser QR-Code passt nicht zur Etappe.");
               ctrl.stop();
               setScanning(false);
             }
@@ -119,7 +121,7 @@ export function QRGate({
     return (
       <main className="flex min-h-screen items-center justify-center px-4">
         <p className="font-mono-typed text-xs uppercase tracking-[0.2em] text-muted-foreground">
-          Lade Akte …
+          Lade Etappe …
         </p>
       </main>
     );
@@ -145,14 +147,14 @@ export function QRGate({
           <div className="flex items-start justify-between gap-3">
             <div>
               <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-                Akte 001 · Versiegelt
+                {label}
               </p>
               <h1 className="mt-2 font-serif text-3xl font-bold leading-tight sm:text-4xl">
                 {title ?? (
                   <>
                     QR-Code scannen,
                     <br />
-                    um Akte zu öffnen
+                    um Etappe zu öffnen
                   </>
                 )}
               </h1>
@@ -162,7 +164,7 @@ export function QRGate({
 
           <p className="mt-5 text-[15px] leading-relaxed text-foreground/80">
             {description ??
-              "Diese Akte ist versiegelt. Sie lässt sich nur mit dem original beigelegten QR-Code öffnen. Halte den Code vor die Kamera deines Geräts."}
+              "Diese Etappe ist versiegelt. Sie lässt sich nur mit dem original beigelegten QR-Code öffnen. Halte den Code vor die Kamera deines Geräts."}
           </p>
 
           <div
@@ -210,7 +212,7 @@ export function QRGate({
           </div>
 
           <p className="mt-6 font-mono-typed text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-            Hinweis: Ohne gültigen Scan bleibt die Akte verschlossen.
+            Hinweis: Ohne gültigen Scan bleibt die Etappe verschlossen.
           </p>
         </PaperCard>
       </div>

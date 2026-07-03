@@ -32,6 +32,7 @@ function AkteGated() {
         storageKey="akte-001-unlocked"
         title={<>Etappe 2 — QR-Code im Dorfladen scannen</>}
         description="Diese Etappe ist versiegelt. Scanne den QR-Code, den Frau Berger für dich bereitgelegt hat."
+        label="Etappe 2 · Versiegelt"
       >
         <AktePage />
       </QRGate>
