@@ -147,14 +147,14 @@ export function QRGate({
           <div className="flex items-start justify-between gap-3">
             <div>
               <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-                Akte 001 · Versiegelt
+                {label}
               </p>
               <h1 className="mt-2 font-serif text-3xl font-bold leading-tight sm:text-4xl">
                 {title ?? (
                   <>
                     QR-Code scannen,
                     <br />
-                    um Akte zu öffnen
+                    um Etappe zu öffnen
                   </>
                 )}
               </h1>
