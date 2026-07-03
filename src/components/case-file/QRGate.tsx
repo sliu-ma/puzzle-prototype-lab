@@ -212,7 +212,7 @@ export function QRGate({
           </div>
 
           <p className="mt-6 font-mono-typed text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-            Hinweis: Ohne gültigen Scan bleibt die Akte verschlossen.
+            Hinweis: Ohne gültigen Scan bleibt die Etappe verschlossen.
           </p>
         </PaperCard>
       </div>
