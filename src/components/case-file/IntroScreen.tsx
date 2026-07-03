@@ -12,6 +12,7 @@ import {
 import { PaperCard } from "@/components/case-file/PaperCard";
 import { Stamp } from "@/components/case-file/Stamp";
 import { getHearingClock } from "@/lib/progress";
+import { useEnvelopePrompt } from "@/components/case-file/EnvelopeDialog";
 
 const KEY = "maya-intro-seen";
 
