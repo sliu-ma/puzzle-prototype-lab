@@ -324,9 +324,23 @@ function ProgressPanel({
           return (
             <li key={s.nr}>
               {status === "current" ? (
-                <Link
-                  to={s.to}
-                  className="group flex items-center gap-3 rounded-sm border-2 border-stamp bg-stamp/5 px-4 py-3 transition-all hover:-translate-y-0.5 hover:shadow-md"
+                <button
+                  type="button"
+                  onClick={() => {
+                    const go = () => navigate({ to: s.to as string });
+                    if (s.nr === 1) {
+                      // Umschlag 1 wurde bereits im Intro gezeigt
+                      go();
+                      return;
+                    }
+                    envelope.ask({
+                      nr: s.nr,
+                      ort: `${s.ort} · Etappe ${s.nr}`,
+                      etappeLabel: `Etappe ${s.nr} · ${s.ort}`,
+                      onConfirm: go,
+                    });
+                  }}
+                  className="group flex w-full items-center gap-3 rounded-sm border-2 border-stamp bg-stamp/5 px-4 py-3 text-left transition-all hover:-translate-y-0.5 hover:shadow-md"
                 >
                   <Badge n={s.nr} variant="current" />
                   <div className="min-w-0 flex-1">
@@ -338,7 +352,7 @@ function ProgressPanel({
                     </p>
                   </div>
                   <span aria-hidden className="transition-transform group-hover:translate-x-1">→</span>
-                </Link>
+                </button>
               ) : (
                 <div
                   className={cn(
