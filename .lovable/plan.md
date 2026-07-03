@@ -1,23 +1,31 @@
-# Fix: Drag-Ghost driftet ~300 px nach unten
+## Ziel
 
-## Diagnose
-`MatchView` und `BucketView` (in `src/routes/finale.tsx`) rendern das Ghost-Element mit `position: fixed`. Beide Views stecken jedoch in einer `PaperCard`, die inline `transform: rotate(0.2deg)` setzt.
+Hinweise werden nicht mehr automatisch angezeigt, sobald sie freigeschaltet sind. Stattdessen sehen die Schüler:innen im Panel eine Aufforderung („Du kannst dir den ersten Hinweis anschauen. Klicke auf das Schloss.") und müssen aktiv auf das Schloss klicken, um den jeweiligen Hinweis zu enthüllen. Zusätzlich wird im Outro neben der benötigten Zeit auch die Anzahl der insgesamt genutzten Hinweise angezeigt.
 
-Ein Ancestor mit `transform` erzeugt laut CSS-Spec einen neuen Containing Block für `fixed`-Nachfahren — `top/left` beziehen sich dann nicht mehr auf den Viewport, sondern auf die `PaperCard`. Sobald die Seite gescrollt ist, erscheint der Ghost um genau die Scroll-Distanz zwischen `PaperCard`-Oberkante und Viewport-Oberkante versetzt (typisch ~300 px bei den Match/Bucket-Fragen).
+## Änderungen
 
-## Änderung
-Ghost aus dem transformierten Kontext herausheben, indem er per React-Portal direkt in `document.body` gerendert wird.
+### 1. `src/components/case-file/HintSystem.tsx`
+- Neuer State `revealed: Set<number>` — welche Hinweise die Schüler:innen tatsächlich aufgedeckt haben. Persistiert unter `${storageKey}-revealed` in `localStorage`.
+- Verhalten pro Tab / Hinweis:
+  - **Gesperrt** (Zeit noch nicht erreicht): Schloss + „Noch gesperrt" (wie bisher).
+  - **Freigeschaltet, aber nicht aufgedeckt**: großes Schloss-Icon + Text „Du kannst dir {Label} anschauen. Klicke auf das Schloss." + Button „Hinweis aufdecken".
+  - **Aufgedeckt**: Titel + Body (wie heute).
+- Der Badge auf dem Floating Button zählt weiterhin freigeschaltete Hinweise (damit Schüler:innen wissen, dass etwas verfügbar ist), Farbwechsel bleibt.
+- Tab-Icons: 🔒 gesperrt, 🔓 freigeschaltet, ✅ (oder gefüllt) aufgedeckt — kleiner visueller Fortschritt.
+- Beim Öffnen springt der aktive Tab auf den neuesten freigeschalteten, aber noch nicht aufgedeckten Hinweis (fallback: letzter aufgedeckter).
 
-1. In `src/routes/finale.tsx`:
-   - `import { createPortal } from "react-dom";`
-   - In `MatchView`: den JSX-Block „Drag ghost" (Zeilen ~1100–1113) mit `createPortal(<div …>…</div>, document.body)` umschließen. SSR-Guard: nur portalen, wenn `typeof document !== "undefined"`.
-   - In `BucketView` (Zeilen ~1383–1390) identisch portalen.
+### 2. Gemeinsamer Zähler
+- In `HintSystem.tsx` neue exportierte Konstante `HINT_STORAGE_KEYS` mit den fünf Storage-Keys der Etappen:
+  ```
+  akte-001, akte-002, akte-003, akte-004, akte-005 → jeweils `-hints-start-revealed`
+  ```
+- Exportierte Hilfsfunktion `getTotalRevealedHints(): number`, die alle fünf Keys aus `localStorage` liest und die Größen der Sets summiert.
 
-Das Ghost bleibt `pointer-events-none fixed z-50 …` mit `left: ghost.x + 12, top: ghost.y + 12` — jetzt aber echt viewport-relativ, weil `body` keinen transformierten Ancestor hat.
+### 3. `src/routes/finale.tsx` — `OutroScreen` (Schluss-Karte)
+- Zusätzlich zur „Benötigte Zeit"-Kachel eine zweite kleine Statistik-Kachel „Genutzte Hinweise" mit `getTotalRevealedHints()` von 0–15.
+- Layout: zwei Kacheln nebeneinander (auf Mobile untereinander), gleiches Design wie die bestehende Zeit-Kachel, andere Akzentfarbe (z. B. `amber`), Icon `Lightbulb` (lucide).
 
-## Warum nicht alternativ die Rotation entfernen?
-Die 0.2°-Rotation ist bewusstes Papier-Feeling und wird an vielen Stellen genutzt. Der Portal-Fix ist lokal, ändert kein Styling und wirkt sich nur auf die zwei betroffenen Ghosts aus.
+## Nicht ändern
 
-## Verifikation
-- Frage mit Match/Bucket öffnen, Seite scrollen, Kachel greifen → Ghost sitzt direkt am Cursor (+12/+12 Offset), sowohl bei Maus als auch bei Touch.
-- Drop-Ziel-Erkennung (`findRightAt` / Bucket-Hover) ist nicht betroffen, weil sie ohnehin mit `getBoundingClientRect` + `clientX/Y` arbeitet.
+- Freischaltzeiten (3 / 6 / 9 Min.) und Storage-Keys der Etappen bleiben.
+- Restlicher Text im Outro, Intro, Timer, Reset-Verhalten (`resetAll` räumt bereits per Präfix auf — `-revealed`-Keys werden mit den bestehenden `-hints-start`-Keys nicht automatisch entfernt; ich erweitere `resetAll` in `src/lib/progress.ts` um die fünf zusätzlichen `-revealed`-Keys, damit ein Reset sauber bleibt).
