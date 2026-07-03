@@ -244,25 +244,39 @@ export function HintSystem({ hints = DEFAULT_HINTS, storageKey = DEFAULT_STORAGE
                   </p>
                 </div>
               ) : !activeRevealed ? (
-                <div className="rounded-sm border border-dashed border-stamp/40 bg-stamp/5 p-5 text-center">
-                  <button
-                    onClick={() => reveal(activeHint.id)}
-                    aria-label={`${activeHint.label} aufdecken`}
-                    className="mx-auto flex h-16 w-16 items-center justify-center rounded-full border-2 border-stamp/60 bg-paper text-stamp shadow-md transition-all hover:-translate-y-0.5 hover:bg-stamp hover:text-paper hover:shadow-lg"
-                  >
-                    <Lock className="h-7 w-7" />
-                  </button>
-                  <p className="mt-3 font-serif text-[15px] leading-relaxed text-foreground/85">
-                    Du kannst dir {activeHint.label} anschauen. Klicke auf das
-                    Schloss.
-                  </p>
-                  <button
-                    onClick={() => reveal(activeHint.id)}
-                    className="mt-4 rounded-sm bg-stamp px-4 py-2 font-mono-typed text-[11px] uppercase tracking-wider text-paper transition-all hover:-translate-y-0.5 hover:shadow-md"
-                  >
-                    Hinweis aufdecken
-                  </button>
-                </div>
+                canRevealActive ? (
+                  <div className="rounded-sm border border-dashed border-stamp/40 bg-stamp/5 p-5 text-center">
+                    <button
+                      onClick={() => reveal(activeHint.id)}
+                      aria-label={`${activeHint.label} aufdecken`}
+                      className="mx-auto flex h-16 w-16 items-center justify-center rounded-full border-2 border-stamp/60 bg-paper text-stamp shadow-md transition-all hover:-translate-y-0.5 hover:bg-stamp hover:text-paper hover:shadow-lg"
+                    >
+                      <Lock className="h-7 w-7" />
+                    </button>
+                    <p className="mt-3 font-serif text-[15px] leading-relaxed text-foreground/85">
+                      Du kannst dir {activeHint.label} anschauen. Klicke auf das
+                      Schloss.
+                    </p>
+                    <button
+                      onClick={() => reveal(activeHint.id)}
+                      className="mt-4 rounded-sm bg-stamp px-4 py-2 font-mono-typed text-[11px] uppercase tracking-wider text-paper transition-all hover:-translate-y-0.5 hover:shadow-md"
+                    >
+                      Hinweis aufdecken
+                    </button>
+                  </div>
+                ) : (
+                  <div className="rounded-sm border border-dashed border-border bg-paper-deep/30 p-5 text-center">
+                    <p className="text-2xl">🔒</p>
+                    <p className="mt-2 font-mono-typed text-[11px] uppercase tracking-wider text-muted-foreground">
+                      Reihenfolge beachten
+                    </p>
+                    <p className="mt-1 text-sm text-foreground/70">
+                      Decke zuerst {prevHint?.label} auf, bevor du{" "}
+                      {activeHint.label} anschauen kannst.
+                    </p>
+                  </div>
+                )
+
               ) : (
                 <div>
                   <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
