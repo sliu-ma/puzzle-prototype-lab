@@ -18,17 +18,17 @@ export const TIMER_DURATION_MIN = 90;
 
 export type StageInfo = {
   nr: number;
-  to: "/akte-003" | "/akte" | "/akte-002" | "/akte-004" | "/akte-005" | "/finale";
+  to: "/etappe-1" | "/etappe-2" | "/etappe-3" | "/etappe-4" | "/etappe-5" | "/finale";
   ort: string;
   thema: string;
 };
 
 export const STAGES: StageInfo[] = [
-  { nr: 1, to: "/akte-003", ort: "Bahnhof", thema: "Mobilität" },
-  { nr: 2, to: "/akte", ort: "Dorfladen", thema: "Konsum" },
-  { nr: 3, to: "/akte-002", ort: "Wald-Lichtung", thema: "Biodiversität" },
-  { nr: 4, to: "/akte-004", ort: "Elviras Haus", thema: "Wohnen" },
-  { nr: 5, to: "/akte-005", ort: "Wasserkraftwerk", thema: "Energie" },
+  { nr: 1, to: "/etappe-1", ort: "Bahnhof", thema: "Mobilität" },
+  { nr: 2, to: "/etappe-2", ort: "Dorfladen", thema: "Konsum" },
+  { nr: 3, to: "/etappe-3", ort: "Wald-Lichtung", thema: "Biodiversität" },
+  { nr: 4, to: "/etappe-4", ort: "Elviras Haus", thema: "Wohnen" },
+  { nr: 5, to: "/etappe-5", ort: "Wasserkraftwerk", thema: "Energie" },
   { nr: 6, to: "/finale", ort: "Gemeindesaal", thema: "Finale" },
 ];
 
