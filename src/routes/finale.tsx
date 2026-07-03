@@ -1383,14 +1383,16 @@ function BucketView({
       )}
 
       {/* Ghost */}
-      {dragging && ghost && draggedItem && (
-        <div
-          className="pointer-events-none fixed z-50 rounded-sm border border-stamp bg-paper px-3 py-2 shadow-lg"
-          style={{ left: ghost.x + 12, top: ghost.y + 12 }}
-        >
-          <div className="font-serif text-[14px] font-bold">{draggedItem.label}</div>
-        </div>
-      )}
+      {dragging && ghost && draggedItem && typeof document !== "undefined" &&
+        createPortal(
+          <div
+            className="pointer-events-none fixed z-50 rounded-sm border border-stamp bg-paper px-3 py-2 shadow-lg"
+            style={{ left: ghost.x + 12, top: ghost.y + 12 }}
+          >
+            <div className="font-serif text-[14px] font-bold">{draggedItem.label}</div>
+          </div>,
+          document.body,
+        )}
     </div>
   );
 }
