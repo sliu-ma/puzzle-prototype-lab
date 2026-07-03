@@ -1,32 +1,65 @@
-## Ziel
+## Änderung 1 — Frisches Spiel bei „Ermittlungen starten"
 
-Beim ersten Rätsel (Akte 001 / „Grüner Markt") soll nach 3 Minuten — also zeitgleich mit der Freischaltung von Tipp 1 — ein einmaliges Pop-up erscheinen, das den Schüler:innen erklärt, dass es ein Hinweissystem gibt, wo sie es finden und wie es funktioniert.
+Auslöser ist der Submit-Button des Startformulars auf `/` (`StartForm` in `src/routes/index.tsx`).
 
-## Verhalten
+Vor `registerTeam(name, code)` wird `resetAll()` aufgerufen — der komplette `localStorage` des Spiels wird gelöscht, bevor Teamname, Startzeit etc. neu gesetzt werden.
 
-- Pop-up erscheint genau einmal pro Gerät (localStorage-Flag `akte-001-hints-intro-shown`).
-- Trigger: sobald `elapsedMin >= 3` im `HintSystem` erreicht ist (gleicher Timer wie Tipp-Freischaltung) — also nur wenn Schüler:innen tatsächlich am ersten Rätsel dran sind.
-- Nur für die erste Akte (Standard-`storageKey` `akte-001-hints-start`), nicht für die weiteren Akten.
-- Wenn Tipp 1 zum Mount-Zeitpunkt schon aufgedeckt wurde (z. B. Rückkehr auf die Seite), wird das Pop-up nicht mehr gezeigt.
+Damit `resetAll()` wirklich **alles** entfernt (aktuell nur eine Whitelist), wird es in `src/lib/progress.ts` auf Präfix-Löschung umgestellt: alle `localStorage`-Keys mit Präfix `maya-*` oder `akte-*` werden entfernt. Danach das gewohnte `maya-progress`-Event.
 
-## Inhalt des Pop-ups
+Das deckt automatisch ab: `akte-00X-unlocked`, `akte-00X-hints-start`, `akte-00X-hints-start-revealed`, das Intro-Popup-Flag, alle Umschlag-Flags, `maya-team-*`, `maya-current-stage`, `maya-start-ts`, `maya-timer-shown`, `maya-intro-seen`, `maya-clock-*`.
 
-- Titel: „Du brauchst Hilfe? Maya hat Hinweise für dich."
-- Text (kurz, kindgerecht):
-  - Unten rechts findest du den Button **💡 Tipps**.
-  - Nach **3 Minuten** kommt Tipp 1, nach **6 Minuten** Tipp 2, nach **9 Minuten** die Auflösung.
-  - Du entscheidest selbst, ob du sie anschaust — klicke auf das Schloss, um einen Hinweis aufzudecken.
-- Ein Button: „Alles klar" schließt das Pop-up und setzt das Flag.
-- Sekundär (optional dezent): „Tipps jetzt öffnen" — schließt das Pop-up und öffnet direkt das Hinweis-Panel.
+Der bestehende „Spiel zurücksetzen"-Button (unten in der Fortschrittsansicht) nutzt weiterhin dieselbe Funktion — bleibt also ebenfalls sauber.
 
-## Umsetzung
+Ergebnis: jeder Druck auf „Ermittlung starten →" garantiert ein frisches Spiel — Intro-Story, QR-Gates, Hint-Timer, Popup und Umschläge starten neu, egal was vorher im Browser lag.
 
-Alle Änderungen in `src/components/case-file/HintSystem.tsx`:
+## Änderung 2 — „Umschlag"-Metapher (genau 5 Umschläge)
 
-- Neuer State `showIntro`.
-- Effect prüft nach dem Mount und in jedem Timer-Tick: wenn `storageKey === "akte-001-hints-start"`, `elapsedMin >= 3`, Tipp 1 noch nicht revealed und Flag noch nicht gesetzt → `showIntro = true`.
-- Dialog per bestehender `Dialog`-Komponente aus `src/components/ui/dialog.tsx` (Design-Sprache passend zum Papier-/Stempel-Look, `font-serif` für Titel, `font-mono-typed` für Meta).
-- Schließen setzt `localStorage.setItem("akte-001-hints-intro-shown", "1")` und `showIntro = false`.
-- „Tipps jetzt öffnen" ruft zusätzlich `openPanel()` auf.
+Ziel: Schüler:innen sollen klar erkennen, dass Elviras Hinweise in **Umschlägen** stecken, die sie am Ende jedes Rätsels öffnen.
 
-Keine Änderungen an anderen Dateien nötig; Storage-Format, `getTotalRevealedHints` und die Reihenfolge-Logik bleiben unverändert.
+Zählung:
+- **Umschlag 1** — Küchentisch, im Intro (Brief).
+- **Umschlag 2** — am Ende Etappe 1 (Bahnhof → Dorfladen).
+- **Umschlag 3** — am Ende Etappe 2 (Dorfladen → Wald).
+- **Umschlag 4** — am Ende Etappe 3 (Wald → Elviras Haus).
+- **Umschlag 5** — am Ende Etappe 4 (Haus → Wasserkraftwerk).
+- **Kein Umschlag** am Ende von Etappe 5; sie führt direkt ins Hearing.
+
+### Umschlag 1 — `IntroScreen.tsx`, Step „Brief"
+
+Über der Brief-Karte einen sichtbaren Umschlag-Header: `Mail`-Icon + „Umschlag 1 · Küchentisch". Ein Hinweiszeile darunter: „Am Ende jedes Rätsels findest du den nächsten Umschlag — insgesamt 5 Stück."
+
+### Umschläge 2–5 — Akten 1–4 im Step `naechstes`
+
+In `src/routes/akte-003.tsx`, `akte.tsx`, `akte-002.tsx`, `akte-004.tsx` den `PaperCard` im Step `naechstes` als Umschlag stilisieren:
+- Header oben: `MailOpen`-Icon + „Umschlag N · <Ort>" (N = 2, 3, 4, 5).
+- Kurzer Zusatztext: „Elviras nächster Hinweis — Ort der Etappe [+ Zusatzmaterial, wenn vorhanden]".
+- Zusätzlich am **Ende des vorhergehenden Steps** (dort wo bisher „Zur nächsten Etappe →" steht) ein deutliches Hinweisbanner mit `Mail`-Icon: „📩 Jetzt Umschlag N öffnen" direkt am Weiter-Button, damit der Klick als Umschlag-Öffnen erkennbar ist.
+
+### Etappe 5 — `akte-005.tsx`
+
+Kein Umschlag-Styling im Übergang zum Hearing. Der `naechstes`-Step bleibt wie bisher, wird aber sprachlich zum „Weg ins Hearing" (statt Umschlag): kurze Formulierung wie „Zeit für das Hearing — alle Beweise liegen auf dem Tisch."
+
+Keine neue Logik/State — nur Präsentation. `naechstes`-Step bleibt Teil des bestehenden Ablaufs, `completeStage` und Navigation unverändert.
+
+## Änderung 3 — Intro-Popup: nach 3 Min echter Verweildauer, einmalig für die gesamte Sitzung
+
+Aktuell in `HintSystem.tsx` an `INTRO_STORAGE_KEY = "akte-003-hints-start"` gebunden — d. h. wenn Rätsel 1 in unter 3 Minuten gelöst wird, kommt das Popup nie.
+
+Neu:
+- Intro-Popup an **kein bestimmtes Rätsel** binden. Trigger: sobald in **irgendeiner** aktiven `HintSystem`-Instanz `elapsedMin >= 3` und Tipp 1 noch nicht aufgedeckt.
+- Globales `localStorage`-Flag `maya-hints-intro-shown` (statt akte-spezifisch). Einmal gesetzt → nie wieder in dieser Sitzung.
+- Wird durch `resetAll()` (Änderung 1, Präfix `maya-*`) beim nächsten Spielstart wieder gelöscht.
+
+Effekt: Löst ein Team Rätsel 1 in 2 Minuten → kein Popup. Bleibt es dann in Rätsel 2 länger als 3 Minuten → Popup erscheint dort. Erscheint es einmal, kommt es nie wieder.
+
+## Technische Details
+
+Dateien:
+- `src/lib/progress.ts` — `resetAll()` auf Präfix-Löschung umstellen.
+- `src/routes/index.tsx` — `StartForm.onStart` ruft `resetAll()` vor `registerTeam(...)` auf.
+- `src/components/case-file/HintSystem.tsx` — `INTRO_STORAGE_KEY`/`INTRO_FLAG_KEY` entfernen, Bedingung im Effect vereinfachen (`elapsedMin >= 3 && !revealed.has(0) && !localStorage.getItem("maya-hints-intro-shown")`). Beim Dismiss globales Flag setzen.
+- `src/components/case-file/IntroScreen.tsx` — Umschlag-1-Header in Step „Brief" + Hinweiszeile („5 Umschläge insgesamt").
+- `src/routes/akte-003.tsx`, `akte.tsx`, `akte-002.tsx`, `akte-004.tsx` — Step `naechstes` als Umschlag 2–5 stilisieren; im vorhergehenden Step Banner „Jetzt Umschlag N öffnen".
+- `src/routes/akte-005.tsx` — `naechstes`-Step als Hearing-Übergang formulieren, ohne Umschlag-Metapher.
+
+Keine Änderungen an Datenmodell, Hint-Storage, QR-Logik oder Ablaufsteuerung.

@@ -12,6 +12,8 @@ import {
   getNowClock,
   getHearingClock,
 } from "@/lib/progress";
+
+
 import { IntroScreen, hasSeenIntro } from "@/components/case-file/IntroScreen";
 import { cn } from "@/lib/utils";
 
@@ -146,10 +148,13 @@ function CoverPage() {
             ) : (
               <StartForm
                 onStart={(name, code) => {
+                  resetAll();
                   registerTeam(name, code);
+                  setIntroSeen(false);
                   setTeam({ name, code });
                   setStage(getCurrentStage());
                 }}
+
               />
             )}
           </article>

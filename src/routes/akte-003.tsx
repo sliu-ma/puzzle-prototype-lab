@@ -11,6 +11,8 @@ import { RouteDetail } from "@/components/case-file/RouteDetail";
 import { VALID_START, VALID_ZIEL, type RouteOption } from "@/lib/mobility-data";
 import { completeStage } from "@/lib/progress";
 import { cn } from "@/lib/utils";
+import { EnvelopeHeader, EnvelopeHint } from "@/components/case-file/EnvelopeBanner";
+
 
 export const Route = createFileRoute("/akte-003")({
   head: () => ({
@@ -373,26 +375,31 @@ function AktePage() {
               </div>
             </PaperCard>
 
-            <div className="flex justify-between">
-              <button
-                onClick={() => setStep("routen")}
-                className="rounded-sm border border-border bg-card px-4 py-2.5 font-serif text-sm hover:bg-secondary"
-              >
-                ← Zurück
-              </button>
-              <button
-                onClick={() => goto("naechstes")}
-                className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
-              >
-                Zur nächsten Etappe →
-              </button>
+            <div className="flex flex-col gap-3">
+              <EnvelopeHint nr={2} />
+              <div className="flex justify-between">
+                <button
+                  onClick={() => setStep("routen")}
+                  className="rounded-sm border border-border bg-card px-4 py-2.5 font-serif text-sm hover:bg-secondary"
+                >
+                  ← Zurück
+                </button>
+                <button
+                  onClick={() => goto("naechstes")}
+                  className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
+                >
+                  📩 Umschlag 2 öffnen →
+                </button>
+              </div>
             </div>
           </div>
         )}
 
         {step === "naechstes" && (
           <PaperCard rotate={-0.5} tape="top-left">
+            <EnvelopeHeader nr={2} ort="Dorfladen" />
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">Etappe 2 · Dorfladen</p>
+
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">„Geh zum alten Dorfladen."</h2>
             <div className="mt-4 rounded-sm border border-dashed border-stamp/40 bg-paper-deep/30 p-5">
               <p className="font-serif italic leading-relaxed">

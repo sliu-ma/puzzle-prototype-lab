@@ -35,8 +35,8 @@ const DEFAULT_HINTS: Hint[] = [
 ];
 
 const DEFAULT_STORAGE_KEY = "akte-001-hints-start";
-const INTRO_STORAGE_KEY = "akte-003-hints-start";
-const INTRO_FLAG_KEY = "akte-003-hints-intro-shown";
+const INTRO_FLAG_KEY = "maya-hints-intro-shown";
+
 
 export const HINT_STORAGE_KEYS = [
   "akte-001-hints-start",
@@ -105,13 +105,13 @@ export function HintSystem({ hints = DEFAULT_HINTS, storageKey = DEFAULT_STORAGE
   const elapsedMinForIntro = startedAt ? (now - startedAt) / 60000 : 0;
   useEffect(() => {
     if (typeof window === "undefined") return;
-    if (STORAGE_KEY !== INTRO_STORAGE_KEY) return;
     if (!startedAt) return;
     if (elapsedMinForIntro < 3) return;
     if (revealed.has(0)) return;
     if (window.localStorage.getItem(INTRO_FLAG_KEY)) return;
     setShowIntro(true);
-  }, [STORAGE_KEY, startedAt, elapsedMinForIntro, revealed]);
+  }, [startedAt, elapsedMinForIntro, revealed]);
+
 
   const dismissIntro = () => {
     try {

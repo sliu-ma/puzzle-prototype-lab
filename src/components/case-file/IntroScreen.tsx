@@ -252,6 +252,12 @@ export function IntroScreen({
             <div className="absolute right-4 top-6 sm:right-8 sm:top-8">
               <Stamp rotate={-8}>Küchentisch</Stamp>
             </div>
+            <div className="mb-4 inline-flex items-center gap-2 rounded-sm border border-stamp/40 bg-stamp/10 px-3 py-1.5">
+              <Mail className="h-4 w-4 text-stamp" />
+              <span className="font-mono-typed text-[11px] uppercase tracking-[0.18em] text-stamp">
+                Umschlag 1 · Küchentisch
+              </span>
+            </div>
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
               Der Brief
             </p>
@@ -263,6 +269,10 @@ export function IntroScreen({
               sich aufs Land eingeladen. Doch als sie ankommt, ist das Haus
               leer. Auf dem Küchentisch liegt nur ein Brief:
             </p>
+            <p className="mt-3 rounded-sm border border-dashed border-border bg-paper-deep/30 p-3 text-[13px] italic text-foreground/75">
+              Insgesamt gibt es 5 Umschläge — am Ende jedes Rätsels wartet der nächste auf dich.
+            </p>
+
 
             <div
               className="mt-5 rounded-sm border border-border bg-paper-deep/40 p-5 font-serif text-[15px] leading-relaxed text-foreground/90 shadow-inner"
