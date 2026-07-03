@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { PaperCard } from "@/components/case-file/PaperCard";
 import { Stamp } from "@/components/case-file/Stamp";
@@ -8,7 +8,7 @@ import { EnergyGame } from "@/components/case-file/EnergyGame";
 import { HintSystem, type Hint } from "@/components/case-file/HintSystem";
 import { completeStage, getFrozenClock } from "@/lib/progress";
 import { cn } from "@/lib/utils";
-import { EnvelopeHeader, EnvelopeHint } from "@/components/case-file/EnvelopeBanner";
+import { useEnvelopePrompt } from "@/components/case-file/EnvelopeDialog";
 
 
 const HINTS_004: Hint[] = [
@@ -78,6 +78,8 @@ const STEPS: { id: Step; label: string }[] = [
 ];
 
 function AktePage() {
+  const navigate = useNavigate();
+  const envelope = useEnvelopePrompt();
   const [step, setStep] = useState<Step>("brief");
   const [unlockedSteps, setUnlockedSteps] = useState<Set<Step>>(new Set(["brief"]));
 
@@ -310,29 +312,25 @@ function AktePage() {
               </div>
             </PaperCard>
 
-            <div className="flex flex-col gap-3">
-              <EnvelopeHint nr={5} />
-              <div className="flex justify-between">
-                <button
-                  onClick={() => setStep("spiel")}
-                  className="rounded-sm border border-border bg-card px-4 py-2.5 font-serif text-sm hover:bg-secondary"
-                >
-                  ← Zurück zum Spiel
-                </button>
-                <button
-                  onClick={() => goto("naechstes")}
-                  className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
-                >
-                  📩 Umschlag 5 öffnen →
-                </button>
-              </div>
+            <div className="flex justify-between">
+              <button
+                onClick={() => setStep("spiel")}
+                className="rounded-sm border border-border bg-card px-4 py-2.5 font-serif text-sm hover:bg-secondary"
+              >
+                ← Zurück zum Spiel
+              </button>
+              <button
+                onClick={() => goto("naechstes")}
+                className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
+              >
+                Weiter →
+              </button>
             </div>
           </div>
         )}
 
         {step === "naechstes" && (
           <PaperCard rotate={-0.5} tape="top-left">
-            <EnvelopeHeader nr={5} ort="altes Wasserkraftwerk" />
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
 
               Etappe 5 · altes Wasserkraftwerk
@@ -361,12 +359,19 @@ function AktePage() {
               fünf falschen Aussagen.
             </p>
             <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
-              <Link
-                to="/akte-005"
+              <button
+                onClick={() =>
+                  envelope.ask({
+                    nr: 5,
+                    ort: "Altes Wasserkraftwerk · Etappe 5",
+                    etappeLabel: "Etappe 5 · Wasserkraftwerk",
+                    onConfirm: () => navigate({ to: "/akte-005" }),
+                  })
+                }
                 className="inline-flex items-center gap-2 rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
               >
                 Etappe 5 öffnen →
-              </Link>
+              </button>
               <Link
                 to="/"
                 className="inline-flex items-center gap-2 rounded-sm border border-border bg-card px-5 py-2.5 font-serif text-sm font-semibold transition-colors hover:bg-secondary"
@@ -385,6 +390,7 @@ function AktePage() {
       {step === "spiel" && (
         <HintSystem hints={HINTS_004} storageKey="akte-004-hints-start" />
       )}
+      {envelope.dialog}
     </main>
   );
 }

@@ -1,65 +1,63 @@
-## Änderung 1 — Frisches Spiel bei „Ermittlungen starten"
+## Ziel
 
-Auslöser ist der Submit-Button des Startformulars auf `/` (`StartForm` in `src/routes/index.tsx`).
+Die aktuellen Umschlag-Banner und -Header (aus `EnvelopeBanner.tsx`) werden entfernt. Stattdessen erscheint an genau definierten Klick-Momenten ein **Pop-up mit Illustration**, das die Schüler:innen auffordert, den physischen Umschlag zu öffnen.
 
-Vor `registerTeam(name, code)` wird `resetAll()` aufgerufen — der komplette `localStorage` des Spiels wird gelöscht, bevor Teamname, Startzeit etc. neu gesetzt werden.
+## Wann erscheint das Pop-up?
 
-Damit `resetAll()` wirklich **alles** entfernt (aktuell nur eine Whitelist), wird es in `src/lib/progress.ts` auf Präfix-Löschung umgestellt: alle `localStorage`-Keys mit Präfix `maya-*` oder `akte-*` werden entfernt. Danach das gewohnte `maya-progress`-Event.
+| Umschlag | Auslöser (Klick) | Ort im Code |
+|---|---|---|
+| **1** | Nach dem Brief-Screen im Intro, beim Klick auf „Ermittlung starten" | `IntroScreen.tsx` |
+| **2** | Klick auf „Etappe 2 öffnen →" am Ende von Etappe 1 **oder** Klick auf Etappe 2 in der Übersicht (Startseite) | `akte-003.tsx` + `index.tsx` |
+| **3** | Klick auf „Etappe 3 öffnen →" am Ende Etappe 2 **oder** Klick auf Etappe 3 in Übersicht | `akte.tsx` + `index.tsx` |
+| **4** | Klick auf „Etappe 4 öffnen →" am Ende Etappe 3 **oder** Klick auf Etappe 4 in Übersicht | `akte-002.tsx` + `index.tsx` |
+| **5** | Klick auf „Etappe 5 öffnen →" am Ende Etappe 4 **oder** Klick auf Etappe 5 in Übersicht | `akte-004.tsx` + `index.tsx` |
 
-Das deckt automatisch ab: `akte-00X-unlocked`, `akte-00X-hints-start`, `akte-00X-hints-start-revealed`, das Intro-Popup-Flag, alle Umschlag-Flags, `maya-team-*`, `maya-current-stage`, `maya-start-ts`, `maya-timer-shown`, `maya-intro-seen`, `maya-clock-*`.
+Nach Etappe 5 → **kein** Umschlag (direkt ins Hearing).
 
-Der bestehende „Spiel zurücksetzen"-Button (unten in der Fortschrittsansicht) nutzt weiterhin dieselbe Funktion — bleibt also ebenfalls sauber.
+Das Pop-up ist ein einmaliger Prompt pro Umschlag: einmal gesehen, wird per `localStorage`-Flag (`maya-envelope-N-shown`) gemerkt, damit derselbe Umschlag beim erneuten Klick (z. B. nachträglich in der Übersicht) nicht wieder aufpoppt. Ein Reset über `resetAll()` (Präfix `maya-*`) löscht die Flags wieder.
 
-Ergebnis: jeder Druck auf „Ermittlung starten →" garantiert ein frisches Spiel — Intro-Story, QR-Gates, Hint-Timer, Popup und Umschläge starten neu, egal was vorher im Browser lag.
+## Neue Komponente: `EnvelopeDialog.tsx`
 
-## Änderung 2 — „Umschlag"-Metapher (genau 5 Umschläge)
+Ersetzt `EnvelopeBanner.tsx`. Nutzt shadcn `Dialog` und zeigt:
 
-Ziel: Schüler:innen sollen klar erkennen, dass Elviras Hinweise in **Umschlägen** stecken, die sie am Ende jedes Rätsels öffnen.
+- Großes **SVG eines Umschlags** mit der Nummer als Siegel — freundlich, spielerisch (kein Stockfoto). Zwei Varianten: geschlossen (Wachssiegel mit Nr.) und leicht geöffnete Klappe.
+- Überschrift: **„Öffne jetzt Umschlag N"**
+- Kurztext: „Elviras nächster Hinweis liegt bereit — nimm den Umschlag mit der Nr. N vom Tisch."
+- Ort-Chip (z. B. „Dorfladen · Etappe 2")
+- Button: „Alles klar →" (schließt Dialog und führt die Aktion aus, z. B. Navigation)
 
-Zählung:
-- **Umschlag 1** — Küchentisch, im Intro (Brief).
-- **Umschlag 2** — am Ende Etappe 1 (Bahnhof → Dorfladen).
-- **Umschlag 3** — am Ende Etappe 2 (Dorfladen → Wald).
-- **Umschlag 4** — am Ende Etappe 3 (Wald → Elviras Haus).
-- **Umschlag 5** — am Ende Etappe 4 (Haus → Wasserkraftwerk).
-- **Kein Umschlag** am Ende von Etappe 5; sie führt direkt ins Hearing.
+Ausgeliefert als:
+```tsx
+<EnvelopeDialog nr={2} ort="Dorfladen" open={open} onConfirm={() => navigate(...)} />
+```
 
-### Umschlag 1 — `IntroScreen.tsx`, Step „Brief"
+Plus ein Utility-Hook `useEnvelopePrompt(nr)`, das den einmaligen Anzeige-Status verwaltet und ein `trigger()` zurückgibt, mit dem sich der Klick abfangen lässt (Klick → Pop-up → nach Bestätigung Navigation ausführen).
 
-Über der Brief-Karte einen sichtbaren Umschlag-Header: `Mail`-Icon + „Umschlag 1 · Küchentisch". Ein Hinweiszeile darunter: „Am Ende jedes Rätsels findest du den nächsten Umschlag — insgesamt 5 Stück."
+## Änderungen pro Datei
 
-### Umschläge 2–5 — Akten 1–4 im Step `naechstes`
+**`src/components/case-file/EnvelopeBanner.tsx`** — löschen.
 
-In `src/routes/akte-003.tsx`, `akte.tsx`, `akte-002.tsx`, `akte-004.tsx` den `PaperCard` im Step `naechstes` als Umschlag stilisieren:
-- Header oben: `MailOpen`-Icon + „Umschlag N · <Ort>" (N = 2, 3, 4, 5).
-- Kurzer Zusatztext: „Elviras nächster Hinweis — Ort der Etappe [+ Zusatzmaterial, wenn vorhanden]".
-- Zusätzlich am **Ende des vorhergehenden Steps** (dort wo bisher „Zur nächsten Etappe →" steht) ein deutliches Hinweisbanner mit `Mail`-Icon: „📩 Jetzt Umschlag N öffnen" direkt am Weiter-Button, damit der Klick als Umschlag-Öffnen erkennbar ist.
+**`src/components/case-file/EnvelopeDialog.tsx`** — neu (Dialog + Inline-SVG-Grafik + Hook).
 
-### Etappe 5 — `akte-005.tsx`
+**`src/routes/akte-003.tsx`, `akte.tsx`, `akte-002.tsx`, `akte-004.tsx`**
+- `EnvelopeHeader` und `EnvelopeHint` entfernen (Import + Verwendung).
+- Beim „Etappe N+1 öffnen →"-Button (im Step `naechstes`): `onClick` fängt Klick ab, zeigt `EnvelopeDialog` mit passender Nr., navigiert erst nach Bestätigung. Falls Umschlag-Flag schon gesetzt → direkt navigieren.
 
-Kein Umschlag-Styling im Übergang zum Hearing. Der `naechstes`-Step bleibt wie bisher, wird aber sprachlich zum „Weg ins Hearing" (statt Umschlag): kurze Formulierung wie „Zeit für das Hearing — alle Beweise liegen auf dem Tisch."
+**`src/routes/akte-005.tsx`** — nichts (kein Umschlag).
 
-Keine neue Logik/State — nur Präsentation. `naechstes`-Step bleibt Teil des bestehenden Ablaufs, `completeStage` und Navigation unverändert.
+**`src/routes/index.tsx`** (Übersicht/ProgressPanel)
+- Die `<Link to={s.to}>`-Einträge für die **aktuelle** Etappe (`status === "current"`) werden zu Buttons/Klick-Wrappern, die den `EnvelopeDialog` für die passende Nummer (`s.nr`) triggern, sofern das Umschlag-Flag noch nicht gesetzt ist. Nach Bestätigung → `router.navigate`.
+- Etappe 1: Umschlag 1 wurde bereits im Intro gezeigt → kein Pop-up in der Übersicht für Etappe 1.
 
-## Änderung 3 — Intro-Popup: nach 3 Min echter Verweildauer, einmalig für die gesamte Sitzung
+**`src/components/case-file/IntroScreen.tsx`**
+- Bestehenden Inline-Chip „Umschlag 1 · Küchentisch" im Brief-Step entfernen.
+- Der finale „Ermittlung starten"-Klick (Step 2 → onDone) öffnet zuerst den `EnvelopeDialog` für Umschlag 1 (Ort: „Küchentisch"). Nach Bestätigung → `markIntroSeen()` + `onDone()`.
 
-Aktuell in `HintSystem.tsx` an `INTRO_STORAGE_KEY = "akte-003-hints-start"` gebunden — d. h. wenn Rätsel 1 in unter 3 Minuten gelöst wird, kommt das Popup nie.
+## Persistenz
 
-Neu:
-- Intro-Popup an **kein bestimmtes Rätsel** binden. Trigger: sobald in **irgendeiner** aktiven `HintSystem`-Instanz `elapsedMin >= 3` und Tipp 1 noch nicht aufgedeckt.
-- Globales `localStorage`-Flag `maya-hints-intro-shown` (statt akte-spezifisch). Einmal gesetzt → nie wieder in dieser Sitzung.
-- Wird durch `resetAll()` (Änderung 1, Präfix `maya-*`) beim nächsten Spielstart wieder gelöscht.
+- `maya-envelope-1-shown` … `maya-envelope-5-shown` — je Umschlag ein Flag.
+- Wird automatisch von `resetAll()` (Präfix `maya-*`) beim Neustart entfernt — kein zusätzlicher Code nötig.
 
-Effekt: Löst ein Team Rätsel 1 in 2 Minuten → kein Popup. Bleibt es dann in Rätsel 2 länger als 3 Minuten → Popup erscheint dort. Erscheint es einmal, kommt es nie wieder.
+## Bild/Grafik
 
-## Technische Details
-
-Dateien:
-- `src/lib/progress.ts` — `resetAll()` auf Präfix-Löschung umstellen.
-- `src/routes/index.tsx` — `StartForm.onStart` ruft `resetAll()` vor `registerTeam(...)` auf.
-- `src/components/case-file/HintSystem.tsx` — `INTRO_STORAGE_KEY`/`INTRO_FLAG_KEY` entfernen, Bedingung im Effect vereinfachen (`elapsedMin >= 3 && !revealed.has(0) && !localStorage.getItem("maya-hints-intro-shown")`). Beim Dismiss globales Flag setzen.
-- `src/components/case-file/IntroScreen.tsx` — Umschlag-1-Header in Step „Brief" + Hinweiszeile („5 Umschläge insgesamt").
-- `src/routes/akte-003.tsx`, `akte.tsx`, `akte-002.tsx`, `akte-004.tsx` — Step `naechstes` als Umschlag 2–5 stilisieren; im vorhergehenden Step Banner „Jetzt Umschlag N öffnen".
-- `src/routes/akte-005.tsx` — `naechstes`-Step als Hearing-Übergang formulieren, ohne Umschlag-Metapher.
-
-Keine Änderungen an Datenmodell, Hint-Storage, QR-Logik oder Ablaufsteuerung.
+Reine Inline-SVGs im Dialog (Umschlag-Silhouette, Wachssiegel-Kreis mit großer Ziffer). Keine externen Bild-Assets nötig, funktioniert offline und ist responsiv.

@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { PaperCard } from "@/components/case-file/PaperCard";
 import { Stamp } from "@/components/case-file/Stamp";
@@ -8,7 +8,7 @@ import { StageGate } from "@/components/case-file/StageGate";
 import { HintSystem, type Hint } from "@/components/case-file/HintSystem";
 import { completeStage, getFrozenClock } from "@/lib/progress";
 import { cn } from "@/lib/utils";
-import { EnvelopeHeader, EnvelopeHint } from "@/components/case-file/EnvelopeBanner";
+import { useEnvelopePrompt } from "@/components/case-file/EnvelopeDialog";
 
 import {
   Dialog,
@@ -85,6 +85,8 @@ const STEPS: { id: Step; label: string }[] = [
 ];
 
 function AktePage() {
+  const navigate = useNavigate();
+  const envelope = useEnvelopePrompt();
   const [step, setStep] = useState<Step>("brief");
   const [unlockedSteps, setUnlockedSteps] = useState<Set<Step>>(new Set(["brief"]));
   const [showCodeHint, setShowCodeHint] = useState(false);
@@ -283,29 +285,25 @@ function AktePage() {
               </div>
             </PaperCard>
 
-            <div className="flex flex-col gap-3">
-              <EnvelopeHint nr={4} />
-              <div className="flex justify-between">
-                <button
-                  onClick={() => setStep("code")}
-                  className="rounded-sm border border-border bg-card px-4 py-2.5 font-serif text-sm hover:bg-secondary"
-                >
-                  ← Zurück
-                </button>
-                <button
-                  onClick={() => goto("naechstes")}
-                  className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
-                >
-                  📩 Umschlag 4 öffnen →
-                </button>
-              </div>
+            <div className="flex justify-between">
+              <button
+                onClick={() => setStep("code")}
+                className="rounded-sm border border-border bg-card px-4 py-2.5 font-serif text-sm hover:bg-secondary"
+              >
+                ← Zurück
+              </button>
+              <button
+                onClick={() => goto("naechstes")}
+                className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
+              >
+                Weiter →
+              </button>
             </div>
           </div>
         )}
 
         {step === "naechstes" && (
           <PaperCard rotate={-0.5} tape="top-left">
-            <EnvelopeHeader nr={4} ort="Elviras Haus" />
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
 
               Etappe 4 · Elviras Haus
@@ -333,12 +331,19 @@ function AktePage() {
               Mappe — und rennst los.
             </p>
             <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
-              <Link
-                to="/akte-004"
+              <button
+                onClick={() =>
+                  envelope.ask({
+                    nr: 4,
+                    ort: "Elviras Haus · Etappe 4",
+                    etappeLabel: "Etappe 4 · Elviras Haus",
+                    onConfirm: () => navigate({ to: "/akte-004" }),
+                  })
+                }
                 className="inline-flex items-center gap-2 rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
               >
                 Etappe 4 öffnen →
-              </Link>
+              </button>
               <Link
                 to="/"
                 className="inline-flex items-center gap-2 rounded-sm border border-border bg-card px-5 py-2.5 font-serif text-sm font-semibold transition-colors hover:bg-secondary"
@@ -381,6 +386,7 @@ function AktePage() {
           </div>
         </DialogContent>
       </Dialog>
+      {envelope.dialog}
     </main>
   );
 }

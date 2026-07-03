@@ -12,6 +12,7 @@ import {
 import { PaperCard } from "@/components/case-file/PaperCard";
 import { Stamp } from "@/components/case-file/Stamp";
 import { getHearingClock } from "@/lib/progress";
+import { useEnvelopePrompt } from "@/components/case-file/EnvelopeDialog";
 
 const KEY = "maya-intro-seen";
 
@@ -116,6 +117,7 @@ export function IntroScreen({
 }) {
   const [step, setStep] = useState(0);
   const [openPerson, setOpenPerson] = useState<string | null>(null);
+  const envelope = useEnvelopePrompt();
   const total = 3;
 
   const personen: Persona[] = [
@@ -141,12 +143,21 @@ export function IntroScreen({
     },
   ];
 
+  const finish = () => {
+    envelope.ask({
+      nr: 1,
+      ort: "Küchentisch · Elviras Haus",
+      etappeLabel: "Umschlag 1 · Küchentisch",
+      onConfirm: () => {
+        markIntroSeen();
+        onDone();
+      },
+    });
+  };
+
   const next = () => {
     if (step < total - 1) setStep(step + 1);
-    else {
-      markIntroSeen();
-      onDone();
-    }
+    else finish();
   };
 
   return (
@@ -252,12 +263,6 @@ export function IntroScreen({
             <div className="absolute right-4 top-6 sm:right-8 sm:top-8">
               <Stamp rotate={-8}>Küchentisch</Stamp>
             </div>
-            <div className="mb-4 inline-flex items-center gap-2 rounded-sm border border-stamp/40 bg-stamp/10 px-3 py-1.5">
-              <Mail className="h-4 w-4 text-stamp" />
-              <span className="font-mono-typed text-[11px] uppercase tracking-[0.18em] text-stamp">
-                Umschlag 1 · Küchentisch
-              </span>
-            </div>
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
               Der Brief
             </p>
@@ -269,9 +274,7 @@ export function IntroScreen({
               sich aufs Land eingeladen. Doch als sie ankommt, ist das Haus
               leer. Auf dem Küchentisch liegt nur ein Brief:
             </p>
-            <p className="mt-3 rounded-sm border border-dashed border-border bg-paper-deep/30 p-3 text-[13px] italic text-foreground/75">
-              Insgesamt gibt es 5 Umschläge — am Ende jedes Rätsels wartet der nächste auf dich.
-            </p>
+
 
 
             <div
@@ -304,10 +307,7 @@ export function IntroScreen({
 
         <div className="mt-6 flex items-center justify-between gap-3">
           <button
-            onClick={() => {
-              markIntroSeen();
-              onDone();
-            }}
+            onClick={finish}
             className="font-mono-typed text-[11px] uppercase tracking-wider text-muted-foreground hover:text-foreground"
           >
             Überspringen
@@ -321,6 +321,7 @@ export function IntroScreen({
           </button>
         </div>
       </div>
+      {envelope.dialog}
     </main>
   );
 }
