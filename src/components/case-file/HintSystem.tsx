@@ -35,6 +35,7 @@ const DEFAULT_HINTS: Hint[] = [
 ];
 
 const DEFAULT_STORAGE_KEY = "akte-001-hints-start";
+const INTRO_FLAG_KEY = "akte-001-hints-intro-shown";
 
 export const HINT_STORAGE_KEYS = [
   "akte-001-hints-start",
@@ -78,6 +79,7 @@ export function HintSystem({ hints = DEFAULT_HINTS, storageKey = DEFAULT_STORAGE
   const [open, setOpen] = useState(false);
   const [activeId, setActiveId] = useState<number>(0);
   const [revealed, setRevealed] = useState<Set<number>>(new Set());
+  const [showIntro, setShowIntro] = useState(false);
 
   // Timer beim ersten Mounten starten (oder aus localStorage wieder aufnehmen)
   useEffect(() => {
@@ -97,6 +99,27 @@ export function HintSystem({ hints = DEFAULT_HINTS, storageKey = DEFAULT_STORAGE
     const t = window.setInterval(() => setNow(Date.now()), 5000);
     return () => window.clearInterval(t);
   }, []);
+
+  // Einmaliges Intro-Pop-up, sobald Tipp 1 (nach 3 Min) freigeschaltet ist.
+  const elapsedMinForIntro = startedAt ? (now - startedAt) / 60000 : 0;
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (STORAGE_KEY !== DEFAULT_STORAGE_KEY) return;
+    if (!startedAt) return;
+    if (elapsedMinForIntro < 3) return;
+    if (revealed.has(0)) return;
+    if (window.localStorage.getItem(INTRO_FLAG_KEY)) return;
+    setShowIntro(true);
+  }, [STORAGE_KEY, startedAt, elapsedMinForIntro, revealed]);
+
+  const dismissIntro = () => {
+    try {
+      window.localStorage.setItem(INTRO_FLAG_KEY, "1");
+    } catch {
+      /* ignore */
+    }
+    setShowIntro(false);
+  };
 
   const elapsedMin = startedAt ? (now - startedAt) / 60000 : 0;
   const unlockedCount = HINTS.filter((h) => elapsedMin >= h.unlockMin).length;
@@ -153,6 +176,63 @@ export function HintSystem({ hints = DEFAULT_HINTS, storageKey = DEFAULT_STORAGE
 
   return (
     <>
+      {/* Intro-Pop-up (einmalig, nach 3 Min bei Akte 001) */}
+      {showIntro && (
+        <>
+          <div
+            className="fixed inset-0 z-[60] bg-black/50"
+            onClick={dismissIntro}
+            aria-hidden
+          />
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label="Hinweise erklärt"
+            className="fixed left-1/2 top-1/2 z-[70] w-[min(92vw,26rem)] -translate-x-1/2 -translate-y-1/2 rounded-lg border border-border bg-paper p-5 shadow-2xl"
+          >
+            <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
+              Unterstützung freigeschaltet
+            </p>
+            <h3 className="mt-1 font-serif text-xl font-bold leading-snug">
+              Du brauchst Hilfe? Maya hat Hinweise für dich.
+            </h3>
+            <ul className="mt-3 space-y-2 text-sm leading-relaxed text-foreground/85">
+              <li>
+                Unten rechts findest du den Button{" "}
+                <span className="font-semibold">💡 Tipps</span>.
+              </li>
+              <li>
+                Nach <strong>3 Minuten</strong> gibt es Tipp 1, nach{" "}
+                <strong>6 Minuten</strong> Tipp 2 und nach{" "}
+                <strong>9 Minuten</strong> die Auflösung.
+              </li>
+              <li>
+                Du entscheidest selbst, ob du sie anschaust — klicke auf das
+                Schloss, um einen Hinweis aufzudecken.
+              </li>
+            </ul>
+            <div className="mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+              <button
+                onClick={dismissIntro}
+                className="rounded-sm border border-border bg-paper px-4 py-2 font-mono-typed text-[11px] uppercase tracking-wider text-foreground/80 transition-colors hover:bg-secondary"
+              >
+                Alles klar
+              </button>
+              <button
+                onClick={() => {
+                  dismissIntro();
+                  openPanel();
+                }}
+                className="rounded-sm bg-stamp px-4 py-2 font-mono-typed text-[11px] uppercase tracking-wider text-paper transition-all hover:-translate-y-0.5 hover:shadow-md"
+              >
+                Tipps jetzt öffnen
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+
+
       {/* Floating Button */}
       <button
         onClick={open ? () => setOpen(false) : openPanel}
