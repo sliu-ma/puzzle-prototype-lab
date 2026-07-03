@@ -32,6 +32,7 @@ export function QRGate({
   storageKey = DEFAULT_STORAGE_KEY,
   title,
   description,
+  label = "Etappe · Versiegelt",
 }: Props) {
   const EXPECTED_TOKEN = token;
   const STORAGE_KEY = storageKey;
