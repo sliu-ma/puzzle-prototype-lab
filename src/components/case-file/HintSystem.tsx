@@ -191,7 +191,7 @@ export function HintSystem({ hints = DEFAULT_HINTS, storageKey = DEFAULT_STORAGE
                 const unlocked = elapsedMin >= h.unlockMin;
                 const isRevealed = revealed.has(h.id);
                 const isActive = activeId === h.id;
-                const icon = !unlocked ? "🔒" : isRevealed ? "✅" : "🔓";
+                const icon = !unlocked ? "🔒" : "🔓";
                 return (
                   <button
                     key={h.id}
