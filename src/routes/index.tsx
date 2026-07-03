@@ -148,7 +148,9 @@ function CoverPage() {
             ) : (
               <StartForm
                 onStart={(name, code) => {
+                  resetAll();
                   registerTeam(name, code);
+
                   setTeam({ name, code });
                   setStage(getCurrentStage());
                 }}
