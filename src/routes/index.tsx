@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Lock, CheckCircle2, RotateCcw } from "lucide-react";
 import { Stamp } from "@/components/case-file/Stamp";
@@ -15,6 +15,7 @@ import {
 
 
 import { IntroScreen, hasSeenIntro } from "@/components/case-file/IntroScreen";
+import { useEnvelopePrompt } from "@/components/case-file/EnvelopeDialog";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/")({
