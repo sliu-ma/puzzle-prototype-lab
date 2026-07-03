@@ -105,7 +105,7 @@ export function HintSystem({ hints = DEFAULT_HINTS, storageKey = DEFAULT_STORAGE
   const elapsedMinForIntro = startedAt ? (now - startedAt) / 60000 : 0;
   useEffect(() => {
     if (typeof window === "undefined") return;
-    if (STORAGE_KEY !== DEFAULT_STORAGE_KEY) return;
+    if (STORAGE_KEY !== INTRO_STORAGE_KEY) return;
     if (!startedAt) return;
     if (elapsedMinForIntro < 3) return;
     if (revealed.has(0)) return;
