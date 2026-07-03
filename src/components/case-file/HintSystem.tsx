@@ -100,6 +100,27 @@ export function HintSystem({ hints = DEFAULT_HINTS, storageKey = DEFAULT_STORAGE
     return () => window.clearInterval(t);
   }, []);
 
+  // Einmaliges Intro-Pop-up, sobald Tipp 1 (nach 3 Min) freigeschaltet ist.
+  const elapsedMinForIntro = startedAt ? (now - startedAt) / 60000 : 0;
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (STORAGE_KEY !== DEFAULT_STORAGE_KEY) return;
+    if (!startedAt) return;
+    if (elapsedMinForIntro < 3) return;
+    if (revealed.has(0)) return;
+    if (window.localStorage.getItem(INTRO_FLAG_KEY)) return;
+    setShowIntro(true);
+  }, [STORAGE_KEY, startedAt, elapsedMinForIntro, revealed]);
+
+  const dismissIntro = () => {
+    try {
+      window.localStorage.setItem(INTRO_FLAG_KEY, "1");
+    } catch {
+      /* ignore */
+    }
+    setShowIntro(false);
+  };
+
   const elapsedMin = startedAt ? (now - startedAt) / 60000 : 0;
   const unlockedCount = HINTS.filter((h) => elapsedMin >= h.unlockMin).length;
   const nextHint = HINTS.find((h) => elapsedMin < h.unlockMin);
