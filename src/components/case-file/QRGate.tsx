@@ -91,7 +91,7 @@ export function QRGate({
               setScanning(false);
               setError(null);
             } else {
-              setError("Zugriff verweigert. Dieser QR-Code passt nicht zur Akte.");
+              setError("Zugriff verweigert. Dieser QR-Code passt nicht zur Etappe.");
               ctrl.stop();
               setScanning(false);
             }
