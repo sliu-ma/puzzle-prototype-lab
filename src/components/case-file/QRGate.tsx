@@ -23,6 +23,7 @@ type Props = {
   storageKey?: string;
   title?: React.ReactNode;
   description?: string;
+  label?: string;
 };
 
 export function QRGate({
