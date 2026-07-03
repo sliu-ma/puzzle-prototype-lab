@@ -106,8 +106,16 @@ export function HintSystem({ hints = DEFAULT_HINTS, storageKey = DEFAULT_STORAGE
   const activeHint = HINTS[activeId];
   const activeUnlocked = elapsedMin >= activeHint.unlockMin;
   const activeRevealed = revealed.has(activeHint.id);
+  const prevHint = activeId > 0 ? HINTS[activeId - 1] : null;
+  const canRevealActive = !prevHint || revealed.has(prevHint.id);
 
   const reveal = (id: number) => {
+    const idx = HINTS.findIndex((h) => h.id === id);
+    if (idx < 0) return;
+    // Vorgänger müssen aufgedeckt sein
+    for (let i = 0; i < idx; i++) {
+      if (!revealed.has(HINTS[i].id)) return;
+    }
     setRevealed((prev) => {
       if (prev.has(id)) return prev;
       const next = new Set(prev);
@@ -120,6 +128,7 @@ export function HintSystem({ hints = DEFAULT_HINTS, storageKey = DEFAULT_STORAGE
       return next;
     });
   };
+
 
   const openPanel = () => {
     // Bevorzugt: neuester freigeschalteter, aber noch nicht aufgedeckter Tipp.
