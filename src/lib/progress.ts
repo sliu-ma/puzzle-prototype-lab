@@ -137,38 +137,18 @@ export function completeStage(n: number) {
 
 export function resetAll() {
   try {
-    localStorage.removeItem(KEY_TEAM);
-    localStorage.removeItem(KEY_CODE);
-    localStorage.removeItem(KEY_STAGE);
-    // QR-Unlocks ebenfalls löschen, damit eine neue Klasse sauber starten kann
-    [
-      "akte-001-unlocked",
-      "akte-002-unlocked",
-      "akte-003-unlocked",
-      "akte-004-unlocked",
-      "akte-005-unlocked",
-      "akte-001-hints-start-revealed",
-      "akte-002-hints-start-revealed",
-      "akte-003-hints-start-revealed",
-      "akte-004-hints-start-revealed",
-      "akte-005-hints-start-revealed",
-    ].forEach((k) => localStorage.removeItem(k));
-    localStorage.removeItem(KEY_START_TS);
-    localStorage.removeItem("maya-timer-shown");
-    localStorage.removeItem("maya-intro-seen");
-    // Eingefrorene Zeitstempel der Akten löschen
-    try {
-      const toRemove: string[] = [];
-      for (let i = 0; i < localStorage.length; i++) {
-        const k = localStorage.key(i);
-        if (k && k.startsWith("maya-clock-")) toRemove.push(k);
+    const toRemove: string[] = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (!k) continue;
+      if (k.startsWith("maya-") || k.startsWith("akte-")) {
+        toRemove.push(k);
       }
-      toRemove.forEach((k) => localStorage.removeItem(k));
-    } catch {
-      /* ignore */
     }
+    toRemove.forEach((k) => localStorage.removeItem(k));
     window.dispatchEvent(new Event("maya-progress"));
   } catch {
     /* ignore */
   }
 }
+

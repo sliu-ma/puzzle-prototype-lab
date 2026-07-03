@@ -11,7 +11,12 @@ import {
   resetAll,
   getNowClock,
   getHearingClock,
+  registerTeam,
+  resetAll,
+  getNowClock,
+  getHearingClock,
 } from "@/lib/progress";
+
 import { IntroScreen, hasSeenIntro } from "@/components/case-file/IntroScreen";
 import { cn } from "@/lib/utils";
 
