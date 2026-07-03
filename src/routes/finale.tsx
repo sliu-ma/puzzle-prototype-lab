@@ -1420,6 +1420,9 @@ function OutroScreen() {
     return `${m} min ${String(s).padStart(2, "0")} s`;
   })[0];
 
+  const hintsUsed = useState(() => getTotalRevealedHints())[0];
+
+
 
   const nowClock =
     typeof window !== "undefined"
