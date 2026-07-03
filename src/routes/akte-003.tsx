@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { MapPin } from "lucide-react";
 import { PaperCard } from "@/components/case-file/PaperCard";
@@ -11,7 +11,7 @@ import { RouteDetail } from "@/components/case-file/RouteDetail";
 import { VALID_START, VALID_ZIEL, type RouteOption } from "@/lib/mobility-data";
 import { completeStage } from "@/lib/progress";
 import { cn } from "@/lib/utils";
-import { EnvelopeHeader, EnvelopeHint } from "@/components/case-file/EnvelopeBanner";
+import { useEnvelopePrompt } from "@/components/case-file/EnvelopeDialog";
 
 
 export const Route = createFileRoute("/akte-003")({
@@ -375,29 +375,25 @@ function AktePage() {
               </div>
             </PaperCard>
 
-            <div className="flex flex-col gap-3">
-              <EnvelopeHint nr={2} />
-              <div className="flex justify-between">
-                <button
-                  onClick={() => setStep("routen")}
-                  className="rounded-sm border border-border bg-card px-4 py-2.5 font-serif text-sm hover:bg-secondary"
-                >
-                  ← Zurück
-                </button>
-                <button
-                  onClick={() => goto("naechstes")}
-                  className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
-                >
-                  📩 Umschlag 2 öffnen →
-                </button>
-              </div>
+            <div className="flex justify-between">
+              <button
+                onClick={() => setStep("routen")}
+                className="rounded-sm border border-border bg-card px-4 py-2.5 font-serif text-sm hover:bg-secondary"
+              >
+                ← Zurück
+              </button>
+              <button
+                onClick={() => goto("naechstes")}
+                className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
+              >
+                Weiter →
+              </button>
             </div>
           </div>
         )}
 
         {step === "naechstes" && (
           <PaperCard rotate={-0.5} tape="top-left">
-            <EnvelopeHeader nr={2} ort="Dorfladen" />
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">Etappe 2 · Dorfladen</p>
 
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">„Geh zum alten Dorfladen."</h2>
@@ -409,12 +405,19 @@ function AktePage() {
               <p className="mt-3 font-mono-typed text-[10px] uppercase tracking-wider text-stamp">— E.</p>
             </div>
             <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
-              <Link
-                to="/akte"
+              <button
+                onClick={() =>
+                  envelope.ask({
+                    nr: 2,
+                    ort: "Dorfladen · Etappe 2",
+                    etappeLabel: "Etappe 2 · Dorfladen",
+                    onConfirm: () => navigate({ to: "/akte" }),
+                  })
+                }
                 className="inline-flex items-center gap-2 rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
               >
                 Etappe 2 öffnen →
-              </Link>
+              </button>
               <Link
                 to="/"
                 className="inline-flex items-center gap-2 rounded-sm border border-border bg-card px-5 py-2.5 font-serif text-sm font-semibold transition-colors hover:bg-secondary"
@@ -424,6 +427,7 @@ function AktePage() {
             </div>
           </PaperCard>
         )}
+        {envelope.dialog}
 
         <p className="mt-12 text-center font-mono-typed text-xs uppercase tracking-[0.2em] text-muted-foreground">
           — Etappe 1 · Bahnhof Speicher —
