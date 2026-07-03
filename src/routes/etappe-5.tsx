@@ -9,7 +9,7 @@ import { HintSystem, type Hint } from "@/components/case-file/HintSystem";
 import { completeStage, getFrozenClock, getHearingClock } from "@/lib/progress";
 import { cn } from "@/lib/utils";
 
-export const Route = createFileRoute("/akte-005")({
+export const Route = createFileRoute("/etappe-5")({
   head: () => ({
     meta: [
       { title: "Etappe 5 — Altes Wasserkraftwerk" },

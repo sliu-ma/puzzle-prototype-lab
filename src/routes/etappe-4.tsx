@@ -35,7 +35,7 @@ const HINTS_004: Hint[] = [
   },
 ];
 
-export const Route = createFileRoute("/akte-004")({
+export const Route = createFileRoute("/etappe-4")({
   head: () => ({
     meta: [
       { title: "Etappe 4 — Elviras Haus" },
@@ -365,7 +365,7 @@ function AktePage() {
                     nr: 5,
                     ort: "Altes Wasserkraftwerk · Etappe 5",
                     etappeLabel: "Etappe 5 · Wasserkraftwerk",
-                    onConfirm: () => navigate({ to: "/akte-005" }),
+                    onConfirm: () => navigate({ to: "/etappe-5" }),
                   })
                 }
                 className="inline-flex items-center gap-2 rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"

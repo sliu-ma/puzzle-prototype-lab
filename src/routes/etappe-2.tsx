@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 import { useEnvelopePrompt } from "@/components/case-file/EnvelopeDialog";
 
 
-export const Route = createFileRoute("/akte")({
+export const Route = createFileRoute("/etappe-2")({
   head: () => ({
     meta: [
       { title: "Etappe 2 — Dorfladen Berger" },
@@ -283,7 +283,7 @@ function AktePage() {
                     nr: 3,
                     ort: "Wald-Lichtung · Etappe 3",
                     etappeLabel: "Etappe 3 · Wald-Lichtung",
-                    onConfirm: () => navigate({ to: "/akte-002" }),
+                    onConfirm: () => navigate({ to: "/etappe-3" }),
                   })
                 }
                 className="inline-flex items-center gap-2 rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"

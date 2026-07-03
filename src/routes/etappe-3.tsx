@@ -18,7 +18,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-export const Route = createFileRoute("/akte-002")({
+export const Route = createFileRoute("/etappe-3")({
   head: () => ({
     meta: [
       { title: "Etappe 3 — Wald-Lichtung" },
@@ -337,7 +337,7 @@ function AktePage() {
                     nr: 4,
                     ort: "Elviras Haus · Etappe 4",
                     etappeLabel: "Etappe 4 · Elviras Haus",
-                    onConfirm: () => navigate({ to: "/akte-004" }),
+                    onConfirm: () => navigate({ to: "/etappe-4" }),
                   })
                 }
                 className="inline-flex items-center gap-2 rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
