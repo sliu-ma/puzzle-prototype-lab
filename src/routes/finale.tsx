@@ -1099,19 +1099,21 @@ function MatchView({
       )}
 
       {/* Drag ghost */}
-      {dragging && ghost && dragged && (
-        <div
-          className="pointer-events-none fixed z-50 rounded-sm border border-stamp bg-paper px-3 py-2 shadow-lg"
-          style={{ left: ghost.x + 12, top: ghost.y + 12 }}
-        >
-          <div className="flex items-center gap-2">
-            {dragged.icon && (
-              <img src={dragged.icon} alt="" className="h-8 w-8 shrink-0 object-contain" />
-            )}
-            <div className="font-serif text-[14px] font-bold">{dragged.label}</div>
-          </div>
-        </div>
-      )}
+      {dragging && ghost && dragged && typeof document !== "undefined" &&
+        createPortal(
+          <div
+            className="pointer-events-none fixed z-50 rounded-sm border border-stamp bg-paper px-3 py-2 shadow-lg"
+            style={{ left: ghost.x + 12, top: ghost.y + 12 }}
+          >
+            <div className="flex items-center gap-2">
+              {dragged.icon && (
+                <img src={dragged.icon} alt="" className="h-8 w-8 shrink-0 object-contain" />
+              )}
+              <div className="font-serif text-[14px] font-bold">{dragged.label}</div>
+            </div>
+          </div>,
+          document.body,
+        )}
     </div>
   );
 }
