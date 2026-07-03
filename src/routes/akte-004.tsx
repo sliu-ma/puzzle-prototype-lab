@@ -28,8 +28,8 @@ const HINTS_004: Hint[] = [
     id: 2,
     unlockMin: 9,
     label: "Auflösung",
-    title: "So erreichst du die 8'000 kWh",
-    body: "Kombiniere günstige Verhaltensoptionen mit gezielten Upgrades: Sparbrause + kurz duschen (2'700), Wasserhahn-Perlator (900), Stosslüften (1'600), Wärmepumpe (5'200), Warmwasser-Wärmepumpe (1'900), Steckerleiste beim TV (320), LED (410). Damit bleibst du im Budget und knackst die 8'000 kWh locker.",
+    title: "So erreichst du die 10'000 kWh",
+    body: "Kombiniere günstige Verhaltensoptionen mit gezielten Upgrades: Sparbrause + kurz duschen (2'700), Wasserhahn-Perlator (900), Stosslüften (1'600), Wärmepumpe (5'200), Warmwasser-Wärmepumpe (1'900), Steckerleiste beim TV (320), LED (410). Damit bleibst du im Budget und knackst die 10'000 kWh locker.",
   },
 ];
 
@@ -220,7 +220,7 @@ function AktePage() {
                   <li>Tippe Geräte im Haus an.</li>
                   <li>Wähle eine Option pro Gerät.</li>
                   <li>Achte aufs Budget.</li>
-                  <li>Erreiche mind. 8'000 kWh Ersparnis.</li>
+                  <li>Erreiche mind. 10'000 kWh Ersparnis.</li>
                 </ol>
               </div>
             </div>
