@@ -147,6 +147,11 @@ export function resetAll() {
       "akte-003-unlocked",
       "akte-004-unlocked",
       "akte-005-unlocked",
+      "akte-001-hints-start-revealed",
+      "akte-002-hints-start-revealed",
+      "akte-003-hints-start-revealed",
+      "akte-004-hints-start-revealed",
+      "akte-005-hints-start-revealed",
     ].forEach((k) => localStorage.removeItem(k));
     localStorage.removeItem(KEY_START_TS);
     localStorage.removeItem("maya-timer-shown");

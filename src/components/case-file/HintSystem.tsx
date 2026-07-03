@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Lock } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export type Hint = {
@@ -35,6 +36,35 @@ const DEFAULT_HINTS: Hint[] = [
 
 const DEFAULT_STORAGE_KEY = "akte-001-hints-start";
 
+export const HINT_STORAGE_KEYS = [
+  "akte-001-hints-start",
+  "akte-002-hints-start",
+  "akte-003-hints-start",
+  "akte-004-hints-start",
+  "akte-005-hints-start",
+] as const;
+
+function revealedKey(storageKey: string) {
+  return `${storageKey}-revealed`;
+}
+
+function readRevealed(storageKey: string): number[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = window.localStorage.getItem(revealedKey(storageKey));
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed.filter((n) => typeof n === "number") : [];
+  } catch {
+    return [];
+  }
+}
+
+export function getTotalRevealedHints(): number {
+  if (typeof window === "undefined") return 0;
+  return HINT_STORAGE_KEYS.reduce((sum, k) => sum + readRevealed(k).length, 0);
+}
+
 type Props = {
   hints?: Hint[];
   storageKey?: string;
@@ -47,6 +77,7 @@ export function HintSystem({ hints = DEFAULT_HINTS, storageKey = DEFAULT_STORAGE
   const [startedAt, setStartedAt] = useState<number | null>(null);
   const [open, setOpen] = useState(false);
   const [activeId, setActiveId] = useState<number>(0);
+  const [revealed, setRevealed] = useState<Set<number>>(new Set());
 
   // Timer beim ersten Mounten starten (oder aus localStorage wieder aufnehmen)
   useEffect(() => {
@@ -59,9 +90,9 @@ export function HintSystem({ hints = DEFAULT_HINTS, storageKey = DEFAULT_STORAGE
       window.localStorage.setItem(STORAGE_KEY, String(ts));
       setStartedAt(ts);
     }
-  }, []);
+    setRevealed(new Set(readRevealed(STORAGE_KEY)));
+  }, [STORAGE_KEY]);
 
-  // Tick alle 5 s — reicht für Minutengranularität
   useEffect(() => {
     const t = window.setInterval(() => setNow(Date.now()), 5000);
     return () => window.clearInterval(t);
@@ -74,12 +105,30 @@ export function HintSystem({ hints = DEFAULT_HINTS, storageKey = DEFAULT_STORAGE
 
   const activeHint = HINTS[activeId];
   const activeUnlocked = elapsedMin >= activeHint.unlockMin;
+  const activeRevealed = revealed.has(activeHint.id);
 
-  // Wenn der aktuell ausgewählte Tipp noch nicht freigeschaltet ist,
-  // beim Öffnen automatisch auf den jüngsten freigeschalteten springen.
+  const reveal = (id: number) => {
+    setRevealed((prev) => {
+      if (prev.has(id)) return prev;
+      const next = new Set(prev);
+      next.add(id);
+      try {
+        window.localStorage.setItem(revealedKey(STORAGE_KEY), JSON.stringify([...next]));
+      } catch {
+        /* ignore */
+      }
+      return next;
+    });
+  };
+
   const openPanel = () => {
-    if (unlockedCount > 0) {
-      setActiveId(Math.min(activeId, unlockedCount - 1));
+    // Bevorzugt: neuester freigeschalteter, aber noch nicht aufgedeckter Tipp.
+    const unlocked = HINTS.filter((h) => elapsedMin >= h.unlockMin);
+    const firstPending = unlocked.find((h) => !revealed.has(h.id));
+    if (firstPending) {
+      setActiveId(firstPending.id);
+    } else if (unlocked.length > 0) {
+      setActiveId(unlocked[unlocked.length - 1].id);
     }
     setOpen(true);
   };
@@ -140,7 +189,9 @@ export function HintSystem({ hints = DEFAULT_HINTS, storageKey = DEFAULT_STORAGE
             <div className="flex gap-1.5 border-b border-border px-4 pb-2">
               {HINTS.map((h) => {
                 const unlocked = elapsedMin >= h.unlockMin;
+                const isRevealed = revealed.has(h.id);
                 const isActive = activeId === h.id;
+                const icon = !unlocked ? "🔒" : isRevealed ? "✅" : "🔓";
                 return (
                   <button
                     key={h.id}
@@ -154,7 +205,7 @@ export function HintSystem({ hints = DEFAULT_HINTS, storageKey = DEFAULT_STORAGE
                       !unlocked && "cursor-not-allowed opacity-50",
                     )}
                   >
-                    <span className="block">{unlocked ? "🔓" : "🔒"}</span>
+                    <span className="block">{icon}</span>
                     <span className="block">{h.label}</span>
                   </button>
                 );
@@ -163,7 +214,38 @@ export function HintSystem({ hints = DEFAULT_HINTS, storageKey = DEFAULT_STORAGE
 
             {/* Inhalt */}
             <div className="px-4 py-4">
-              {activeUnlocked ? (
+              {!activeUnlocked ? (
+                <div className="rounded-sm border border-dashed border-border bg-paper-deep/30 p-4 text-center">
+                  <p className="text-2xl">🔒</p>
+                  <p className="mt-2 font-mono-typed text-[11px] uppercase tracking-wider text-muted-foreground">
+                    Noch gesperrt
+                  </p>
+                  <p className="mt-1 text-sm text-foreground/70">
+                    Versuch's erst selbst — das Spiel ist nicht so schwer, wie
+                    es aussieht.
+                  </p>
+                </div>
+              ) : !activeRevealed ? (
+                <div className="rounded-sm border border-dashed border-stamp/40 bg-stamp/5 p-5 text-center">
+                  <button
+                    onClick={() => reveal(activeHint.id)}
+                    aria-label={`${activeHint.label} aufdecken`}
+                    className="mx-auto flex h-16 w-16 items-center justify-center rounded-full border-2 border-stamp/60 bg-paper text-stamp shadow-md transition-all hover:-translate-y-0.5 hover:bg-stamp hover:text-paper hover:shadow-lg"
+                  >
+                    <Lock className="h-7 w-7" />
+                  </button>
+                  <p className="mt-3 font-serif text-[15px] leading-relaxed text-foreground/85">
+                    Du kannst dir {activeHint.label} anschauen. Klicke auf das
+                    Schloss.
+                  </p>
+                  <button
+                    onClick={() => reveal(activeHint.id)}
+                    className="mt-4 rounded-sm bg-stamp px-4 py-2 font-mono-typed text-[11px] uppercase tracking-wider text-paper transition-all hover:-translate-y-0.5 hover:shadow-md"
+                  >
+                    Hinweis aufdecken
+                  </button>
+                </div>
+              ) : (
                 <div>
                   <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
                     {activeHint.label}
@@ -173,17 +255,6 @@ export function HintSystem({ hints = DEFAULT_HINTS, storageKey = DEFAULT_STORAGE
                   </h4>
                   <p className="mt-3 text-sm leading-relaxed text-foreground/85">
                     {activeHint.body}
-                  </p>
-                </div>
-              ) : (
-                <div className="rounded-sm border border-dashed border-border bg-paper-deep/30 p-4 text-center">
-                  <p className="text-2xl">🔒</p>
-                  <p className="mt-2 font-mono-typed text-[11px] uppercase tracking-wider text-muted-foreground">
-                    Noch gesperrt
-                  </p>
-                  <p className="mt-1 text-sm text-foreground/70">
-                    Versuch's erst selbst — das Spiel ist nicht so schwer, wie
-                    es aussieht.
                   </p>
                 </div>
               )}

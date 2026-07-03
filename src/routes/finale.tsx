@@ -1,10 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { CheckCircle2, XCircle, Gauge, RefreshCw, ArrowUp, ArrowDown, Sparkles, Clock } from "lucide-react";
+import { CheckCircle2, XCircle, Gauge, RefreshCw, ArrowUp, ArrowDown, Sparkles, Clock, Lightbulb } from "lucide-react";
 import { PaperCard } from "@/components/case-file/PaperCard";
 import { Stamp } from "@/components/case-file/Stamp";
 import { StageGate } from "@/components/case-file/StageGate";
+import { getTotalRevealedHints } from "@/components/case-file/HintSystem";
 import { completeStage, getHearingClock, getStartTs } from "@/lib/progress";
 import { cn } from "@/lib/utils";
 import bioLogo from "@/assets/labels/bio.png.asset.json";
@@ -1419,6 +1420,9 @@ function OutroScreen() {
     return `${m} min ${String(s).padStart(2, "0")} s`;
   })[0];
 
+  const hintsUsed = useState(() => getTotalRevealedHints())[0];
+
+
 
   const nowClock =
     typeof window !== "undefined"
@@ -1607,15 +1611,27 @@ function OutroScreen() {
             genau hingeschaut hat. Das war eure Arbeit.
           </p>
 
-          <div className="mt-8 flex flex-col items-center gap-2 rounded-sm border border-emerald-500/40 bg-emerald-500/5 p-6 text-center animate-scale-in">
-            <Clock className="h-8 w-8 text-emerald-600 animate-pulse" />
-            <p className="font-mono-typed text-[10px] uppercase tracking-[0.3em] text-emerald-700">
-              Benötigte Zeit
-            </p>
-            <p className="font-serif text-4xl font-bold text-emerald-700 tabular-nums sm:text-5xl">
-              {elapsedLabel}
-            </p>
+          <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <div className="flex flex-col items-center gap-2 rounded-sm border border-emerald-500/40 bg-emerald-500/5 p-6 text-center animate-scale-in">
+              <Clock className="h-8 w-8 text-emerald-600 animate-pulse" />
+              <p className="font-mono-typed text-[10px] uppercase tracking-[0.3em] text-emerald-700">
+                Benötigte Zeit
+              </p>
+              <p className="font-serif text-4xl font-bold text-emerald-700 tabular-nums sm:text-5xl">
+                {elapsedLabel}
+              </p>
+            </div>
+            <div className="flex flex-col items-center gap-2 rounded-sm border border-amber-500/40 bg-amber-500/5 p-6 text-center animate-scale-in">
+              <Lightbulb className="h-8 w-8 text-amber-600" />
+              <p className="font-mono-typed text-[10px] uppercase tracking-[0.3em] text-amber-700">
+                Genutzte Hinweise
+              </p>
+              <p className="font-serif text-4xl font-bold text-amber-700 tabular-nums sm:text-5xl">
+                {hintsUsed}<span className="text-2xl text-amber-700/60 sm:text-3xl"> / 15</span>
+              </p>
+            </div>
           </div>
+
 
           <div className="mt-8 flex justify-center">
             <Link
