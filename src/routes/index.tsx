@@ -287,12 +287,15 @@ function ProgressPanel({
   currentStage: number;
   onReset: () => void;
 }) {
+  const navigate = useNavigate();
+  const envelope = useEnvelopePrompt();
   const finished = currentStage >= 7;
   const stageStations = STAGES.slice(0, 5); // ohne Finale
   const finale = STAGES[5];
 
   return (
     <div className="mt-8 space-y-6">
+      {envelope.dialog}
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-sm border border-border bg-secondary/40 p-4">
         <div>
           <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
