@@ -79,6 +79,7 @@ export function HintSystem({ hints = DEFAULT_HINTS, storageKey = DEFAULT_STORAGE
   const [open, setOpen] = useState(false);
   const [activeId, setActiveId] = useState<number>(0);
   const [revealed, setRevealed] = useState<Set<number>>(new Set());
+  const [showIntro, setShowIntro] = useState(false);
 
   // Timer beim ersten Mounten starten (oder aus localStorage wieder aufnehmen)
   useEffect(() => {
