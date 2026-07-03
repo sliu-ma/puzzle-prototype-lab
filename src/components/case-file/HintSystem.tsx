@@ -131,16 +131,25 @@ export function HintSystem({ hints = DEFAULT_HINTS, storageKey = DEFAULT_STORAGE
 
 
   const openPanel = () => {
-    // Bevorzugt: neuester freigeschalteter, aber noch nicht aufgedeckter Tipp.
     const unlocked = HINTS.filter((h) => elapsedMin >= h.unlockMin);
-    const firstPending = unlocked.find((h) => !revealed.has(h.id));
-    if (firstPending) {
-      setActiveId(firstPending.id);
+    const revealedSet = revealed;
+    // Erster aufdeckbarer, noch nicht aufgedeckter Hinweis (Vorgänger aufgedeckt).
+    const firstRevealable = unlocked.find((h, i) => {
+      if (revealedSet.has(h.id)) return false;
+      const idx = HINTS.findIndex((x) => x.id === h.id);
+      for (let j = 0; j < idx; j++) {
+        if (!revealedSet.has(HINTS[j].id)) return false;
+      }
+      return true;
+    });
+    if (firstRevealable) {
+      setActiveId(firstRevealable.id);
     } else if (unlocked.length > 0) {
       setActiveId(unlocked[unlocked.length - 1].id);
     }
     setOpen(true);
   };
+
 
   return (
     <>
