@@ -4,7 +4,7 @@ import { PaperCard } from "./PaperCard";
 import { Stamp } from "./Stamp";
 import { cn } from "@/lib/utils";
 
-// Default für Akte 001 — bewusst NICHT im UI angezeigt.
+// Default für Etappe 1 — bewusst NICHT im UI angezeigt.
 const DEFAULT_TOKEN = "CpZk0z9RaQkL22gtiWoR";
 const DEFAULT_STORAGE_KEY = "akte-001-unlocked";
 
