@@ -89,6 +89,8 @@ const norm = (s: string) =>
     .replace(/[^a-z\s]/g, "");
 
 function AktePage() {
+  const navigate = useNavigate();
+  const envelope = useEnvelopePrompt();
   const [step, setStep] = useState<Step>("brief");
   const [unlockedSteps, setUnlockedSteps] = useState<Set<Step>>(new Set(["brief"]));
 
