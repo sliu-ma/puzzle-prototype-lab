@@ -117,6 +117,7 @@ export function IntroScreen({
 }) {
   const [step, setStep] = useState(0);
   const [openPerson, setOpenPerson] = useState<string | null>(null);
+  const envelope = useEnvelopePrompt();
   const total = 3;
 
   const personen: Persona[] = [
@@ -142,12 +143,21 @@ export function IntroScreen({
     },
   ];
 
+  const finish = () => {
+    envelope.ask({
+      nr: 1,
+      ort: "Küchentisch · Elviras Haus",
+      etappeLabel: "Umschlag 1 · Küchentisch",
+      onConfirm: () => {
+        markIntroSeen();
+        onDone();
+      },
+    });
+  };
+
   const next = () => {
     if (step < total - 1) setStep(step + 1);
-    else {
-      markIntroSeen();
-      onDone();
-    }
+    else finish();
   };
 
   return (
