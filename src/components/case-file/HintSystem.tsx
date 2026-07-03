@@ -177,11 +177,11 @@ export function HintSystem({ hints = DEFAULT_HINTS, storageKey = DEFAULT_STORAGE
 
   return (
     <>
-      {/* Intro-Pop-up (einmalig, nach 3 Min bei Akte 001) */}
+      {/* Intro-Pop-up (einmalig, nach 3 Min beim ersten Rätsel: Mobilität) */}
       {showIntro && (
         <>
           <div
-            className="fixed inset-0 z-[60] bg-black/50"
+            className="fixed inset-0 z-[60] bg-black/60"
             onClick={dismissIntro}
             aria-hidden
           />
@@ -189,49 +189,106 @@ export function HintSystem({ hints = DEFAULT_HINTS, storageKey = DEFAULT_STORAGE
             role="dialog"
             aria-modal="true"
             aria-label="Hinweise erklärt"
-            className="fixed left-1/2 top-1/2 z-[70] w-[min(92vw,26rem)] -translate-x-1/2 -translate-y-1/2 rounded-lg border border-border bg-paper p-5 shadow-2xl"
+            className="fixed left-1/2 top-1/2 z-[70] w-[min(94vw,30rem)] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-lg border border-border bg-paper shadow-2xl"
           >
-            <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
-              Unterstützung freigeschaltet
-            </p>
-            <h3 className="mt-1 font-serif text-xl font-bold leading-snug">
-              Du brauchst Hilfe? Maya hat Hinweise für dich.
-            </h3>
-            <ul className="mt-3 space-y-2 text-sm leading-relaxed text-foreground/85">
-              <li>
-                Unten rechts findest du den Button{" "}
-                <span className="font-semibold">💡 Tipps</span>.
-              </li>
-              <li>
-                Nach <strong>3 Minuten</strong> gibt es Tipp 1, nach{" "}
-                <strong>6 Minuten</strong> Tipp 2 und nach{" "}
-                <strong>9 Minuten</strong> die Auflösung.
-              </li>
-              <li>
-                Du entscheidest selbst, ob du sie anschaust — klicke auf das
-                Schloss, um einen Hinweis aufzudecken.
-              </li>
-            </ul>
-            <div className="mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-              <button
-                onClick={dismissIntro}
-                className="rounded-sm border border-border bg-paper px-4 py-2 font-mono-typed text-[11px] uppercase tracking-wider text-foreground/80 transition-colors hover:bg-secondary"
-              >
-                Alles klar
-              </button>
-              <button
-                onClick={() => {
-                  dismissIntro();
-                  openPanel();
+            {/* Illustrations-Header */}
+            <div className="relative flex items-center justify-center gap-2 bg-stamp/10 px-5 py-6">
+              <div
+                aria-hidden
+                className="pointer-events-none absolute inset-0 opacity-[0.08]"
+                style={{
+                  backgroundImage:
+                    "repeating-linear-gradient(45deg, var(--color-ink) 0, var(--color-ink) 1px, transparent 1px, transparent 10px)",
                 }}
-                className="rounded-sm bg-stamp px-4 py-2 font-mono-typed text-[11px] uppercase tracking-wider text-paper transition-all hover:-translate-y-0.5 hover:shadow-md"
-              >
-                Tipps jetzt öffnen
-              </button>
+              />
+              {/* Mock des Floating-Buttons */}
+              <div className="relative flex items-center gap-2 rounded-full border border-stamp/50 bg-paper px-4 py-2 shadow-md">
+                <Lightbulb className="h-5 w-5 text-stamp" fill="currentColor" />
+                <span className="font-mono-typed text-xs uppercase tracking-wider text-stamp">
+                  Tipps
+                </span>
+                <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-stamp px-1.5 text-[10px] font-bold text-paper">
+                  3
+                </span>
+              </div>
+              <Sparkles
+                aria-hidden
+                className="absolute right-4 top-3 h-4 w-4 text-stamp/70"
+              />
+              <Sparkles
+                aria-hidden
+                className="absolute left-4 bottom-3 h-3 w-3 text-stamp/50"
+              />
+            </div>
+
+            <div className="px-5 pb-5 pt-4">
+              <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
+                Unterstützung freigeschaltet
+              </p>
+              <h3 className="mt-1 font-serif text-xl font-bold leading-snug">
+                Du brauchst Hilfe? Maja hat Hinweise für dich.
+              </h3>
+              <p className="mt-2 text-sm text-foreground/75">
+                Unten rechts findest du diesen Button — tippe darauf, um
+                Hinweise zu öffnen.
+              </p>
+
+              {/* Timeline-Grafik */}
+              <ol className="mt-5 grid grid-cols-3 gap-2 text-center">
+                {[
+                  { icon: KeyRound, min: "3", label: "Tipp 1" },
+                  { icon: KeyRound, min: "6", label: "Tipp 2" },
+                  { icon: Lock, min: "9", label: "Auflösung" },
+                ].map((s, i) => {
+                  const Icon = s.icon;
+                  return (
+                    <li key={i} className="relative flex flex-col items-center">
+                      {i < 2 && (
+                        <span
+                          aria-hidden
+                          className="absolute right-[-50%] top-5 h-px w-full border-t border-dashed border-stamp/40"
+                        />
+                      )}
+                      <span className="relative z-10 flex h-10 w-10 items-center justify-center rounded-full border-2 border-stamp/60 bg-paper text-stamp shadow-sm">
+                        <Icon className="h-4 w-4" />
+                      </span>
+                      <span className="mt-2 flex items-center gap-1 font-mono-typed text-[10px] uppercase tracking-wider text-foreground/70">
+                        <Clock className="h-3 w-3" /> {s.min} Min
+                      </span>
+                      <span className="font-serif text-sm font-semibold">
+                        {s.label}
+                      </span>
+                    </li>
+                  );
+                })}
+              </ol>
+
+              <p className="mt-4 rounded-sm border border-dashed border-border bg-paper-deep/30 p-3 text-center text-sm text-foreground/80">
+                Du entscheidest selbst, ob du sie nutzt.
+              </p>
+
+              <div className="mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+                <button
+                  onClick={dismissIntro}
+                  className="rounded-sm border border-border bg-paper px-4 py-2 font-mono-typed text-[11px] uppercase tracking-wider text-foreground/80 transition-colors hover:bg-secondary"
+                >
+                  Alles klar
+                </button>
+                <button
+                  onClick={() => {
+                    dismissIntro();
+                    openPanel();
+                  }}
+                  className="rounded-sm bg-stamp px-4 py-2 font-mono-typed text-[11px] uppercase tracking-wider text-paper transition-all hover:-translate-y-0.5 hover:shadow-md"
+                >
+                  Tipps jetzt öffnen
+                </button>
+              </div>
             </div>
           </div>
         </>
       )}
+
 
 
       {/* Floating Button */}
