@@ -1,63 +1,40 @@
 ## Ziel
 
-Die aktuellen Umschlag-Banner und -Header (aus `EnvelopeBanner.tsx`) werden entfernt. Stattdessen erscheint an genau definierten Klick-Momenten ein **Pop-up mit Illustration**, das die Schüler:innen auffordert, den physischen Umschlag zu öffnen.
+URL-Pfade so umbenennen, dass sie mit der Etappen-Nummer korrelieren.
 
-## Wann erscheint das Pop-up?
-
-| Umschlag | Auslöser (Klick) | Ort im Code |
+| Etappe | Bisher | Neu |
 |---|---|---|
-| **1** | Nach dem Brief-Screen im Intro, beim Klick auf „Ermittlung starten" | `IntroScreen.tsx` |
-| **2** | Klick auf „Etappe 2 öffnen →" am Ende von Etappe 1 **oder** Klick auf Etappe 2 in der Übersicht (Startseite) | `akte-003.tsx` + `index.tsx` |
-| **3** | Klick auf „Etappe 3 öffnen →" am Ende Etappe 2 **oder** Klick auf Etappe 3 in Übersicht | `akte.tsx` + `index.tsx` |
-| **4** | Klick auf „Etappe 4 öffnen →" am Ende Etappe 3 **oder** Klick auf Etappe 4 in Übersicht | `akte-002.tsx` + `index.tsx` |
-| **5** | Klick auf „Etappe 5 öffnen →" am Ende Etappe 4 **oder** Klick auf Etappe 5 in Übersicht | `akte-004.tsx` + `index.tsx` |
+| 1 · Bahnhof | `/akte-003` | `/etappe-1` |
+| 2 · Dorfladen | `/akte` | `/etappe-2` |
+| 3 · Wald | `/akte-002` | `/etappe-3` |
+| 4 · Elviras Haus | `/akte-004` | `/etappe-4` |
+| 5 · Wasserkraftwerk | `/akte-005` | `/etappe-5` |
+| Finale | `/finale` | `/finale` (unverändert) |
 
-Nach Etappe 5 → **kein** Umschlag (direkt ins Hearing).
+## Umsetzung
 
-Das Pop-up ist ein einmaliger Prompt pro Umschlag: einmal gesehen, wird per `localStorage`-Flag (`maya-envelope-N-shown`) gemerkt, damit derselbe Umschlag beim erneuten Klick (z. B. nachträglich in der Übersicht) nicht wieder aufpoppt. Ein Reset über `resetAll()` (Präfix `maya-*`) löscht die Flags wieder.
+1. **Route-Dateien umbenennen** (`mv`, Inhalte bleiben identisch):
+   - `src/routes/akte-003.tsx` → `src/routes/etappe-1.tsx`
+   - `src/routes/akte.tsx` → `src/routes/etappe-2.tsx`
+   - `src/routes/akte-002.tsx` → `src/routes/etappe-3.tsx`
+   - `src/routes/akte-004.tsx` → `src/routes/etappe-4.tsx`
+   - `src/routes/akte-005.tsx` → `src/routes/etappe-5.tsx`
 
-## Neue Komponente: `EnvelopeDialog.tsx`
+2. **`createFileRoute("...")` in jeder Datei anpassen** — Pfad muss dem Dateinamen entsprechen (`"/etappe-1"` … `"/etappe-5"`).
 
-Ersetzt `EnvelopeBanner.tsx`. Nutzt shadcn `Dialog` und zeigt:
+3. **`src/lib/progress.ts`** — `STAGES[].to` und der `to`-Union-Typ auf neue Pfade umstellen.
 
-- Großes **SVG eines Umschlags** mit der Nummer als Siegel — freundlich, spielerisch (kein Stockfoto). Zwei Varianten: geschlossen (Wachssiegel mit Nr.) und leicht geöffnete Klappe.
-- Überschrift: **„Öffne jetzt Umschlag N"**
-- Kurztext: „Elviras nächster Hinweis liegt bereit — nimm den Umschlag mit der Nr. N vom Tisch."
-- Ort-Chip (z. B. „Dorfladen · Etappe 2")
-- Button: „Alles klar →" (schließt Dialog und führt die Aktion aus, z. B. Navigation)
+4. **Alle `navigate({ to: "..." })`-Aufrufe** in den Etappen-Dateien anpassen (Zeiger auf die jeweils nächste Etappe): `/akte` → `/etappe-2`, `/akte-002` → `/etappe-3`, `/akte-004` → `/etappe-4`, `/akte-005` → `/etappe-5`.
 
-Ausgeliefert als:
-```tsx
-<EnvelopeDialog nr={2} ort="Dorfladen" open={open} onConfirm={() => navigate(...)} />
-```
+5. **`src/routeTree.gen.ts`** wird vom Vite-Plugin automatisch neu generiert — nicht anfassen.
 
-Plus ein Utility-Hook `useEnvelopePrompt(nr)`, das den einmaligen Anzeige-Status verwaltet und ein `trigger()` zurückgibt, mit dem sich der Klick abfangen lässt (Klick → Pop-up → nach Bestätigung Navigation ausführen).
+## Was NICHT geändert wird
 
-## Änderungen pro Datei
+- **`localStorage`-Keys** (`akte-00X-unlocked`, `akte-00X-hints-start`, `maya-clock-akte-00X`) bleiben — sind reine Interna, keine URLs. Das erspart Migrationslogik und der bestehende `resetAll()`-Präfix (`akte-*`) wischt sie weiterhin sauber weg.
+- **QR-Tokens** (`AKTE_003_TOKEN` etc.) bleiben unverändert — die gedruckten QR-Codes im Dorf enthalten Text-Tokens, keine URLs, funktionieren also weiter.
+- **Konstantennamen im Code** (`AKTE_003_TOKEN`, `HINTS_003`, `AkteGated`, `AktePage`) bleiben — reine Symbole ohne User-Sichtbarkeit.
+- **`/finale`** bleibt.
 
-**`src/components/case-file/EnvelopeBanner.tsx`** — löschen.
+## Verifikation
 
-**`src/components/case-file/EnvelopeDialog.tsx`** — neu (Dialog + Inline-SVG-Grafik + Hook).
-
-**`src/routes/akte-003.tsx`, `akte.tsx`, `akte-002.tsx`, `akte-004.tsx`**
-- `EnvelopeHeader` und `EnvelopeHint` entfernen (Import + Verwendung).
-- Beim „Etappe N+1 öffnen →"-Button (im Step `naechstes`): `onClick` fängt Klick ab, zeigt `EnvelopeDialog` mit passender Nr., navigiert erst nach Bestätigung. Falls Umschlag-Flag schon gesetzt → direkt navigieren.
-
-**`src/routes/akte-005.tsx`** — nichts (kein Umschlag).
-
-**`src/routes/index.tsx`** (Übersicht/ProgressPanel)
-- Die `<Link to={s.to}>`-Einträge für die **aktuelle** Etappe (`status === "current"`) werden zu Buttons/Klick-Wrappern, die den `EnvelopeDialog` für die passende Nummer (`s.nr`) triggern, sofern das Umschlag-Flag noch nicht gesetzt ist. Nach Bestätigung → `router.navigate`.
-- Etappe 1: Umschlag 1 wurde bereits im Intro gezeigt → kein Pop-up in der Übersicht für Etappe 1.
-
-**`src/components/case-file/IntroScreen.tsx`**
-- Bestehenden Inline-Chip „Umschlag 1 · Küchentisch" im Brief-Step entfernen.
-- Der finale „Ermittlung starten"-Klick (Step 2 → onDone) öffnet zuerst den `EnvelopeDialog` für Umschlag 1 (Ort: „Küchentisch"). Nach Bestätigung → `markIntroSeen()` + `onDone()`.
-
-## Persistenz
-
-- `maya-envelope-1-shown` … `maya-envelope-5-shown` — je Umschlag ein Flag.
-- Wird automatisch von `resetAll()` (Präfix `maya-*`) beim Neustart entfernt — kein zusätzlicher Code nötig.
-
-## Bild/Grafik
-
-Reine Inline-SVGs im Dialog (Umschlag-Silhouette, Wachssiegel-Kreis mit großer Ziffer). Keine externen Bild-Assets nötig, funktioniert offline und ist responsiv.
+Nach dem Umbau `tsgo --noEmit` laufen lassen: alle `navigate`- und `<Link to>`-Aufrufe sind über den `to`-Typ in `progress.ts` bzw. TanStacks generiertem RouteTree typisiert und würden bei einem übersehenen Pfad einen Compile-Error werfen.
