@@ -35,6 +35,7 @@ const DEFAULT_HINTS: Hint[] = [
 ];
 
 const DEFAULT_STORAGE_KEY = "akte-001-hints-start";
+const INTRO_FLAG_KEY = "akte-001-hints-intro-shown";
 
 export const HINT_STORAGE_KEYS = [
   "akte-001-hints-start",
