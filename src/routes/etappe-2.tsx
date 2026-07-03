@@ -2,72 +2,39 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { PaperCard } from "@/components/case-file/PaperCard";
 import { Stamp } from "@/components/case-file/Stamp";
-import { CodeLock } from "@/components/case-file/CodeLock";
+import { GruenerMarkt } from "@/components/case-file/GruenerMarkt";
 import { QRGate } from "@/components/case-file/QRGate";
 import { StageGate } from "@/components/case-file/StageGate";
-import { HintSystem, type Hint } from "@/components/case-file/HintSystem";
-import { completeStage, getFrozenClock } from "@/lib/progress";
+import { HintSystem } from "@/components/case-file/HintSystem";
+import { START_WARENKORB } from "@/lib/maya-data";
+import { completeStage, getFrozenClock, getHearingClock } from "@/lib/progress";
 import { cn } from "@/lib/utils";
 import { useEnvelopePrompt } from "@/components/case-file/EnvelopeDialog";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 
-export const Route = createFileRoute("/akte-002")({
+export const Route = createFileRoute("/etappe-2")({
   head: () => ({
     meta: [
-      { title: "Etappe 3 — Wald-Lichtung" },
+      { title: "Etappe 2 — Dorfladen Berger" },
       {
         name: "description",
         content:
-          "Etappe 3: Auf der Lichtung steht Elviras Beobachtungsposten. Sortiere die Tiere und entschlüssele den Code des Zahlenschlosses.",
+          "Etappe 2: Im alten Dorfladen wartet ein gepackter Einkaufskorb. Zwei Produkte stimmen nicht — finde sie und tausche sie aus.",
       },
     ],
   }),
   component: AkteGated,
 });
 
-const AKTE_002_TOKEN = "Mn7YxQ2pVe9TbR4Ks0Lh";
-const EXPECTED_CODE = "123";
-
-const HINTS_002: Hint[] = [
-  {
-    id: 0,
-    unlockMin: 3,
-    label: "Tipp 1",
-    title: "Sortier zuerst die Tiere",
-    body: "Lege die acht Polaroids vor dich. Welche dieser Tiere sind in der Schweiz bedroht? Tipp: Fünf davon sind in der Schweiz in irgendeiner Form gefährdet, drei sind nicht gefährdet.",
-  },
-  {
-    id: 1,
-    unlockMin: 6,
-    label: "Tipp 2",
-    title: "Dreh die Karten um",
-    body: "Hinter einer einzigen Karte verbergen sich gleich alle drei Zahlen des Codes. Such bei den bedrohten Arten weiter.",
-  },
-  {
-    id: 2,
-    unlockMin: 9,
-    label: "Auflösung",
-    title: "So geht's",
-    body: "Hinter der Kreuzotter (in der Schweiz stark gefährdet) stehen die Zahlen 1, 2 und 3. Aufsteigend ergibt das den Code 1 — 2 — 3.",
-  },
-];
-
 function AkteGated() {
   return (
-    <StageGate stage={3}>
+    <StageGate stage={2}>
       <QRGate
-        token={AKTE_002_TOKEN}
-        storageKey="akte-002-unlocked"
-        title={<>Etappe 3 — QR-Code an der Hütte scannen</>}
-        description="Diese Etappe ist versiegelt. Scanne den QR-Code an Elviras Beobachtungsposten auf der Lichtung."
-        label="Etappe 3 · Versiegelt"
+        token="CpZk0z9RaQkL22gtiWoR"
+        storageKey="akte-001-unlocked"
+        title={<>Etappe 2 — QR-Code im Dorfladen scannen</>}
+        description="Diese Etappe ist versiegelt. Scanne den QR-Code, den Frau Berger für dich bereitgelegt hat."
+        label="Etappe 2 · Versiegelt"
       >
         <AktePage />
       </QRGate>
@@ -75,11 +42,11 @@ function AkteGated() {
   );
 }
 
-type Step = "brief" | "code" | "input" | "naechstes";
+type Step = "brief" | "shop" | "input" | "naechstes";
 
 const STEPS: { id: Step; label: string }[] = [
-  { id: "brief", label: "Beobachtungsbuch" },
-  { id: "code", label: "Code eintippen" },
+  { id: "brief", label: "Brief" },
+  { id: "shop", label: "Einkaufskorb" },
   { id: "input", label: "Fachlicher Input" },
   { id: "naechstes", label: "Nächste Etappe" },
 ];
@@ -89,10 +56,9 @@ function AktePage() {
   const envelope = useEnvelopePrompt();
   const [step, setStep] = useState<Step>("brief");
   const [unlockedSteps, setUnlockedSteps] = useState<Set<Step>>(new Set(["brief"]));
-  const [showCodeHint, setShowCodeHint] = useState(false);
 
   useEffect(() => {
-    if (step === "naechstes") completeStage(3);
+    if (step === "naechstes") completeStage(2);
   }, [step]);
 
   const goto = (s: Step) => {
@@ -123,10 +89,10 @@ function AktePage() {
               ← Zurück zur Übersicht
             </Link>
             <h1 className="mt-1.5 font-serif text-2xl font-bold leading-tight sm:mt-2 sm:text-5xl">
-              Etappe 3 · Wald-Lichtung
+              Etappe 2 · Dorfladen
             </h1>
             <p className="mt-0.5 font-serif italic text-sm text-foreground/70 sm:text-base">
-              Elviras Beobachtungsposten
+              Frau Bergers Einkaufskorb
             </p>
           </div>
           <Stamp rotate={-6}>Vertraulich</Stamp>
@@ -172,65 +138,49 @@ function AktePage() {
         {step === "brief" && (
           <PaperCard rotate={-0.4}>
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-              Notiz 03 · Beobachtungsposten · Lichtung
+              Notiz 02 · Dorfladen Berger · auf dem Holztresen
             </p>
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-              „Rodung ab Montag."
+              Frau Berger wartet schon.
             </h2>
             <p className="mt-1 font-mono-typed text-xs text-muted-foreground">
-              [Aufgeschlagenes Beobachtungsbuch · {getFrozenClock("maya-clock-akte-003")} Uhr]
+              [Holztresen · gepackter Korb · {getFrozenClock("maya-clock-akte-002")} Uhr]
             </p>
             <blockquote className="mt-5 border-l-4 border-stamp pl-4 text-[15px] leading-relaxed">
-              Der Waldweg ist ihr vertraut aber heute sieht er anders aus. Schon
-              von Weitem sieht Maja es: rotes Band um die Bäume, ein Schild mit
-              der Aufschrift „Baubeginn – Zutritt verboten. Rodung ab Montag."
-              Sie bleibt kurz stehen. Montag. Das ist übermorgen.
-              <br />
-              &nbsp;&nbsp;&nbsp;
-              <br />
-              Die Hütte steht noch, windschief wie immer. Am alten
-              Beobachtungsposten mit dem Fernglas liegen Fotokarten von Tieren,
-              die Elvira über Jahrzehnte hier gesichtet hat – daneben ihr
-              vollgeschriebenes Beobachtungsbuch. Die letzten Einträge sind
-              kürzer geworden. Manche Arten kommen seit Jahren nicht mehr vor.
-              <br />
-              &nbsp;&nbsp;&nbsp;
-              <br />
-              Auf der aufgeschlagenen Seite steht in eiliger Handschrift:
-              „Manche dieser Tiere sind hier noch sicher andere stehen kurz vor
-              dem Verschwinden. Trenne die gefährdeten von den nicht gefährdeten
-              Arten, um meinen Code zu entschlüsseln."
+              Der alte Dorfladen ist eigentlich schon geschlossen, aber Frau
+              Berger, eine langjährige Freundin Elviras, lässt dich noch hinein.
+              <br /><br />
+              „Deine Tante war hier jede Woche", sagt sie nachdenklich. „Sie hat
+              mal gesagt: Wenn ich sehe, was die Leute kaufen, weiss ich genau,
+              was schiefläuft."
+              <br /><br />
+              Du ziehst Elviras Einkaufsliste hervor und zeigst sie Frau Berger.
+              Daraufhin holt sie einen Einkaufskorb hinter der Kasse hervor.
+              „Diesen hat Elvira gepackt." Du schaust rein, dann auf die Liste.
+              Alles stimmt überein, jedes einzelne Produkt. Und genau das ist
+              komisch.
+              <br /><br />
+              „Sie meinte, du seist ziemlich gut im Kombinieren." Frau Berger
+              lächelt. „Was fällt dir auf?"
             </blockquote>
             <div className="mt-6 flex justify-end">
               <button
-                onClick={() => setShowCodeHint(true)}
+                onClick={() => goto("shop")}
                 className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
               >
-                Code eintippen →
+                Zum Einkaufskorb →
               </button>
             </div>
           </PaperCard>
         )}
 
-
-        {step === "code" && (
-          <PaperCard rotate={-0.2} tape="top-right">
-            <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-              Zahlenschloss · Ausrüstungskiste
-            </p>
-            <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-              Findest du den Code?
-            </h2>
-            <p className="mt-3 text-[15px] text-foreground/80">
-              Tippe die drei Zahlen <strong>von der kleinsten zur grössten</strong>{" "}
-              ein.
-            </p>
-
-            <div className="mt-6">
-              <CodeLock expected={EXPECTED_CODE} onUnlock={() => goto("input")} />
-            </div>
-
-            <div className="mt-6 flex justify-start">
+        {step === "shop" && (
+          <div className="space-y-4">
+            <GruenerMarkt
+              startWarenkorb={START_WARENKORB}
+              onErfolg={() => goto("input")}
+            />
+            <div className="flex justify-start">
               <button
                 onClick={() => setStep("brief")}
                 className="rounded-sm border border-border bg-card px-4 py-2.5 font-serif text-sm hover:bg-secondary"
@@ -238,39 +188,39 @@ function AktePage() {
                 ← Zurück
               </button>
             </div>
-          </PaperCard>
+          </div>
         )}
 
         {step === "input" && (
           <div className="space-y-6">
             <PaperCard rotate={-0.3}>
               <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-                Fachlicher Input · Biodiversität
+                Fachlicher Input · 3 Lernkarten
               </p>
               <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-                Warum Vielfalt zählt
+                Was heißt eigentlich „nachhaltig einkaufen"?
               </h2>
               <p className="mt-3 text-foreground/80">
-                Die Schweiz gehört in Europa zu den Ländern mit dem grössten
-                Anteil bedrohter Arten. Drei Begriffe, die du für den Rat brauchst:
+                Drei Begriffe, die du gerade angewendet hast — und die der Rat
+                heute Abend hören will:
               </p>
 
               <div className="mt-5 grid gap-4 sm:grid-cols-3">
                 {[
                   {
-                    title: "Rote Liste",
-                    body: "Eine offizielle Übersicht der gefährdeten Tier- und Pflanzenarten der Schweiz. Rund ein Drittel aller untersuchten Arten gilt heute als bedroht — vom Feldhasen bis zum Apollofalter.",
-                    hint: "Quelle: BAFU – Bundesamt für Umwelt.",
+                    title: "Saisonal",
+                    body: "Obst und Gemüse, das gerade in der Schweiz wächst und geerntet werden kann. Wer im März Erdbeeren kauft, kauft Ware aus dem Süden oder beheizten Tunneln — viel Energie für wenig Geschmack.",
+                    hint: "Im Frühling in CH saisonal: Lauch, Karotten, Feldsalat …",
                   },
                   {
-                    title: "Lebensraum",
-                    body: "Versiegelte Böden, intensive Landwirtschaft und Verkehr zerschneiden Wiesen, Hecken und Feuchtgebiete. Ohne Lebensraum keine Tiere — auch nicht auf der Lichtung hinter dem Dorf.",
-                    hint: "Hecken, Trockenmauern und Tümpel sind echte Biodiversitäts-Hotspots.",
+                    title: "Regional",
+                    body: "Lebensmittel aus deiner Umgebung — meist 50–100 km. Kurzer Transport, frischer, oft kleinere Höfe. Achtung: «Aus der Schweiz» ist nicht automatisch regional. Region heißt: aus deiner Gegend.",
+                    hint: "Bio Suisse & IP-Suisse stehen für Schweizer Herkunft mit klaren Standards.",
                   },
                   {
-                    title: "Vernetzung",
-                    body: "Tiere brauchen Wanderkorridore: Grünbrücken, Gewässer, Hecken. Werden Räume durch Strassen oder Kraftwerke getrennt, sterben Populationen lokal aus, auch wenn jede einzelne noch zu retten wäre.",
-                    hint: "Stichwort: Wildtierkorridore und Renaturierung.",
+                    title: "Tiergerecht & Bio",
+                    body: "Bio-Freilandhaltung garantiert Auslauf und Bio-Futter — Bodenhaltung nicht. Importeier reisen oft über tausende Kilometer. Hinter günstigen Preisen stehen meist enge Ställe und industrielle Logistik.",
+                    hint: "Schweizer Bio-Eier sind teurer, halten aber, was die Werbung verspricht.",
                   },
                 ].map((c) => (
                   <div key={c.title} className="rounded-sm border border-border bg-paper p-4 shadow-sm">
@@ -287,10 +237,10 @@ function AktePage() {
 
             <div className="flex justify-between">
               <button
-                onClick={() => setStep("code")}
+                onClick={() => setStep("shop")}
                 className="rounded-sm border border-border bg-card px-4 py-2.5 font-serif text-sm hover:bg-secondary"
               >
-                ← Zurück
+                ← Zurück zum Korb
               </button>
               <button
                 onClick={() => goto("naechstes")}
@@ -305,44 +255,40 @@ function AktePage() {
         {step === "naechstes" && (
           <PaperCard rotate={-0.5} tape="top-left">
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-
-              Etappe 4 · Elviras Haus
+              Etappe 3 · Wald-Lichtung
             </p>
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-              „Geh zurück ins Haus."
+              „Geh zur Lichtung im Wald."
             </h2>
             <div className="mt-4 rounded-sm border border-dashed border-stamp/40 bg-paper-deep/30 p-5">
               <p className="font-serif italic leading-relaxed">
-                In der Ausrüstungskiste findest du keine Forschungsausrüstung,
-                sondern eine Mappe mit alten Strom- und Heizrechnungen. Ein
-                Zettel obenauf:
+                Die alte Registrierkasse springt mit einem lauten Ping an und
+                druckt einen Bon. Frau Berger reicht ihn dir mit einem wissenden
+                Lächeln. Auf der Rückseite steht in Elviras Handschrift:
                 <br /><br />
-                „Um diesen Ort zu bewahren, müssen wir das Problem an der Wurzel
-                packen — und das beginnt bei uns zuhause. Ich habe im Haus
-                Vorbereitungen getroffen. Nimm die Rechnungen mit und schau dir
-                die Räume ganz genau an."
+                „Gut gemacht! Geh zur Lichtung im Wald, wo wir früher Vögel
+                beobachtet haben. Dort findest du meinen Beobachtungsposten."
               </p>
               <p className="mt-3 font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
                 — E.
               </p>
             </div>
             <p className="mt-5 text-sm text-foreground/70">
-              Du wirfst einen letzten Blick auf das Bauschild, greifst die
-              Mappe — und rennst los.
+              Du denkst kurz an die Uhr. Bis {getHearingClock() ?? "19:00"} Uhr bleibt noch Zeit.
             </p>
             <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
               <button
                 onClick={() =>
                   envelope.ask({
-                    nr: 4,
-                    ort: "Elviras Haus · Etappe 4",
-                    etappeLabel: "Etappe 4 · Elviras Haus",
-                    onConfirm: () => navigate({ to: "/akte-004" }),
+                    nr: 3,
+                    ort: "Wald-Lichtung · Etappe 3",
+                    etappeLabel: "Etappe 3 · Wald-Lichtung",
+                    onConfirm: () => navigate({ to: "/etappe-3" }),
                   })
                 }
                 className="inline-flex items-center gap-2 rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
               >
-                Etappe 4 öffnen →
+                Etappe 3 öffnen →
               </button>
               <Link
                 to="/"
@@ -353,40 +299,16 @@ function AktePage() {
             </div>
           </PaperCard>
         )}
+        {envelope.dialog}
 
         <p className="mt-12 text-center font-mono-typed text-xs uppercase tracking-[0.2em] text-muted-foreground">
-          — Etappe 3 · Wald-Lichtung —
+          — Etappe 2 · Dorfladen Berger —
         </p>
       </div>
 
-      {step === "code" && (
-        <HintSystem hints={HINTS_002} storageKey="akte-002-hints-start" />
+      {unlockedSteps.has("shop") && (step === "shop" || step === "input") && (
+        <HintSystem />
       )}
-
-      <Dialog open={showCodeHint} onOpenChange={setShowCodeHint}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Recherche-Tipp</DialogTitle>
-            <DialogDescription>
-              Falls du dir nicht sicher bist, ob ein Tier in der Schweiz
-              gefährdet ist: Recherchiere im Internet. Das hilft dir, die
-              Polaroids richtig zuzuordnen.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="mt-2 flex justify-center">
-            <button
-              onClick={() => {
-                setShowCodeHint(false);
-                goto("code");
-              }}
-              className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
-            >
-              Zum Zahlenschloss →
-            </button>
-          </div>
-        </DialogContent>
-      </Dialog>
-      {envelope.dialog}
     </main>
   );
 }

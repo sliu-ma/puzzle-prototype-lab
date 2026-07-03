@@ -2,64 +2,72 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { PaperCard } from "@/components/case-file/PaperCard";
 import { Stamp } from "@/components/case-file/Stamp";
+import { CodeLock } from "@/components/case-file/CodeLock";
 import { QRGate } from "@/components/case-file/QRGate";
 import { StageGate } from "@/components/case-file/StageGate";
-import { EnergyGame } from "@/components/case-file/EnergyGame";
 import { HintSystem, type Hint } from "@/components/case-file/HintSystem";
 import { completeStage, getFrozenClock } from "@/lib/progress";
 import { cn } from "@/lib/utils";
 import { useEnvelopePrompt } from "@/components/case-file/EnvelopeDialog";
 
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
-const HINTS_004: Hint[] = [
-  {
-    id: 0,
-    unlockMin: 3,
-    label: "Tipp 1",
-    title: "Wo steckt der grösste Verbrauch?",
-    body: "Öffne zuerst die grossen Posten: Heizung, Warmwasser, Dusche und Fenster. Dort schlummern die meisten kWh — nicht bei Fernseher oder Lampe.",
-  },
-  {
-    id: 1,
-    unlockMin: 6,
-    label: "Tipp 2",
-    title: "Nicht jedes teure Upgrade lohnt sich",
-    body: "Verhalten kostet 0 CHF und bringt viel: kurz duschen, Wasserhahn zudrehen, stosslüften statt Kippfenster. Behalte das Budget im Blick — die teuersten Geräte sind selten die effizientesten pro Franken.",
-  },
-  {
-    id: 2,
-    unlockMin: 9,
-    label: "Auflösung",
-    title: "So erreichst du die 10'000 kWh",
-    body: "Kombiniere günstige Verhaltensoptionen mit gezielten Upgrades: Sparbrause + kurz duschen (2'700), Wasserhahn-Perlator (900), Stosslüften (1'600), Wärmepumpe (5'200), Warmwasser-Wärmepumpe (1'900), Steckerleiste beim TV (320), LED (410). Damit bleibst du im Budget und knackst die 10'000 kWh locker.",
-  },
-];
-
-export const Route = createFileRoute("/akte-004")({
+export const Route = createFileRoute("/etappe-3")({
   head: () => ({
     meta: [
-      { title: "Etappe 4 — Elviras Haus" },
+      { title: "Etappe 3 — Wald-Lichtung" },
       {
         name: "description",
         content:
-          "Etappe 4: Zurück bei Elvira. Eine Querschnittszeichnung des Hauses, alte Rechnungen — und das Ziel: 10'000 kWh einsparen.",
+          "Etappe 3: Auf der Lichtung steht Elviras Beobachtungsposten. Sortiere die Tiere und entschlüssele den Code des Zahlenschlosses.",
       },
     ],
   }),
   component: AkteGated,
 });
 
-const AKTE_004_TOKEN = "Wb6Vc4Hn1ZqYpMr8Js3F";
+const AKTE_002_TOKEN = "Mn7YxQ2pVe9TbR4Ks0Lh";
+const EXPECTED_CODE = "123";
+
+const HINTS_002: Hint[] = [
+  {
+    id: 0,
+    unlockMin: 3,
+    label: "Tipp 1",
+    title: "Sortier zuerst die Tiere",
+    body: "Lege die acht Polaroids vor dich. Welche dieser Tiere sind in der Schweiz bedroht? Tipp: Fünf davon sind in der Schweiz in irgendeiner Form gefährdet, drei sind nicht gefährdet.",
+  },
+  {
+    id: 1,
+    unlockMin: 6,
+    label: "Tipp 2",
+    title: "Dreh die Karten um",
+    body: "Hinter einer einzigen Karte verbergen sich gleich alle drei Zahlen des Codes. Such bei den bedrohten Arten weiter.",
+  },
+  {
+    id: 2,
+    unlockMin: 9,
+    label: "Auflösung",
+    title: "So geht's",
+    body: "Hinter der Kreuzotter (in der Schweiz stark gefährdet) stehen die Zahlen 1, 2 und 3. Aufsteigend ergibt das den Code 1 — 2 — 3.",
+  },
+];
 
 function AkteGated() {
   return (
-    <StageGate stage={4}>
+    <StageGate stage={3}>
       <QRGate
-        token={AKTE_004_TOKEN}
-        storageKey="akte-004-unlocked"
-        title={<>Etappe 4 — QR-Code in Elviras Haus scannen</>}
-        description="Diese Etappe ist versiegelt. Scanne den QR-Code, der bei Elvira auf dem Küchentisch liegt."
-        label="Etappe 4 · Versiegelt"
+        token={AKTE_002_TOKEN}
+        storageKey="akte-002-unlocked"
+        title={<>Etappe 3 — QR-Code an der Hütte scannen</>}
+        description="Diese Etappe ist versiegelt. Scanne den QR-Code an Elviras Beobachtungsposten auf der Lichtung."
+        label="Etappe 3 · Versiegelt"
       >
         <AktePage />
       </QRGate>
@@ -67,12 +75,11 @@ function AkteGated() {
   );
 }
 
-type Step = "brief" | "raetselkarte" | "spiel" | "input" | "naechstes";
+type Step = "brief" | "code" | "input" | "naechstes";
 
 const STEPS: { id: Step; label: string }[] = [
-  { id: "brief", label: "Zettel" },
-  { id: "raetselkarte", label: "Rätselkarte" },
-  { id: "spiel", label: "Haus planen" },
+  { id: "brief", label: "Beobachtungsbuch" },
+  { id: "code", label: "Code eintippen" },
   { id: "input", label: "Fachlicher Input" },
   { id: "naechstes", label: "Nächste Etappe" },
 ];
@@ -82,9 +89,10 @@ function AktePage() {
   const envelope = useEnvelopePrompt();
   const [step, setStep] = useState<Step>("brief");
   const [unlockedSteps, setUnlockedSteps] = useState<Set<Step>>(new Set(["brief"]));
+  const [showCodeHint, setShowCodeHint] = useState(false);
 
   useEffect(() => {
-    if (step === "naechstes") completeStage(4);
+    if (step === "naechstes") completeStage(3);
   }, [step]);
 
   const goto = (s: Step) => {
@@ -115,10 +123,10 @@ function AktePage() {
               ← Zurück zur Übersicht
             </Link>
             <h1 className="mt-1.5 font-serif text-2xl font-bold leading-tight sm:mt-2 sm:text-5xl">
-              Etappe 4 · Zuhause
+              Etappe 3 · Wald-Lichtung
             </h1>
             <p className="mt-0.5 font-serif italic text-sm text-foreground/70 sm:text-base">
-              Elviras Haus, Querschnitt auf dem Küchentisch
+              Elviras Beobachtungsposten
             </p>
           </div>
           <Stamp rotate={-6}>Vertraulich</Stamp>
@@ -164,140 +172,105 @@ function AktePage() {
         {step === "brief" && (
           <PaperCard rotate={-0.4}>
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-              Notiz 04 · Küchentisch · neben der Zeichnung
+              Notiz 03 · Beobachtungsposten · Lichtung
             </p>
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-              Eine Zeichnung und ein knapper Zettel
+              „Rodung ab Montag."
             </h2>
             <p className="mt-1 font-mono-typed text-xs text-muted-foreground">
-              [Hauszeichnung + Rechnungen aus der Kiste · {getFrozenClock("maya-clock-akte-004")} Uhr]
+              [Aufgeschlagenes Beobachtungsbuch · {getFrozenClock("maya-clock-akte-003")} Uhr]
             </p>
             <blockquote className="mt-5 border-l-4 border-stamp pl-4 text-[15px] leading-relaxed">
-              Du kommst ausser Atem zurück zu Elviras Haus. Auf dem Küchentisch
-              — genau dort, wo der erste Brief lag — liegt jetzt eine grosse
-              Zeichnung: eine Querschnittsansicht des Hauses mit Küche,
-              Badezimmer, Wohnzimmer, Schlafzimmer und Heizkeller. Daneben ein
-              Zettel:
+              Der Waldweg ist ihr vertraut aber heute sieht er anders aus. Schon
+              von Weitem sieht Maja es: rotes Band um die Bäume, ein Schild mit
+              der Aufschrift „Baubeginn – Zutritt verboten. Rodung ab Montag."
+              Sie bleibt kurz stehen. Montag. Das ist übermorgen.
               <br />
+              &nbsp;&nbsp;&nbsp;
               <br />
-              „Ein neues Kraftwerk wird oft nur deshalb gebaut, weil wir im
-              Alltag unbemerkt zu viel Energie verbrauchen. Wenn wir zeigen
-              können, wie viel ein einziger Haushalt einsparen kann, bricht das
-              Hauptargument für den Neubau zusammen. Nimm die Rechnungen aus
-              der Kiste und finde heraus, welche Massnahmen am meisten bringen!"
+              Die Hütte steht noch, windschief wie immer. Am alten
+              Beobachtungsposten mit dem Fernglas liegen Fotokarten von Tieren,
+              die Elvira über Jahrzehnte hier gesichtet hat – daneben ihr
+              vollgeschriebenes Beobachtungsbuch. Die letzten Einträge sind
+              kürzer geworden. Manche Arten kommen seit Jahren nicht mehr vor.
+              <br />
+              &nbsp;&nbsp;&nbsp;
+              <br />
+              Auf der aufgeschlagenen Seite steht in eiliger Handschrift:
+              „Manche dieser Tiere sind hier noch sicher andere stehen kurz vor
+              dem Verschwinden. Trenne die gefährdeten von den nicht gefährdeten
+              Arten, um meinen Code zu entschlüsseln."
             </blockquote>
             <div className="mt-6 flex justify-end">
               <button
-                onClick={() => goto("raetselkarte")}
+                onClick={() => setShowCodeHint(true)}
                 className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
               >
-                Weiter zur Rätselkarte →
+                Code eintippen →
               </button>
             </div>
           </PaperCard>
         )}
 
-        {step === "raetselkarte" && (
-          <PaperCard rotate={0.3} tape="top">
+
+        {step === "code" && (
+          <PaperCard rotate={-0.2} tape="top-right">
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-              Rätselkarte · Auftrag von Elvira
+              Zahlenschloss · Ausrüstungskiste
             </p>
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-              Plane Elviras Haus um
+              Findest du den Code?
             </h2>
-            <div className="mt-5 grid gap-4 sm:grid-cols-2">
-              <div className="rounded-sm border border-border bg-paper p-4">
-                <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
-                  Was du hast
-                </p>
-                <ul className="mt-2 space-y-1 text-[15px]">
-                  <li>· Querschnitt mit 5 Räumen</li>
-                  <li>· 1'500.– CHF Budget</li>
-                  <li>· Pro Gerät 2–3 Optionen</li>
-                </ul>
-              </div>
-              <div className="rounded-sm border border-border bg-paper p-4">
-                <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
-                  Dein Auftrag
-                </p>
-                <ol className="mt-2 list-decimal space-y-1 pl-5 text-[15px]">
-                  <li>Tippe Geräte im Haus an.</li>
-                  <li>Wähle eine Option pro Gerät.</li>
-                  <li>Achte aufs Budget.</li>
-                  <li>Erreiche mind. 10'000 kWh Ersparnis.</li>
-                </ol>
-              </div>
+            <p className="mt-3 text-[15px] text-foreground/80">
+              Tippe die drei Zahlen <strong>von der kleinsten zur grössten</strong>{" "}
+              ein.
+            </p>
+
+            <div className="mt-6">
+              <CodeLock expected={EXPECTED_CODE} onUnlock={() => goto("input")} />
             </div>
-            <div className="mt-6 rounded-sm border border-stamp/30 bg-stamp/5 p-4">
-              <p className="font-serif italic leading-relaxed">
-                „Nicht jedes Upgrade lohnt sich. Manchmal ist die billigste
-                Gewohnheit die wirksamste."
-              </p>
-              <p className="mt-2 font-mono-typed text-[11px] uppercase tracking-wider text-stamp">
-                — E.
-              </p>
-            </div>
-            <div className="mt-6 flex justify-between">
+
+            <div className="mt-6 flex justify-start">
               <button
                 onClick={() => setStep("brief")}
                 className="rounded-sm border border-border bg-card px-4 py-2.5 font-serif text-sm hover:bg-secondary"
               >
                 ← Zurück
               </button>
-              <button
-                onClick={() => goto("spiel")}
-                className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
-              >
-                Haus planen →
-              </button>
             </div>
           </PaperCard>
-        )}
-
-        {step === "spiel" && (
-          <div className="space-y-4">
-            <EnergyGame onErfolg={() => goto("input")} />
-            <div className="flex justify-start">
-              <button
-                onClick={() => setStep("raetselkarte")}
-                className="rounded-sm border border-border bg-card px-4 py-2.5 font-serif text-sm hover:bg-secondary"
-              >
-                ← Rätselkarte erneut ansehen
-              </button>
-            </div>
-          </div>
         )}
 
         {step === "input" && (
           <div className="space-y-6">
             <PaperCard rotate={-0.3}>
               <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-                Fachlicher Input · Wohnen &amp; Energie
+                Fachlicher Input · Biodiversität
               </p>
               <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-                Wo zuhause Energie versickert
+                Warum Vielfalt zählt
               </h2>
               <p className="mt-3 text-foreground/80">
-                Rund 40 % des Schweizer Energieverbrauchs entstehen in Gebäuden.
-                Drei Begriffe, die du fürs Hearing brauchst:
+                Die Schweiz gehört in Europa zu den Ländern mit dem grössten
+                Anteil bedrohter Arten. Drei Begriffe, die du für den Rat brauchst:
               </p>
 
               <div className="mt-5 grid gap-4 sm:grid-cols-3">
                 {[
                   {
-                    title: "Effizienzklasse",
-                    body: "A+++ Geräte verbrauchen oft nur ein Drittel der Energie alter Modelle. Bei Kühlschrank, Ofen und Boiler lohnt sich der Austausch über die Lebensdauer fast immer.",
-                    hint: "Energieetikette: A (sparsam) bis G (Stromfresser).",
+                    title: "Rote Liste",
+                    body: "Eine offizielle Übersicht der gefährdeten Tier- und Pflanzenarten der Schweiz. Rund ein Drittel aller untersuchten Arten gilt heute als bedroht — vom Feldhasen bis zum Apollofalter.",
+                    hint: "Quelle: BAFU – Bundesamt für Umwelt.",
                   },
                   {
-                    title: "Wärme-Hülle",
-                    body: "Heizen ist Posten Nr. 1 im Haushalt. 3-fach-Verglasung, Stosslüften statt Kippen und eine Wärmepumpe statt Öl sparen mehr als jedes neue Gerät.",
-                    hint: "Faustregel: zuerst dämmen, dann Heizung tauschen.",
+                    title: "Lebensraum",
+                    body: "Versiegelte Böden, intensive Landwirtschaft und Verkehr zerschneiden Wiesen, Hecken und Feuchtgebiete. Ohne Lebensraum keine Tiere — auch nicht auf der Lichtung hinter dem Dorf.",
+                    hint: "Hecken, Trockenmauern und Tümpel sind echte Biodiversitäts-Hotspots.",
                   },
                   {
-                    title: "Verhalten",
-                    body: "Kurz duschen, Standby abschalten, Wasser zudrehen — diese Schritte kosten nichts und wirken sofort. Technik allein bringt wenig, wenn die Gewohnheiten nicht passen.",
-                    hint: "1 °C kühler heizen spart ca. 6 % Heizenergie.",
+                    title: "Vernetzung",
+                    body: "Tiere brauchen Wanderkorridore: Grünbrücken, Gewässer, Hecken. Werden Räume durch Strassen oder Kraftwerke getrennt, sterben Populationen lokal aus, auch wenn jede einzelne noch zu retten wäre.",
+                    hint: "Stichwort: Wildtierkorridore und Renaturierung.",
                   },
                 ].map((c) => (
                   <div key={c.title} className="rounded-sm border border-border bg-paper p-4 shadow-sm">
@@ -314,10 +287,10 @@ function AktePage() {
 
             <div className="flex justify-between">
               <button
-                onClick={() => setStep("spiel")}
+                onClick={() => setStep("code")}
                 className="rounded-sm border border-border bg-card px-4 py-2.5 font-serif text-sm hover:bg-secondary"
               >
-                ← Zurück zum Spiel
+                ← Zurück
               </button>
               <button
                 onClick={() => goto("naechstes")}
@@ -333,44 +306,43 @@ function AktePage() {
           <PaperCard rotate={-0.5} tape="top-left">
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
 
-              Etappe 5 · altes Wasserkraftwerk
+              Etappe 4 · Elviras Haus
             </p>
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-              „Komm zum alten Wasserkraftwerk."
+              „Geh zurück ins Haus."
             </h2>
             <div className="mt-4 rounded-sm border border-dashed border-stamp/40 bg-paper-deep/30 p-5">
               <p className="font-serif italic leading-relaxed">
-                Es klickt leise im Flur. Die Abdeckung des alten
-                Sicherungskastens springt auf. Darin: eine Schlüsselkarte und
-                ein Zettel.
+                In der Ausrüstungskiste findest du keine Forschungsausrüstung,
+                sondern eine Mappe mit alten Strom- und Heizrechnungen. Ein
+                Zettel obenauf:
                 <br /><br />
-                „10'000 kWh — genau der Beweis, den wir brauchen! Ich bin jetzt
-                beim alten Wasserkraftwerk am Dorfrand. Marlene Vogt,
-                Mitarbeiterin im kantonalen Umweltamt, wartet dort auf uns —
-                sie hat Zugang zu den offiziellen Gemeindegutachten und hilft
-                mir, die Fehler darin zu belegen. Komm schnell! Die Zeit läuft."
+                „Um diesen Ort zu bewahren, müssen wir das Problem an der Wurzel
+                packen — und das beginnt bei uns zuhause. Ich habe im Haus
+                Vorbereitungen getroffen. Nimm die Rechnungen mit und schau dir
+                die Räume ganz genau an."
               </p>
               <p className="mt-3 font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
                 — E.
               </p>
             </div>
             <p className="mt-5 text-sm text-foreground/70">
-              In Etappe 5 prüfst du drei Gemeindegutachten und entlarvst die
-              fünf falschen Aussagen.
+              Du wirfst einen letzten Blick auf das Bauschild, greifst die
+              Mappe — und rennst los.
             </p>
             <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
               <button
                 onClick={() =>
                   envelope.ask({
-                    nr: 5,
-                    ort: "Altes Wasserkraftwerk · Etappe 5",
-                    etappeLabel: "Etappe 5 · Wasserkraftwerk",
-                    onConfirm: () => navigate({ to: "/akte-005" }),
+                    nr: 4,
+                    ort: "Elviras Haus · Etappe 4",
+                    etappeLabel: "Etappe 4 · Elviras Haus",
+                    onConfirm: () => navigate({ to: "/etappe-4" }),
                   })
                 }
                 className="inline-flex items-center gap-2 rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
               >
-                Etappe 5 öffnen →
+                Etappe 4 öffnen →
               </button>
               <Link
                 to="/"
@@ -383,13 +355,37 @@ function AktePage() {
         )}
 
         <p className="mt-12 text-center font-mono-typed text-xs uppercase tracking-[0.2em] text-muted-foreground">
-          — Etappe 4 · Elviras Haus —
+          — Etappe 3 · Wald-Lichtung —
         </p>
       </div>
 
-      {step === "spiel" && (
-        <HintSystem hints={HINTS_004} storageKey="akte-004-hints-start" />
+      {step === "code" && (
+        <HintSystem hints={HINTS_002} storageKey="akte-002-hints-start" />
       )}
+
+      <Dialog open={showCodeHint} onOpenChange={setShowCodeHint}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Recherche-Tipp</DialogTitle>
+            <DialogDescription>
+              Falls du dir nicht sicher bist, ob ein Tier in der Schweiz
+              gefährdet ist: Recherchiere im Internet. Das hilft dir, die
+              Polaroids richtig zuzuordnen.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="mt-2 flex justify-center">
+            <button
+              onClick={() => {
+                setShowCodeHint(false);
+                goto("code");
+              }}
+              className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
+            >
+              Zum Zahlenschloss →
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
       {envelope.dialog}
     </main>
   );

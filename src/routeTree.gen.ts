@@ -10,11 +10,11 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as FinaleRouteImport } from './routes/finale'
-import { Route as Akte005RouteImport } from './routes/akte-005'
-import { Route as Akte004RouteImport } from './routes/akte-004'
-import { Route as Akte003RouteImport } from './routes/akte-003'
-import { Route as Akte002RouteImport } from './routes/akte-002'
-import { Route as AkteRouteImport } from './routes/akte'
+import { Route as Etappe5RouteImport } from './routes/etappe-5'
+import { Route as Etappe4RouteImport } from './routes/etappe-4'
+import { Route as Etappe3RouteImport } from './routes/etappe-3'
+import { Route as Etappe2RouteImport } from './routes/etappe-2'
+import { Route as Etappe1RouteImport } from './routes/etappe-1'
 import { Route as IndexRouteImport } from './routes/index'
 
 const FinaleRoute = FinaleRouteImport.update({
@@ -22,29 +22,29 @@ const FinaleRoute = FinaleRouteImport.update({
   path: '/finale',
   getParentRoute: () => rootRouteImport,
 } as any)
-const Akte005Route = Akte005RouteImport.update({
-  id: '/akte-005',
-  path: '/akte-005',
+const Etappe5Route = Etappe5RouteImport.update({
+  id: '/etappe-5',
+  path: '/etappe-5',
   getParentRoute: () => rootRouteImport,
 } as any)
-const Akte004Route = Akte004RouteImport.update({
-  id: '/akte-004',
-  path: '/akte-004',
+const Etappe4Route = Etappe4RouteImport.update({
+  id: '/etappe-4',
+  path: '/etappe-4',
   getParentRoute: () => rootRouteImport,
 } as any)
-const Akte003Route = Akte003RouteImport.update({
-  id: '/akte-003',
-  path: '/akte-003',
+const Etappe3Route = Etappe3RouteImport.update({
+  id: '/etappe-3',
+  path: '/etappe-3',
   getParentRoute: () => rootRouteImport,
 } as any)
-const Akte002Route = Akte002RouteImport.update({
-  id: '/akte-002',
-  path: '/akte-002',
+const Etappe2Route = Etappe2RouteImport.update({
+  id: '/etappe-2',
+  path: '/etappe-2',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AkteRoute = AkteRouteImport.update({
-  id: '/akte',
-  path: '/akte',
+const Etappe1Route = Etappe1RouteImport.update({
+  id: '/etappe-1',
+  path: '/etappe-1',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -55,69 +55,69 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/akte': typeof AkteRoute
-  '/akte-002': typeof Akte002Route
-  '/akte-003': typeof Akte003Route
-  '/akte-004': typeof Akte004Route
-  '/akte-005': typeof Akte005Route
+  '/etappe-1': typeof Etappe1Route
+  '/etappe-2': typeof Etappe2Route
+  '/etappe-3': typeof Etappe3Route
+  '/etappe-4': typeof Etappe4Route
+  '/etappe-5': typeof Etappe5Route
   '/finale': typeof FinaleRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/akte': typeof AkteRoute
-  '/akte-002': typeof Akte002Route
-  '/akte-003': typeof Akte003Route
-  '/akte-004': typeof Akte004Route
-  '/akte-005': typeof Akte005Route
+  '/etappe-1': typeof Etappe1Route
+  '/etappe-2': typeof Etappe2Route
+  '/etappe-3': typeof Etappe3Route
+  '/etappe-4': typeof Etappe4Route
+  '/etappe-5': typeof Etappe5Route
   '/finale': typeof FinaleRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/akte': typeof AkteRoute
-  '/akte-002': typeof Akte002Route
-  '/akte-003': typeof Akte003Route
-  '/akte-004': typeof Akte004Route
-  '/akte-005': typeof Akte005Route
+  '/etappe-1': typeof Etappe1Route
+  '/etappe-2': typeof Etappe2Route
+  '/etappe-3': typeof Etappe3Route
+  '/etappe-4': typeof Etappe4Route
+  '/etappe-5': typeof Etappe5Route
   '/finale': typeof FinaleRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/akte'
-    | '/akte-002'
-    | '/akte-003'
-    | '/akte-004'
-    | '/akte-005'
+    | '/etappe-1'
+    | '/etappe-2'
+    | '/etappe-3'
+    | '/etappe-4'
+    | '/etappe-5'
     | '/finale'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/akte'
-    | '/akte-002'
-    | '/akte-003'
-    | '/akte-004'
-    | '/akte-005'
+    | '/etappe-1'
+    | '/etappe-2'
+    | '/etappe-3'
+    | '/etappe-4'
+    | '/etappe-5'
     | '/finale'
   id:
     | '__root__'
     | '/'
-    | '/akte'
-    | '/akte-002'
-    | '/akte-003'
-    | '/akte-004'
-    | '/akte-005'
+    | '/etappe-1'
+    | '/etappe-2'
+    | '/etappe-3'
+    | '/etappe-4'
+    | '/etappe-5'
     | '/finale'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AkteRoute: typeof AkteRoute
-  Akte002Route: typeof Akte002Route
-  Akte003Route: typeof Akte003Route
-  Akte004Route: typeof Akte004Route
-  Akte005Route: typeof Akte005Route
+  Etappe1Route: typeof Etappe1Route
+  Etappe2Route: typeof Etappe2Route
+  Etappe3Route: typeof Etappe3Route
+  Etappe4Route: typeof Etappe4Route
+  Etappe5Route: typeof Etappe5Route
   FinaleRoute: typeof FinaleRoute
 }
 
@@ -130,39 +130,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FinaleRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/akte-005': {
-      id: '/akte-005'
-      path: '/akte-005'
-      fullPath: '/akte-005'
-      preLoaderRoute: typeof Akte005RouteImport
+    '/etappe-5': {
+      id: '/etappe-5'
+      path: '/etappe-5'
+      fullPath: '/etappe-5'
+      preLoaderRoute: typeof Etappe5RouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/akte-004': {
-      id: '/akte-004'
-      path: '/akte-004'
-      fullPath: '/akte-004'
-      preLoaderRoute: typeof Akte004RouteImport
+    '/etappe-4': {
+      id: '/etappe-4'
+      path: '/etappe-4'
+      fullPath: '/etappe-4'
+      preLoaderRoute: typeof Etappe4RouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/akte-003': {
-      id: '/akte-003'
-      path: '/akte-003'
-      fullPath: '/akte-003'
-      preLoaderRoute: typeof Akte003RouteImport
+    '/etappe-3': {
+      id: '/etappe-3'
+      path: '/etappe-3'
+      fullPath: '/etappe-3'
+      preLoaderRoute: typeof Etappe3RouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/akte-002': {
-      id: '/akte-002'
-      path: '/akte-002'
-      fullPath: '/akte-002'
-      preLoaderRoute: typeof Akte002RouteImport
+    '/etappe-2': {
+      id: '/etappe-2'
+      path: '/etappe-2'
+      fullPath: '/etappe-2'
+      preLoaderRoute: typeof Etappe2RouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/akte': {
-      id: '/akte'
-      path: '/akte'
-      fullPath: '/akte'
-      preLoaderRoute: typeof AkteRouteImport
+    '/etappe-1': {
+      id: '/etappe-1'
+      path: '/etappe-1'
+      fullPath: '/etappe-1'
+      preLoaderRoute: typeof Etappe1RouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -177,11 +177,11 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AkteRoute: AkteRoute,
-  Akte002Route: Akte002Route,
-  Akte003Route: Akte003Route,
-  Akte004Route: Akte004Route,
-  Akte005Route: Akte005Route,
+  Etappe1Route: Etappe1Route,
+  Etappe2Route: Etappe2Route,
+  Etappe3Route: Etappe3Route,
+  Etappe4Route: Etappe4Route,
+  Etappe5Route: Etappe5Route,
   FinaleRoute: FinaleRoute,
 }
 export const routeTree = rootRouteImport
