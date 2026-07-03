@@ -359,12 +359,19 @@ function AktePage() {
               fünf falschen Aussagen.
             </p>
             <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
-              <Link
-                to="/akte-005"
+              <button
+                onClick={() =>
+                  envelope.ask({
+                    nr: 5,
+                    ort: "Altes Wasserkraftwerk · Etappe 5",
+                    etappeLabel: "Etappe 5 · Wasserkraftwerk",
+                    onConfirm: () => navigate({ to: "/akte-005" }),
+                  })
+                }
                 className="inline-flex items-center gap-2 rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
               >
                 Etappe 5 öffnen →
-              </Link>
+              </button>
               <Link
                 to="/"
                 className="inline-flex items-center gap-2 rounded-sm border border-border bg-card px-5 py-2.5 font-serif text-sm font-semibold transition-colors hover:bg-secondary"
@@ -383,6 +390,7 @@ function AktePage() {
       {step === "spiel" && (
         <HintSystem hints={HINTS_004} storageKey="akte-004-hints-start" />
       )}
+      {envelope.dialog}
     </main>
   );
 }
