@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { PaperCard } from "@/components/case-file/PaperCard";
 import { Stamp } from "@/components/case-file/Stamp";
@@ -8,7 +8,7 @@ import { EnergyGame } from "@/components/case-file/EnergyGame";
 import { HintSystem, type Hint } from "@/components/case-file/HintSystem";
 import { completeStage, getFrozenClock } from "@/lib/progress";
 import { cn } from "@/lib/utils";
-import { EnvelopeHeader, EnvelopeHint } from "@/components/case-file/EnvelopeBanner";
+import { useEnvelopePrompt } from "@/components/case-file/EnvelopeDialog";
 
 
 const HINTS_004: Hint[] = [
