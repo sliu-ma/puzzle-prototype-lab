@@ -164,7 +164,7 @@ export function QRGate({
 
           <p className="mt-5 text-[15px] leading-relaxed text-foreground/80">
             {description ??
-              "Diese Akte ist versiegelt. Sie lässt sich nur mit dem original beigelegten QR-Code öffnen. Halte den Code vor die Kamera deines Geräts."}
+              "Diese Etappe ist versiegelt. Sie lässt sich nur mit dem original beigelegten QR-Code öffnen. Halte den Code vor die Kamera deines Geräts."}
           </p>
 
           <div
