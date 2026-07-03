@@ -150,10 +150,11 @@ function CoverPage() {
                 onStart={(name, code) => {
                   resetAll();
                   registerTeam(name, code);
-
+                  setIntroSeen(false);
                   setTeam({ name, code });
                   setStage(getCurrentStage());
                 }}
+
               />
             )}
           </article>
