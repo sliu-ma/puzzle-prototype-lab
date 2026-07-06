@@ -24,6 +24,7 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
   const [status, setStatus] = useState<Status>("shop");
   const [cartOpen, setCartOpen] = useState(false);
   const [detail, setDetail] = useState<Produkt | null>(null);
+  const [feedback, setFeedback] = useState<null | "leer" | "nicht-nachhaltig">(null);
 
   const produktById = useMemo(
     () => Object.fromEntries(PRODUKTE.map((p) => [p.id, p])) as Record<string, Produkt>,
@@ -40,9 +41,11 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
   const inKorb = (id: string) => warenkorb.includes(id);
 
   const hinzufuegen = (id: string) => {
+    setFeedback(null);
     if (!warenkorb.includes(id)) setWarenkorb([...warenkorb, id]);
   };
   const entfernen = (id: string) => {
+    setFeedback(null);
     setWarenkorb(warenkorb.filter((x) => x !== id));
   };
 
@@ -53,12 +56,20 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
     );
     const fehlend = REZEPT_ZUTATEN_KEYS.filter((z) => !abgedeckt.has(z));
 
-    if (schlechteImKorb.length === 0 && fehlend.length === 0) {
-      setStatus("erfolg");
-      setCartOpen(false);
-      setTimeout(onErfolg, 1200);
+    if (fehlend.length > 0) {
+      setFeedback("leer");
+      return;
     }
+    if (schlechteImKorb.length > 0) {
+      setFeedback("nicht-nachhaltig");
+      return;
+    }
+    setFeedback(null);
+    setStatus("erfolg");
+    setCartOpen(false);
+    setTimeout(onErfolg, 1200);
   };
+
 
   return (
     <div className="rounded-sm border border-border bg-card shadow-sm">
