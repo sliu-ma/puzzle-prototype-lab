@@ -56,15 +56,11 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
     );
     const fehlend = REZEPT_ZUTATEN_KEYS.filter((z) => !abgedeckt.has(z));
 
-    if (fehlend.length > 0) {
-      setFeedback("leer");
+    if (fehlend.length > 0 || schlechteImKorb.length > 0) {
+      setFeedback(true);
       return;
     }
-    if (schlechteImKorb.length > 0) {
-      setFeedback("nicht-nachhaltig");
-      return;
-    }
-    setFeedback(null);
+    setFeedback(false);
     setStatus("erfolg");
     setCartOpen(false);
     setTimeout(onErfolg, 1200);
