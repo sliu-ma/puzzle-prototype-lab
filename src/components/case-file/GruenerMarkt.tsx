@@ -24,6 +24,7 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
   const [status, setStatus] = useState<Status>("shop");
   const [cartOpen, setCartOpen] = useState(false);
   const [detail, setDetail] = useState<Produkt | null>(null);
+  const [feedback, setFeedback] = useState<null | "leer" | "nicht-nachhaltig">(null);
 
   const produktById = useMemo(
     () => Object.fromEntries(PRODUKTE.map((p) => [p.id, p])) as Record<string, Produkt>,
@@ -40,9 +41,11 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
   const inKorb = (id: string) => warenkorb.includes(id);
 
   const hinzufuegen = (id: string) => {
+    setFeedback(null);
     if (!warenkorb.includes(id)) setWarenkorb([...warenkorb, id]);
   };
   const entfernen = (id: string) => {
+    setFeedback(null);
     setWarenkorb(warenkorb.filter((x) => x !== id));
   };
 
@@ -53,12 +56,20 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
     );
     const fehlend = REZEPT_ZUTATEN_KEYS.filter((z) => !abgedeckt.has(z));
 
-    if (schlechteImKorb.length === 0 && fehlend.length === 0) {
-      setStatus("erfolg");
-      setCartOpen(false);
-      setTimeout(onErfolg, 1200);
+    if (fehlend.length > 0) {
+      setFeedback("leer");
+      return;
     }
+    if (schlechteImKorb.length > 0) {
+      setFeedback("nicht-nachhaltig");
+      return;
+    }
+    setFeedback(null);
+    setStatus("erfolg");
+    setCartOpen(false);
+    setTimeout(onErfolg, 1200);
   };
+
 
   return (
     <div className="rounded-sm border border-border bg-card shadow-sm">
@@ -155,10 +166,27 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
         {status === "erfolg" && (
           <div className="mt-2 rounded-sm border border-emerald-700/40 bg-emerald-700/5 p-3 text-xs">
             <p className="font-mono-typed text-[10px] uppercase tracking-wider text-emerald-800">
-              ✓ Einkauf nachhaltig abgeschlossen
+              ✓ Ping! Die Kasse springt an — Einkauf nachhaltig abgeschlossen.
             </p>
           </div>
         )}
+
+        {status !== "erfolg" && feedback === "leer" && (
+          <div className="mt-2 rounded-sm border border-stamp/40 bg-stamp/5 p-3 text-xs">
+            <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
+              Hast du alle Zutaten? Prüfe Elviras Rezept nochmal.
+            </p>
+          </div>
+        )}
+
+        {status !== "erfolg" && feedback === "nicht-nachhaltig" && (
+          <div className="mt-2 rounded-sm border border-stamp/40 bg-stamp/5 p-3 text-xs">
+            <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
+              Die Kasse springt nicht an. Eine Zutat ist nicht die nachhaltigste Wahl — schau dich nochmal um.
+            </p>
+          </div>
+        )}
+
       </div>
 
       {/* Bottom-Sheet Warenkorb */}

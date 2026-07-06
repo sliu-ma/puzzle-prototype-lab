@@ -5,7 +5,7 @@ import { Stamp } from "@/components/case-file/Stamp";
 import { GruenerMarkt } from "@/components/case-file/GruenerMarkt";
 import { QRGate } from "@/components/case-file/QRGate";
 import { StageGate } from "@/components/case-file/StageGate";
-import { HintSystem } from "@/components/case-file/HintSystem";
+import { HintSystem, type Hint } from "@/components/case-file/HintSystem";
 import { START_WARENKORB } from "@/lib/maya-data";
 import { completeStage, getFrozenClock, getHearingClock } from "@/lib/progress";
 import { cn } from "@/lib/utils";
@@ -51,6 +51,31 @@ const STEPS: { id: Step; label: string }[] = [
   { id: "naechstes", label: "Nächste Etappe" },
 ];
 
+const DORFLADEN_HINTS: Hint[] = [
+  {
+    id: 0,
+    unlockMin: 3,
+    label: "Tipp 1",
+    title: "Starte mit Elviras Rezept",
+    body: "Der Korb ist leer — das ist Absicht. Öffne oben das Rezept-Akkordeon und geh die Zutaten Schritt für Schritt durch. Für jede Zutat gibt es im Laden mindestens eine Option.",
+  },
+  {
+    id: 1,
+    unlockMin: 6,
+    label: "Tipp 2",
+    title: "Regionalität schlägt Import",
+    body: "Es ist Sommer — Erdbeeren gibt es in der Schweiz und in Spanien. Der viel kürzere Weg macht die Schweizer Variante nachhaltiger. Auch bei Zitronen lohnt der Blick auf die Herkunft: Bio/Demeter aus Italien ist deutlich näher als Südafrika.",
+  },
+  {
+    id: 2,
+    unlockMin: 9,
+    label: "Auflösung",
+    title: "So geht's",
+    body: "Wähle Schweizer Erdbeeren (IP-Suisse), Schweizer Bio-Freiland-Eier und die Bio/Demeter-Zitrone aus Italien. Ergänze Mehl, Zucker, Salz, Butter, Vollrahm und Vanillezucker — für die gibt es je nur eine Option. Dann springt die Kasse an.",
+  },
+];
+
+
 function AktePage() {
   const navigate = useNavigate();
   const envelope = useEnvelopePrompt();
@@ -92,8 +117,9 @@ function AktePage() {
               Etappe 2 · Dorfladen
             </h1>
             <p className="mt-0.5 font-serif italic text-sm text-foreground/70 sm:text-base">
-              Frau Bergers Einkaufskorb
+              Frau Bergers Regale
             </p>
+
           </div>
           <Stamp rotate={-6}>Vertraulich</Stamp>
         </header>
@@ -156,7 +182,7 @@ function AktePage() {
                 onClick={() => goto("shop")}
                 className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
               >
-                Zum Einkaufskorb →
+                In den Laden →
               </button>
             </div>
           </PaperCard>
@@ -228,7 +254,7 @@ function AktePage() {
                 onClick={() => setStep("shop")}
                 className="rounded-sm border border-border bg-card px-4 py-2.5 font-serif text-sm hover:bg-secondary"
               >
-                ← Zurück zum Korb
+                ← Zurück in den Laden
               </button>
               <button
                 onClick={() => goto("naechstes")}
@@ -295,8 +321,9 @@ function AktePage() {
       </div>
 
       {unlockedSteps.has("shop") && (step === "shop" || step === "input") && (
-        <HintSystem />
+        <HintSystem hints={DORFLADEN_HINTS} storageKey="akte-002-hints-start" />
       )}
+
     </main>
   );
 }
