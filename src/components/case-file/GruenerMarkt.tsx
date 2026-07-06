@@ -166,10 +166,27 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
         {status === "erfolg" && (
           <div className="mt-2 rounded-sm border border-emerald-700/40 bg-emerald-700/5 p-3 text-xs">
             <p className="font-mono-typed text-[10px] uppercase tracking-wider text-emerald-800">
-              ✓ Einkauf nachhaltig abgeschlossen
+              ✓ Ping! Die Kasse springt an — Einkauf nachhaltig abgeschlossen.
             </p>
           </div>
         )}
+
+        {status !== "erfolg" && feedback === "leer" && (
+          <div className="mt-2 rounded-sm border border-stamp/40 bg-stamp/5 p-3 text-xs">
+            <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
+              Hast du alle Zutaten? Prüfe Elviras Rezept nochmal.
+            </p>
+          </div>
+        )}
+
+        {status !== "erfolg" && feedback === "nicht-nachhaltig" && (
+          <div className="mt-2 rounded-sm border border-stamp/40 bg-stamp/5 p-3 text-xs">
+            <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
+              Die Kasse springt nicht an. Eine Zutat ist nicht die nachhaltigste Wahl — schau dich nochmal um.
+            </p>
+          </div>
+        )}
+
       </div>
 
       {/* Bottom-Sheet Warenkorb */}
