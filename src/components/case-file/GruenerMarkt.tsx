@@ -41,11 +41,11 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
   const inKorb = (id: string) => warenkorb.includes(id);
 
   const hinzufuegen = (id: string) => {
-    setFeedback(null);
+    setFeedback(false);
     if (!warenkorb.includes(id)) setWarenkorb([...warenkorb, id]);
   };
   const entfernen = (id: string) => {
-    setFeedback(null);
+    setFeedback(false);
     setWarenkorb(warenkorb.filter((x) => x !== id));
   };
 
