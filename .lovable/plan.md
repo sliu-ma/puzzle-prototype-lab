@@ -1,40 +1,55 @@
 ## Ziel
 
-URL-Pfade so umbenennen, dass sie mit der Etappen-Nummer korrelieren.
+Etappe 2 (Dorfladen) wird vom "Fehler-Finden"-Rätsel zum echten Einkaufsentscheid: SuS starten mit **leerem Korb**, wählen aus allen Produkten selbst aus. Feedback erst an der Kasse. Texte, Buttons und Tipps werden angepasst.
 
-| Etappe | Bisher | Neu |
-|---|---|---|
-| 1 · Bahnhof | `/akte-003` | `/etappe-1` |
-| 2 · Dorfladen | `/akte` | `/etappe-2` |
-| 3 · Wald | `/akte-002` | `/etappe-3` |
-| 4 · Elviras Haus | `/akte-004` | `/etappe-4` |
-| 5 · Wasserkraftwerk | `/akte-005` | `/etappe-5` |
-| Finale | `/finale` | `/finale` (unverändert) |
+## 1. Datenschicht (`src/lib/maya-data.ts`)
 
-## Umsetzung
+- `START_WARENKORB` = `[]` (leer statt vorgepackt).
+- `zitrone-za` (Südafrika) → `bewertung: "schlecht"` + `problemHinweis` (lange Wege, kein Bio), damit die Kassenprüfung sie ablehnt.
+- `zitrone-it` (Bio/Demeter Italien) → `bewertung: "gut"`, `ersetzt: "zitrone-za"` (Konsistenz mit Erdbeeren/Eiern).
+- Rezeptzutaten bleiben unverändert; jede benötigte Zutat hat mindestens eine "gute/neutrale" Option im Sortiment (Mehl, Zucker, Salz, Butter, Rahm, Vanillezucker: je 1 Option; Erdbeeren/Eier/Zitrone: je 2 Optionen mit nachhaltig ✓ vs. weniger nachhaltig ✗).
 
-1. **Route-Dateien umbenennen** (`mv`, Inhalte bleiben identisch):
-   - `src/routes/akte-003.tsx` → `src/routes/etappe-1.tsx`
-   - `src/routes/akte.tsx` → `src/routes/etappe-2.tsx`
-   - `src/routes/akte-002.tsx` → `src/routes/etappe-3.tsx`
-   - `src/routes/akte-004.tsx` → `src/routes/etappe-4.tsx`
-   - `src/routes/akte-005.tsx` → `src/routes/etappe-5.tsx`
+## 2. Kassenlogik (`src/components/case-file/GruenerMarkt.tsx`)
 
-2. **`createFileRoute("...")` in jeder Datei anpassen** — Pfad muss dem Dateinamen entsprechen (`"/etappe-1"` … `"/etappe-5"`).
+Die Funktion `pruefen()` erhält echtes Feedback statt stiller Blockade:
 
-3. **`src/lib/progress.ts`** — `STAGES[].to` und der `to`-Union-Typ auf neue Pfade umstellen.
+- **Fall A – leer / unvollständig:** Meldung "Hast du alle Zutaten?" (kein Erfolg).
+- **Fall B – vollständig, aber `schlechte` Produkte im Korb:** Meldung "Die Kasse springt nicht an. Schau dich nochmal um." (ohne konkret zu verraten welche).
+- **Fall C – vollständig + keine schlechten:** bestehender Erfolgspfad (Bon, `onErfolg`).
 
-4. **Alle `navigate({ to: "..." })`-Aufrufe** in den Etappen-Dateien anpassen (Zeiger auf die jeweils nächste Etappe): `/akte` → `/etappe-2`, `/akte-002` → `/etappe-3`, `/akte-004` → `/etappe-4`, `/akte-005` → `/etappe-5`.
+Feedback wird im Sticky-Cart-Bereich unter dem Bezahlen-Button als kleine, ruhige Notiz eingeblendet und verschwindet, sobald der Korb geändert wird. Kein sofortiges Feedback beim Hinzufügen einzelner Produkte.
 
-5. **`src/routeTree.gen.ts`** wird vom Vite-Plugin automatisch neu generiert — nicht anfassen.
+## 3. Texte & Buttons
 
-## Was NICHT geändert wird
+`**src/routes/etappe-2.tsx**`
 
-- **`localStorage`-Keys** (`akte-00X-unlocked`, `akte-00X-hints-start`, `maya-clock-akte-00X`) bleiben — sind reine Interna, keine URLs. Das erspart Migrationslogik und der bestehende `resetAll()`-Präfix (`akte-*`) wischt sie weiterhin sauber weg.
-- **QR-Tokens** (`AKTE_003_TOKEN` etc.) bleiben unverändert — die gedruckten QR-Codes im Dorf enthalten Text-Tokens, keine URLs, funktionieren also weiter.
-- **Konstantennamen im Code** (`AKTE_003_TOKEN`, `HINTS_003`, `AkteGated`, `AktePage`) bleiben — reine Symbole ohne User-Sichtbarkeit.
-- **`/finale`** bleibt.
+- Header-Untertitel: „Frau Bergers Einkaufskorb" → „Frau Bergers Regale".
+- Meta-Description passt (bereits leerer Korb).
+- Brief-Screen: Text steht bereits auf „leerer Korb" — bleibt.
+- Button „Zum Einkaufskorb →" → **„In den Laden →"**.
+- „← Zurück zum Korb" → „← Zurück in den Laden".
+- Weiter-Button nach Input bleibt.
 
-## Verifikation
+`**src/routes/etappe-1.tsx**` (Rätsel 1, Mobilität)
 
-Nach dem Umbau `tsgo --noEmit` laufen lassen: alle `navigate`- und `<Link to>`-Aufrufe sind über den `to`-Typ in `progress.ts` bzw. TanStacks generiertem RouteTree typisiert und würden bei einem übersehenen Pfad einen Compile-Error werfen.
+- Button „Nächstes Rätsel" → **„Weiter zu Etappe 2 →"** (bzw. analog zum Muster der anderen Etappen). Nur Buttontext, sonst nichts.
+
+## 4. Tipps (`src/routes/etappe-2.tsx`, `HintSystem`-Props)
+
+Etappe 2 nutzt die Default-Hints aus `HintSystem.tsx`. Wir übergeben stattdessen etappen-spezifische Hints via Prop (bereits unterstützt) und aktualisieren Fokus:
+
+- **Tipp 1:** Fokus „leerer Korb → welche Zutaten brauchst du überhaupt? Prüfe das Rezept."
+- **Tipp 2:** Fokus **Regionalität** (nicht Saisonalität, da Sommer): „Erdbeeren gibt's im Sommer sowohl aus der Schweiz als auch aus Spanien — die Schweizer Variante hat den viel kürzeren Weg. Auch bei **Zitronen** lohnt der Blick auf die Herkunft (Italien/Bio vs. Südafrika)."
+- **Tipp 3 (Auflösung):** „Wähle Schweizer Erdbeeren (IP-Suisse), Schweizer Bio-Freiland-Eier und die Bio/Demeter-Zitrone aus Italien. Ergänze Mehl, Zucker, Salz, Butter, Vollrahm und Vanillezucker."
+
+## 5. Nicht angefasst
+
+- QR-Token, Route, StageGate, EnvelopeDialog-Flow, Fachlicher Input, Registrierkassen-Bon-Text.
+- Andere Etappen (nur `etappe-1` Buttontext).
+- Bilder/Assets.
+
+## Technische Notizen
+
+- `pruefen()` ruft heute schon `onErfolg` nur bei Erfolg auf; wir erweitern nur den Feedback-State (`feedback: null | "leer" | "nicht-nachhaltig"`).
+- Reset des Feedbacks bei jedem `hinzufuegen`/`entfernen`.
+- `zitrone-za.bewertung` von "neutral" → "schlecht" ist nötig, damit die vorhandene Prüfung greift.
