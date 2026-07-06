@@ -131,8 +131,9 @@ export const PRODUKTE: Produkt[] = [
     saison: "ganzjahr",
     emoji: "🍋",
     bildUrl: zitroneAsset.url,
-    bewertung: "neutral",
+    bewertung: "gut",
     zutat: "zitrone",
+    ersetzt: "zitrone-za",
     nachhaltigkeit: {
       regional: 2,
       saisonal: 4,
@@ -426,7 +427,10 @@ export const PRODUKTE: Produkt[] = [
     saison: "ganzjahr",
     emoji: "🍋",
     bildUrl: zitroneZaAsset.url,
-    bewertung: "neutral",
+    bewertung: "schlecht",
+    zutat: "zitrone",
+    problemHinweis:
+      "Zitronen aus Südafrika legen per Schiff oder Flugzeug tausende Kilometer zurück — ohne Bio-Standard. Italienische Bio-/Demeter-Zitronen sind die deutlich nachhaltigere Wahl.",
     nachhaltigkeit: {
       regional: 1,
       saisonal: 3,
@@ -514,17 +518,7 @@ export const REZEPT = {
   ],
 };
 
-export const START_WARENKORB: string[] = [
-  "erdbeeren-es",
-  "eier-bh-import",
-  "mehl-ch",
-  "zucker-ch",
-  "salz",
-  "butter-ch",
-  "zitrone-it",
-  "vollrahm-ch",
-  "vanillezucker",
-];
+export const START_WARENKORB: string[] = [];
 
 export const REZEPT_ZUTATEN_KEYS = [
   "mehl",
