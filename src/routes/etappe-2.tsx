@@ -144,24 +144,12 @@ function AktePage() {
               Frau Berger wartet schon.
             </h2>
             <p className="mt-1 font-mono-typed text-xs text-muted-foreground">
-              [Holztresen · gepackter Korb · {getFrozenClock("maya-clock-akte-002")} Uhr]
+              [Holztresen · leerer Korb · {getFrozenClock("maya-clock-akte-002")} Uhr]
             </p>
             <blockquote className="mt-5 border-l-4 border-stamp pl-4 text-[15px] leading-relaxed">
-              Der alte Dorfladen ist eigentlich schon geschlossen, aber Frau
-              Berger, eine langjährige Freundin Elviras, lässt dich noch hinein.
+              Der alte Dorfladen ist eigentlich schon geschlossen, aber Frau Berger, eine langjährige Freundin Elviras, lässt dich noch hinein. „Deine Tante war hier jede Woche", sagt sie. „Sie hat mal gesagt: Wenn ich sehe, was die Leute kaufen, weiss ich genau, was schiefläuft."
               <br /><br />
-              „Deine Tante war hier jede Woche", sagt sie nachdenklich. „Sie hat
-              mal gesagt: Wenn ich sehe, was die Leute kaufen, weiss ich genau,
-              was schiefläuft."
-              <br /><br />
-              Du ziehst Elviras Einkaufsliste hervor und zeigst sie Frau Berger.
-              Daraufhin holt sie einen Einkaufskorb hinter der Kasse hervor.
-              „Diesen hat Elvira gepackt." Du schaust rein, dann auf die Liste.
-              Alles stimmt überein, jedes einzelne Produkt. Und genau das ist
-              komisch.
-              <br /><br />
-              „Sie meinte, du seist ziemlich gut im Kombinieren." Frau Berger
-              lächelt. „Was fällt dir auf?"
+              Du ziehst Elviras Einkaufsliste hervor. Frau Berger liest sie durch, nickt, und stellt einen leeren Korb auf den Tresen. „Die Zutaten sind alle da. Aber welche du nimmst, das musst du selbst entscheiden." Sie deutet auf die Regale. „Elvira hätte es gewusst."
             </blockquote>
             <div className="mt-6 flex justify-end">
               <button
