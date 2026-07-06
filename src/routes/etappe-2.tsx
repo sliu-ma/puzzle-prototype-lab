@@ -5,7 +5,7 @@ import { Stamp } from "@/components/case-file/Stamp";
 import { GruenerMarkt } from "@/components/case-file/GruenerMarkt";
 import { QRGate } from "@/components/case-file/QRGate";
 import { StageGate } from "@/components/case-file/StageGate";
-import { HintSystem } from "@/components/case-file/HintSystem";
+import { HintSystem, type Hint } from "@/components/case-file/HintSystem";
 import { START_WARENKORB } from "@/lib/maya-data";
 import { completeStage, getFrozenClock, getHearingClock } from "@/lib/progress";
 import { cn } from "@/lib/utils";
@@ -50,6 +50,31 @@ const STEPS: { id: Step; label: string }[] = [
   { id: "input", label: "Fachlicher Input" },
   { id: "naechstes", label: "Nächste Etappe" },
 ];
+
+const DORFLADEN_HINTS: Hint[] = [
+  {
+    id: 0,
+    unlockMin: 3,
+    label: "Tipp 1",
+    title: "Starte mit Elviras Rezept",
+    body: "Der Korb ist leer — das ist Absicht. Öffne oben das Rezept-Akkordeon und geh die Zutaten Schritt für Schritt durch. Für jede Zutat gibt es im Laden mindestens eine Option.",
+  },
+  {
+    id: 1,
+    unlockMin: 6,
+    label: "Tipp 2",
+    title: "Regionalität schlägt Import",
+    body: "Es ist Sommer — Erdbeeren gibt es in der Schweiz und in Spanien. Der viel kürzere Weg macht die Schweizer Variante nachhaltiger. Auch bei Zitronen lohnt der Blick auf die Herkunft: Bio/Demeter aus Italien ist deutlich näher als Südafrika.",
+  },
+  {
+    id: 2,
+    unlockMin: 9,
+    label: "Auflösung",
+    title: "So geht's",
+    body: "Wähle Schweizer Erdbeeren (IP-Suisse), Schweizer Bio-Freiland-Eier und die Bio/Demeter-Zitrone aus Italien. Ergänze Mehl, Zucker, Salz, Butter, Vollrahm und Vanillezucker — für die gibt es je nur eine Option. Dann springt die Kasse an.",
+  },
+];
+
 
 function AktePage() {
   const navigate = useNavigate();
@@ -296,8 +321,9 @@ function AktePage() {
       </div>
 
       {unlockedSteps.has("shop") && (step === "shop" || step === "input") && (
-        <HintSystem />
+        <HintSystem hints={DORFLADEN_HINTS} storageKey="akte-002-hints-start" />
       )}
+
     </main>
   );
 }
