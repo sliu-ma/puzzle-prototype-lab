@@ -146,7 +146,7 @@ export const DEVICES: EnergyDevice[] = [
     ...fromPx(362, 1376, 100, 136),
     options: [
       { id: "alt", label: "Alter Backofen", productName: "Backofen Grossmutter", description: "Lange Vorheizzeit.", cost: 0, energy: 0, energyLabel: "E" },
-      { id: "umluft", label: "Umluft A", productName: "Umluft ClassicPlus", description: "Niedrigere Temperatur möglich.", cost: 0, energy: 20, energyLabel: "B" },
+      { id: "umluft", label: "Umluft", productName: "Umluft ClassicPlus", description: "Niedrigere Temperatur möglich — gleicher Ofen, anderes Programm.", cost: 0, energy: 20 },
       { id: "a3", label: "Umluft A+++", productName: "EcoBake Pro", description: "Top isoliert, sehr effizient.", cost: 700, energy: 70, energyLabel: "A" },
     ],
   },
