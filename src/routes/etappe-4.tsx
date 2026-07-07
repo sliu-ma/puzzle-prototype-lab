@@ -16,22 +16,22 @@ const HINTS_004: Hint[] = [
     id: 0,
     unlockMin: 3,
     label: "Tipp 1",
-    title: "Wo steckt der grösste Verbrauch?",
-    body: "Öffne zuerst die grossen Posten: Heizung, Warmwasser, Dusche und Fenster. Dort schlummern die meisten kWh — nicht bei Fernseher oder Lampe.",
+    title: "Grosse Posten zuerst",
+    body: "Klick als Erstes auf Heizung/Raumtemperatur, Dusche und die Wäsche. Kleine Geräte wie Staubsauger oder Fernseher bringen nur wenige Punkte.",
   },
   {
     id: 1,
     unlockMin: 6,
     label: "Tipp 2",
-    title: "Nicht jedes teure Upgrade lohnt sich",
-    body: "Verhalten kostet 0 CHF und bringt viel: kurz duschen, Wasserhahn zudrehen, stosslüften statt Kippfenster. Behalte das Budget im Blick — die teuersten Geräte sind selten die effizientesten pro Franken.",
+    title: "Gewohnheiten sind gratis — und stark",
+    body: "18 °C heizen, kurz duschen, Wäsche aufhängen, Eco-Programme, Deckel auf den Topf, Kühlschrank auf 7 °C: alles kostet 0 CHF und bringt zusammen schon fast die 3'500 ESP.",
   },
   {
     id: 2,
     unlockMin: 9,
     label: "Auflösung",
-    title: "So erreichst du die 10'000 kWh",
-    body: "Kombiniere günstige Verhaltensoptionen mit gezielten Upgrades: Sparbrause + kurz duschen (2'700), Wasserhahn-Perlator (900), Stosslüften (1'600), Wärmepumpe (5'200), Warmwasser-Wärmepumpe (1'900), Steckerleiste beim TV (320), LED (410). Damit bleibst du im Budget und knackst die 10'000 kWh locker.",
+    title: "So erreichst du die 3'500 ESP",
+    body: "Nur mit Verhalten: 18 °C (1480) + 5-Min-Dusche (820) + Aufhängen (550) + Eco-Waschen (340) + Eco-Spülen (150) + Umluft (20) + Deckel + Pfannengrösse (220) + Kühlschrank 7 °C (90) = ~3'670 ESP. Ergänze eine LED-Lampe (60 CHF) oder Sparbrause (30 CHF) — Budget bleibt fast unangetastet.",
   },
 ];
 
