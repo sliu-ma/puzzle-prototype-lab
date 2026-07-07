@@ -271,7 +271,7 @@ function OptionRow({
             <span className="text-[11px] font-normal text-emerald-700">✓ gewählt</span>
           )}
         </div>
-        <div className="mt-0.5 line-clamp-1 text-xs text-foreground/70">{opt.description}</div>
+        <div className="mt-0.5 text-xs text-foreground/70">{opt.description}</div>
         {opt.energyLabel && (
           <div className="mt-2">
             <EnergyLabel grade={opt.energyLabel} />
