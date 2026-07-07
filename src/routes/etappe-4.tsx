@@ -344,11 +344,11 @@ function AktePage() {
                 Sicherungskastens springt auf. Darin: eine Schlüsselkarte und
                 ein Zettel.
                 <br /><br />
-                „10'000 kWh — genau der Beweis, den wir brauchen! Ich bin jetzt
-                beim alten Wasserkraftwerk am Dorfrand. Marlene Vogt,
-                Mitarbeiterin im kantonalen Umweltamt, wartet dort auf uns —
-                sie hat Zugang zu den offiziellen Gemeindegutachten und hilft
-                mir, die Fehler darin zu belegen. Komm schnell! Die Zeit läuft."
+                „3'500 Energiesparpunkte — genau der Beweis, den wir brauchen!
+                Ich bin jetzt beim alten Wasserkraftwerk am Dorfrand. Marlene
+                Vogt, Mitarbeiterin im kantonalen Umweltamt, wartet dort auf
+                uns — sie hat Zugang zu den offiziellen Gemeindegutachten und
+                hilft mir, die Fehler darin zu belegen. Komm schnell! Die Zeit läuft."
               </p>
               <p className="mt-3 font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
                 — E.
