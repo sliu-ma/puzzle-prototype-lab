@@ -30,12 +30,12 @@ const LABEL_MAP: Record<EnergyLabelGrade, { url: string }> = {
   G: labelG,
 };
 
-function EnergyLabel({ grade }: { grade: EnergyLabelGrade }) {
+function EnergyLabel({ grade, size = "large" }: { grade: EnergyLabelGrade; size?: "small" | "large" }) {
   return (
     <img
       src={LABEL_MAP[grade].url}
       alt={`Energieklasse ${grade}`}
-      className="h-4 w-auto object-contain"
+      className={`w-auto object-contain ${size === "large" ? "h-8" : "h-4"}`}
     />
   );
 }
@@ -264,12 +264,16 @@ function OptionRow({
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
           <span className="font-bold leading-tight">{opt.productName ?? opt.label}</span>
-          {opt.energyLabel && <EnergyLabel grade={opt.energyLabel} />}
           {isCurrent && (
             <span className="text-[11px] font-normal text-emerald-700">✓ gewählt</span>
           )}
         </div>
         <div className="mt-0.5 line-clamp-1 text-xs text-foreground/70">{opt.description}</div>
+        {opt.energyLabel && (
+          <div className="mt-2">
+            <EnergyLabel grade={opt.energyLabel} />
+          </div>
+        )}
       </div>
       <div className="flex shrink-0 items-center gap-3 text-xs">
         <Coin value={opt.cost} />
