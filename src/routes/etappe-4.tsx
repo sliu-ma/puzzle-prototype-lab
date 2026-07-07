@@ -175,16 +175,16 @@ function AktePage() {
             <blockquote className="mt-5 border-l-4 border-stamp pl-4 text-[15px] leading-relaxed">
               Du kommst ausser Atem zurück zu Elviras Haus. Auf dem Küchentisch
               — genau dort, wo der erste Brief lag — liegt jetzt eine grosse
-              Zeichnung: eine Querschnittsansicht des Hauses mit Küche,
-              Badezimmer, Wohnzimmer, Schlafzimmer und Heizkeller. Daneben ein
-              Zettel:
+              Zeichnung: eine Querschnittsansicht des Hauses mit Schlafzimmer,
+              Bad, Wäscheraum, Wohnzimmer und Küche. Daneben ein Zettel:
               <br />
               <br />
               „Ein neues Kraftwerk wird oft nur deshalb gebaut, weil wir im
               Alltag unbemerkt zu viel Energie verbrauchen. Wenn wir zeigen
-              können, wie viel ein einziger Haushalt einsparen kann, bricht das
-              Hauptargument für den Neubau zusammen. Nimm die Rechnungen aus
-              der Kiste und finde heraus, welche Massnahmen am meisten bringen!"
+              können, wie viele Energiesparpunkte ein einziger Haushalt sammeln
+              kann, bricht das Hauptargument für den Neubau zusammen. Nimm die
+              Rechnungen aus der Kiste und finde heraus, welche Massnahmen am
+              meisten bringen — oft sind es nicht die teuersten!"
             </blockquote>
             <div className="mt-6 flex justify-end">
               <button
