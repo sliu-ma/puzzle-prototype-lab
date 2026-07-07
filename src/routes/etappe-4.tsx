@@ -42,7 +42,7 @@ export const Route = createFileRoute("/etappe-4")({
       {
         name: "description",
         content:
-          "Etappe 4: Zurück bei Elvira. Eine Querschnittszeichnung des Hauses, alte Rechnungen — und das Ziel: 10'000 kWh einsparen.",
+          "Etappe 4: Zurück bei Elvira. Eine Querschnittszeichnung des Hauses, alte Rechnungen — und das Ziel: 3'500 Energiesparpunkte sammeln.",
       },
     ],
   }),
