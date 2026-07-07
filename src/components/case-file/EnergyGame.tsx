@@ -35,7 +35,7 @@ function EnergyLabel({ grade, size = "large" }: { grade: EnergyLabelGrade; size?
     <img
       src={LABEL_MAP[grade].url}
       alt={`Energieklasse ${grade}`}
-      className={`w-auto object-contain ${size === "large" ? "h-8" : "h-4"}`}
+      className={`w-auto object-contain ${size === "large" ? "h-14" : "h-4"}`}
     />
   );
 }
