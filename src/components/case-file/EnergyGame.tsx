@@ -268,9 +268,13 @@ function OptionRow({
             <span className="ml-2 text-[11px] font-normal text-emerald-700">✓ gewählt</span>
           )}
         </div>
+        {opt.productName && (
+          <div className="text-xs italic text-foreground/60">{opt.productName}</div>
+        )}
         <div className="text-xs text-foreground/70">{opt.description}</div>
       </div>
       <div className="flex shrink-0 flex-col items-end gap-1 text-xs">
+        {opt.energyLabel && <EnergyLabel grade={opt.energyLabel} />}
         <Coin value={opt.cost} />
         <span
           className={`whitespace-nowrap font-bold ${
