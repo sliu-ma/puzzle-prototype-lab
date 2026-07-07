@@ -212,7 +212,7 @@ function AktePage() {
                 </p>
                 <ul className="mt-2 space-y-1 text-[15px]">
                   <li>· Querschnitt mit 5 Räumen</li>
-                  <li>· 1'500.– CHF Budget</li>
+                  <li>· 1'000.– CHF Budget</li>
                   <li>· Pro Gerät 2–3 Optionen</li>
                 </ul>
               </div>
@@ -224,7 +224,7 @@ function AktePage() {
                   <li>Tippe Geräte im Haus an.</li>
                   <li>Wähle eine Option pro Gerät.</li>
                   <li>Achte aufs Budget.</li>
-                  <li>Erreiche mind. 10'000 kWh Ersparnis.</li>
+                  <li>Sammle mind. 3'500 Energiesparpunkte.</li>
                 </ol>
               </div>
             </div>
