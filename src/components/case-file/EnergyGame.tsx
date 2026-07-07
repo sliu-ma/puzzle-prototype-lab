@@ -225,7 +225,10 @@ export function EnergyGame({ onErfolg }: { onErfolg: () => void }) {
           device={open}
           current={choices[open.id]}
           remaining={remaining}
-          onChoose={(choice) => setChoice(open.id, choice)}
+          onChoose={(choice) => {
+            setChoice(open.id, choice);
+            setOpen(null);
+          }}
           onClose={() => setOpen(null)}
         />
       )}
