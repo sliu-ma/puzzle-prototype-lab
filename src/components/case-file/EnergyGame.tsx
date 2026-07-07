@@ -6,41 +6,11 @@ import {
   ENERGY_TARGET,
   formatNumber,
   type EnergyDevice,
-  type EnergyLabelGrade,
   type EnergyOption,
 } from "@/lib/energy-data";
 import houseAsset from "@/assets/haus.png.asset.json";
 import coin from "@/assets/coin.png";
 import trophy from "@/assets/trophy.png";
-import labelA from "@/assets/label-a.png.asset.json";
-import labelB from "@/assets/label-b.png.asset.json";
-import labelC from "@/assets/label-c.png.asset.json";
-import labelD from "@/assets/label-d.png.asset.json";
-import labelE from "@/assets/label-e.png.asset.json";
-import labelF from "@/assets/label-f.png.asset.json";
-import labelG from "@/assets/label-g.png.asset.json";
-
-const LABEL_MAP: Record<EnergyLabelGrade, { url: string }> = {
-  A: labelA,
-  B: labelB,
-  C: labelC,
-  D: labelD,
-  E: labelE,
-  F: labelF,
-  G: labelG,
-};
-
-function EnergyLabel({ grade }: { grade: EnergyLabelGrade }) {
-  return (
-    <img
-      src={LABEL_MAP[grade].url}
-      alt={`Energieklasse ${grade}`}
-      width={180}
-      height={36}
-      className="h-9 w-auto object-contain"
-    />
-  );
-}
 
 function Coin({ value, variant = "coin" }: { value: string | number; variant?: "coin" | "energy" }) {
   return (
@@ -274,11 +244,6 @@ function OptionRow({
           )}
         </div>
         <div className="mt-0.5 text-xs text-foreground/70">{opt.description}</div>
-        {opt.energyLabel && (
-          <div className="mt-2">
-            <EnergyLabel grade={opt.energyLabel} />
-          </div>
-        )}
       </div>
       <div className="flex shrink-0 items-center gap-3 text-xs">
         <Coin value={opt.cost} />
