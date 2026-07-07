@@ -3,7 +3,13 @@ export interface EnergyOption {
   label: string;
   description: string;
   cost: number;
-  energy: number; // kWh/Jahr Ersparnis
+  energy: number; // Energiesparpunkte (ESP)
+}
+
+export interface EnergyOptionGroup {
+  id: string;
+  label: string;
+  options: EnergyOption[];
 }
 
 export interface EnergyDevice {
@@ -15,13 +21,15 @@ export interface EnergyDevice {
   y: number;
   w: number;
   h: number;
-  options: EnergyOption[];
+  options?: EnergyOption[];
+  groups?: EnergyOptionGroup[];
 }
 
-export const BUDGET = 1500;
+export const BUDGET = 1000;
+export const ENERGY_TARGET = 3500;
 
 const IMG_W = 941;
-const IMG_H = 1672;
+const IMG_H = 1671;
 const fromPx = (xPx: number, yPx: number, wPx: number, hPx: number) => ({
   x: (xPx / IMG_W) * 100,
   y: (yPx / IMG_H) * 100,
@@ -35,11 +43,23 @@ export const DEVICES: EnergyDevice[] = [
     name: "Schlafzimmer – Fernseher",
     room: "Schlafzimmer",
     icon: "📺",
-    ...fromPx(366.6, 558, 82, 62),
+    ...fromPx(167, 802, 103, 107),
     options: [
-      { id: "alt", label: "Alter LCD, Standby an", description: "Läuft immer im Standby.", cost: 0, energy: 0 },
-      { id: "off", label: "Steckerleiste mit Schalter", description: "Komplett aus wenn nicht gebraucht.", cost: 15, energy: 320 },
-      { id: "neu", label: "Neuer OLED, A-Klasse", description: "Effizient und ohne Standby.", cost: 900, energy: 480 },
+      { id: "alt", label: "Alter LCD, Stand-by an", description: "Läuft immer im Standby.", cost: 0, energy: 0 },
+      { id: "led-e", label: "Neuer LED, E-Klasse", description: "Etwas effizienter.", cost: 700, energy: 50 },
+      { id: "led-d", label: "Neuer D-Klasse", description: "Deutlich effizienter.", cost: 1000, energy: 90 },
+    ],
+  },
+  {
+    id: "heating",
+    name: "Schlafzimmer – Raumtemperatur",
+    room: "Schlafzimmer",
+    icon: "🌡️",
+    ...fromPx(368, 970, 94, 91),
+    options: [
+      { id: "22", label: "22 °C (aktuell)", description: "Angenehm warm, hoher Verbrauch.", cost: 0, energy: 0 },
+      { id: "20", label: "20 °C heizen", description: "Ein Pullover mehr — spart viel.", cost: 0, energy: 740 },
+      { id: "18", label: "18 °C heizen", description: "Sportlich frisch, maximaler Effekt.", cost: 0, energy: 1480 },
     ],
   },
   {
@@ -47,47 +67,47 @@ export const DEVICES: EnergyDevice[] = [
     name: "Bad – Dusche",
     room: "Bad",
     icon: "🚿",
-    ...fromPx(605, 455, 191, 287),
+    ...fromPx(625, 800, 175, 340),
     options: [
-      { id: "lang", label: "Lange heisse Dusche", description: "15 Minuten täglich.", cost: 0, energy: 0 },
-      { id: "kurz", label: "Kurz duschen (5 Min)", description: "Schneller fertig, mehr Energie gespart.", cost: 0, energy: 1800 },
-      { id: "sparbrause", label: "Sparbrause + kurz", description: "Halbiert den Wasserverbrauch.", cost: 60, energy: 2700 },
+      { id: "lang", label: "10 Minuten duschen (aktuell)", description: "Lange heisse Dusche.", cost: 0, energy: 0 },
+      { id: "kurz", label: "Kurz duschen (5 Min)", description: "Schneller fertig, gratis.", cost: 0, energy: 820 },
+      { id: "sparbrause", label: "Sparbrause + kurz duschen", description: "Halbierter Wasserdurchfluss.", cost: 30, energy: 1150 },
     ],
   },
   {
-    id: "faucet",
-    name: "Bad – Wasserhahn",
-    room: "Bad",
-    icon: "🚰",
-    ...fromPx(495, 605, 100, 81),
+    id: "tumbler",
+    name: "Wäscheraum – Tumbler",
+    room: "Wäscheraum",
+    icon: "🌀",
+    ...fromPx(354, 548, 137, 187),
     options: [
-      { id: "alt", label: "Alter Hahn, läuft immer", description: "Wasser läuft beim Zähneputzen.", cost: 0, energy: 0 },
-      { id: "zu", label: "Beim Putzen zudrehen", description: "Einfache Gewohnheit, viel Wirkung.", cost: 0, energy: 600 },
-      { id: "perlator", label: "Spar-Perlator", description: "Halbierter Wasserdurchfluss.", cost: 20, energy: 900 },
+      { id: "alt", label: "Alter Tumbler", description: "Läuft nach jeder Wäsche.", cost: 0, energy: 0 },
+      { id: "neu", label: "Neues Gerät A+++", description: "Effizienter, aber teuer.", cost: 700, energy: 350 },
+      { id: "aufhaengen", label: "Wäsche aufhängen", description: "Braucht Zeit, spart viel — gratis.", cost: 0, energy: 550 },
     ],
   },
   {
-    id: "fridge",
-    name: "Küche – Kühlschrank",
-    room: "Küche",
-    icon: "🧊",
-    ...fromPx(167, 830, 90, 246),
+    id: "washer",
+    name: "Wäscheraum – Waschmaschine",
+    room: "Wäscheraum",
+    icon: "🧺",
+    ...fromPx(196, 540, 142, 196),
     options: [
-      { id: "alt", label: "Kühlschrank von 2005", description: "Energiefresser.", cost: 0, energy: 0 },
-      { id: "a-plus", label: "Modell A+", description: "Etwas sparsamer.", cost: 400, energy: 380 },
-      { id: "a-plus3", label: "Neues Modell A+++", description: "Hocheffizient.", cost: 800, energy: 720 },
+      { id: "40-60", label: "Wäsche 40–60 °C", description: "Standardprogramm.", cost: 0, energy: 0 },
+      { id: "eco", label: "40–60 °C Eco-Programm", description: "Länger, aber viel sparsamer.", cost: 0, energy: 340 },
+      { id: "neu", label: "Neue Waschmaschine", description: "Modernes A+++ Gerät.", cost: 1700, energy: 390 },
     ],
   },
   {
-    id: "oven",
-    name: "Küche – Ofen",
-    room: "Küche",
-    icon: "🍳",
-    ...fromPx(370, 976, 84, 100),
+    id: "vacuum",
+    name: "Wäscheraum – Staubsauger",
+    room: "Wäscheraum",
+    icon: "🧹",
+    ...fromPx(625, 456, 159, 279),
     options: [
-      { id: "alt", label: "Alter Backofen", description: "Lange Vorheizzeit.", cost: 0, energy: 0 },
-      { id: "umluft", label: "Umluft nutzen", description: "Niedrigere Temperatur möglich.", cost: 0, energy: 220 },
-      { id: "neu", label: "Neuer A+++ Ofen", description: "Top isoliert.", cost: 750, energy: 540 },
+      { id: "alt", label: "Alter Staubsauger", description: "Ineffizient, viel Strom.", cost: 0, energy: 0 },
+      { id: "neu", label: "Neues Gerät", description: "Etwas sparsamer.", cost: 100, energy: 45 },
+      { id: "top", label: "Sehr energieeffizient", description: "Bestes Modell auf dem Markt.", cost: 200, energy: 70 },
     ],
   },
   {
@@ -95,58 +115,81 @@ export const DEVICES: EnergyDevice[] = [
     name: "Wohnzimmer – Lampe",
     room: "Wohnzimmer",
     icon: "💡",
-    ...fromPx(495, 904.5, 56, 111),
+    ...fromPx(510, 1267, 61, 134),
     options: [
-      { id: "glueh", label: "Glühbirnen", description: "Viel Strom.", cost: 0, energy: 0 },
-      { id: "led", label: "LED warmweiss", description: "Selbe Stimmung, weniger Strom.", cost: 90, energy: 410 },
-      { id: "dimm", label: "LED + Dimmer", description: "Helligkeit nach Bedarf.", cost: 160, energy: 520 },
+      { id: "halogen", label: "Halogen", description: "Warm, aber viel Strom.", cost: 0, energy: 0 },
+      { id: "spar", label: "Energiesparlampe", description: "Deutlich effizienter.", cost: 30, energy: 300 },
+      { id: "led", label: "LED", description: "Beste Wahl, kaum Verbrauch.", cost: 60, energy: 350 },
     ],
   },
   {
-    id: "window",
-    name: "Wohnzimmer – Fenster",
-    room: "Wohnzimmer",
-    icon: "🪟",
-    ...fromPx(578.5, 822.2, 152.6, 129.2),
+    id: "dishwasher",
+    name: "Küche – Geschirrspüler",
+    room: "Küche",
+    icon: "🍽️",
+    ...fromPx(257, 1377, 94, 137),
     options: [
-      { id: "kippen", label: "Fenster auf Kipp", description: "Dauerhaft gekippt – Wärme entweicht.", cost: 0, energy: 0 },
-      { id: "stoss", label: "Stosslüften", description: "Kurz weit auf, dann zu.", cost: 0, energy: 1600 },
-      { id: "3fach", label: "3-fach Verglasung", description: "Top isoliert.", cost: 1100, energy: 2200 },
+      { id: "normal", label: "Geschirrspüler normal", description: "Standardprogramm.", cost: 0, energy: 0 },
+      { id: "eco", label: "Geschirrspüler Eco", description: "Länger, aber sparsamer.", cost: 0, energy: 150 },
+      { id: "hand", label: "Von Hand abwaschen", description: "Braucht viel warmes Wasser — schlechter als der Geschirrspüler.", cost: 0, energy: -90 },
     ],
   },
   {
-    id: "car",
-    name: "Garage – Auto",
-    room: "Garage",
-    icon: "🚗",
-    ...fromPx(190, 1266, 248, 221),
+    id: "oven",
+    name: "Küche – Ofen",
+    room: "Küche",
+    icon: "🍳",
+    ...fromPx(362, 1376, 100, 136),
     options: [
-      { id: "benzin", label: "Benziner", description: "Klassischer Verbrenner.", cost: 0, energy: 0 },
-      { id: "hybrid", label: "Hybrid-Auto", description: "Weniger Verbrauch in der Stadt.", cost: 800, energy: 1400 },
-      { id: "elektro", label: "E-Auto + PV-Strom", description: "Mit Solar geladen.", cost: 1300, energy: 3200 },
+      { id: "alt", label: "Alter Backofen", description: "Lange Vorheizzeit.", cost: 0, energy: 0 },
+      { id: "umluft", label: "Umluft A", description: "Niedrigere Temperatur möglich.", cost: 0, energy: 20 },
+      { id: "a3", label: "Umluft A+++", description: "Top isoliert, sehr effizient.", cost: 700, energy: 70 },
     ],
   },
   {
-    id: "heating",
-    name: "Heizraum – Heizung",
-    room: "Heizraum",
-    icon: "🌡️",
-    ...fromPx(585, 1260, 111, 221),
-    options: [
-      { id: "oel", label: "Alte Ölheizung", description: "Teuer und CO₂-stark.", cost: 0, energy: 0 },
-      { id: "gas", label: "Gasheizung modern", description: "Etwas besser.", cost: 700, energy: 2400 },
-      { id: "wp", label: "Wärmepumpe", description: "Strom + Umweltwärme.", cost: 1200, energy: 5200 },
+    id: "stove",
+    name: "Küche – Herd",
+    room: "Küche",
+    icon: "🔥",
+    ...fromPx(363, 1311, 98, 50),
+    groups: [
+      {
+        id: "topf",
+        label: "Kochen im Topf",
+        options: [
+          { id: "ohne", label: "Ohne Deckel (aktuell)", description: "Wärme entweicht.", cost: 0, energy: 0 },
+          { id: "deckel", label: "Mit Deckel kochen", description: "Wärme bleibt drin — gratis.", cost: 0, energy: 120 },
+        ],
+      },
+      {
+        id: "geschirr",
+        label: "Kochgeschirr",
+        options: [
+          { id: "klein", label: "Zu kleine Pfanne (aktuell)", description: "Energie geht daneben.", cost: 0, energy: 0 },
+          { id: "korrekt", label: "Passende Pfannengrösse", description: "Passend zur Herdplatte.", cost: 0, energy: 100 },
+        ],
+      },
+      {
+        id: "platte",
+        label: "Herdplatte",
+        options: [
+          { id: "guss", label: "Gusseisenplatte (aktuell)", description: "Heizt langsam auf.", cost: 0, energy: 0 },
+          { id: "glas", label: "Glaskeramik", description: "Reagiert schneller.", cost: 300, energy: 50 },
+          { id: "induktion", label: "Induktionsherd", description: "Effizienteste Technik.", cost: 750, energy: 100 },
+        ],
+      },
     ],
   },
   {
-    id: "hotwater",
-    name: "Heizraum – Warmwasser",
-    room: "Heizraum",
-    icon: "♨️",
-    ...fromPx(696, 1341, 81, 103),
+    id: "fridge",
+    name: "Küche – Kühlschrank",
+    room: "Küche",
+    icon: "🧊",
+    ...fromPx(156, 1212, 91, 300),
     options: [
-      { id: "elektro", label: "Elektroboiler", description: "Konstant am Heizen.", cost: 0, energy: 0 },
-      { id: "wp", label: "Warmwasser-Wärmepumpe", description: "Viel sparsamer.", cost: 500, energy: 1900 },
+      { id: "alt", label: "Altes Gerät", description: "Läuft rund um die Uhr.", cost: 0, energy: 0 },
+      { id: "warm", label: "Temperatur 5 → 7 °C", description: "Zwei Grad wärmer — gratis.", cost: 0, energy: 90 },
+      { id: "neu", label: "Neues Gerät A+++", description: "Hocheffizient.", cost: 1000, energy: 320 },
     ],
   },
 ];

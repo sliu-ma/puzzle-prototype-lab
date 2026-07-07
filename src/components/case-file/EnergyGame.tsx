@@ -1,7 +1,14 @@
 import { useMemo, useState } from "react";
 import { Check, RotateCcw, Wallet, Zap } from "lucide-react";
-import { BUDGET, DEVICES, formatNumber, type EnergyDevice } from "@/lib/energy-data";
-import houseBg from "@/assets/house-bg.jpg";
+import {
+  BUDGET,
+  DEVICES,
+  ENERGY_TARGET,
+  formatNumber,
+  type EnergyDevice,
+  type EnergyOption,
+} from "@/lib/energy-data";
+import houseAsset from "@/assets/haus.png.asset.json";
 import coin from "@/assets/coin.png";
 import trophy from "@/assets/trophy.png";
 
@@ -14,13 +21,46 @@ function Coin({ value, variant = "coin" }: { value: string | number; variant?: "
   );
 }
 
-const ENERGY_TARGET = 10000; // kWh/Jahr Mindestziel
+// A choice per device: either an option-id (flat) or a record of group-id → option-id.
+type DeviceChoice = string | Record<string, string>;
+type Choices = Record<string, DeviceChoice>;
 
-type Choices = Record<string, string>;
+function defaultDeviceChoice(d: EnergyDevice): DeviceChoice {
+  if (d.groups) {
+    return Object.fromEntries(d.groups.map((g) => [g.id, g.options[0].id]));
+  }
+  return d.options![0].id;
+}
+
+function resolveDeviceTotals(d: EnergyDevice, choice: DeviceChoice) {
+  if (d.groups) {
+    const rec = choice as Record<string, string>;
+    let cost = 0;
+    let energy = 0;
+    for (const g of d.groups) {
+      const optId = rec[g.id] ?? g.options[0].id;
+      const opt = g.options.find((o) => o.id === optId) ?? g.options[0];
+      cost += opt.cost;
+      energy += opt.energy;
+    }
+    return { cost, energy };
+  }
+  const opts = d.options!;
+  const opt = opts.find((o) => o.id === (choice as string)) ?? opts[0];
+  return { cost: opt.cost, energy: opt.energy };
+}
+
+function isDefaultChoice(d: EnergyDevice, choice: DeviceChoice): boolean {
+  if (d.groups) {
+    const rec = choice as Record<string, string>;
+    return d.groups.every((g) => (rec[g.id] ?? g.options[0].id) === g.options[0].id);
+  }
+  return (choice as string) === d.options![0].id;
+}
 
 export function EnergyGame({ onErfolg }: { onErfolg: () => void }) {
   const defaults = useMemo<Choices>(
-    () => Object.fromEntries(DEVICES.map((d) => [d.id, d.options[0].id])),
+    () => Object.fromEntries(DEVICES.map((d) => [d.id, defaultDeviceChoice(d)])),
     [],
   );
   const [choices, setChoices] = useState<Choices>(defaults);
@@ -31,9 +71,9 @@ export function EnergyGame({ onErfolg }: { onErfolg: () => void }) {
     let invested = 0;
     let energy = 0;
     for (const d of DEVICES) {
-      const opt = d.options.find((o) => o.id === choices[d.id]) ?? d.options[0];
-      invested += opt.cost;
-      energy += opt.energy;
+      const t = resolveDeviceTotals(d, choices[d.id]);
+      invested += t.cost;
+      energy += t.energy;
     }
     return { invested, energy };
   }, [choices]);
@@ -41,9 +81,8 @@ export function EnergyGame({ onErfolg }: { onErfolg: () => void }) {
   const remaining = BUDGET - totals.invested;
   const erreicht = totals.energy >= ENERGY_TARGET;
 
-  const setChoice = (deviceId: string, optId: string) => {
-    setChoices((c) => ({ ...c, [deviceId]: optId }));
-    setOpen(null);
+  const setChoice = (deviceId: string, choice: DeviceChoice) => {
+    setChoices((c) => ({ ...c, [deviceId]: choice }));
   };
 
   const reset = () => {
@@ -71,11 +110,11 @@ export function EnergyGame({ onErfolg }: { onErfolg: () => void }) {
         </div>
         <div className="flex items-center gap-3">
           <span className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
-            Ersparnis
+            Energiesparpunkte
           </span>
-          <span className="inline-flex items-center gap-1.5 font-bold tabular-nums">
-            <Zap className="h-4 w-4 text-emerald-600" />
-            {formatNumber(totals.energy)} kWh
+          <span className={`inline-flex items-center gap-1.5 font-bold tabular-nums ${totals.energy < 0 ? "text-destructive" : ""}`}>
+            <Zap className={`h-4 w-4 ${totals.energy < 0 ? "text-destructive" : "text-emerald-600"}`} />
+            {formatNumber(totals.energy)} ESP
           </span>
         </div>
       </div>
@@ -88,20 +127,23 @@ export function EnergyGame({ onErfolg }: { onErfolg: () => void }) {
             : "border-stamp/40 bg-stamp/5 text-foreground/80"
         }`}
       >
-        Ziel: mind. <strong>{formatNumber(ENERGY_TARGET)} kWh</strong> sparen, ohne das Budget zu sprengen.
+        Ziel: mind. <strong>{formatNumber(ENERGY_TARGET)} ESP</strong> sammeln, ohne das Budget zu sprengen.
+        <span className="ml-1 text-foreground/60">
+          Tipp: Viele Punkte gibt es gratis — Gewohnheiten schlagen teure Geräte.
+        </span>
         {erreicht && " ✓ Ziel erreicht — du kannst prüfen."}
       </div>
 
       {/* Haus-Stage */}
       <div className="relative mx-auto w-full max-w-sm">
         <img
-          src={houseBg}
+          src={houseAsset.url}
           alt="Querschnitt Haus mit Räumen"
           className="block h-auto w-full rounded-sm shadow-md"
         />
         {DEVICES.map((device) => {
           const chosen = choices[device.id];
-          const isChanged = chosen !== device.options[0].id;
+          const isChanged = !isDefaultChoice(device, chosen);
           return (
             <button
               key={device.id}
@@ -145,7 +187,7 @@ export function EnergyGame({ onErfolg }: { onErfolg: () => void }) {
 
       {showFail && !erreicht && (
         <div className="mt-3 rounded-sm border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">
-          Noch nicht genug Energie gespart. Tippe auf die markierten Bereiche im Haus und wähle effizientere Optionen.
+          Noch nicht genug Energiesparpunkte. Tippe auf die markierten Bereiche im Haus und wähle sparsamere Optionen — viele bringen Punkte, ohne etwas zu kosten.
         </div>
       )}
 
@@ -155,11 +197,71 @@ export function EnergyGame({ onErfolg }: { onErfolg: () => void }) {
           device={open}
           current={choices[open.id]}
           remaining={remaining}
-          onChoose={(optId) => setChoice(open.id, optId)}
+          onChoose={(choice) => setChoice(open.id, choice)}
           onClose={() => setOpen(null)}
         />
       )}
     </div>
+  );
+}
+
+function OptionRow({
+  opt,
+  icon,
+  isCurrent,
+  disabled,
+  onChoose,
+}: {
+  opt: EnergyOption;
+  icon: string;
+  isCurrent: boolean;
+  disabled: boolean;
+  onChoose: () => void;
+}) {
+  return (
+    <button
+      disabled={disabled}
+      onClick={onChoose}
+      className={`relative flex w-full items-start gap-3 rounded-sm border p-3 text-left transition ${
+        isCurrent
+          ? "border-emerald-600 bg-emerald-50"
+          : disabled
+            ? "cursor-not-allowed border-border bg-secondary/40 opacity-50"
+            : "border-border bg-secondary/40 hover:bg-secondary"
+      }`}
+    >
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-sm bg-paper text-xl">
+        {icon}
+      </div>
+      <div className="min-w-0 flex-1">
+        <div className="font-bold">
+          {opt.label}
+          {isCurrent && (
+            <span className="ml-2 text-[11px] font-normal text-emerald-700">✓ gewählt</span>
+          )}
+        </div>
+        <div className="text-xs text-foreground/70">{opt.description}</div>
+      </div>
+      <div className="flex shrink-0 flex-col items-end gap-1 text-xs">
+        <Coin value={opt.cost} />
+        <span
+          className={`whitespace-nowrap font-bold ${
+            opt.energy > 0
+              ? "text-emerald-700"
+              : opt.energy < 0
+                ? "text-destructive"
+                : "text-foreground/50"
+          }`}
+        >
+          {opt.energy > 0 ? `+${formatNumber(opt.energy)} ESP` : opt.energy < 0 ? `${formatNumber(opt.energy)} ESP` : "—"}
+        </span>
+      </div>
+      {isCurrent && (
+        <div className="absolute right-2 top-2 rounded-full bg-emerald-500 p-1">
+          <Check className="h-3 w-3 text-white" />
+        </div>
+      )}
+    </button>
   );
 }
 
@@ -171,13 +273,11 @@ function DeviceModal({
   onClose,
 }: {
   device: EnergyDevice;
-  current: string;
+  current: DeviceChoice;
   remaining: number;
-  onChoose: (optId: string) => void;
+  onChoose: (choice: DeviceChoice) => void;
   onClose: () => void;
 }) {
-  const currentOpt = device.options.find((o) => o.id === current) ?? device.options[0];
-
   return (
     <div
       className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 p-0 backdrop-blur-sm sm:items-center sm:p-4"
@@ -195,53 +295,61 @@ function DeviceModal({
           Raum: <span className="font-bold">{device.room}</span>
         </p>
 
-        <div className="space-y-2">
-          {device.options.map((opt) => {
-            const isCurrent = opt.id === current;
-            const wouldBe = remaining + currentOpt.cost - opt.cost;
-            const tooExpensive = !isCurrent && wouldBe < 0;
-            return (
-              <button
-                key={opt.id}
-                disabled={tooExpensive}
-                onClick={() => onChoose(opt.id)}
-                className={`relative flex w-full items-start gap-3 rounded-sm border p-3 text-left transition ${
-                  isCurrent
-                    ? "border-emerald-600 bg-emerald-50"
-                    : tooExpensive
-                      ? "cursor-not-allowed border-border bg-secondary/40 opacity-50"
-                      : "border-border bg-secondary/40 hover:bg-secondary"
-                }`}
-              >
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-sm bg-paper text-xl">
-                  {device.icon}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="font-bold">
-                    {opt.label}
-                    {isCurrent && (
-                      <span className="ml-2 text-[11px] font-normal text-emerald-700">
-                        ✓ gewählt
-                      </span>
-                    )}
+        {device.groups ? (
+          <div className="space-y-5">
+            {device.groups.map((group) => {
+              const rec = current as Record<string, string>;
+              const currentId = rec[group.id] ?? group.options[0].id;
+              const currentOpt = group.options.find((o) => o.id === currentId) ?? group.options[0];
+              return (
+                <div key={group.id}>
+                  <p className="mb-2 font-mono-typed text-[11px] uppercase tracking-wider text-stamp">
+                    {group.label}
+                  </p>
+                  <div className="space-y-2">
+                    {group.options.map((opt) => {
+                      const isCurrent = opt.id === currentId;
+                      const wouldBe = remaining + currentOpt.cost - opt.cost;
+                      const tooExpensive = !isCurrent && wouldBe < 0;
+                      return (
+                        <OptionRow
+                          key={opt.id}
+                          opt={opt}
+                          icon={device.icon}
+                          isCurrent={isCurrent}
+                          disabled={tooExpensive}
+                          onChoose={() => onChoose({ ...rec, [group.id]: opt.id })}
+                        />
+                      );
+                    })}
                   </div>
-                  <div className="text-xs text-foreground/70">{opt.description}</div>
                 </div>
-                <div className="flex shrink-0 flex-col items-end gap-1 text-xs">
-                  <Coin value={opt.cost} />
-                  <span className="font-bold text-emerald-700 whitespace-nowrap">
-                    {opt.energy > 0 ? `−${formatNumber(opt.energy)} kWh` : "—"}
-                  </span>
-                </div>
-                {isCurrent && (
-                  <div className="absolute right-2 top-2 rounded-full bg-emerald-500 p-1">
-                    <Check className="h-3 w-3 text-white" />
-                  </div>
-                )}
-              </button>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {(() => {
+              const opts = device.options!;
+              const currentOpt = opts.find((o) => o.id === (current as string)) ?? opts[0];
+              return opts.map((opt) => {
+                const isCurrent = opt.id === currentOpt.id;
+                const wouldBe = remaining + currentOpt.cost - opt.cost;
+                const tooExpensive = !isCurrent && wouldBe < 0;
+                return (
+                  <OptionRow
+                    key={opt.id}
+                    opt={opt}
+                    icon={device.icon}
+                    isCurrent={isCurrent}
+                    disabled={tooExpensive}
+                    onChoose={() => onChoose(opt.id)}
+                  />
+                );
+              });
+            })()}
+          </div>
+        )}
 
         <div className="mt-5 flex items-center justify-between">
           <button

@@ -1,55 +1,82 @@
 ## Ziel
 
-Etappe 2 (Dorfladen) wird vom "Fehler-Finden"-Rätsel zum echten Einkaufsentscheid: SuS starten mit **leerem Korb**, wählen aus allen Produkten selbst aus. Feedback erst an der Kasse. Texte, Buttons und Tipps werden angepasst.
+Etappe 4 (Wohnen) bekommt das neue Haus, neue Räume (Wäscheraum statt Garage/Heizkeller), neue Zahlen aus `Energieposten.pdf` und spricht ab jetzt von **Energiesparpunkten (ESP)** statt kWh. Die Kernbotschaft: **einfache Verhaltensänderungen bringen ohne Kosten schon viel**.
 
-## 1. Datenschicht (`src/lib/maya-data.ts`)
+## 1. Neues Haus-Asset
 
-- `START_WARENKORB` = `[]` (leer statt vorgepackt).
-- `zitrone-za` (Südafrika) → `bewertung: "schlecht"` + `problemHinweis` (lange Wege, kein Bio), damit die Kassenprüfung sie ablehnt.
-- `zitrone-it` (Bio/Demeter Italien) → `bewertung: "gut"`, `ersetzt: "zitrone-za"` (Konsistenz mit Erdbeeren/Eiern).
-- Rezeptzutaten bleiben unverändert; jede benötigte Zutat hat mindestens eine "gute/neutrale" Option im Sortiment (Mehl, Zucker, Salz, Butter, Rahm, Vanillezucker: je 1 Option; Erdbeeren/Eier/Zitrone: je 2 Optionen mit nachhaltig ✓ vs. weniger nachhaltig ✗).
+- Upload `wohnenraetsel.png` per `lovable-assets create` → `src/assets/haus.png.asset.json`.
+- `EnergyGame.tsx`: `houseBg`-Import auf neues Asset umstellen.
+- Bildabmessungen des neuen PNGs ermitteln und `IMG_W`/`IMG_H` in `energy-data.ts` entsprechend anpassen (Koordinaten aus der PDF beziehen sich auf dieses Bild).
 
-## 2. Kassenlogik (`src/components/case-file/GruenerMarkt.tsx`)
+## 2. `src/lib/energy-data.ts` neu aufbauen
 
-Die Funktion `pruefen()` erhält echtes Feedback statt stiller Blockade:
+Räume neu: **Schlafzimmer, Bad, Wäscheraum, Wohnzimmer, Küche** (Garage & Heizkeller entfallen; Heizung wandert ins Schlafzimmer als "Wärmepumpe / Raumtemperatur").
 
-- **Fall A – leer / unvollständig:** Meldung "Hast du alle Zutaten?" (kein Erfolg).
-- **Fall B – vollständig, aber `schlechte` Produkte im Korb:** Meldung "Die Kasse springt nicht an. Schau dich nochmal um." (ohne konkret zu verraten welche).
-- **Fall C – vollständig + keine schlechten:** bestehender Erfolgspfad (Bon, `onErfolg`).
+Neue Geräte + Optionen (Werte 1:1 aus PDF, `energy` heisst jetzt ESP):
 
-Feedback wird im Sticky-Cart-Bereich unter dem Bezahlen-Button als kleine, ruhige Notiz eingeblendet und verschwindet, sobald der Korb geändert wird. Kein sofortiges Feedback beim Hinzufügen einzelner Produkte.
+- **Fernseher** (Schlafzimmer): Alter LCD 0/0, LED E-Klasse 700/50, D-Klasse 1000/90
+- **Heizung / Raumtemperatur** (Schlafzimmer): 22° 0/0, 20° 0/740, 18° 0/1480
+- **Dusche** (Bad): 10 Min 0/0, 5 Min 0/820, Sparbrause 30/1150
+- **Tumbler** (Wäscheraum): Alt 0/0, A+++ 700/350, Aufhängen 0/550
+- **Waschmaschine** (Wäscheraum): 40–60° 0/0, Eco-Programm 0/340, Neue Maschine 1700/390
+- **Staubsauger** (Wäscheraum): Alt 0/0, Neu 100/45, Sehr effizient 200/70
+- **Lampe** (Wohnzimmer): Halogen 0/0, Sparlampe 30/300, LED 60/350
+- **Geschirrspüler** (Küche): Normal 0/0, Eco 0/150, Von Hand 0/**−90** (schlechte Option)
+- **Ofen** (Küche): Alt 0/0, Umluft A 0/20, Umluft A+++ 700/70
+- **Kühlschrank** (Küche): Alt 0/0, 5→7 °C 0/90, Neues Gerät 1000/320
+- **Herd** (Küche) — **neu: 3 Untergruppen** in einem Modal, jede mit eigener Auswahl:
+  - *Kochen im Topf*: ohne Deckel 0/0, mit Deckel 0/120
+  - *Kochgeschirr*: zu klein 0/0, korrekte Pfannengrösse 0/100
+  - *Herdplatte*: Gusseisen 0/0, Glaskeramik 300/50, Induktion 750/100
 
-## 3. Texte & Buttons
+### Typänderung
 
-`**src/routes/etappe-2.tsx**`
+`EnergyDevice.options` wird optional; neu:
+```ts
+type OptionGroup = { id: string; label: string; options: EnergyOption[] };
+type EnergyDevice = { ...; options?: EnergyOption[]; groups?: OptionGroup[] };
+```
+Ein Gerät hat entweder `options` (Standard) **oder** `groups` (Herd). Totals summieren beim `groups`-Fall über die gewählte Option pro Gruppe.
 
-- Header-Untertitel: „Frau Bergers Einkaufskorb" → „Frau Bergers Regale".
-- Meta-Description passt (bereits leerer Korb).
-- Brief-Screen: Text steht bereits auf „leerer Korb" — bleibt.
-- Button „Zum Einkaufskorb →" → **„In den Laden →"**.
-- „← Zurück zum Korb" → „← Zurück in den Laden".
-- Weiter-Button nach Input bleibt.
+Negativer ESP-Wert (Handabwasch) wird zugelassen — Totals dürfen sinken.
 
-`**src/routes/etappe-1.tsx**` (Rätsel 1, Mobilität)
+### Budget & Ziel
 
-- Button „Nächstes Rätsel" → **„Weiter zu Etappe 2 →"** (bzw. analog zum Muster der anderen Etappen). Nur Buttontext, sonst nichts.
+- **Budget: 1'000 CHF** (statt 1'500) — zwingt zu Verhaltensfokus.
+- **Ziel: 3'500 ESP.** Erreichbar praktisch nur mit Verhalten (ca. 3'670 ESP komplett gratis: 18° / kurz duschen / aufhängen / Eco-Wäsche / Eco-Spülen / Umluft / Deckel+Pfanne / Kühlschrank 7°). Kleine Zusatzkäufe (LED-Lampe 60, Sparbrause 30) polstern.
+- `formatNumber` bleibt.
 
-## 4. Tipps (`src/routes/etappe-2.tsx`, `HintSystem`-Props)
+## 3. `EnergyGame.tsx` anpassen
 
-Etappe 2 nutzt die Default-Hints aus `HintSystem.tsx`. Wir übergeben stattdessen etappen-spezifische Hints via Prop (bereits unterstützt) und aktualisieren Fokus:
+- Alle Texte `kWh` → `Energiesparpunkte` (Kurzform **ESP** in HUD).
+- Ziel-Banner-Text: "Ziel: mind. **3'500 ESP** sammeln, ohne das Budget zu sprengen. Tipp: Viele Punkte gibt es gratis — Gewohnheiten schlagen teure Geräte."
+- HUD-Icon für ESP bleibt `Zap`; Label „Ersparnis" → „Energiesparpunkte".
+- `ENERGY_TARGET = 3500`, Import `BUDGET` bleibt (nun 1'000).
+- `DeviceModal`: wenn `device.groups` existiert, rendere pro Gruppe eine kleine Überschrift + Optionsliste (statt einer flachen Liste). Auswahl-State erweitern: `choices` speichert entweder `string` oder `Record<groupId,string>`.
+- Fehlermeldung passt auf ESP an.
+- „−X ESP" bei negativen Deltas rot einfärben.
 
-- **Tipp 1:** Fokus „leerer Korb → welche Zutaten brauchst du überhaupt? Prüfe das Rezept."
-- **Tipp 2:** Fokus **Regionalität** (nicht Saisonalität, da Sommer): „Erdbeeren gibt's im Sommer sowohl aus der Schweiz als auch aus Spanien — die Schweizer Variante hat den viel kürzeren Weg. Auch bei **Zitronen** lohnt der Blick auf die Herkunft (Italien/Bio vs. Südafrika)."
-- **Tipp 3 (Auflösung):** „Wähle Schweizer Erdbeeren (IP-Suisse), Schweizer Bio-Freiland-Eier und die Bio/Demeter-Zitrone aus Italien. Ergänze Mehl, Zucker, Salz, Butter, Vollrahm und Vanillezucker."
+## 4. `src/routes/etappe-4.tsx` Texte
+
+- Zettel-Blockquote: „Heizkeller" entfernen, neue Raumliste (Schlafzimmer, Bad, Wäscheraum, Wohnzimmer, Küche).
+- Notiz-Zeile: "[Hauszeichnung + Rechnungen aus der Kiste · … Uhr]" bleibt.
+- Rätselkarten-Liste:
+  - „5 Räumen" bleibt korrekt (jetzt Schlafzimmer/Bad/Wäscheraum/Wohnzimmer/Küche).
+  - „1'500.– CHF" → **„1'000.– CHF"**.
+  - „mind. 10'000 kWh" → **„mind. 3'500 Energiesparpunkte"**.
+- Elvira-Zettel „Nächste Etappe": „10'000 kWh" → „3'500 Energiesparpunkte".
+- Fachlicher Input-Karten leicht anpassen: „kWh" nicht mehr erwähnen; Beispiele weiter passend (Verhalten, Wärme-Hülle, Effizienzklasse). Kein grosser Umbau.
+- `HINTS_004` neu:
+  - Tipp 1: „Grosse Posten zuerst: Heizung/Raumtemperatur, Dusche, Wäsche. Kleine Icons wie Staubsauger bringen wenig."
+  - Tipp 2: „Gewohnheiten sind gratis und stark: 18° heizen, kurz duschen, Wäsche aufhängen, Eco-Programme, Deckel auf den Topf. Das reicht fast schon für das Ziel."
+  - Tipp 3 (Auflösung): „Reine Verhaltenswahl bringt ~3'670 ESP: 18° (1480) + 5-Min-Dusche (820) + Aufhängen (550) + Eco-Waschen (340) + Eco-Spülen (150) + Umluft (20) + Deckel+Pfannengrösse (220) + Kühlschrank 7° (90). Ergänze LED-Lampe (60 CHF) oder Sparbrause (30 CHF) als günstige Upgrades."
 
 ## 5. Nicht angefasst
 
-- QR-Token, Route, StageGate, EnvelopeDialog-Flow, Fachlicher Input, Registrierkassen-Bon-Text.
-- Andere Etappen (nur `etappe-1` Buttontext).
-- Bilder/Assets.
+`StageGate`, `QRGate`, Token, Route-Path, EnvelopeDialog, andere Etappen, `mobility`-/`maya`-Daten, Fortschrittslogik.
 
 ## Technische Notizen
 
-- `pruefen()` ruft heute schon `onErfolg` nur bei Erfolg auf; wir erweitern nur den Feedback-State (`feedback: null | "leer" | "nicht-nachhaltig"`).
-- Reset des Feedbacks bei jedem `hinzufuegen`/`entfernen`.
-- `zitrone-za.bewertung` von "neutral" → "schlecht" ist nötig, damit die vorhandene Prüfung greift.
+- Negatives ESP-Total möglich (Handabwasch) → `energy` als `number` ohne Clamp; Ziel-Check `totals.energy >= 3500` bleibt korrekt.
+- `groups`-Modal: initialer State setzt pro Gruppe die erste (schlechte) Option als Default, konsistent zu heute.
+- Wenn die neuen PDF-Pixelkoordinaten nicht 1:1 zur Bildauflösung passen, feinjustiere `IMG_W`/`IMG_H` und einzelne Boxen visuell nach dem ersten Render.

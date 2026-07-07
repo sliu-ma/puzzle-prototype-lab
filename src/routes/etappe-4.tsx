@@ -16,22 +16,22 @@ const HINTS_004: Hint[] = [
     id: 0,
     unlockMin: 3,
     label: "Tipp 1",
-    title: "Wo steckt der grösste Verbrauch?",
-    body: "Öffne zuerst die grossen Posten: Heizung, Warmwasser, Dusche und Fenster. Dort schlummern die meisten kWh — nicht bei Fernseher oder Lampe.",
+    title: "Grosse Posten zuerst",
+    body: "Klick als Erstes auf Heizung/Raumtemperatur, Dusche und die Wäsche. Kleine Geräte wie Staubsauger oder Fernseher bringen nur wenige Punkte.",
   },
   {
     id: 1,
     unlockMin: 6,
     label: "Tipp 2",
-    title: "Nicht jedes teure Upgrade lohnt sich",
-    body: "Verhalten kostet 0 CHF und bringt viel: kurz duschen, Wasserhahn zudrehen, stosslüften statt Kippfenster. Behalte das Budget im Blick — die teuersten Geräte sind selten die effizientesten pro Franken.",
+    title: "Gewohnheiten sind gratis — und stark",
+    body: "18 °C heizen, kurz duschen, Wäsche aufhängen, Eco-Programme, Deckel auf den Topf, Kühlschrank auf 7 °C: alles kostet 0 CHF und bringt zusammen schon fast die 3'500 ESP.",
   },
   {
     id: 2,
     unlockMin: 9,
     label: "Auflösung",
-    title: "So erreichst du die 10'000 kWh",
-    body: "Kombiniere günstige Verhaltensoptionen mit gezielten Upgrades: Sparbrause + kurz duschen (2'700), Wasserhahn-Perlator (900), Stosslüften (1'600), Wärmepumpe (5'200), Warmwasser-Wärmepumpe (1'900), Steckerleiste beim TV (320), LED (410). Damit bleibst du im Budget und knackst die 10'000 kWh locker.",
+    title: "So erreichst du die 3'500 ESP",
+    body: "Nur mit Verhalten: 18 °C (1480) + 5-Min-Dusche (820) + Aufhängen (550) + Eco-Waschen (340) + Eco-Spülen (150) + Umluft (20) + Deckel + Pfannengrösse (220) + Kühlschrank 7 °C (90) = ~3'670 ESP. Ergänze eine LED-Lampe (60 CHF) oder Sparbrause (30 CHF) — Budget bleibt fast unangetastet.",
   },
 ];
 
@@ -42,7 +42,7 @@ export const Route = createFileRoute("/etappe-4")({
       {
         name: "description",
         content:
-          "Etappe 4: Zurück bei Elvira. Eine Querschnittszeichnung des Hauses, alte Rechnungen — und das Ziel: 10'000 kWh einsparen.",
+          "Etappe 4: Zurück bei Elvira. Eine Querschnittszeichnung des Hauses, alte Rechnungen — und das Ziel: 3'500 Energiesparpunkte sammeln.",
       },
     ],
   }),
@@ -175,16 +175,16 @@ function AktePage() {
             <blockquote className="mt-5 border-l-4 border-stamp pl-4 text-[15px] leading-relaxed">
               Du kommst ausser Atem zurück zu Elviras Haus. Auf dem Küchentisch
               — genau dort, wo der erste Brief lag — liegt jetzt eine grosse
-              Zeichnung: eine Querschnittsansicht des Hauses mit Küche,
-              Badezimmer, Wohnzimmer, Schlafzimmer und Heizkeller. Daneben ein
-              Zettel:
+              Zeichnung: eine Querschnittsansicht des Hauses mit Schlafzimmer,
+              Bad, Wäscheraum, Wohnzimmer und Küche. Daneben ein Zettel:
               <br />
               <br />
               „Ein neues Kraftwerk wird oft nur deshalb gebaut, weil wir im
               Alltag unbemerkt zu viel Energie verbrauchen. Wenn wir zeigen
-              können, wie viel ein einziger Haushalt einsparen kann, bricht das
-              Hauptargument für den Neubau zusammen. Nimm die Rechnungen aus
-              der Kiste und finde heraus, welche Massnahmen am meisten bringen!"
+              können, wie viele Energiesparpunkte ein einziger Haushalt sammeln
+              kann, bricht das Hauptargument für den Neubau zusammen. Nimm die
+              Rechnungen aus der Kiste und finde heraus, welche Massnahmen am
+              meisten bringen — oft sind es nicht die teuersten!"
             </blockquote>
             <div className="mt-6 flex justify-end">
               <button
@@ -212,7 +212,7 @@ function AktePage() {
                 </p>
                 <ul className="mt-2 space-y-1 text-[15px]">
                   <li>· Querschnitt mit 5 Räumen</li>
-                  <li>· 1'500.– CHF Budget</li>
+                  <li>· 1'000.– CHF Budget</li>
                   <li>· Pro Gerät 2–3 Optionen</li>
                 </ul>
               </div>
@@ -224,7 +224,7 @@ function AktePage() {
                   <li>Tippe Geräte im Haus an.</li>
                   <li>Wähle eine Option pro Gerät.</li>
                   <li>Achte aufs Budget.</li>
-                  <li>Erreiche mind. 10'000 kWh Ersparnis.</li>
+                  <li>Sammle mind. 3'500 Energiesparpunkte.</li>
                 </ol>
               </div>
             </div>
@@ -291,13 +291,13 @@ function AktePage() {
                   },
                   {
                     title: "Wärme-Hülle",
-                    body: "Heizen ist Posten Nr. 1 im Haushalt. 3-fach-Verglasung, Stosslüften statt Kippen und eine Wärmepumpe statt Öl sparen mehr als jedes neue Gerät.",
-                    hint: "Faustregel: zuerst dämmen, dann Heizung tauschen.",
+                    body: "Heizen ist Posten Nr. 1 im Haushalt. Ein Grad kühler zu heizen bringt sofort viele Energiesparpunkte — ohne einen Franken Investition.",
+                    hint: "Faustregel: 1 °C kühler heizen spart ca. 6 % Heizenergie.",
                   },
                   {
                     title: "Verhalten",
-                    body: "Kurz duschen, Standby abschalten, Wasser zudrehen — diese Schritte kosten nichts und wirken sofort. Technik allein bringt wenig, wenn die Gewohnheiten nicht passen.",
-                    hint: "1 °C kühler heizen spart ca. 6 % Heizenergie.",
+                    body: "Kurz duschen, Wäsche aufhängen, Deckel auf den Topf, Eco-Programme wählen — diese Schritte kosten nichts und wirken sofort. Technik allein bringt wenig, wenn die Gewohnheiten nicht passen.",
+                    hint: "Verhalten schlägt teure Geräte im Preis-Leistungs-Vergleich.",
                   },
                 ].map((c) => (
                   <div key={c.title} className="rounded-sm border border-border bg-paper p-4 shadow-sm">
@@ -344,11 +344,11 @@ function AktePage() {
                 Sicherungskastens springt auf. Darin: eine Schlüsselkarte und
                 ein Zettel.
                 <br /><br />
-                „10'000 kWh — genau der Beweis, den wir brauchen! Ich bin jetzt
-                beim alten Wasserkraftwerk am Dorfrand. Marlene Vogt,
-                Mitarbeiterin im kantonalen Umweltamt, wartet dort auf uns —
-                sie hat Zugang zu den offiziellen Gemeindegutachten und hilft
-                mir, die Fehler darin zu belegen. Komm schnell! Die Zeit läuft."
+                „3'500 Energiesparpunkte — genau der Beweis, den wir brauchen!
+                Ich bin jetzt beim alten Wasserkraftwerk am Dorfrand. Marlene
+                Vogt, Mitarbeiterin im kantonalen Umweltamt, wartet dort auf
+                uns — sie hat Zugang zu den offiziellen Gemeindegutachten und
+                hilft mir, die Fehler darin zu belegen. Komm schnell! Die Zeit läuft."
               </p>
               <p className="mt-3 font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
                 — E.
