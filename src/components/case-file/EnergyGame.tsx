@@ -310,6 +310,11 @@ function DeviceModal({
   onChoose: (choice: DeviceChoice) => void;
   onClose: () => void;
 }) {
+  const [openGroup, setOpenGroup] = useState<string | null>(null);
+  useEffect(() => {
+    setOpenGroup(null);
+  }, [device.id]);
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 p-0 backdrop-blur-sm sm:items-center sm:p-4"
@@ -328,13 +333,46 @@ function DeviceModal({
         </p>
 
         {device.groups ? (
-          <div className="space-y-5">
-            {device.groups.map((group) => {
+          openGroup === null ? (
+            <div className="space-y-2">
+              {device.groups.map((group) => {
+                const rec = current as Record<string, string>;
+                const currentId = rec[group.id] ?? group.options[0].id;
+                const currentOpt = group.options.find((o) => o.id === currentId) ?? group.options[0];
+                const isChanged = currentId !== group.options[0].id;
+                return (
+                  <button
+                    key={group.id}
+                    onClick={() => setOpenGroup(group.id)}
+                    className={`flex w-full items-center gap-3 rounded-sm border p-3 text-left transition hover:bg-secondary ${
+                      isChanged ? "border-emerald-600 bg-emerald-50" : "border-border bg-secondary/40"
+                    }`}
+                  >
+                    <div className="min-w-0 flex-1">
+                      <div className="font-bold">{group.label}</div>
+                      <div className="text-xs text-foreground/70">
+                        aktuell: <span className="italic">{currentOpt.label}</span>
+                      </div>
+                    </div>
+                    <ChevronRight className="h-4 w-4 shrink-0 text-foreground/50" />
+                  </button>
+                );
+              })}
+            </div>
+          ) : (
+            (() => {
+              const group = device.groups.find((g) => g.id === openGroup)!;
               const rec = current as Record<string, string>;
               const currentId = rec[group.id] ?? group.options[0].id;
               const currentOpt = group.options.find((o) => o.id === currentId) ?? group.options[0];
               return (
-                <div key={group.id}>
+                <div>
+                  <button
+                    onClick={() => setOpenGroup(null)}
+                    className="mb-3 text-xs text-foreground/70 hover:text-foreground"
+                  >
+                    ← Zurück zur Auswahl
+                  </button>
                   <p className="mb-2 font-mono-typed text-[11px] uppercase tracking-wider text-stamp">
                     {group.label}
                   </p>
@@ -357,8 +395,8 @@ function DeviceModal({
                   </div>
                 </div>
               );
-            })}
-          </div>
+            })()
+          )
         ) : (
           <div className="space-y-2">
             {(() => {
