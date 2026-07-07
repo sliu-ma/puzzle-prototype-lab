@@ -291,13 +291,13 @@ function AktePage() {
                   },
                   {
                     title: "Wärme-Hülle",
-                    body: "Heizen ist Posten Nr. 1 im Haushalt. 3-fach-Verglasung, Stosslüften statt Kippen und eine Wärmepumpe statt Öl sparen mehr als jedes neue Gerät.",
-                    hint: "Faustregel: zuerst dämmen, dann Heizung tauschen.",
+                    body: "Heizen ist Posten Nr. 1 im Haushalt. Ein Grad kühler zu heizen bringt sofort viele Energiesparpunkte — ohne einen Franken Investition.",
+                    hint: "Faustregel: 1 °C kühler heizen spart ca. 6 % Heizenergie.",
                   },
                   {
                     title: "Verhalten",
-                    body: "Kurz duschen, Standby abschalten, Wasser zudrehen — diese Schritte kosten nichts und wirken sofort. Technik allein bringt wenig, wenn die Gewohnheiten nicht passen.",
-                    hint: "1 °C kühler heizen spart ca. 6 % Heizenergie.",
+                    body: "Kurz duschen, Wäsche aufhängen, Deckel auf den Topf, Eco-Programme wählen — diese Schritte kosten nichts und wirken sofort. Technik allein bringt wenig, wenn die Gewohnheiten nicht passen.",
+                    hint: "Verhalten schlägt teure Geräte im Preis-Leistungs-Vergleich.",
                   },
                 ].map((c) => (
                   <div key={c.title} className="rounded-sm border border-border bg-paper p-4 shadow-sm">
