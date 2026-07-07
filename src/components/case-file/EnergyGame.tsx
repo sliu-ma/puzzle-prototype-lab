@@ -30,12 +30,14 @@ const LABEL_MAP: Record<EnergyLabelGrade, { url: string }> = {
   G: labelG,
 };
 
-function EnergyLabel({ grade, size = "large" }: { grade: EnergyLabelGrade; size?: "small" | "large" }) {
+function EnergyLabel({ grade }: { grade: EnergyLabelGrade }) {
   return (
     <img
       src={LABEL_MAP[grade].url}
       alt={`Energieklasse ${grade}`}
-      className={`w-auto object-contain ${size === "large" ? "h-8" : "h-4"}`}
+      width={180}
+      height={36}
+      className="h-9 w-auto object-contain"
     />
   );
 }
@@ -271,7 +273,7 @@ function OptionRow({
             <span className="text-[11px] font-normal text-emerald-700">✓ gewählt</span>
           )}
         </div>
-        <div className="mt-0.5 line-clamp-1 text-xs text-foreground/70">{opt.description}</div>
+        <div className="mt-0.5 text-xs text-foreground/70">{opt.description}</div>
         {opt.energyLabel && (
           <div className="mt-2">
             <EnergyLabel grade={opt.energyLabel} />
