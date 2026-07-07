@@ -1,16 +1,44 @@
-import { useMemo, useState } from "react";
-import { Check, RotateCcw, Wallet, Zap } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Check, ChevronRight, RotateCcw, Wallet, Zap } from "lucide-react";
 import {
   BUDGET,
   DEVICES,
   ENERGY_TARGET,
   formatNumber,
   type EnergyDevice,
+  type EnergyLabelGrade,
   type EnergyOption,
 } from "@/lib/energy-data";
 import houseAsset from "@/assets/haus.png.asset.json";
 import coin from "@/assets/coin.png";
 import trophy from "@/assets/trophy.png";
+import labelA from "@/assets/label-a.png.asset.json";
+import labelB from "@/assets/label-b.png.asset.json";
+import labelC from "@/assets/label-c.png.asset.json";
+import labelD from "@/assets/label-d.png.asset.json";
+import labelE from "@/assets/label-e.png.asset.json";
+import labelF from "@/assets/label-f.png.asset.json";
+import labelG from "@/assets/label-g.png.asset.json";
+
+const LABEL_MAP: Record<EnergyLabelGrade, { url: string }> = {
+  A: labelA,
+  B: labelB,
+  C: labelC,
+  D: labelD,
+  E: labelE,
+  F: labelF,
+  G: labelG,
+};
+
+function EnergyLabel({ grade }: { grade: EnergyLabelGrade }) {
+  return (
+    <img
+      src={LABEL_MAP[grade].url}
+      alt={`Energieklasse ${grade}`}
+      className="h-4 w-auto object-contain"
+    />
+  );
+}
 
 function Coin({ value, variant = "coin" }: { value: string | number; variant?: "coin" | "energy" }) {
   return (
