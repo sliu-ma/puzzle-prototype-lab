@@ -30,12 +30,12 @@ const LABEL_MAP: Record<EnergyLabelGrade, { url: string }> = {
   G: labelG,
 };
 
-function EnergyLabel({ grade, size = "large" }: { grade: EnergyLabelGrade; size?: "small" | "large" }) {
+function EnergyLabel({ grade }: { grade: EnergyLabelGrade }) {
   return (
     <img
       src={LABEL_MAP[grade].url}
       alt={`Energieklasse ${grade}`}
-      className={`w-auto object-contain ${size === "large" ? "h-8" : "h-4"}`}
+      className="h-auto w-[240px] max-w-full object-contain"
     />
   );
 }
