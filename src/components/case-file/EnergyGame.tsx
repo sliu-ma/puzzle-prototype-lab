@@ -1,16 +1,44 @@
-import { useMemo, useState } from "react";
-import { Check, RotateCcw, Wallet, Zap } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Check, ChevronRight, RotateCcw, Wallet, Zap } from "lucide-react";
 import {
   BUDGET,
   DEVICES,
   ENERGY_TARGET,
   formatNumber,
   type EnergyDevice,
+  type EnergyLabelGrade,
   type EnergyOption,
 } from "@/lib/energy-data";
 import houseAsset from "@/assets/haus.png.asset.json";
 import coin from "@/assets/coin.png";
 import trophy from "@/assets/trophy.png";
+import labelA from "@/assets/label-a.png.asset.json";
+import labelB from "@/assets/label-b.png.asset.json";
+import labelC from "@/assets/label-c.png.asset.json";
+import labelD from "@/assets/label-d.png.asset.json";
+import labelE from "@/assets/label-e.png.asset.json";
+import labelF from "@/assets/label-f.png.asset.json";
+import labelG from "@/assets/label-g.png.asset.json";
+
+const LABEL_MAP: Record<EnergyLabelGrade, { url: string }> = {
+  A: labelA,
+  B: labelB,
+  C: labelC,
+  D: labelD,
+  E: labelE,
+  F: labelF,
+  G: labelG,
+};
+
+function EnergyLabel({ grade }: { grade: EnergyLabelGrade }) {
+  return (
+    <img
+      src={LABEL_MAP[grade].url}
+      alt={`Energieklasse ${grade}`}
+      className="h-4 w-auto object-contain"
+    />
+  );
+}
 
 function Coin({ value, variant = "coin" }: { value: string | number; variant?: "coin" | "energy" }) {
   return (
@@ -240,9 +268,13 @@ function OptionRow({
             <span className="ml-2 text-[11px] font-normal text-emerald-700">✓ gewählt</span>
           )}
         </div>
+        {opt.productName && (
+          <div className="text-xs italic text-foreground/60">{opt.productName}</div>
+        )}
         <div className="text-xs text-foreground/70">{opt.description}</div>
       </div>
       <div className="flex shrink-0 flex-col items-end gap-1 text-xs">
+        {opt.energyLabel && <EnergyLabel grade={opt.energyLabel} />}
         <Coin value={opt.cost} />
         <span
           className={`whitespace-nowrap font-bold ${
@@ -278,6 +310,11 @@ function DeviceModal({
   onChoose: (choice: DeviceChoice) => void;
   onClose: () => void;
 }) {
+  const [openGroup, setOpenGroup] = useState<string | null>(null);
+  useEffect(() => {
+    setOpenGroup(null);
+  }, [device.id]);
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 p-0 backdrop-blur-sm sm:items-center sm:p-4"
@@ -296,13 +333,46 @@ function DeviceModal({
         </p>
 
         {device.groups ? (
-          <div className="space-y-5">
-            {device.groups.map((group) => {
+          openGroup === null ? (
+            <div className="space-y-2">
+              {device.groups.map((group) => {
+                const rec = current as Record<string, string>;
+                const currentId = rec[group.id] ?? group.options[0].id;
+                const currentOpt = group.options.find((o) => o.id === currentId) ?? group.options[0];
+                const isChanged = currentId !== group.options[0].id;
+                return (
+                  <button
+                    key={group.id}
+                    onClick={() => setOpenGroup(group.id)}
+                    className={`flex w-full items-center gap-3 rounded-sm border p-3 text-left transition hover:bg-secondary ${
+                      isChanged ? "border-emerald-600 bg-emerald-50" : "border-border bg-secondary/40"
+                    }`}
+                  >
+                    <div className="min-w-0 flex-1">
+                      <div className="font-bold">{group.label}</div>
+                      <div className="text-xs text-foreground/70">
+                        aktuell: <span className="italic">{currentOpt.label}</span>
+                      </div>
+                    </div>
+                    <ChevronRight className="h-4 w-4 shrink-0 text-foreground/50" />
+                  </button>
+                );
+              })}
+            </div>
+          ) : (
+            (() => {
+              const group = device.groups.find((g) => g.id === openGroup)!;
               const rec = current as Record<string, string>;
               const currentId = rec[group.id] ?? group.options[0].id;
               const currentOpt = group.options.find((o) => o.id === currentId) ?? group.options[0];
               return (
-                <div key={group.id}>
+                <div>
+                  <button
+                    onClick={() => setOpenGroup(null)}
+                    className="mb-3 text-xs text-foreground/70 hover:text-foreground"
+                  >
+                    ← Zurück zur Auswahl
+                  </button>
                   <p className="mb-2 font-mono-typed text-[11px] uppercase tracking-wider text-stamp">
                     {group.label}
                   </p>
@@ -325,8 +395,8 @@ function DeviceModal({
                   </div>
                 </div>
               );
-            })}
-          </div>
+            })()
+          )
         ) : (
           <div className="space-y-2">
             {(() => {
