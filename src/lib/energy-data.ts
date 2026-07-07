@@ -1,9 +1,13 @@
+export type EnergyLabelGrade = "A" | "B" | "C" | "D" | "E" | "F" | "G";
+
 export interface EnergyOption {
   id: string;
   label: string;
+  productName?: string;
   description: string;
   cost: number;
   energy: number; // Energiesparpunkte (ESP)
+  energyLabel?: EnergyLabelGrade;
 }
 
 export interface EnergyOptionGroup {
@@ -45,9 +49,9 @@ export const DEVICES: EnergyDevice[] = [
     icon: "📺",
     ...fromPx(167, 802, 103, 107),
     options: [
-      { id: "alt", label: "Alter LCD, Stand-by an", description: "Läuft immer im Standby.", cost: 0, energy: 0 },
-      { id: "led-e", label: "Neuer LED, E-Klasse", description: "Etwas effizienter.", cost: 700, energy: 50 },
-      { id: "led-d", label: "Neuer D-Klasse", description: "Deutlich effizienter.", cost: 1000, energy: 90 },
+      { id: "alt", label: "Alter LCD, Stand-by an", productName: "Röhrenknight 2003", description: "Läuft immer im Standby.", cost: 0, energy: 0, energyLabel: "F" },
+      { id: "led-e", label: "Neuer LED, E-Klasse", productName: "Flimmerkiste Standard", description: "Etwas effizienter.", cost: 700, energy: 50, energyLabel: "E" },
+      { id: "led-d", label: "Neuer D-Klasse", productName: "PixelPro Eco", description: "Deutlich effizienter.", cost: 1000, energy: 90, energyLabel: "D" },
     ],
   },
   {
@@ -81,8 +85,8 @@ export const DEVICES: EnergyDevice[] = [
     icon: "🌀",
     ...fromPx(354, 548, 137, 187),
     options: [
-      { id: "alt", label: "Alter Tumbler", description: "Läuft nach jeder Wäsche.", cost: 0, energy: 0 },
-      { id: "neu", label: "Neues Gerät A+++", description: "Effizienter, aber teuer.", cost: 700, energy: 350 },
+      { id: "alt", label: "Alter Tumbler", productName: "Heissluft-Otto", description: "Läuft nach jeder Wäsche.", cost: 0, energy: 0, energyLabel: "F" },
+      { id: "neu", label: "Neues Gerät A", productName: "TrockenFix A", description: "Modernes A-Gerät, effizient aber teuer.", cost: 700, energy: 350, energyLabel: "A" },
       { id: "aufhaengen", label: "Wäsche aufhängen", description: "Braucht Zeit, spart viel — gratis.", cost: 0, energy: 550 },
     ],
   },
@@ -95,7 +99,7 @@ export const DEVICES: EnergyDevice[] = [
     options: [
       { id: "40-60", label: "Wäsche 40–60 °C", description: "Standardprogramm.", cost: 0, energy: 0 },
       { id: "eco", label: "40–60 °C Eco-Programm", description: "Länger, aber viel sparsamer.", cost: 0, energy: 340 },
-      { id: "neu", label: "Neue Waschmaschine", description: "Modernes A+++ Gerät.", cost: 1700, energy: 390 },
+      { id: "neu", label: "Neue Waschmaschine A", productName: "SauberStar A", description: "Modernes A-Gerät.", cost: 1700, energy: 390, energyLabel: "A" },
     ],
   },
   {
@@ -105,9 +109,9 @@ export const DEVICES: EnergyDevice[] = [
     icon: "🧹",
     ...fromPx(625, 456, 159, 279),
     options: [
-      { id: "alt", label: "Alter Staubsauger", description: "Ineffizient, viel Strom.", cost: 0, energy: 0 },
-      { id: "neu", label: "Neues Gerät", description: "Etwas sparsamer.", cost: 100, energy: 45 },
-      { id: "top", label: "Sehr energieeffizient", description: "Bestes Modell auf dem Markt.", cost: 200, energy: 70 },
+      { id: "alt", label: "Alter Staubsauger", productName: "Turbo-Sauger 2000", description: "Ineffizient, viel Strom.", cost: 0, energy: 0, energyLabel: "F" },
+      { id: "neu", label: "Neues Gerät", productName: "SaugMeister", description: "Etwas sparsamer.", cost: 100, energy: 45, energyLabel: "C" },
+      { id: "top", label: "Sehr energieeffizient", productName: "SilentVac Pro", description: "Bestes Modell auf dem Markt.", cost: 200, energy: 70, energyLabel: "A" },
     ],
   },
   {
@@ -117,9 +121,9 @@ export const DEVICES: EnergyDevice[] = [
     icon: "💡",
     ...fromPx(510, 1267, 61, 134),
     options: [
-      { id: "halogen", label: "Halogen", description: "Warm, aber viel Strom.", cost: 0, energy: 0 },
-      { id: "spar", label: "Energiesparlampe", description: "Deutlich effizienter.", cost: 30, energy: 300 },
-      { id: "led", label: "LED", description: "Beste Wahl, kaum Verbrauch.", cost: 60, energy: 350 },
+      { id: "halogen", label: "Halogen", productName: "Glühbirne Retro", description: "Warm, aber viel Strom.", cost: 0, energy: 0, energyLabel: "E" },
+      { id: "spar", label: "Energiesparlampe", productName: "Sparlicht Kompakt", description: "Deutlich effizienter.", cost: 30, energy: 300, energyLabel: "B" },
+      { id: "led", label: "LED", productName: "LumiLED Bright", description: "Beste Wahl, kaum Verbrauch.", cost: 60, energy: 350, energyLabel: "A" },
     ],
   },
   {
@@ -141,9 +145,9 @@ export const DEVICES: EnergyDevice[] = [
     icon: "🍳",
     ...fromPx(362, 1376, 100, 136),
     options: [
-      { id: "alt", label: "Alter Backofen", description: "Lange Vorheizzeit.", cost: 0, energy: 0 },
-      { id: "umluft", label: "Umluft A", description: "Niedrigere Temperatur möglich.", cost: 0, energy: 20 },
-      { id: "a3", label: "Umluft A+++", description: "Top isoliert, sehr effizient.", cost: 700, energy: 70 },
+      { id: "alt", label: "Alter Backofen", productName: "Backofen Grossmutter", description: "Lange Vorheizzeit.", cost: 0, energy: 0, energyLabel: "E" },
+      { id: "umluft", label: "Umluft A", productName: "Umluft ClassicPlus", description: "Niedrigere Temperatur möglich.", cost: 0, energy: 20, energyLabel: "B" },
+      { id: "a3", label: "Umluft A+++", productName: "EcoBake Pro", description: "Top isoliert, sehr effizient.", cost: 700, energy: 70, energyLabel: "A" },
     ],
   },
   {
@@ -187,9 +191,9 @@ export const DEVICES: EnergyDevice[] = [
     icon: "🧊",
     ...fromPx(156, 1212, 91, 300),
     options: [
-      { id: "alt", label: "Altes Gerät", description: "Läuft rund um die Uhr.", cost: 0, energy: 0 },
+      { id: "alt", label: "Altes Gerät", productName: "Frostbeule 1998", description: "Läuft rund um die Uhr.", cost: 0, energy: 0, energyLabel: "F" },
       { id: "warm", label: "Temperatur 5 → 7 °C", description: "Zwei Grad wärmer — gratis.", cost: 0, energy: 90 },
-      { id: "neu", label: "Neues Gerät A+++", description: "Hocheffizient.", cost: 1000, energy: 320 },
+      { id: "neu", label: "Neues Gerät A", productName: "ArcticFresh A", description: "Hocheffizient, modernes A-Gerät.", cost: 1000, energy: 320, energyLabel: "A" },
     ],
   },
 ];
