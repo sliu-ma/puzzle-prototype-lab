@@ -244,11 +244,6 @@ function OptionRow({
           )}
         </div>
         <div className="mt-0.5 text-xs text-foreground/70">{opt.description}</div>
-        {opt.energyLabel && (
-          <div className="mt-2">
-            <EnergyLabel grade={opt.energyLabel} />
-          </div>
-        )}
       </div>
       <div className="flex shrink-0 items-center gap-3 text-xs">
         <Coin value={opt.cost} />
