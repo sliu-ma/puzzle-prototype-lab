@@ -116,5 +116,16 @@ export function StageGate({ stage, children }: Props) {
     );
   }
 
-  return <>{children}</>;
+  const isReview = current > stage;
+  return (
+    <>
+      {isReview && (
+        <div className="sticky top-0 z-40 border-b border-emerald-500/40 bg-emerald-500/10 px-3 py-2 text-center font-mono-typed text-[11px] uppercase tracking-[0.18em] text-emerald-800">
+          Rückblick · Etappe {stage} abgeschlossen · eure Antworten bleiben sichtbar
+        </div>
+      )}
+      {children}
+    </>
+  );
 }
+
