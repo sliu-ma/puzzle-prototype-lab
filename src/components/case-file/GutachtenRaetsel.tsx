@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { usePersistentSet } from "@/lib/persist";
+
 
 type FehlerId = "f1" | "f2" | "f3" | "f4" | "f5";
 const alleFehlerIds: FehlerId[] = ["f1", "f2", "f3", "f4", "f5"];
