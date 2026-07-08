@@ -274,7 +274,14 @@ function AktePage() {
             </p>
 
             <div className="mt-6">
-              <CodeLock expected={EXPECTED_CODE} onUnlock={() => goto("input")} />
+              <CodeLock
+                expected={EXPECTED_CODE}
+                onUnlock={() => {
+                  saveSolution(3, { code: EXPECTED_CODE });
+                  goto("input");
+                }}
+              />
+
             </div>
 
             <div className="mt-6 flex justify-start">
