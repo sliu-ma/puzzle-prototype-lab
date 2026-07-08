@@ -1,109 +1,53 @@
+# Rätsel-Rückblick: Lösungen speichern und wieder anschauen
+
 ## Ziel
+Sobald ein Rätsel gelöst wird, werden Auswahl/Antworten der Schüler:innen im `localStorage` gespeichert. Am Ende (und optional jederzeit von der Startseite aus) können alle Rätsel erneut geöffnet werden — mit den gemachten Eingaben, aber im reinen Lese-/Review-Modus.
 
-Etappe 4 bekommt drei Verbesserungen:
+## Ansatz
 
-1. **Energieetiketten (A–G)** als Farbpfeil-Badges an relevanten Geräteoptionen.
-2. **Imaginäre Produktnamen** — **nur** für echte Haushaltsgeräte (Alt/Neu-Varianten), nicht für Verhaltens- oder Programmoptionen.
-3. **Herd zweistufig**: erst 3 Untergruppen wählen, dann erst die Massnahmen anzeigen.
+### 1. Zentrale Speicher-Helfer (`src/lib/progress.ts`)
+Neue kleine API ergänzen (keine bestehende Logik ändern):
+- `saveSolution(stage, data)` — speichert unter `maya-solution-<stage>` als JSON, dispatched `maya-progress`.
+- `getSolution<T>(stage)` — liest zurück (oder `null`).
+- `resetAll()` löscht diese Keys mit (Prefix `maya-` erfasst sie bereits).
 
-## 1. Energieetiketten als Assets
+### 2. Rätsel-Komponenten schreiben ihre Lösung
+Jeweils direkt bevor `completeStage(n)` läuft, `saveSolution(n, {...})` aufrufen:
+- **Etappe 1 · Mobilität** (`RouteCards`/`etappe-1`): gewählte Route + evtl. Reihenfolge.
+- **Etappe 2 · Dorfladen** (`GruenerMarkt`): finaler Warenkorb (Produkt-IDs + Mengen).
+- **Etappe 3 · Wald** (`GutachtenRaetsel`): Zuordnungen / Antworten.
+- **Etappe 4 · Haus** (`EnergyGame`): pro Gerät die gewählte Option.
+- **Etappe 5 · Wasserkraftwerk**: gelöste Antwort/Code.
+- **Finale**: Kernentscheidungen des Hearings.
 
-- 7 Uploads → `src/assets/label-a.png.asset.json` … `label-g.png.asset.json` via `lovable-assets create` aus `/mnt/user-uploads/a.png` … `g.png`.
-- Kleine Inline-Komponente `EnergyLabel` in `EnergyGame.tsx`, statisches `labelMap`.
+Format pro Etappe klein und stabil (z. B. `{ v: 1, choices: {...} }`), damit spätere Änderungen migrierbar bleiben.
 
-## 2. `EnergyOption` erweitern
+### 3. Review-Modus in den Rätsel-Komponenten
+Neuer optionaler Prop `reviewMode?: boolean` (+ ggf. `initialSolution`):
+- Alle Auswahl-Controls werden `disabled` / nicht-interaktiv.
+- Kein `onErfolg`/`completeStage` mehr, keine Timer/Hints.
+- Ein deutlicher Hinweis-Banner oben: „Rückblick — deine Lösung vom Spiel".
 
-```ts
-type EnergyLabel = "A" | "B" | "C" | "D" | "E" | "F" | "G";
-interface EnergyOption {
-  id: string;
-  label: string;            // Sach-Bezeichnung
-  productName?: string;     // Fun-Name — NUR bei echten Geräten
-  description: string;
-  cost: number;
-  energy: number;
-  energyLabel?: EnergyLabel;
-}
-```
+Die Etappen-Routes nehmen `reviewMode` aus einem Search-Param (`?review=1`) auf. Im Review-Modus:
+- `StageGate` und `QRGate` werden übersprungen (freier Zugang zum Rückblick).
+- Nur der Rätsel-Schritt wird gerendert (kein Brief/Weiter-Flow nötig — oder Brief bleibt zur Einbettung, ohne "Weiter").
 
-## 3. Fun-Namen + Etiketten — Regel
+### 4. Einstiegspunkte für den Rückblick
+- **Auf der Startseite** (`src/routes/index.tsx`): Sektion „Rückblick" unter dem Fortschritt — pro abgeschlossener Etappe ein Link `/<etappe>?review=1`. Erscheint sobald mind. eine Lösung gespeichert ist.
+- **Am Ende des Finales**: gleiche Liste als Abschluss-Sammlung („Schaut euch alle Rätsel nochmals an").
 
-**Fun-Namen bekommen NUR echte Haushaltsgeräte** (Alt- oder Neu-Variante mit Anschaffung/Ersatz). Verhaltensoptionen, Programme, Temperatur-Einstellungen, Zubehör (Sparbrause, Deckel, Pfannengrösse) bekommen **keinen** Fun-Namen — sie behalten nur ihr sachliches Label.
+## Technische Details
 
-**Fernseher** (alles Geräte):
+- Storage-Keys: `maya-solution-1` … `maya-solution-6` (JSON, versioniert).
+- `saveSolution` triggert `window.dispatchEvent(new Event("maya-progress"))`, damit Übersicht/Finale reaktiv aktualisieren.
+- Search-Param via TanStack Router: `validateSearch: (s) => ({ review: s.review === "1" ? "1" : undefined })` pro Etappen-Route.
+- `reviewMode` verhindert Nebeneffekte (kein `completeStage`, kein `saveSolution`, kein Timer-Reset, kein Envelope-Prompt zur nächsten Etappe).
+- Backfill: Falls für eine bereits gelöste Etappe (noch) keine Solution gespeichert ist, wird der Review-Link leicht ausgegraut mit Hinweis „Keine gespeicherte Lösung — bitte Etappe erneut spielen".
 
-- Alter LCD → *Röhrenknight 2003*, Label **F**
-- LED E-Klasse → *Flimmerkiste Standard*, Label **E**
-- D-Klasse → *PixelPro Eco*, Label **D**
+## Umfang / Reihenfolge der Umsetzung
+1. Helfer in `progress.ts` + Typen.
+2. Alle fünf Rätsel-Komponenten: `reviewMode` einbauen + `saveSolution` beim Lösen.
+3. Etappen-Routes: `?review=1` durchreichen, Gates im Review überspringen.
+4. Übersicht auf Startseite + Abschluss-Liste im Finale.
 
-**Tumbler** (Text „A+++" → „A"):
-
-- Alter Tumbler → *Heissluft-Otto*, Label **F**
-- Neues Gerät A → *TrockenFix A*, Label **A**
-- Wäsche aufhängen → **kein** Fun-Name, **kein** Label
-
-**Waschmaschine**:
-
-- 40–60 °C → **kein** Fun-Name, **kein** Label (Programm)
-- Eco-Programm → **kein** Fun-Name (Programm)
-- Neue Waschmaschine A (Text „A" statt A+++) → *SauberStar A*, Label **A**
-- Für alte Waschmaschine bleibt es beim reinen Sach-Label — sie ist zwar Gerät, aber die Option beschreibt hier das Waschprogramm der bestehenden Maschine. Kein Fun-Name.
-
-**Staubsauger** (alles Geräte):
-
-- Alter Staubsauger → *Turbo-Sauger 2000*, Label **F**
-- Neues Gerät → *SaugMeister*, Label **C**
-- Sehr effizient → *SilentVac Pro*, Label **A**
-
-**Lampe** (alles Leuchtmittel-Geräte):
-
-- Halogen → *Glühbirne Retro*, Label **E**
-- Energiesparlampe → *Sparlicht Kompakt*, Label **B**
-- LED → *LumiLED Bright*, Label **A**
-
-**Ofen** (alles Geräte):
-
-- Alter Backofen → *Backofen Grossmutter*, Label **E**
-- Umluft A → *Backen mit Umluft*, **kein Label**
-- Umluft A+++ (Text bleibt) → *EcoBake Pro*, Label **A**
-
-**Kühlschrank**:
-
-- Altes Gerät → *Frostbeule 1998*, Label **F**
-- 5 → 7 °C → **kein** Fun-Name, **kein** Label (Temperatur-Einstellung)
-- Neues Gerät A (Text „A+++" → „A") → *ArcticFresh A*, Label **A**
-
-**Dusche** — alle Optionen sind Verhalten/Zubehör → **keine** Fun-Namen, keine Labels.
-
-**Heizung / Raumtemperatur** — Temperatur-Einstellung → **keine** Fun-Namen, keine Labels.
-
-**Geschirrspüler** — Programme/Verhalten → **keine** Fun-Namen, keine Labels.
-
-**Herd-Gruppen** — Kochverhalten & Kochgeschirr → **keine** Fun-Namen. Bei Herdplatte sind Glaskeramik/Induktion technisch Geräte, aber sie stehen als Umbau-Massnahme in der Gruppe „Herdplatte" — konsistent halten und **keine** Fun-Namen vergeben. Keine Labels.
-
-Text-Anpassungen „A+++" → „A" bei Tumbler / Waschmaschine / Kühlschrank in `label` und `description`.
-
-## 4. Herd zweistufig im Modal
-
-Neuer lokaler State im `DeviceModal`: `openGroup: string | null` (start: `null`).
-
-- `openGroup === null` und `device.groups`: rendere 3 kompakte Gruppen-Tiles („Kochen im Topf", „Kochgeschirr", „Herdplatte") mit „aktuell: <currentOpt.label>" + Chevron. Klick → `openGroup = g.id`.
-- `openGroup !== null`: nur die Optionen dieser Gruppe + „← Zurück zur Auswahl"-Button (setzt `openGroup` zurück).
-- Beim erneuten Öffnen des Modals wieder `null`.
-
-Nicht-Gruppen-Geräte unverändert.
-
-## 5. `OptionRow` UI-Ergänzung
-
-- `productName` (falls gesetzt): klein/italic unter dem `label`, `text-foreground/60`.
-- `energyLabel` (falls gesetzt): Badge oben rechts in der Zahlenspalte (über Coin / ESP).
-
-## 6. Nicht angefasst
-
-Budget (1'000), Ziel (3'500 ESP), Koordinaten, Zahlen, andere Etappen, Route-Texte in `etappe-4.tsx`.
-
-## Technische Notizen
-
-- 7 Label-Assets als statisches Map importieren, kein dynamisches `import()`.
-- `productName` und `energyLabel` beide optional — Optionen ohne diese Felder rendern wie heute.
-- Herd-Modal-State lokal, kein globaler Umbau.
+Kein neuer Backend-Bedarf, alles clientseitig — passt zum bestehenden localStorage-Ansatz.

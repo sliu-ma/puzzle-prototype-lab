@@ -6,9 +6,11 @@ import { CodeLock } from "@/components/case-file/CodeLock";
 import { QRGate } from "@/components/case-file/QRGate";
 import { StageGate } from "@/components/case-file/StageGate";
 import { HintSystem, type Hint } from "@/components/case-file/HintSystem";
-import { completeStage, getFrozenClock } from "@/lib/progress";
+import { ReviewBanner } from "@/components/case-file/ReviewBanner";
+import { completeStage, getFrozenClock, getSolution, saveSolution } from "@/lib/progress";
 import { cn } from "@/lib/utils";
 import { useEnvelopePrompt } from "@/components/case-file/EnvelopeDialog";
+
 
 import {
   Dialog,
@@ -19,6 +21,9 @@ import {
 } from "@/components/ui/dialog";
 
 export const Route = createFileRoute("/etappe-3")({
+  validateSearch: (s: Record<string, unknown>) => ({
+    review: s.review === "1" ? "1" : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Etappe 3 — Wald-Lichtung" },
@@ -31,6 +36,7 @@ export const Route = createFileRoute("/etappe-3")({
   }),
   component: AkteGated,
 });
+
 
 const AKTE_002_TOKEN = "Mn7YxQ2pVe9TbR4Ks0Lh";
 const EXPECTED_CODE = "123";
@@ -60,6 +66,8 @@ const HINTS_002: Hint[] = [
 ];
 
 function AkteGated() {
+  const { review } = Route.useSearch();
+  if (review === "1") return <AkteReview />;
   return (
     <StageGate stage={3}>
       <QRGate
@@ -74,6 +82,45 @@ function AkteGated() {
     </StageGate>
   );
 }
+
+function AkteReview() {
+  const solution = getSolution<{ code: string }>(3);
+  return (
+    <main className="relative min-h-screen px-3 py-6 sm:px-4 sm:py-10">
+      <div className="relative mx-auto max-w-3xl">
+        <ReviewBanner stage={3} />
+        <PaperCard rotate={-0.3}>
+          <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
+            Zahlenschloss · Ausrüstungskiste
+          </p>
+          <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
+            Euer eingegebener Code
+          </h2>
+          {solution ? (
+            <div className="mt-6 flex justify-center gap-3">
+              {solution.code.split("").map((d, i) => (
+                <div
+                  key={i}
+                  className="flex h-16 w-12 items-center justify-center rounded-sm border-2 border-emerald-700 bg-emerald-50 font-mono-typed text-3xl font-bold text-ink sm:h-20 sm:w-16 sm:text-4xl"
+                >
+                  {d}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="mt-4 text-foreground/80">
+              Keine gespeicherte Lösung für Etappe 3.
+            </p>
+          )}
+          <p className="mt-6 text-sm text-foreground/70">
+            Kreuzotter (stark gefährdet) → 1 · 2 · 3 (aufsteigend).
+          </p>
+        </PaperCard>
+      </div>
+    </main>
+  );
+}
+
 
 type Step = "brief" | "code" | "input" | "naechstes";
 
@@ -227,7 +274,14 @@ function AktePage() {
             </p>
 
             <div className="mt-6">
-              <CodeLock expected={EXPECTED_CODE} onUnlock={() => goto("input")} />
+              <CodeLock
+                expected={EXPECTED_CODE}
+                onUnlock={() => {
+                  saveSolution(3, { code: EXPECTED_CODE });
+                  goto("input");
+                }}
+              />
+
             </div>
 
             <div className="mt-6 flex justify-start">

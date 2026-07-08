@@ -8,13 +8,18 @@ import { StageGate } from "@/components/case-file/StageGate";
 import { HintSystem, type Hint } from "@/components/case-file/HintSystem";
 import { RouteCards } from "@/components/case-file/RouteCards";
 import { RouteDetail } from "@/components/case-file/RouteDetail";
-import { VALID_START, VALID_ZIEL, type RouteOption } from "@/lib/mobility-data";
-import { completeStage } from "@/lib/progress";
+import { ReviewBanner } from "@/components/case-file/ReviewBanner";
+import { ROUTES, VALID_START, VALID_ZIEL, type RouteOption } from "@/lib/mobility-data";
+import { completeStage, getSolution, saveSolution } from "@/lib/progress";
 import { cn } from "@/lib/utils";
 import { useEnvelopePrompt } from "@/components/case-file/EnvelopeDialog";
 
 
+
 export const Route = createFileRoute("/etappe-1")({
+  validateSearch: (s: Record<string, unknown>) => ({
+    review: s.review === "1" ? "1" : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Etappe 1 — Bahnhof Speicher" },
@@ -27,6 +32,7 @@ export const Route = createFileRoute("/etappe-1")({
   }),
   component: AkteGated,
 });
+
 
 const AKTE_003_TOKEN = "Tz3PqW8nXmYr5JcLs6Vk";
 
@@ -55,6 +61,8 @@ const HINTS_003: Hint[] = [
 ];
 
 function AkteGated() {
+  const { review } = Route.useSearch();
+  if (review === "1") return <AkteReview />;
   return (
     <StageGate stage={1}>
       <QRGate
@@ -69,6 +77,36 @@ function AkteGated() {
     </StageGate>
   );
 }
+
+function AkteReview() {
+  const solution = getSolution<{ routeId: string }>(1);
+  const route = solution ? ROUTES.find((r) => r.id === solution.routeId) : null;
+  return (
+    <main className="relative min-h-screen px-3 py-6 sm:px-4 sm:py-10">
+      <div className="relative mx-auto max-w-5xl">
+        <ReviewBanner stage={1} />
+        {route ? (
+          <RouteDetail
+            routeId={route.id}
+            errorText={null}
+            onBack={() => {}}
+            onChoose={() => {}}
+          />
+        ) : (
+          <PaperCard rotate={-0.3}>
+            <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
+              Keine gespeicherte Lösung
+            </p>
+            <h2 className="mt-2 font-serif text-2xl font-bold">
+              Für Etappe 1 liegt noch kein Rückblick vor.
+            </h2>
+          </PaperCard>
+        )}
+      </div>
+    </main>
+  );
+}
+
 
 type Step = "brief" | "eingabe" | "routen" | "input" | "naechstes";
 
@@ -325,6 +363,7 @@ function AktePage() {
             onChoose={(r: RouteOption) => {
               if (r.correct) {
                 setRouteError(null);
+                saveSolution(1, { routeId: r.id });
                 goto("input");
               } else {
                 setRouteError(
@@ -332,6 +371,7 @@ function AktePage() {
                 );
               }
             }}
+
           />
         )}
 

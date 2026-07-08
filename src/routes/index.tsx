@@ -11,7 +11,9 @@ import {
   resetAll,
   getNowClock,
   getHearingClock,
+  hasSolution,
 } from "@/lib/progress";
+
 
 
 import { IntroScreen, hasSeenIntro } from "@/components/case-file/IntroScreen";
@@ -434,6 +436,8 @@ function ProgressPanel({
         </li>
       </ol>
 
+      <ReviewList />
+
       <div className="flex justify-end">
         <button
           onClick={onReset}
@@ -445,6 +449,47 @@ function ProgressPanel({
     </div>
   );
 }
+
+function ReviewList() {
+  const reviewable = STAGES.slice(0, 5).filter((s) => hasSolution(s.nr));
+  if (reviewable.length === 0) return null;
+  return (
+    <div className="rounded-sm border border-border bg-paper-deep/30 p-4">
+      <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
+        Rückblick
+      </p>
+      <h3 className="mt-1 font-serif text-lg font-bold">Gelöste Rätsel nochmals anschauen</h3>
+      <p className="mt-1 text-sm text-foreground/70">
+        Öffnet eure gespeicherten Lösungen — ideal für die Nachbesprechung.
+      </p>
+      <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+        {reviewable.map((s) => (
+          <li key={s.nr}>
+            <Link
+              to={s.to}
+              search={{ review: "1" }}
+              className="group flex items-center justify-between gap-2 rounded-sm border border-border bg-paper px-3 py-2 text-sm hover:-translate-y-0.5 hover:shadow-sm transition-all"
+            >
+              <span className="min-w-0">
+                <span className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
+                  Etappe {s.nr}
+                </span>
+                <span className="block font-serif font-bold">
+                  {s.ort}{" "}
+                  <span className="text-foreground/60 font-normal">· {s.thema}</span>
+                </span>
+              </span>
+              <span aria-hidden className="transition-transform group-hover:translate-x-1">
+                →
+              </span>
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 
 function Badge({
   n,

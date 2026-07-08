@@ -6,10 +6,15 @@ import { QRGate } from "@/components/case-file/QRGate";
 import { StageGate } from "@/components/case-file/StageGate";
 import { GutachtenRaetsel } from "@/components/case-file/GutachtenRaetsel";
 import { HintSystem, type Hint } from "@/components/case-file/HintSystem";
-import { completeStage, getFrozenClock, getHearingClock } from "@/lib/progress";
+import { ReviewBanner } from "@/components/case-file/ReviewBanner";
+import { completeStage, getFrozenClock, getHearingClock, getSolution, saveSolution } from "@/lib/progress";
 import { cn } from "@/lib/utils";
 
+
 export const Route = createFileRoute("/etappe-5")({
+  validateSearch: (s: Record<string, unknown>) => ({
+    review: s.review === "1" ? "1" : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Etappe 5 — Altes Wasserkraftwerk" },
@@ -22,6 +27,7 @@ export const Route = createFileRoute("/etappe-5")({
   }),
   component: AkteGated,
 });
+
 
 const AKTE_005_TOKEN = "Eg9LkRq2VhYbP4Mn7TcW";
 
@@ -50,6 +56,8 @@ const HINTS_005: Hint[] = [
 ];
 
 function AkteGated() {
+  const { review } = Route.useSearch();
+  if (review === "1") return <AkteReview />;
   return (
     <StageGate stage={5}>
       <QRGate
@@ -64,6 +72,33 @@ function AkteGated() {
     </StageGate>
   );
 }
+
+function AkteReview() {
+  const solution = getSolution<string[]>(5);
+  return (
+    <main className="relative min-h-screen px-3 py-6 sm:px-4 sm:py-10">
+      <div className="relative mx-auto max-w-5xl">
+        <ReviewBanner stage={5} />
+        {solution ? (
+          <GutachtenRaetsel onErfolg={() => {}} reviewMode initialMarkiert={solution} />
+        ) : (
+          <PaperCard rotate={-0.3}>
+            <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
+              Keine gespeicherte Lösung
+            </p>
+            <h2 className="mt-2 font-serif text-2xl font-bold">
+              Für Etappe 5 liegt noch kein Rückblick vor.
+            </h2>
+            <p className="mt-3 text-foreground/80">
+              Löse die Etappe zuerst — danach findest du sie hier im Rückblick wieder.
+            </p>
+          </PaperCard>
+        )}
+      </div>
+    </main>
+  );
+}
+
 
 type Step = "brief" | "spiel" | "input" | "naechstes";
 
@@ -202,7 +237,13 @@ function AktePage() {
 
         {step === "spiel" && (
           <div className="space-y-4">
-            <GutachtenRaetsel onErfolg={() => goto("input")} />
+            <GutachtenRaetsel
+              onErfolg={(markiert) => {
+                saveSolution(5, markiert);
+                goto("input");
+              }}
+            />
+
             <div className="flex justify-start">
               <button
                 onClick={() => setStep("brief")}
