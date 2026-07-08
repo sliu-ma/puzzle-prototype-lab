@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
+import { usePersistentState } from "@/lib/persist";
+
 import { Check, ChevronRight, RotateCcw, Wallet, Zap } from "lucide-react";
 import {
   BUDGET,
