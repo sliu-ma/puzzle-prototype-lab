@@ -6,9 +6,11 @@ import { CodeLock } from "@/components/case-file/CodeLock";
 import { QRGate } from "@/components/case-file/QRGate";
 import { StageGate } from "@/components/case-file/StageGate";
 import { HintSystem, type Hint } from "@/components/case-file/HintSystem";
-import { completeStage, getFrozenClock } from "@/lib/progress";
+import { ReviewBanner } from "@/components/case-file/ReviewBanner";
+import { completeStage, getFrozenClock, getSolution, saveSolution } from "@/lib/progress";
 import { cn } from "@/lib/utils";
 import { useEnvelopePrompt } from "@/components/case-file/EnvelopeDialog";
+
 
 import {
   Dialog,
