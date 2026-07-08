@@ -58,12 +58,20 @@ function isDefaultChoice(d: EnergyDevice, choice: DeviceChoice): boolean {
   return (choice as string) === d.options![0].id;
 }
 
-export function EnergyGame({ onErfolg }: { onErfolg: () => void }) {
+export function EnergyGame({
+  onErfolg,
+  reviewMode = false,
+  initialChoices,
+}: {
+  onErfolg: (choices: Choices) => void;
+  reviewMode?: boolean;
+  initialChoices?: Choices;
+}) {
   const defaults = useMemo<Choices>(
     () => Object.fromEntries(DEVICES.map((d) => [d.id, defaultDeviceChoice(d)])),
     [],
   );
-  const [choices, setChoices] = useState<Choices>(defaults);
+  const [choices, setChoices] = useState<Choices>(initialChoices ?? defaults);
   const [open, setOpen] = useState<EnergyDevice | null>(null);
   const [showFail, setShowFail] = useState(false);
 
@@ -82,18 +90,22 @@ export function EnergyGame({ onErfolg }: { onErfolg: () => void }) {
   const erreicht = totals.energy >= ENERGY_TARGET;
 
   const setChoice = (deviceId: string, choice: DeviceChoice) => {
+    if (reviewMode) return;
     setChoices((c) => ({ ...c, [deviceId]: choice }));
   };
 
   const reset = () => {
+    if (reviewMode) return;
     setChoices(defaults);
     setShowFail(false);
   };
 
   const pruefen = () => {
-    if (erreicht && totals.invested <= BUDGET) onErfolg();
+    if (reviewMode) return;
+    if (erreicht && totals.invested <= BUDGET) onErfolg(choices);
     else setShowFail(true);
   };
+
 
   return (
     <div className="rounded-sm border border-border bg-paper p-3 sm:p-5">
@@ -173,17 +185,20 @@ export function EnergyGame({ onErfolg }: { onErfolg: () => void }) {
         <button
           onClick={reset}
           aria-label="Zurücksetzen"
-          className="inline-flex items-center gap-1 rounded-sm border border-border bg-paper px-3 py-2 text-xs hover:bg-secondary"
+          disabled={reviewMode}
+          className="inline-flex items-center gap-1 rounded-sm border border-border bg-paper px-3 py-2 text-xs hover:bg-secondary disabled:opacity-40"
         >
           <RotateCcw className="h-3 w-3" /> Reset
         </button>
         <button
           onClick={pruefen}
-          className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
+          disabled={reviewMode}
+          className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md disabled:opacity-50"
         >
-          Entscheidung prüfen →
+          {reviewMode ? "Rückblick" : "Entscheidung prüfen →"}
         </button>
       </div>
+
 
       {showFail && !erreicht && (
         <div className="mt-3 rounded-sm border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">

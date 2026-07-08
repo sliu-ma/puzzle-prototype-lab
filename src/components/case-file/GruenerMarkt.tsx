@@ -13,12 +13,13 @@ import { ProduktDetailDialog } from "./ProduktDetailDialog";
 
 interface GruenerMarktProps {
   startWarenkorb: string[];
-  onErfolg: () => void;
+  onErfolg: (warenkorb: string[]) => void;
+  reviewMode?: boolean;
 }
 
 type Status = "shop" | "erfolg";
 
-export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
+export function GruenerMarkt({ startWarenkorb, onErfolg, reviewMode = false }: GruenerMarktProps) {
   const [warenkorb, setWarenkorb] = useState<string[]>(startWarenkorb);
   const [aktiveKat, setAktiveKat] = useState<Kategorie>("fruechte-gemuese");
   const [status, setStatus] = useState<Status>("shop");
@@ -41,15 +42,18 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
   const inKorb = (id: string) => warenkorb.includes(id);
 
   const hinzufuegen = (id: string) => {
+    if (reviewMode) return;
     setFeedback(false);
     if (!warenkorb.includes(id)) setWarenkorb([...warenkorb, id]);
   };
   const entfernen = (id: string) => {
+    if (reviewMode) return;
     setFeedback(false);
     setWarenkorb(warenkorb.filter((x) => x !== id));
   };
 
   const pruefen = () => {
+    if (reviewMode) return;
     const schlechteImKorb = warenkorbProdukte.filter((p) => p.bewertung === "schlecht");
     const abgedeckt = new Set(
       warenkorbProdukte.map((p) => p.zutat).filter(Boolean) as string[],
@@ -63,8 +67,10 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
     setFeedback(false);
     setStatus("erfolg");
     setCartOpen(false);
-    setTimeout(onErfolg, 1200);
+    const finalKorb = [...warenkorb];
+    setTimeout(() => onErfolg(finalKorb), 1200);
   };
+
 
 
   return (
@@ -152,11 +158,12 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
           </button>
           <button
             onClick={pruefen}
-            disabled={status === "erfolg"}
+            disabled={status === "erfolg" || reviewMode}
             className="rounded-sm bg-primary px-4 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md disabled:opacity-50"
           >
-            Bezahlen
+            {reviewMode ? "Rückblick" : "Bezahlen"}
           </button>
+
         </div>
 
         {status === "erfolg" && (
