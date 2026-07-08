@@ -8,6 +8,8 @@ import { StageGate } from "@/components/case-file/StageGate";
 import { HintSystem, type Hint } from "@/components/case-file/HintSystem";
 import { START_WARENKORB } from "@/lib/maya-data";
 import { completeStage, getFrozenClock, getHearingClock } from "@/lib/progress";
+import { usePersistentState, usePersistentSet } from "@/lib/persist";
+
 import { cn } from "@/lib/utils";
 import { useEnvelopePrompt } from "@/components/case-file/EnvelopeDialog";
 
