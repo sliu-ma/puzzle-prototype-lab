@@ -65,7 +65,7 @@ export function EnergyGame({ onErfolg }: { onErfolg: () => void }) {
     () => Object.fromEntries(DEVICES.map((d) => [d.id, defaultDeviceChoice(d)])),
     [],
   );
-  const [choices, setChoices] = useState<Choices>(defaults);
+  const [choices, setChoices] = usePersistentState<Choices>("akte-4-energy-choices", defaults);
   const [open, setOpen] = useState<EnergyDevice | null>(null);
   const [showFail, setShowFail] = useState(false);
 
