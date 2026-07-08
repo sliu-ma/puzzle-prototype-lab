@@ -11,7 +11,9 @@ import {
   resetAll,
   getNowClock,
   getHearingClock,
+  hasSolution,
 } from "@/lib/progress";
+
 
 
 import { IntroScreen, hasSeenIntro } from "@/components/case-file/IntroScreen";
