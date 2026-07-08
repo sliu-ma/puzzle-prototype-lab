@@ -1,4 +1,6 @@
 import { useMemo, useState } from "react";
+import { usePersistentState } from "@/lib/persist";
+
 import { cn } from "@/lib/utils";
 import {
   KATEGORIEN,
