@@ -77,8 +77,12 @@ const STEPS: { id: Step; label: string }[] = [
 ];
 
 function AktePage() {
-  const [step, setStep] = useState<Step>("brief");
-  const [unlockedSteps, setUnlockedSteps] = useState<Set<Step>>(new Set(["brief"]));
+  const [step, setStep] = usePersistentState<Step>("akte-5-step", "brief");
+  const [unlockedSteps, setUnlockedSteps] = usePersistentSet<Step>(
+    "akte-5-unlocked-steps",
+    () => new Set(["brief"]),
+  );
+
 
   useEffect(() => {
     if (step === "naechstes") completeStage(5);
