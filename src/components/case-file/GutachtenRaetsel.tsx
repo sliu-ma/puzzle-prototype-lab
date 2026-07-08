@@ -170,24 +170,13 @@ const gutachten: Gutachten[] = [
   },
 ];
 
-export function GutachtenRaetsel({
-  onErfolg,
-  reviewMode = false,
-  initialMarkiert,
-}: {
-  onErfolg: (markiert: string[]) => void;
-  reviewMode?: boolean;
-  initialMarkiert?: string[];
-}) {
-  const [markiert, setMarkiert] = useState<Set<string>>(
-    () => new Set(initialMarkiert ?? []),
-  );
+export function GutachtenRaetsel({ onErfolg }: { onErfolg: () => void }) {
+  const [markiert, setMarkiert] = useState<Set<string>>(new Set());
   const [puls, setPuls] = useState(0);
   const [aktuell, setAktuell] = useState(0);
   const [fehler, setFehler] = useState<string | null>(null);
 
   const toggle = (id: string) => {
-    if (reviewMode) return;
     setFehler(null);
     setMarkiert((m) => {
       const next = new Set(m);
@@ -201,7 +190,6 @@ export function GutachtenRaetsel({
   };
 
   const pruefen = () => {
-    if (reviewMode) return;
     if (markiert.size !== MAX_MARKIERUNGEN) {
       setPuls((n) => n + 1);
       setFehler(`Du musst genau ${MAX_MARKIERUNGEN} Aussagen markieren.`);
@@ -210,13 +198,12 @@ export function GutachtenRaetsel({
     const errSet = new Set<string>(alleFehlerIds);
     let ok = true;
     for (const id of markiert) if (!errSet.has(id)) { ok = false; break; }
-    if (ok) onErfolg([...markiert]);
+    if (ok) onErfolg();
     else {
       setPuls((n) => n + 1);
       setFehler("Mindestens eine Markierung stimmt nicht. Vergleiche Text, Diagramm und Faktenkarte erneut.");
     }
   };
-
 
   const budgetVoll = markiert.size >= MAX_MARKIERUNGEN;
   const g = gutachten[aktuell];
@@ -244,12 +231,11 @@ export function GutachtenRaetsel({
           </div>
           <button
             onClick={pruefen}
-            disabled={markiert.size === 0 || reviewMode}
+            disabled={markiert.size === 0}
             className="rounded-sm bg-primary px-4 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-40"
           >
-            {reviewMode ? "Rückblick" : "Prüfen →"}
+            Prüfen →
           </button>
-
         </div>
       </div>
 

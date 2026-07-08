@@ -152,39 +152,3 @@ export function resetAll() {
   }
 }
 
-// ---- Rätsel-Lösungen (für Rückblick am Ende) --------------------------------
-// Pro Etappe wird die Auswahl/Antwort der Schüler:innen als JSON gespeichert.
-// Format: { v: 1, data: <etappenspezifisch> }
-const solutionKey = (stage: number) => `maya-solution-${stage}`;
-
-export type StoredSolution<T = unknown> = { v: number; data: T };
-
-export function saveSolution<T>(stage: number, data: T, version = 1) {
-  try {
-    const payload: StoredSolution<T> = { v: version, data };
-    localStorage.setItem(solutionKey(stage), JSON.stringify(payload));
-    window.dispatchEvent(new Event("maya-progress"));
-  } catch {
-    /* ignore */
-  }
-}
-
-export function getSolution<T>(stage: number): T | null {
-  try {
-    const raw = localStorage.getItem(solutionKey(stage));
-    if (!raw) return null;
-    const parsed = JSON.parse(raw) as StoredSolution<T>;
-    return parsed?.data ?? null;
-  } catch {
-    return null;
-  }
-}
-
-export function hasSolution(stage: number): boolean {
-  try {
-    return localStorage.getItem(solutionKey(stage)) !== null;
-  } catch {
-    return false;
-  }
-}
-
