@@ -21,6 +21,9 @@ import {
 } from "@/components/ui/dialog";
 
 export const Route = createFileRoute("/etappe-3")({
+  validateSearch: (s: Record<string, unknown>) => ({
+    review: s.review === "1" ? "1" : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Etappe 3 — Wald-Lichtung" },
@@ -33,6 +36,7 @@ export const Route = createFileRoute("/etappe-3")({
   }),
   component: AkteGated,
 });
+
 
 const AKTE_002_TOKEN = "Mn7YxQ2pVe9TbR4Ks0Lh";
 const EXPECTED_CODE = "123";
