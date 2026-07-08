@@ -91,19 +91,26 @@ const norm = (s: string) =>
 function AktePage() {
   const navigate = useNavigate();
   const envelope = useEnvelopePrompt();
-  const [step, setStep] = useState<Step>("brief");
-  const [unlockedSteps, setUnlockedSteps] = useState<Set<Step>>(new Set(["brief"]));
+  const [step, setStep] = usePersistentState<Step>("akte-1-step", "brief");
+  const [unlockedSteps, setUnlockedSteps] = usePersistentSet<Step>(
+    "akte-1-unlocked-steps",
+    () => new Set(["brief"]),
+  );
 
   useEffect(() => {
     if (step === "naechstes") completeStage(1);
   }, [step]);
 
-  const [start, setStart] = useState("");
-  const [ziel, setZiel] = useState("");
+  const [start, setStart] = usePersistentState<string>("akte-1-start", "");
+  const [ziel, setZiel] = usePersistentState<string>("akte-1-ziel", "");
   const [eingabeError, setEingabeError] = useState<string | null>(null);
 
-  const [selectedRouteId, setSelectedRouteId] = useState<string | null>(null);
+  const [selectedRouteId, setSelectedRouteId] = usePersistentState<string | null>(
+    "akte-1-route",
+    null,
+  );
   const [routeError, setRouteError] = useState<string | null>(null);
+
 
   const jetzt = useMemo(
     () =>
