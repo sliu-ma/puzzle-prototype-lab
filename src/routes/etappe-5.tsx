@@ -7,6 +7,8 @@ import { StageGate } from "@/components/case-file/StageGate";
 import { GutachtenRaetsel } from "@/components/case-file/GutachtenRaetsel";
 import { HintSystem, type Hint } from "@/components/case-file/HintSystem";
 import { completeStage, getFrozenClock, getHearingClock } from "@/lib/progress";
+import { usePersistentState, usePersistentSet } from "@/lib/persist";
+
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/etappe-5")({
