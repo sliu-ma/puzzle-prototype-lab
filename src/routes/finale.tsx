@@ -274,13 +274,15 @@ const MAX_FEHLER = 3;
 type Status = "running" | "won" | "lost";
 
 function FinalePage() {
-  const [started, setStarted] = useState(false);
-  const [aktuell, setAktuell] = useState(0);
-  const [ergebnisse, setErgebnisse] = useState<(boolean | null)[]>(() =>
-    Array(FRAGEN.length).fill(null),
+  const [started, setStarted] = usePersistentState<boolean>("akte-finale-started", false);
+  const [aktuell, setAktuell] = usePersistentState<number>("akte-finale-aktuell", 0);
+  const [ergebnisse, setErgebnisse] = usePersistentState<(boolean | null)[]>(
+    "akte-finale-ergebnisse",
+    () => Array(FRAGEN.length).fill(null),
   );
   const [resetKey, setResetKey] = useState(0);
   const [pulse, setPulse] = useState<null | "up" | "down">(null);
+
   const pulseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const correctCount = useMemo(
