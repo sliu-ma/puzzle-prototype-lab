@@ -7,7 +7,9 @@ import { Stamp } from "@/components/case-file/Stamp";
 import { StageGate } from "@/components/case-file/StageGate";
 import { getTotalRevealedHints } from "@/components/case-file/HintSystem";
 import { completeStage, getHearingClock, getStartTs } from "@/lib/progress";
+import { usePersistentState } from "@/lib/persist";
 import { cn } from "@/lib/utils";
+
 import bioLogo from "@/assets/labels/bio.png.asset.json";
 import ipSuisseLogo from "@/assets/labels/ip-suisse.png.asset.json";
 import demeterLogo from "@/assets/labels/demeter.png.asset.json";
