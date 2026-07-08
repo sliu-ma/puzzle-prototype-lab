@@ -353,15 +353,24 @@ function ProgressPanel({
                   </div>
                   <span aria-hidden className="transition-transform group-hover:translate-x-1">→</span>
                 </button>
-              ) : (
-                <div
-                  className={cn(
-                    "flex items-center gap-3 rounded-sm border px-4 py-3",
-                    status === "done"
-                      ? "border-emerald-500/40 bg-emerald-500/5"
-                      : "border-border bg-card opacity-60",
-                  )}
+              ) : status === "done" ? (
+                <Link
+                  to={s.to as string}
+                  className="group flex items-center gap-3 rounded-sm border border-emerald-500/40 bg-emerald-500/5 px-4 py-3 transition-all hover:-translate-y-0.5 hover:shadow-md"
                 >
+                  <Badge n={s.nr} variant="done" />
+                  <div className="min-w-0 flex-1">
+                    <p className="font-mono-typed text-[10px] uppercase tracking-wider text-emerald-700">
+                      Abgeschlossen · nochmals ansehen
+                    </p>
+                    <p className="font-serif text-base font-bold">
+                      {s.ort} <span className="text-foreground/60">· {s.thema}</span>
+                    </p>
+                  </div>
+                  <CheckCircle2 className="h-5 w-5 text-emerald-600" />
+                </Link>
+              ) : (
+                <div className="flex items-center gap-3 rounded-sm border border-border bg-card px-4 py-3 opacity-60">
                   <Badge n={s.nr} variant={status} />
                   <div className="min-w-0 flex-1">
                     <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
@@ -371,13 +380,10 @@ function ProgressPanel({
                       {s.ort} <span className="text-foreground/60">· {s.thema}</span>
                     </p>
                   </div>
-                  {status === "done" ? (
-                    <CheckCircle2 className="h-5 w-5 text-emerald-600" />
-                  ) : (
-                    <Lock className="h-4 w-4 text-muted-foreground" />
-                  )}
+                  <Lock className="h-4 w-4 text-muted-foreground" />
                 </div>
               )}
+
             </li>
           );
         })}

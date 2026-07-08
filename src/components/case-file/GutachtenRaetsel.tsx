@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { usePersistentSet } from "@/lib/persist";
+
 
 type FehlerId = "f1" | "f2" | "f3" | "f4" | "f5";
 const alleFehlerIds: FehlerId[] = ["f1", "f2", "f3", "f4", "f5"];
@@ -171,7 +173,11 @@ const gutachten: Gutachten[] = [
 ];
 
 export function GutachtenRaetsel({ onErfolg }: { onErfolg: () => void }) {
-  const [markiert, setMarkiert] = useState<Set<string>>(new Set());
+  const [markiert, setMarkiert] = usePersistentSet<string>(
+    "akte-5-gutachten-markiert",
+    () => new Set(),
+  );
+
   const [puls, setPuls] = useState(0);
   const [aktuell, setAktuell] = useState(0);
   const [fehler, setFehler] = useState<string | null>(null);

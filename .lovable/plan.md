@@ -1,109 +1,56 @@
 ## Ziel
 
-Etappe 4 bekommt drei Verbesserungen:
+Alle gelösten Etappen bleiben in der Übersicht anklickbar. Beim erneuten Öffnen sehen die Schüler:innen ihre eigenen Antworten, Auswahl, aufgedeckten Faktenkarten und den erreichten Story-Stand wieder — nichts geht verloren.
 
-1. **Energieetiketten (A–G)** als Farbpfeil-Badges an relevanten Geräteoptionen.
-2. **Imaginäre Produktnamen** — **nur** für echte Haushaltsgeräte (Alt/Neu-Varianten), nicht für Verhaltens- oder Programmoptionen.
-3. **Herd zweistufig**: erst 3 Untergruppen wählen, dann erst die Massnahmen anzeigen.
+## Ansatz
 
-## 1. Energieetiketten als Assets
+Ein kleiner `**usePersistentState**`-Hook (in `src/lib/persist.ts`), der wie `useState` funktioniert, aber Wert automatisch in `localStorage` unter einem festen Key spiegelt und beim Mount wiederherstellt. Alle relevanten `useState`-Aufrufe in den Etappen-Komponenten werden auf diesen Hook umgestellt. Dadurch wird pro Etappe der vollständige Zustand persistent:
 
-- 7 Uploads → `src/assets/label-a.png.asset.json` … `label-g.png.asset.json` via `lovable-assets create` aus `/mnt/user-uploads/a.png` … `g.png`.
-- Kleine Inline-Komponente `EnergyLabel` in `EnergyGame.tsx`, statisches `labelMap`.
+- Schritt/Step (`brief` → `naechstes`), bereits freigeschaltete Steps
+- Alle Antworten & Eingaben (Start/Ziel, Route-Auswahl, Ofen/Beleuchtung-Optionen usw.)
+- Aufgedeckte Faktenkarten, geöffnete Hinweise
+- Story-/Modal-Zustände, die den Fortschritt widerspiegeln
 
-## 2. `EnergyOption` erweitern
+Keys werden pro Etappe präfigiert (`akte-1-*`, `akte-2-*` …), sodass ein Reset über die bestehende `resetAll()`-Logik weiterhin alles löscht (sie räumt bereits `maya-*` und `akte-*` auf).
 
-```ts
-type EnergyLabel = "A" | "B" | "C" | "D" | "E" | "F" | "G";
-interface EnergyOption {
-  id: string;
-  label: string;            // Sach-Bezeichnung
-  productName?: string;     // Fun-Name — NUR bei echten Geräten
-  description: string;
-  cost: number;
-  energy: number;
-  energyLabel?: EnergyLabel;
-}
-```
+## Übersicht (Startseite)
 
-## 3. Fun-Namen + Etiketten — Regel
+`ProgressPanel` rendert gelöste Etappen (`status === "done"`) neu als anklickbaren `Link` statt statischer `div`:
 
-**Fun-Namen bekommen NUR echte Haushaltsgeräte** (Alt- oder Neu-Variante mit Anschaffung/Ersatz). Verhaltensoptionen, Programme, Temperatur-Einstellungen, Zubehör (Sparbrause, Deckel, Pfannengrösse) bekommen **keinen** Fun-Namen — sie behalten nur ihr sachliches Label.
+- Grüne Umrandung + `CheckCircle2` bleiben, aber die ganze Zeile ist ein Link zur Etappe.
+- „Aktuell“ und „Gesperrt“ bleiben unverändert.
 
-**Fernseher** (alles Geräte):
+## Etappen-Seite (Wiederansicht)
 
-- Alter LCD → *Röhrenknight 2003*, Label **F**
-- LED E-Klasse → *Flimmerkiste Standard*, Label **E**
-- D-Klasse → *PixelPro Eco*, Label **D**
+`StageGate` erlaubt bereits den Zugriff, wenn `current >= stage` — an der Zugriffsregel ändert sich nichts. Zwei kleine Ergänzungen:
 
-**Tumbler** (Text „A+++" → „A"):
+- Wenn `current > stage` (Etappe schon abgeschlossen), zeigt die Seite oben einen dezenten Hinweisstreifen: „Rückblick · Etappe X abgeschlossen · Ihr könnt eure Antworten nochmals ansehen.“
+- Das `QRGate` (Scanner-Sperre) merkt sich bereits per `storageKey`, dass gescannt wurde — beim Wiederbesuch entfällt das Scannen also automatisch.
 
-- Alter Tumbler → *Heissluft-Otto*, Label **F**
-- Neues Gerät A → *TrockenFix A*, Label **A**
-- Wäsche aufhängen → **kein** Fun-Name, **kein** Label
+## Technische Details
 
-**Waschmaschine**:
+- Neue Datei `src/lib/persist.ts`
+  - `usePersistentState<T>(key, initial)` — SSR-sicher (Wert-Init im `useEffect`), JSON-serialisiert, feuert `maya-progress` bei Reset nicht, damit die Übersicht ruhig bleibt.
+  - `usePersistentSet<T>(key, initial)` als dünner Wrapper für die `Set<Step>`-Fälle (JSON-Array-Serialisierung).
+- Etappen 1–5 (`src/routes/etappe-{1..5}.tsx`):
+  - `useState`-Aufrufe für Step, Fehler-Meldungen (Fehler nicht persistieren), Antworten, `selectedRouteId`, `unlockedSteps`, `openFact`-artige Flags werden gezielt auf `usePersistentState` umgestellt (Fehler & rein visuelle Modal-States bleiben `useState`).
+  - Keys: `akte-1-step`, `akte-1-unlocked-steps`, `akte-1-start`, `akte-1-ziel`, `akte-1-route`, analog für 2–5.
+- `EnergyGame` (`choices`) und `GruenerMarkt` (Auswahl/geöffnete Faktenkarten) bekommen ebenfalls persistente Keys — der `Reset`-Button dort setzt weiterhin lokal zurück und schreibt den Default in den Storage.
+- `HintSystem`: geöffnete Hinweise werden persistiert (`akte-<n>-hints-open`), sodass der Rückblick den Stand zeigt.
+- `finale.tsx`: gleiche Behandlung für die Finale-Antworten, damit der Hearing-Stand konservierbar ist.
+- `src/lib/progress.ts`: keine strukturelle Änderung; `resetAll()` deckt die neuen Keys durch das bestehende `akte-`/`maya-`-Präfix bereits ab.
+- `src/routes/index.tsx`: „done“-Zeilen als `<Link to={s.to}>` mit gleichem Styling, plus Mikrotext „Nochmals ansehen →“.
 
-- 40–60 °C → **kein** Fun-Name, **kein** Label (Programm)
-- Eco-Programm → **kein** Fun-Name (Programm)
-- Neue Waschmaschine A (Text „A" statt A+++) → *SauberStar A*, Label **A**
-- Für alte Waschmaschine bleibt es beim reinen Sach-Label — sie ist zwar Gerät, aber die Option beschreibt hier das Waschprogramm der bestehenden Maschine. Kein Fun-Name.
+## Nicht Teil dieses Plans
 
-**Staubsauger** (alles Geräte):
+- Kein Backend / Lovable Cloud — bleibt bewusst lokal (localStorage), da das Spiel geräte-lokal läuft und ein Reset bereits alles löscht.
+- Keine Änderung an Aufgaben-Logik, Design-Tokens oder Textinhalten.
+- Kein separater Rückblick-Screen — bewusst in die bestehende Übersicht integriert, wie gewünscht.
 
-- Alter Staubsauger → *Turbo-Sauger 2000*, Label **F**
-- Neues Gerät → *SaugMeister*, Label **C**
-- Sehr effizient → *SilentVac Pro*, Label **A**
+## Ablauf der Umsetzung
 
-**Lampe** (alles Leuchtmittel-Geräte):
-
-- Halogen → *Glühbirne Retro*, Label **E**
-- Energiesparlampe → *Sparlicht Kompakt*, Label **B**
-- LED → *LumiLED Bright*, Label **A**
-
-**Ofen** (alles Geräte):
-
-- Alter Backofen → *Backofen Grossmutter*, Label **E**
-- Umluft A → *Backen mit Umluft*, **kein Label**
-- Umluft A+++ (Text bleibt) → *EcoBake Pro*, Label **A**
-
-**Kühlschrank**:
-
-- Altes Gerät → *Frostbeule 1998*, Label **F**
-- 5 → 7 °C → **kein** Fun-Name, **kein** Label (Temperatur-Einstellung)
-- Neues Gerät A (Text „A+++" → „A") → *ArcticFresh A*, Label **A**
-
-**Dusche** — alle Optionen sind Verhalten/Zubehör → **keine** Fun-Namen, keine Labels.
-
-**Heizung / Raumtemperatur** — Temperatur-Einstellung → **keine** Fun-Namen, keine Labels.
-
-**Geschirrspüler** — Programme/Verhalten → **keine** Fun-Namen, keine Labels.
-
-**Herd-Gruppen** — Kochverhalten & Kochgeschirr → **keine** Fun-Namen. Bei Herdplatte sind Glaskeramik/Induktion technisch Geräte, aber sie stehen als Umbau-Massnahme in der Gruppe „Herdplatte" — konsistent halten und **keine** Fun-Namen vergeben. Keine Labels.
-
-Text-Anpassungen „A+++" → „A" bei Tumbler / Waschmaschine / Kühlschrank in `label` und `description`.
-
-## 4. Herd zweistufig im Modal
-
-Neuer lokaler State im `DeviceModal`: `openGroup: string | null` (start: `null`).
-
-- `openGroup === null` und `device.groups`: rendere 3 kompakte Gruppen-Tiles („Kochen im Topf", „Kochgeschirr", „Herdplatte") mit „aktuell: <currentOpt.label>" + Chevron. Klick → `openGroup = g.id`.
-- `openGroup !== null`: nur die Optionen dieser Gruppe + „← Zurück zur Auswahl"-Button (setzt `openGroup` zurück).
-- Beim erneuten Öffnen des Modals wieder `null`.
-
-Nicht-Gruppen-Geräte unverändert.
-
-## 5. `OptionRow` UI-Ergänzung
-
-- `productName` (falls gesetzt): klein/italic unter dem `label`, `text-foreground/60`.
-- `energyLabel` (falls gesetzt): Badge oben rechts in der Zahlenspalte (über Coin / ESP).
-
-## 6. Nicht angefasst
-
-Budget (1'000), Ziel (3'500 ESP), Koordinaten, Zahlen, andere Etappen, Route-Texte in `etappe-4.tsx`.
-
-## Technische Notizen
-
-- 7 Label-Assets als statisches Map importieren, kein dynamisches `import()`.
-- `productName` und `energyLabel` beide optional — Optionen ohne diese Felder rendern wie heute.
-- Herd-Modal-State lokal, kein globaler Umbau.
+1. `src/lib/persist.ts` anlegen.
+2. `src/routes/index.tsx`: „done“-Etappen anklickbar machen.
+3. `StageGate` um Rückblick-Banner ergänzen.
+4. Etappen 1–5 + Finale + `EnergyGame` + `GruenerMarkt` + `HintSystem` auf persistente States umstellen.
+5. Typecheck + kurzer Browser-Sanity-Check (Etappe 1 lösen, zurück zur Übersicht, erneut öffnen — Route-Auswahl noch vorhanden).

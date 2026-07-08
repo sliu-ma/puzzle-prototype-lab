@@ -7,6 +7,8 @@ import { StageGate } from "@/components/case-file/StageGate";
 import { GutachtenRaetsel } from "@/components/case-file/GutachtenRaetsel";
 import { HintSystem, type Hint } from "@/components/case-file/HintSystem";
 import { completeStage, getFrozenClock, getHearingClock } from "@/lib/progress";
+import { usePersistentState, usePersistentSet } from "@/lib/persist";
+
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/etappe-5")({
@@ -75,8 +77,12 @@ const STEPS: { id: Step; label: string }[] = [
 ];
 
 function AktePage() {
-  const [step, setStep] = useState<Step>("brief");
-  const [unlockedSteps, setUnlockedSteps] = useState<Set<Step>>(new Set(["brief"]));
+  const [step, setStep] = usePersistentState<Step>("akte-5-step", "brief");
+  const [unlockedSteps, setUnlockedSteps] = usePersistentSet<Step>(
+    "akte-5-unlocked-steps",
+    () => new Set(["brief"]),
+  );
+
 
   useEffect(() => {
     if (step === "naechstes") completeStage(5);

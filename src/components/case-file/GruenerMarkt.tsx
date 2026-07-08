@@ -1,4 +1,6 @@
 import { useMemo, useState } from "react";
+import { usePersistentState } from "@/lib/persist";
+
 import { cn } from "@/lib/utils";
 import {
   KATEGORIEN,
@@ -19,9 +21,13 @@ interface GruenerMarktProps {
 type Status = "shop" | "erfolg";
 
 export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
-  const [warenkorb, setWarenkorb] = useState<string[]>(startWarenkorb);
+  const [warenkorb, setWarenkorb] = usePersistentState<string[]>(
+    "akte-2-warenkorb",
+    startWarenkorb,
+  );
   const [aktiveKat, setAktiveKat] = useState<Kategorie>("fruechte-gemuese");
-  const [status, setStatus] = useState<Status>("shop");
+  const [status, setStatus] = usePersistentState<Status>("akte-2-shop-status", "shop");
+
   const [cartOpen, setCartOpen] = useState(false);
   const [detail, setDetail] = useState<Produkt | null>(null);
   const [feedback, setFeedback] = useState<boolean>(false);
