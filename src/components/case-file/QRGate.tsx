@@ -58,8 +58,9 @@ async function collectDiagnostics(err: unknown): Promise<DiagnosticInfo> {
   const e = err as { name?: string; message?: string; stack?: string } | null;
   let permissionState: string | undefined;
   try {
-    // @ts-expect-error – "camera" ist gültig, aber nicht in allen TS-Libs typisiert
-    const status = await navigator.permissions?.query?.({ name: "camera" });
+    const status = await navigator.permissions?.query?.({
+      name: "camera" as PermissionName,
+    });
     permissionState = status?.state;
   } catch {
     /* ignore */
