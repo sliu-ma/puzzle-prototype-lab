@@ -26,6 +26,145 @@ type Props = {
   label?: string;
 };
 
+type DiagnosticInfo = {
+  name: string;
+  message: string;
+  stack?: string;
+  isIframe: boolean;
+  protocol: string;
+  userAgent: string;
+  permissionState?: string;
+  hasMediaDevices: boolean;
+  hasGetUserMedia: boolean;
+};
+
+type FriendlyError = {
+  headline: string;
+  detail: string;
+  builderBlocked: boolean;
+  diagnostics: DiagnosticInfo;
+};
+
+function isInIframe(): boolean {
+  try {
+    return window.self !== window.top;
+  } catch {
+    // Cross-origin access throws → wir sind definitiv im iframe
+    return true;
+  }
+}
+
+async function collectDiagnostics(err: unknown): Promise<DiagnosticInfo> {
+  const e = err as { name?: string; message?: string; stack?: string } | null;
+  let permissionState: string | undefined;
+  try {
+    const status = await navigator.permissions?.query?.({
+      name: "camera" as PermissionName,
+    });
+    permissionState = status?.state;
+  } catch {
+    /* ignore */
+  }
+  return {
+    name: e?.name ?? "UnknownError",
+    message: e?.message ?? String(err),
+    stack: e?.stack,
+    isIframe: isInIframe(),
+    protocol: typeof location !== "undefined" ? location.protocol : "n/a",
+    userAgent: typeof navigator !== "undefined" ? navigator.userAgent : "n/a",
+    permissionState,
+    hasMediaDevices: typeof navigator !== "undefined" && !!navigator.mediaDevices,
+    hasGetUserMedia:
+      typeof navigator !== "undefined" &&
+      !!navigator.mediaDevices &&
+      typeof navigator.mediaDevices.getUserMedia === "function",
+  };
+}
+
+function classifyError(diag: DiagnosticInfo): {
+  headline: string;
+  detail: string;
+  builderBlocked: boolean;
+} {
+  const msg = diag.message.toLowerCase();
+  const looksLikePolicy =
+    msg.includes("permissions policy") ||
+    msg.includes("permission policy") ||
+    msg.includes("disallowed by permissions policy") ||
+    msg.includes("permission denied by system");
+
+  if (!diag.hasMediaDevices || !diag.hasGetUserMedia) {
+    return {
+      headline: "Kamera-API nicht verfügbar",
+      detail:
+        "Dieser Browser stellt navigator.mediaDevices.getUserMedia nicht bereit. Kamera nur über HTTPS und in aktuellen Browsern.",
+      builderBlocked: false,
+    };
+  }
+
+  if (diag.name === "NotAllowedError" && diag.isIframe && looksLikePolicy) {
+    return {
+      headline: "Lovable Builder blockiert die Kamera",
+      detail:
+        "Die Preview im Builder läuft in einem iframe ohne Kamera-Freigabe (Permissions-Policy). Öffne die Preview in einem neuen Tab oder nutze die veröffentlichte Version — dort funktioniert der Scanner.",
+      builderBlocked: true,
+    };
+  }
+
+  if (diag.name === "NotAllowedError" && diag.isIframe) {
+    // Häufig meldet Chrome im iframe generisch „Permission denied" — trotzdem meist Policy
+    return {
+      headline: "Kamera in dieser Vorschau blockiert",
+      detail:
+        "Der eingebettete Builder-Kontext hat den Kamerazugriff verweigert. Öffne die Preview in einem neuen Tab oder verwende die veröffentlichte Version.",
+      builderBlocked: true,
+    };
+  }
+
+  switch (diag.name) {
+    case "NotAllowedError":
+      return {
+        headline: "Kamera-Zugriff verweigert",
+        detail:
+          "Du hast den Zugriff auf die Kamera abgelehnt oder das Betriebssystem blockiert ihn. Erlaube die Kamera in den Browser- bzw. System-Einstellungen und lade neu.",
+        builderBlocked: false,
+      };
+    case "NotFoundError":
+    case "OverconstrainedError":
+      return {
+        headline: "Keine Kamera gefunden",
+        detail: "Auf diesem Gerät wurde keine passende Kamera erkannt.",
+        builderBlocked: false,
+      };
+    case "NotReadableError":
+      return {
+        headline: "Kamera wird bereits verwendet",
+        detail:
+          "Eine andere App oder ein anderer Tab greift gerade auf die Kamera zu. Schliesse sie und versuche es erneut.",
+        builderBlocked: false,
+      };
+    case "SecurityError":
+      return {
+        headline: "Kamera nur über HTTPS",
+        detail: "Der Kamerazugriff ist nur über eine sichere Verbindung (HTTPS) möglich.",
+        builderBlocked: false,
+      };
+    case "TypeError":
+      return {
+        headline: "Kamera-API nicht verfügbar",
+        detail:
+          "getUserMedia steht in diesem Kontext nicht zur Verfügung (evtl. unsicherer Kontext oder alter Browser).",
+        builderBlocked: false,
+      };
+    default:
+      return {
+        headline: "Kamera konnte nicht gestartet werden",
+        detail: `${diag.name}: ${diag.message}`,
+        builderBlocked: false,
+      };
+  }
+}
+
 export function QRGate({
   children,
   token = DEFAULT_TOKEN,
@@ -36,15 +175,16 @@ export function QRGate({
 }: Props) {
   const EXPECTED_TOKEN = token;
   const STORAGE_KEY = storageKey;
-  const [unlocked, setUnlocked] = useState<boolean | null>(null); // null = noch nicht geprüft
+  const [unlocked, setUnlocked] = useState<boolean | null>(null);
   const [scanning, setScanning] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<FriendlyError | null>(null);
+  const [showDebug, setShowDebug] = useState(false);
   const [expectedHash, setExpectedHash] = useState<string | null>(null);
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const controlsRef = useRef<IScannerControls | null>(null);
+  const mediaStreamRef = useRef<MediaStream | null>(null);
 
-  // Initial: gespeicherten Hash gegen erwarteten Hash prüfen
   useEffect(() => {
     let mounted = true;
     (async () => {
@@ -63,7 +203,6 @@ export function QRGate({
     };
   }, []);
 
-  // Scanner starten/stoppen
   useEffect(() => {
     if (!scanning) return;
 
@@ -71,8 +210,35 @@ export function QRGate({
     const reader = new BrowserQRCodeReader();
 
     (async () => {
+      // 1) Erst explizit getUserMedia aufrufen, damit wir den *echten* Fehler bekommen.
+      try {
+        if (!navigator.mediaDevices?.getUserMedia) {
+          throw Object.assign(new Error("mediaDevices.getUserMedia is undefined"), {
+            name: "TypeError",
+          });
+        }
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: { ideal: "environment" } },
+          audio: false,
+        });
+        mediaStreamRef.current = stream;
+      } catch (e) {
+        if (cancelled) return;
+        // eslint-disable-next-line no-console
+        console.error("[QRGate] getUserMedia failed:", e);
+        const diag = await collectDiagnostics(e);
+        const cls = classifyError(diag);
+        setError({ ...cls, diagnostics: diag });
+        setScanning(false);
+        return;
+      }
+
+      // 2) Kamera läuft → an zXing übergeben (nutzt intern denselben Stream-Pfad)
       try {
         if (!videoRef.current) return;
+        // Stream direkt anhängen, dann zXing dekodieren lassen
+        videoRef.current.srcObject = mediaStreamRef.current;
+        await videoRef.current.play().catch(() => {});
         const controls = await reader.decodeFromVideoDevice(
           undefined,
           videoRef.current,
@@ -91,20 +257,28 @@ export function QRGate({
               setScanning(false);
               setError(null);
             } else {
-              setError("Zugriff verweigert. Dieser QR-Code passt nicht zur Etappe.");
+              const diag = await collectDiagnostics(
+                new Error("QR-Code passt nicht zur Etappe"),
+              );
+              setError({
+                headline: "Falscher QR-Code",
+                detail: "Dieser QR-Code passt nicht zur aktuellen Etappe.",
+                builderBlocked: false,
+                diagnostics: { ...diag, name: "WrongCodeError" },
+              });
               ctrl.stop();
               setScanning(false);
             }
           },
         );
         controlsRef.current = controls;
-      } catch (e: any) {
+      } catch (e) {
         if (cancelled) return;
-        setError(
-          e?.name === "NotAllowedError"
-            ? "Kamera-Zugriff wurde abgelehnt. Bitte erlaube den Zugriff in den Browser-Einstellungen."
-            : "Kamera konnte nicht gestartet werden.",
-        );
+        // eslint-disable-next-line no-console
+        console.error("[QRGate] zXing decode failed:", e);
+        const diag = await collectDiagnostics(e);
+        const cls = classifyError(diag);
+        setError({ ...cls, diagnostics: diag });
         setScanning(false);
       }
     })();
@@ -113,10 +287,11 @@ export function QRGate({
       cancelled = true;
       controlsRef.current?.stop();
       controlsRef.current = null;
+      mediaStreamRef.current?.getTracks().forEach((t) => t.stop());
+      mediaStreamRef.current = null;
     };
   }, [scanning]);
 
-  // Lade-Zustand
   if (unlocked === null || expectedHash === null) {
     return (
       <main className="flex min-h-screen items-center justify-center px-4">
@@ -131,7 +306,6 @@ export function QRGate({
     return <>{children}</>;
   }
 
-  // Gate-Ansicht: gesperrt
   return (
     <main className="relative min-h-screen px-3 py-8 sm:px-4 sm:py-14">
       <div
@@ -182,8 +356,35 @@ export function QRGate({
           </div>
 
           {error && (
-            <div className="mt-5 rounded-sm border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">
-              {error}
+            <div className="mt-5 rounded-sm border border-destructive/40 bg-destructive/10 p-4 text-sm">
+              <p className="font-serif text-base font-semibold text-destructive">
+                {error.headline}
+              </p>
+              <p className="mt-1 text-destructive/90">{error.detail}</p>
+
+              {error.builderBlocked && (
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <button
+                    onClick={() => window.open(location.href, "_blank", "noopener")}
+                    className="rounded-sm bg-primary px-3 py-2 font-serif text-xs font-semibold text-primary-foreground shadow hover:-translate-y-0.5 transition-transform"
+                  >
+                    Preview in neuem Tab öffnen
+                  </button>
+                </div>
+              )}
+
+              <button
+                onClick={() => setShowDebug((v) => !v)}
+                className="mt-3 font-mono-typed text-[10px] uppercase tracking-[0.2em] text-destructive/80 underline underline-offset-4"
+              >
+                {showDebug ? "Technische Details ausblenden" : "Technische Details anzeigen"}
+              </button>
+
+              {showDebug && (
+                <pre className="mt-2 max-h-64 overflow-auto rounded-sm bg-black/80 p-3 text-[11px] leading-relaxed text-green-200">
+{JSON.stringify(error.diagnostics, null, 2)}
+                </pre>
+              )}
             </div>
           )}
 
@@ -202,6 +403,7 @@ export function QRGate({
               <button
                 onClick={() => {
                   controlsRef.current?.stop();
+                  mediaStreamRef.current?.getTracks().forEach((t) => t.stop());
                   setScanning(false);
                 }}
                 className="rounded-sm border border-border bg-card px-5 py-3 font-serif text-sm hover:bg-secondary"

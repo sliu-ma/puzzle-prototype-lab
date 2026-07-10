@@ -1,56 +1,31 @@
-## Ziel
+## Ursache (Hypothese)
 
-Alle gelösten Etappen bleiben in der Übersicht anklickbar. Beim erneuten Öffnen sehen die Schüler:innen ihre eigenen Antworten, Auswahl, aufgedeckten Faktenkarten und den erreichten Story-Stand wieder — nichts geht verloren.
+Der Lovable Builder rendert die Preview in einem `<iframe>`. Für `getUserMedia()` muss dieser iframe explizit die Permissions-Policy `allow="camera; microphone"` gesetzt haben. Ohne dieses Attribut blockiert der Browser den Zugriff **bevor** überhaupt ein Berechtigungsdialog erscheint — und wirft einen `NotAllowedError` mit Message wie *"Permissions policy violation: camera is not allowed in this document"*. Genau dieser Fehler wird von `QRGate.tsx` aktuell pauschal als „Kamera-Zugriff wurde abgelehnt" interpretiert, weshalb es so aussieht, als hätte der Nutzer verweigert.
 
-## Ansatz
+Dass es im neuen Tab und in Production funktioniert, passt zu dieser Hypothese: dort gibt es keinen einschränkenden iframe-Parent.
 
-Ein kleiner `**usePersistentState**`-Hook (in `src/lib/persist.ts`), der wie `useState` funktioniert, aber Wert automatisch in `localStorage` unter einem festen Key spiegelt und beim Mount wiederherstellt. Alle relevanten `useState`-Aufrufe in den Etappen-Komponenten werden auf diesen Hook umgestellt. Dadurch wird pro Etappe der vollständige Zustand persistent:
+Die Iframe-Policy des Builders können wir aus der App heraus **nicht ändern** — nur der Builder selbst kann `allow="camera"` am iframe setzen. Was wir tun können: den echten Fehler sichtbar machen, den Sonderfall erkennen und dem Nutzer eine sinnvolle Handlung anbieten (Preview in neuem Tab öffnen).
 
-- Schritt/Step (`brief` → `naechstes`), bereits freigeschaltete Steps
-- Alle Antworten & Eingaben (Start/Ziel, Route-Auswahl, Ofen/Beleuchtung-Optionen usw.)
-- Aufgedeckte Faktenkarten, geöffnete Hinweise
-- Story-/Modal-Zustände, die den Fortschritt widerspiegeln
+## Änderungen
 
-Keys werden pro Etappe präfigiert (`akte-1-*`, `akte-2-*` …), sodass ein Reset über die bestehende `resetAll()`-Logik weiterhin alles löscht (sie räumt bereits `maya-*` und `akte-*` auf).
+### 1. `src/components/case-file/QRGate.tsx` — echte Fehlerdiagnose
+- Vor `decodeFromVideoDevice` einen expliziten `navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })` Aufruf machen, um den rohen Fehler zu bekommen (zXing schluckt/normalisiert Fehler).
+- Erkennen ob App im iframe läuft: `window.self !== window.top`.
+- Feature-Check: `navigator.permissions.query({ name: "camera" })` (falls verfügbar) für zusätzlichen Kontext.
+- Fehler differenziert behandeln nach `error.name`:
+  - `NotAllowedError` + iframe + Message enthält „permissions policy" / „Permission denied by system" → **Builder-Block-Meldung**: „Der Lovable Builder blockiert den Kamerazugriff in dieser Vorschau. Öffne die Preview in einem neuen Tab (Button oben rechts im Builder) oder nutze die veröffentlichte Version."
+  - `NotAllowedError` sonst → echte Verweigerung durch Nutzer/OS.
+  - `NotFoundError` → „Keine Kamera gefunden."
+  - `NotReadableError` → „Kamera wird bereits von einer anderen App verwendet."
+  - `SecurityError` → „Kamera nur über HTTPS verfügbar."
+  - `TypeError` → „getUserMedia in diesem Browser nicht verfügbar."
+  - default → generisch mit `name`/`message`.
+- Debug-Panel (aufklappbar „Technische Details") mit: `error.name`, `error.message`, `error.stack`, `isIframe`, `location.protocol`, `userAgent`, Permissions-State. Damit ist die Ursache im Builder sofort sichtbar.
+- Wenn iframe-Block erkannt: zusätzlicher Button „In neuem Tab öffnen" (`window.open(location.href, "_blank")`).
 
-## Übersicht (Startseite)
+### 2. Kein Reset des freigeschalteten States
+Der bestehende Ablauf (Token/Storage) bleibt unverändert. Nur die Diagnose- und Fehler-Anzeige-Pfade werden erweitert.
 
-`ProgressPanel` rendert gelöste Etappen (`status === "done"`) neu als anklickbaren `Link` statt statischer `div`:
-
-- Grüne Umrandung + `CheckCircle2` bleiben, aber die ganze Zeile ist ein Link zur Etappe.
-- „Aktuell“ und „Gesperrt“ bleiben unverändert.
-
-## Etappen-Seite (Wiederansicht)
-
-`StageGate` erlaubt bereits den Zugriff, wenn `current >= stage` — an der Zugriffsregel ändert sich nichts. Zwei kleine Ergänzungen:
-
-- Wenn `current > stage` (Etappe schon abgeschlossen), zeigt die Seite oben einen dezenten Hinweisstreifen: „Rückblick · Etappe X abgeschlossen · Ihr könnt eure Antworten nochmals ansehen.“
-- Das `QRGate` (Scanner-Sperre) merkt sich bereits per `storageKey`, dass gescannt wurde — beim Wiederbesuch entfällt das Scannen also automatisch.
-
-## Technische Details
-
-- Neue Datei `src/lib/persist.ts`
-  - `usePersistentState<T>(key, initial)` — SSR-sicher (Wert-Init im `useEffect`), JSON-serialisiert, feuert `maya-progress` bei Reset nicht, damit die Übersicht ruhig bleibt.
-  - `usePersistentSet<T>(key, initial)` als dünner Wrapper für die `Set<Step>`-Fälle (JSON-Array-Serialisierung).
-- Etappen 1–5 (`src/routes/etappe-{1..5}.tsx`):
-  - `useState`-Aufrufe für Step, Fehler-Meldungen (Fehler nicht persistieren), Antworten, `selectedRouteId`, `unlockedSteps`, `openFact`-artige Flags werden gezielt auf `usePersistentState` umgestellt (Fehler & rein visuelle Modal-States bleiben `useState`).
-  - Keys: `akte-1-step`, `akte-1-unlocked-steps`, `akte-1-start`, `akte-1-ziel`, `akte-1-route`, analog für 2–5.
-- `EnergyGame` (`choices`) und `GruenerMarkt` (Auswahl/geöffnete Faktenkarten) bekommen ebenfalls persistente Keys — der `Reset`-Button dort setzt weiterhin lokal zurück und schreibt den Default in den Storage.
-- `HintSystem`: geöffnete Hinweise werden persistiert (`akte-<n>-hints-open`), sodass der Rückblick den Stand zeigt.
-- `finale.tsx`: gleiche Behandlung für die Finale-Antworten, damit der Hearing-Stand konservierbar ist.
-- `src/lib/progress.ts`: keine strukturelle Änderung; `resetAll()` deckt die neuen Keys durch das bestehende `akte-`/`maya-`-Präfix bereits ab.
-- `src/routes/index.tsx`: „done“-Zeilen als `<Link to={s.to}>` mit gleichem Styling, plus Mikrotext „Nochmals ansehen →“.
-
-## Nicht Teil dieses Plans
-
-- Kein Backend / Lovable Cloud — bleibt bewusst lokal (localStorage), da das Spiel geräte-lokal läuft und ein Reset bereits alles löscht.
-- Keine Änderung an Aufgaben-Logik, Design-Tokens oder Textinhalten.
-- Kein separater Rückblick-Screen — bewusst in die bestehende Übersicht integriert, wie gewünscht.
-
-## Ablauf der Umsetzung
-
-1. `src/lib/persist.ts` anlegen.
-2. `src/routes/index.tsx`: „done“-Etappen anklickbar machen.
-3. `StageGate` um Rückblick-Banner ergänzen.
-4. Etappen 1–5 + Finale + `EnergyGame` + `GruenerMarkt` + `HintSystem` auf persistente States umstellen.
-5. Typecheck + kurzer Browser-Sanity-Check (Etappe 1 lösen, zurück zur Übersicht, erneut öffnen — Route-Auswahl noch vorhanden).
+## Verifikation
+- Im Builder: erwartet Meldung „Builder blockiert Kamera" + Debug-Details mit `NotAllowedError` + „permissions policy" + `isIframe: true`.
+- In neuem Tab / Published: unverändertes Verhalten, Scanner startet.
