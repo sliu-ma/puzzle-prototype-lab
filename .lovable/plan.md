@@ -1,11 +1,25 @@
-## Problem
+## Ziel
+Sobald die Spielenden das Spiel erfolgreich abschliessen (Outro / Hearing bestanden, Stage 7), wird der 90-Minuten-Timer eingefroren. Der Countdown läuft nicht mehr weiter, das Time-Up-Overlay kann nicht mehr auslösen, und Maja-Popups erscheinen nicht mehr.
 
-In der Faktenkarte (fachlicher Input) sieht man beim Wischen einen weissen Verlauf am rechten Rand. Er verschwindet erst auf der letzten Karte.
+## Änderungen
 
-**Ursache:** In `src/components/case-file/InputCarousel.tsx` gibt es ein „Peek-Fade" – ein Farbverlauf `bg-gradient-to-l from-card to-transparent`, der über dem Carousel liegt, solange man nicht auf der letzten Karte ist. Auf dem cremefarbenen Papier-Hintergrund wirkt er wie ein weisser Streifen.
+**`src/lib/progress.ts`**
+- Neue Konstante `KEY_END_TS` (`"maya-end-ts"`).
+- Neue Funktion `finishGame()`: schreibt `Date.now()` in `KEY_END_TS` (nur beim ersten Mal), dispatched `maya-progress`.
+- Neue Funktion `getEndTs(): number | null`.
+- `isTimeUp()` gibt `false` zurück, sobald `getEndTs()` gesetzt ist.
+- `resetAll()` entfernt auch `maya-end-ts` (bereits durch `maya-*`-Prefix abgedeckt — verifizieren).
 
-## Änderung
+**`src/components/case-file/GlobalTimer.tsx`**
+- `endTs` aus `getEndTs()` mit gleicher Sync-Logik wie `startTs` lesen.
+- Wenn `endTs` gesetzt: `now` auf `endTs` klemmen → `remaining` bleibt konstant, kein Overlay, keine neuen Beats.
+- Interval stoppen, sobald `endTs` gesetzt ist (Performance).
+- Optische Kennzeichnung: Timer-Chip in ruhiger Farbe (border-border) + kleines Häkchen/„Fertig" Label statt Uhr, damit klar ist, dass die Zeit gestoppt wurde.
 
-- Peek-Fade-Element entfernen (das `<div>` mit `pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l …`).
-- Der Rest der Swipe-Hinweise (Chevron, Punkte, „Wischen für nächste Karte", floating Hint) bleibt erhalten – das reicht als visueller Hinweis.
-- Keine weiteren Dateien betroffen.
+**Aufruf von `finishGame()`**
+- In `src/routes/finale.tsx` beim Übergang zum Outro (dort wo `completeStage(6)` bereits läuft, bzw. beim Erreichen von Stage 7). Genaue Stelle wird beim Umsetzen aus der Datei gelesen — Trigger ist das erfolgreiche Beenden des Hearings / Anzeige des `OutroScreen`.
+
+## Verhalten nach Abschluss
+- Timer-Anzeige bleibt sichtbar mit der Endzeit (z. B. „⏱ 42:17 · Fertig"), läuft nicht weiter.
+- `TimeUpOverlay` wird nicht mehr getriggert, auch wenn die Seite nach 90 min erneut geöffnet wird.
+- Bei „Neues Spiel" (`resetAll`) wird auch der End-Zeitstempel gelöscht.
