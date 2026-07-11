@@ -71,6 +71,30 @@ export function getStartTs(): number | null {
   }
 }
 
+export function getEndTs(): number | null {
+  try {
+    const v = localStorage.getItem(KEY_END_TS);
+    if (!v) return null;
+    const n = parseInt(v, 10);
+    return Number.isFinite(n) ? n : null;
+  } catch {
+    return null;
+  }
+}
+
+/** Markiert das Spiel als beendet und friert damit den Timer ein. */
+export function finishGame() {
+  try {
+    if (!localStorage.getItem(KEY_END_TS)) {
+      localStorage.setItem(KEY_END_TS, String(Date.now()));
+      window.dispatchEvent(new Event("maya-progress"));
+    }
+  } catch {
+    /* ignore */
+  }
+}
+
+
 // ---- Adaptive Zeit-Helfer ---------------------------------------------------
 export function formatClock(d: Date): string {
   return d.toLocaleTimeString("de-CH", { hour: "2-digit", minute: "2-digit" });
