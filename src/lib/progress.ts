@@ -114,6 +114,7 @@ export function getHearingClock(): string | null {
 
 /** True, wenn die 90 Minuten seit Registrierung abgelaufen sind. */
 export function isTimeUp(): boolean {
+  if (getEndTs()) return false;
   const ts = getStartTs();
   if (!ts) return false;
   return Date.now() >= ts + TIMER_DURATION_MIN * 60_000;
