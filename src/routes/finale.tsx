@@ -311,7 +311,10 @@ function FinalePage() {
         : "running";
 
   useEffect(() => {
-    if (status === "won") completeStage(6);
+    if (status === "won") {
+      completeStage(6);
+      finishGame();
+    }
   }, [status]);
 
   const handleResult = (correct: boolean) => {
