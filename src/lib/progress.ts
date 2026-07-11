@@ -14,6 +14,7 @@ const KEY_TEAM = "maya-team-name";
 const KEY_CODE = "maya-team-code";
 const KEY_STAGE = "maya-current-stage";
 export const KEY_START_TS = "maya-start-ts";
+export const KEY_END_TS = "maya-end-ts";
 export const TIMER_DURATION_MIN = 90;
 
 export type StageInfo = {
@@ -70,6 +71,30 @@ export function getStartTs(): number | null {
   }
 }
 
+export function getEndTs(): number | null {
+  try {
+    const v = localStorage.getItem(KEY_END_TS);
+    if (!v) return null;
+    const n = parseInt(v, 10);
+    return Number.isFinite(n) ? n : null;
+  } catch {
+    return null;
+  }
+}
+
+/** Markiert das Spiel als beendet und friert damit den Timer ein. */
+export function finishGame() {
+  try {
+    if (!localStorage.getItem(KEY_END_TS)) {
+      localStorage.setItem(KEY_END_TS, String(Date.now()));
+      window.dispatchEvent(new Event("maya-progress"));
+    }
+  } catch {
+    /* ignore */
+  }
+}
+
+
 // ---- Adaptive Zeit-Helfer ---------------------------------------------------
 export function formatClock(d: Date): string {
   return d.toLocaleTimeString("de-CH", { hour: "2-digit", minute: "2-digit" });
@@ -89,6 +114,7 @@ export function getHearingClock(): string | null {
 
 /** True, wenn die 90 Minuten seit Registrierung abgelaufen sind. */
 export function isTimeUp(): boolean {
+  if (getEndTs()) return false;
   const ts = getStartTs();
   if (!ts) return false;
   return Date.now() >= ts + TIMER_DURATION_MIN * 60_000;

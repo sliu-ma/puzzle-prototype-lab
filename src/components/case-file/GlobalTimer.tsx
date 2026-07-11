@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Clock, AlertTriangle } from "lucide-react";
+import { Clock, AlertTriangle, CheckCircle2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import {
   getStartTs,
+  getEndTs,
   TIMER_DURATION_MIN,
   formatClock,
   getHearingClock,
@@ -93,11 +94,15 @@ function format(ms: number) {
 
 export function GlobalTimer() {
   const [startTs, setStartTs] = useState<number | null>(null);
+  const [endTs, setEndTs] = useState<number | null>(null);
   const [now, setNow] = useState(() => Date.now());
   const [popup, setPopup] = useState<MajaBeat | null>(null);
 
   useEffect(() => {
-    const sync = () => setStartTs(getStartTs());
+    const sync = () => {
+      setStartTs(getStartTs());
+      setEndTs(getEndTs());
+    };
     sync();
     window.addEventListener("maya-progress", sync);
     window.addEventListener("storage", sync);
@@ -108,13 +113,13 @@ export function GlobalTimer() {
   }, []);
 
   useEffect(() => {
-    if (!startTs) return;
+    if (!startTs || endTs) return;
     const id = window.setInterval(() => setNow(Date.now()), 1000);
     return () => window.clearInterval(id);
-  }, [startTs]);
+  }, [startTs, endTs]);
 
   useEffect(() => {
-    if (!startTs) return;
+    if (!startTs || endTs) return;
     const elapsedMin = (now - startTs) / 60000;
     const shown = getShown();
     const due = BEATS.find((b) => elapsedMin >= b.at && !shown.has(b.at));
@@ -122,14 +127,16 @@ export function GlobalTimer() {
       markShown(due.at);
       setPopup(due);
     }
-  }, [now, startTs, popup]);
+  }, [now, startTs, endTs, popup]);
 
   if (!startTs) return null;
 
   const totalMs = TIMER_DURATION_MIN * 60_000;
-  const remaining = startTs + totalMs - now;
-  const isOver = remaining <= 0;
-  const isFinal = remaining <= 15 * 60_000;
+  const effectiveNow = endTs ?? now;
+  const remaining = startTs + totalMs - effectiveNow;
+  const isFinished = !!endTs;
+  const isOver = !isFinished && remaining <= 0;
+  const isFinal = !isFinished && remaining <= 15 * 60_000;
   const hearing = getHearingClock() ?? "19:00";
   const popupTitle = popup
     ? `Maja · ${formatClock(new Date(startTs + popup.at * 60_000))}`
@@ -142,15 +149,19 @@ export function GlobalTimer() {
       <div
         className={cn(
           "fixed right-3 top-3 z-40 flex items-center gap-2 rounded-sm border bg-card/95 px-3 py-1.5 font-mono-typed text-sm shadow-md backdrop-blur",
-          isOver
-            ? "border-destructive text-destructive"
-            : isFinal
-              ? "border-stamp text-stamp animate-pulse"
-              : "border-border text-foreground",
+          isFinished
+            ? "border-emerald-600 text-emerald-700"
+            : isOver
+              ? "border-destructive text-destructive"
+              : isFinal
+                ? "border-stamp text-stamp animate-pulse"
+                : "border-border text-foreground",
         )}
         aria-live="polite"
       >
-        {isOver ? (
+        {isFinished ? (
+          <CheckCircle2 className="h-4 w-4" />
+        ) : isOver ? (
           <AlertTriangle className="h-4 w-4" />
         ) : (
           <Clock className="h-4 w-4" />
@@ -158,7 +169,9 @@ export function GlobalTimer() {
         <span className="tabular-nums font-semibold">
           {isOver ? "00:00" : format(remaining)}
         </span>
+        {isFinished && <span className="text-xs font-serif">· Fertig</span>}
       </div>
+
 
       <Dialog open={!!popup} onOpenChange={(o) => !o && setPopup(null)}>
         <DialogContent className="max-w-sm">

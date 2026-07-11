@@ -6,7 +6,7 @@ import { PaperCard } from "@/components/case-file/PaperCard";
 import { Stamp } from "@/components/case-file/Stamp";
 import { StageGate } from "@/components/case-file/StageGate";
 import { getTotalRevealedHints } from "@/components/case-file/HintSystem";
-import { completeStage, getHearingClock, getStartTs } from "@/lib/progress";
+import { completeStage, finishGame, getHearingClock, getStartTs } from "@/lib/progress";
 import { usePersistentState } from "@/lib/persist";
 import { cn } from "@/lib/utils";
 
@@ -311,7 +311,10 @@ function FinalePage() {
         : "running";
 
   useEffect(() => {
-    if (status === "won") completeStage(6);
+    if (status === "won") {
+      completeStage(6);
+      finishGame();
+    }
   }, [status]);
 
   const handleResult = (correct: boolean) => {
