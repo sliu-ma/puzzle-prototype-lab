@@ -94,11 +94,15 @@ function format(ms: number) {
 
 export function GlobalTimer() {
   const [startTs, setStartTs] = useState<number | null>(null);
+  const [endTs, setEndTs] = useState<number | null>(null);
   const [now, setNow] = useState(() => Date.now());
   const [popup, setPopup] = useState<MajaBeat | null>(null);
 
   useEffect(() => {
-    const sync = () => setStartTs(getStartTs());
+    const sync = () => {
+      setStartTs(getStartTs());
+      setEndTs(getEndTs());
+    };
     sync();
     window.addEventListener("maya-progress", sync);
     window.addEventListener("storage", sync);
@@ -109,13 +113,13 @@ export function GlobalTimer() {
   }, []);
 
   useEffect(() => {
-    if (!startTs) return;
+    if (!startTs || endTs) return;
     const id = window.setInterval(() => setNow(Date.now()), 1000);
     return () => window.clearInterval(id);
-  }, [startTs]);
+  }, [startTs, endTs]);
 
   useEffect(() => {
-    if (!startTs) return;
+    if (!startTs || endTs) return;
     const elapsedMin = (now - startTs) / 60000;
     const shown = getShown();
     const due = BEATS.find((b) => elapsedMin >= b.at && !shown.has(b.at));
@@ -123,14 +127,16 @@ export function GlobalTimer() {
       markShown(due.at);
       setPopup(due);
     }
-  }, [now, startTs, popup]);
+  }, [now, startTs, endTs, popup]);
 
   if (!startTs) return null;
 
   const totalMs = TIMER_DURATION_MIN * 60_000;
-  const remaining = startTs + totalMs - now;
-  const isOver = remaining <= 0;
-  const isFinal = remaining <= 15 * 60_000;
+  const effectiveNow = endTs ?? now;
+  const remaining = startTs + totalMs - effectiveNow;
+  const isFinished = !!endTs;
+  const isOver = !isFinished && remaining <= 0;
+  const isFinal = !isFinished && remaining <= 15 * 60_000;
   const hearing = getHearingClock() ?? "19:00";
   const popupTitle = popup
     ? `Maja · ${formatClock(new Date(startTs + popup.at * 60_000))}`
