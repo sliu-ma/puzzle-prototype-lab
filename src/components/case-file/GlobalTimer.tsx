@@ -149,15 +149,19 @@ export function GlobalTimer() {
       <div
         className={cn(
           "fixed right-3 top-3 z-40 flex items-center gap-2 rounded-sm border bg-card/95 px-3 py-1.5 font-mono-typed text-sm shadow-md backdrop-blur",
-          isOver
-            ? "border-destructive text-destructive"
-            : isFinal
-              ? "border-stamp text-stamp animate-pulse"
-              : "border-border text-foreground",
+          isFinished
+            ? "border-emerald-600 text-emerald-700"
+            : isOver
+              ? "border-destructive text-destructive"
+              : isFinal
+                ? "border-stamp text-stamp animate-pulse"
+                : "border-border text-foreground",
         )}
         aria-live="polite"
       >
-        {isOver ? (
+        {isFinished ? (
+          <CheckCircle2 className="h-4 w-4" />
+        ) : isOver ? (
           <AlertTriangle className="h-4 w-4" />
         ) : (
           <Clock className="h-4 w-4" />
@@ -165,7 +169,9 @@ export function GlobalTimer() {
         <span className="tabular-nums font-semibold">
           {isOver ? "00:00" : format(remaining)}
         </span>
+        {isFinished && <span className="text-xs font-serif">· Fertig</span>}
       </div>
+
 
       <Dialog open={!!popup} onOpenChange={(o) => !o && setPopup(null)}>
         <DialogContent className="max-w-sm">
