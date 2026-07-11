@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Clock, AlertTriangle } from "lucide-react";
+import { Clock, AlertTriangle, CheckCircle2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import {
   getStartTs,
+  getEndTs,
   TIMER_DURATION_MIN,
   formatClock,
   getHearingClock,
