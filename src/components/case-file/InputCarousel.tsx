@@ -162,13 +162,8 @@ export function InputCarousel({
             ))}
           </div>
 
-          {/* Right peek fade — nur Mobile */}
-          {!isLast && (
-            <div
-              aria-hidden
-              className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-card to-transparent md:hidden"
-            />
-          )}
+
+
 
           {/* First-time floating hint — nur Mobile */}
           {showFirstHint && !isLast && (
