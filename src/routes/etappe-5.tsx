@@ -5,6 +5,7 @@ import { Stamp } from "@/components/case-file/Stamp";
 import { QRGate } from "@/components/case-file/QRGate";
 import { StageGate } from "@/components/case-file/StageGate";
 import { GutachtenRaetsel } from "@/components/case-file/GutachtenRaetsel";
+import { InputCarousel } from "@/components/case-file/InputCarousel";
 import { HintSystem, type Hint } from "@/components/case-file/HintSystem";
 import { completeStage, getFrozenClock, getHearingClock } from "@/lib/progress";
 import { usePersistentState, usePersistentSet } from "@/lib/persist";
@@ -221,64 +222,31 @@ function AktePage() {
         )}
 
         {step === "input" && (
-          <div className="space-y-6">
-            <PaperCard rotate={-0.3}>
-              <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-                Fachlicher Input · Energieträger
-              </p>
-              <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-                Was wirklich nachhaltig ist
-              </h2>
-              <p className="mt-3 text-foreground/80">
-                Drei Begriffe, an denen du jede Energiestudie messen kannst —
-                und an denen das Hearing entschieden wird:
-              </p>
-
-              <div className="mt-5 grid gap-4 sm:grid-cols-3">
-                {[
-                  {
-                    title: "CO₂ pro kWh",
-                    body: "Erdgas liegt real bei ca. 400 g/kWh, Steinkohle bei 820 g, Photovoltaik im Betrieb bei 0 g. Wer mit 95 g/kWh für Gas wirbt, schummelt um den Faktor 4.",
-                    hint: "Quelle: BAFU, BFE 2024.",
-                  },
-                  {
-                    title: "Wirkungsgrad",
-                    body: "Moderne Kohlekraftwerke kommen real auf 43–46 %, GuD-Erdgas auf rund 60 %, Wind und PV liegen darunter — produzieren aber ohne Brennstoff. Mehr als 70 % bei Kohle gibt es nicht.",
-                    hint: "Wirkungsgrad ≠ Nachhaltigkeit. Auch ein effizienter Kohleblock bleibt fossil.",
-                  },
-                  {
-                    title: "Versorgungssicherheit",
-                    body: "PV + Wind brauchen Speicher und Netz, sind aber kombinierbar. Fossile Anlagen wirken stabil, hängen aber an Importen und Weltmarktpreisen. Die Mischung entscheidet — nicht ein einzelner Träger.",
-                    hint: "Stichworte: Speicher, Sektorenkopplung, Stromnetz.",
-                  },
-                ].map((c) => (
-                  <div key={c.title} className="rounded-sm border border-border bg-paper p-4 shadow-sm">
-                    <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">Karte</p>
-                    <h4 className="mt-1 font-serif text-xl font-bold">{c.title}</h4>
-                    <p className="mt-2 text-sm text-foreground/85">{c.body}</p>
-                    <p className="mt-3 border-t border-dashed border-border pt-2 text-xs italic text-foreground/60">
-                      {c.hint}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </PaperCard>
-
-            <div className="flex justify-between">
-              <button
-                onClick={() => setStep("spiel")}
-                className="rounded-sm border border-border bg-card px-4 py-2.5 font-serif text-sm hover:bg-secondary"
-              >
-                ← Zurück
-              </button>
-              <button
-                onClick={() => goto("naechstes")}
-                className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
-              >
-                Zum Hearing →
-              </button>
-            </div>
-          </div>
+          <InputCarousel
+            kicker="Fachlicher Input · Energieträger"
+            title="Was wirklich nachhaltig ist"
+            intro="Drei Begriffe, an denen du jede Energiestudie messen kannst — und an denen das Hearing entschieden wird:"
+            cards={[
+              {
+                title: "CO₂ pro kWh",
+                body: "Erdgas liegt real bei ca. 400 g/kWh, Steinkohle bei 820 g, Photovoltaik im Betrieb bei 0 g. Wer mit 95 g/kWh für Gas wirbt, schummelt um den Faktor 4.",
+                hint: "Quelle: BAFU, BFE 2024.",
+              },
+              {
+                title: "Wirkungsgrad",
+                body: "Moderne Kohlekraftwerke kommen real auf 43–46 %, GuD-Erdgas auf rund 60 %, Wind und PV liegen darunter — produzieren aber ohne Brennstoff. Mehr als 70 % bei Kohle gibt es nicht.",
+                hint: "Wirkungsgrad ≠ Nachhaltigkeit. Auch ein effizienter Kohleblock bleibt fossil.",
+              },
+              {
+                title: "Versorgungssicherheit",
+                body: "PV + Wind brauchen Speicher und Netz, sind aber kombinierbar. Fossile Anlagen wirken stabil, hängen aber an Importen und Weltmarktpreisen. Die Mischung entscheidet — nicht ein einzelner Träger.",
+                hint: "Stichworte: Speicher, Sektorenkopplung, Stromnetz.",
+              },
+            ]}
+            onBack={() => setStep("spiel")}
+            nextLabel="Zum Hearing →"
+            onNext={() => goto("naechstes")}
+          />
         )}
 
         {step === "naechstes" && (

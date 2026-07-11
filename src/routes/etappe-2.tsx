@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { PaperCard } from "@/components/case-file/PaperCard";
 import { Stamp } from "@/components/case-file/Stamp";
 import { GruenerMarkt } from "@/components/case-file/GruenerMarkt";
+import { InputCarousel } from "@/components/case-file/InputCarousel";
 import { QRGate } from "@/components/case-file/QRGate";
 import { StageGate } from "@/components/case-file/StageGate";
 import { HintSystem, type Hint } from "@/components/case-file/HintSystem";
@@ -212,64 +213,32 @@ function AktePage() {
         )}
 
         {step === "input" && (
-          <div className="space-y-6">
-            <PaperCard rotate={-0.3}>
-              <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-                Fachlicher Input · 3 Lernkarten
-              </p>
-              <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-                Was heißt eigentlich „nachhaltig einkaufen"?
-              </h2>
-              <p className="mt-3 text-foreground/80">
-                Drei Begriffe, die du gerade angewendet hast — und die der Rat
-                heute Abend hören will:
-              </p>
-
-              <div className="mt-5 grid gap-4 sm:grid-cols-3">
-                {[
-                  {
-                    title: "Saisonal",
-                    body: "Obst und Gemüse, das gerade in der Schweiz wächst und geerntet werden kann. Wer im März Erdbeeren kauft, kauft Ware aus dem Süden oder beheizten Tunneln — viel Energie für wenig Geschmack.",
-                    hint: "Im Frühling in CH saisonal: Lauch, Karotten, Feldsalat …",
-                  },
-                  {
-                    title: "Regional",
-                    body: "Lebensmittel aus deiner Umgebung — meist 50–100 km. Kurzer Transport, frischer, oft kleinere Höfe. Achtung: «Aus der Schweiz» ist nicht automatisch regional. Region heißt: aus deiner Gegend.",
-                    hint: "Bio Suisse & IP-Suisse stehen für Schweizer Herkunft mit klaren Standards.",
-                  },
-                  {
-                    title: "Tiergerecht & Bio",
-                    body: "Bio-Freilandhaltung garantiert Auslauf und Bio-Futter — Bodenhaltung nicht. Importeier reisen oft über tausende Kilometer. Hinter günstigen Preisen stehen meist enge Ställe und industrielle Logistik.",
-                    hint: "Schweizer Bio-Eier sind teurer, halten aber, was die Werbung verspricht.",
-                  },
-                ].map((c) => (
-                  <div key={c.title} className="rounded-sm border border-border bg-paper p-4 shadow-sm">
-                    <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">Karte</p>
-                    <h4 className="mt-1 font-serif text-xl font-bold">{c.title}</h4>
-                    <p className="mt-2 text-sm text-foreground/85">{c.body}</p>
-                    <p className="mt-3 border-t border-dashed border-border pt-2 text-xs italic text-foreground/60">
-                      {c.hint}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </PaperCard>
-
-            <div className="flex justify-between">
-              <button
-                onClick={() => setStep("shop")}
-                className="rounded-sm border border-border bg-card px-4 py-2.5 font-serif text-sm hover:bg-secondary"
-              >
-                ← Zurück in den Laden
-              </button>
-              <button
-                onClick={() => goto("naechstes")}
-                className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
-              >
-                Weiter →
-              </button>
-            </div>
-          </div>
+          <InputCarousel
+            kicker="Fachlicher Input · 3 Lernkarten"
+            title={`Was heißt eigentlich „nachhaltig einkaufen"?`}
+            intro="Drei Begriffe, die du gerade angewendet hast — und die der Rat heute Abend hören will:"
+            cards={[
+              {
+                title: "Saisonal",
+                body: "Obst und Gemüse, das gerade in der Schweiz wächst und geerntet werden kann. Wer im März Erdbeeren kauft, kauft Ware aus dem Süden oder beheizten Tunneln — viel Energie für wenig Geschmack.",
+                hint: "Im Frühling in CH saisonal: Lauch, Karotten, Feldsalat …",
+              },
+              {
+                title: "Regional",
+                body: "Lebensmittel aus deiner Umgebung — meist 50–100 km. Kurzer Transport, frischer, oft kleinere Höfe. Achtung: «Aus der Schweiz» ist nicht automatisch regional. Region heißt: aus deiner Gegend.",
+                hint: "Bio Suisse & IP-Suisse stehen für Schweizer Herkunft mit klaren Standards.",
+              },
+              {
+                title: "Tiergerecht & Bio",
+                body: "Bio-Freilandhaltung garantiert Auslauf und Bio-Futter — Bodenhaltung nicht. Importeier reisen oft über tausende Kilometer. Hinter günstigen Preisen stehen meist enge Ställe und industrielle Logistik.",
+                hint: "Schweizer Bio-Eier sind teurer, halten aber, was die Werbung verspricht.",
+              },
+            ]}
+            backLabel="← Zurück in den Laden"
+            onBack={() => setStep("shop")}
+            nextLabel="Weiter zu Etappe 3 →"
+            onNext={() => goto("naechstes")}
+          />
         )}
 
         {step === "naechstes" && (

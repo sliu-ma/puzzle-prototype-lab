@@ -1,31 +1,44 @@
-## Ursache (Hypothese)
+## Ziel
+Die drei "Fachlicher Input"-Karten in jeder Etappe (1–5) werden zu einem swipebaren Kartenstapel/Karussell, das für Mobile optimiert ist. Der Weiter-Button erscheint erst auf der letzten (dritten) Karte. Ein sichtbarer Hinweis macht den Swipe klar.
 
-Der Lovable Builder rendert die Preview in einem `<iframe>`. Für `getUserMedia()` muss dieser iframe explizit die Permissions-Policy `allow="camera; microphone"` gesetzt haben. Ohne dieses Attribut blockiert der Browser den Zugriff **bevor** überhaupt ein Berechtigungsdialog erscheint — und wirft einen `NotAllowedError` mit Message wie *"Permissions policy violation: camera is not allowed in this document"*. Genau dieser Fehler wird von `QRGate.tsx` aktuell pauschal als „Kamera-Zugriff wurde abgelehnt" interpretiert, weshalb es so aussieht, als hätte der Nutzer verweigert.
+## Umsetzung
 
-Dass es im neuen Tab und in Production funktioniert, passt zu dieser Hypothese: dort gibt es keinen einschränkenden iframe-Parent.
+### 1. Neue Komponente `src/components/case-file/InputCarousel.tsx`
+- Props: `title`, `kicker`, `intro`, `cards: { title, body, hint }[]`, `onBack`, `onNext`, `nextLabel` (z. B. `"Weiter zu Etappe 2 →"`).
+- **Mobile-first Karussell** (immer, auf allen Breiten – die App ist für Mobile gemacht):
+  - Horizontaler Scroll-Container mit `snap-x snap-mandatory`, jede Karte `w-[85vw] max-w-[380px] snap-center shrink-0`.
+  - Beobachtung des aktiven Index via `IntersectionObserver` auf den Karten-Wrappern (Threshold 0.6).
+  - Zusätzlich Touch/Pfeil-Steuerung: kleine Pfeil-Buttons links/rechts (nur bei ≥sm sichtbar) + Klick auf Dots scrollt zur Karte.
+- **Swipe-Hinweis** (deutlich, aber nicht störend):
+  - Unter der aktiven Karte: Dots-Indikator `● ○ ○` + Textzeile `"Karte 1 von 3 · nach links wischen"` mit animiertem Pfeil-Icon (`ChevronRight` mit dezenter Wischanimation via Tailwind `animate-pulse` + Translation).
+  - Beim ersten Aufruf (kein `localStorage`-Flag `maya-input-swipe-hint`) einmalig ein größerer schwebender Hinweis `👉 Wische zur nächsten Karte` über die rechte Kartenkante, verschwindet beim ersten Scroll oder nach 4 s.
+  - Rechter Rand des Containers zeigt einen "Peek" der nächsten Karte (~10 vw sichtbar), damit intuitiv klar ist, dass mehr kommt.
+- **Fortschritts-/Weiter-Logik**:
+  - `nextEnabled = activeIndex === cards.length - 1`.
+  - Vorher: Button-Slot zeigt statt Weiter-Button eine kleine Anzeige `"Noch {n} Karten · weiterwischen"`.
+  - Auf der letzten Karte: der primäre `nextLabel`-Button erscheint (gleiche Position wie heute unten rechts) plus `← Zurück` links.
+- Optik bleibt konsistent zum Field-Notes-Look (`PaperCard`-Stil, `border-dashed`, `font-mono-typed`-Kicker).
 
-Die Iframe-Policy des Builders können wir aus der App heraus **nicht ändern** — nur der Builder selbst kann `allow="camera"` am iframe setzen. Was wir tun können: den echten Fehler sichtbar machen, den Sonderfall erkennen und dem Nutzer eine sinnvolle Handlung anbieten (Preview in neuem Tab öffnen).
+### 2. Einbindung in die fünf Etappen-Routen
+Nur die Sektion `step === "input"` wird ersetzt. Der Karten-Content (Titel, Body, Hint) wird 1:1 an die neue Komponente übergeben. Betroffen:
+- `src/routes/etappe-1.tsx` (Nachhaltige Mobilität, "Weiter zu Etappe 2 →")
+- `src/routes/etappe-2.tsx` (3 Lernkarten, "Weiter zu Etappe 3 →")
+- `src/routes/etappe-3.tsx` (Biodiversität, "Weiter zu Etappe 4 →")
+- `src/routes/etappe-4.tsx` (Wohnen & Energie, "Weiter zu Etappe 5 →")
+- `src/routes/etappe-5.tsx` (Energieträger, "Weiter zum Finale →" – Label prüfen)
 
-## Änderungen
+Kein anderer Etappen-Code (Rätsellogik, Persistenz, Hints) wird angefasst.
 
-### 1. `src/components/case-file/QRGate.tsx` — echte Fehlerdiagnose
-- Vor `decodeFromVideoDevice` einen expliziten `navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })` Aufruf machen, um den rohen Fehler zu bekommen (zXing schluckt/normalisiert Fehler).
-- Erkennen ob App im iframe läuft: `window.self !== window.top`.
-- Feature-Check: `navigator.permissions.query({ name: "camera" })` (falls verfügbar) für zusätzlichen Kontext.
-- Fehler differenziert behandeln nach `error.name`:
-  - `NotAllowedError` + iframe + Message enthält „permissions policy" / „Permission denied by system" → **Builder-Block-Meldung**: „Der Lovable Builder blockiert den Kamerazugriff in dieser Vorschau. Öffne die Preview in einem neuen Tab (Button oben rechts im Builder) oder nutze die veröffentlichte Version."
-  - `NotAllowedError` sonst → echte Verweigerung durch Nutzer/OS.
-  - `NotFoundError` → „Keine Kamera gefunden."
-  - `NotReadableError` → „Kamera wird bereits von einer anderen App verwendet."
-  - `SecurityError` → „Kamera nur über HTTPS verfügbar."
-  - `TypeError` → „getUserMedia in diesem Browser nicht verfügbar."
-  - default → generisch mit `name`/`message`.
-- Debug-Panel (aufklappbar „Technische Details") mit: `error.name`, `error.message`, `error.stack`, `isIframe`, `location.protocol`, `userAgent`, Permissions-State. Damit ist die Ursache im Builder sofort sichtbar.
-- Wenn iframe-Block erkannt: zusätzlicher Button „In neuem Tab öffnen" (`window.open(location.href, "_blank")`).
+### 3. Persistenz
+- `activeIndex` wird nicht global persistiert – Karten sind rein informativ, Weiter-Zustand hängt am bestehenden Step-Modell.
+- `maya-input-swipe-hint` (bool) im `localStorage`, damit der große Hinweis nur beim allerersten Mal erscheint. Wird von `resetAll` in `src/lib/progress.ts` mitgelöscht (Prefix `maya-*` ist bereits abgedeckt).
 
-### 2. Kein Reset des freigeschalteten States
-Der bestehende Ablauf (Token/Storage) bleibt unverändert. Nur die Diagnose- und Fehler-Anzeige-Pfade werden erweitert.
+## Technisches
 
-## Verifikation
-- Im Builder: erwartet Meldung „Builder blockiert Kamera" + Debug-Details mit `NotAllowedError` + „permissions policy" + `isIframe: true`.
-- In neuem Tab / Published: unverändertes Verhalten, Scanner startet.
+- CSS-Snap statt JS-Drag – robust, ohne zusätzliche Library.
+- IntersectionObserver liegt in `useEffect`; Referenzen via `useRef<HTMLDivElement[]>`.
+- Kein neuer npm-Import nötig; Icons aus vorhandenem `lucide-react` (`ChevronRight`, `ChevronLeft`).
+
+## Ergebnis
+- Auf Mobile: eine Karte pro "Blick", flüssiges Swipen, klarer Fortschritts- und Swipe-Hinweis, Weiter-Button erst auf Karte 3.
+- Fünf Etappen erhalten das Verhalten identisch, ohne Rätsel- oder Fortschrittslogik zu ändern.
