@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { PaperCard } from "@/components/case-file/PaperCard";
 import { Stamp } from "@/components/case-file/Stamp";
 import { CodeLock } from "@/components/case-file/CodeLock";
+import { InputCarousel } from "@/components/case-file/InputCarousel";
 import { QRGate } from "@/components/case-file/QRGate";
 import { StageGate } from "@/components/case-file/StageGate";
 import { HintSystem, type Hint } from "@/components/case-file/HintSystem";
@@ -248,64 +249,31 @@ function AktePage() {
         )}
 
         {step === "input" && (
-          <div className="space-y-6">
-            <PaperCard rotate={-0.3}>
-              <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-                Fachlicher Input · Biodiversität
-              </p>
-              <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-                Warum Vielfalt zählt
-              </h2>
-              <p className="mt-3 text-foreground/80">
-                Die Schweiz gehört in Europa zu den Ländern mit dem grössten
-                Anteil bedrohter Arten. Drei Begriffe, die du für den Rat brauchst:
-              </p>
-
-              <div className="mt-5 grid gap-4 sm:grid-cols-3">
-                {[
-                  {
-                    title: "Rote Liste",
-                    body: "Eine offizielle Übersicht der gefährdeten Tier- und Pflanzenarten der Schweiz. Rund ein Drittel aller untersuchten Arten gilt heute als bedroht — vom Feldhasen bis zum Apollofalter.",
-                    hint: "Quelle: BAFU – Bundesamt für Umwelt.",
-                  },
-                  {
-                    title: "Lebensraum",
-                    body: "Versiegelte Böden, intensive Landwirtschaft und Verkehr zerschneiden Wiesen, Hecken und Feuchtgebiete. Ohne Lebensraum keine Tiere — auch nicht auf der Lichtung hinter dem Dorf.",
-                    hint: "Hecken, Trockenmauern und Tümpel sind echte Biodiversitäts-Hotspots.",
-                  },
-                  {
-                    title: "Vernetzung",
-                    body: "Tiere brauchen Wanderkorridore: Grünbrücken, Gewässer, Hecken. Werden Räume durch Strassen oder Kraftwerke getrennt, sterben Populationen lokal aus, auch wenn jede einzelne noch zu retten wäre.",
-                    hint: "Stichwort: Wildtierkorridore und Renaturierung.",
-                  },
-                ].map((c) => (
-                  <div key={c.title} className="rounded-sm border border-border bg-paper p-4 shadow-sm">
-                    <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">Karte</p>
-                    <h4 className="mt-1 font-serif text-xl font-bold">{c.title}</h4>
-                    <p className="mt-2 text-sm text-foreground/85">{c.body}</p>
-                    <p className="mt-3 border-t border-dashed border-border pt-2 text-xs italic text-foreground/60">
-                      {c.hint}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </PaperCard>
-
-            <div className="flex justify-between">
-              <button
-                onClick={() => setStep("code")}
-                className="rounded-sm border border-border bg-card px-4 py-2.5 font-serif text-sm hover:bg-secondary"
-              >
-                ← Zurück
-              </button>
-              <button
-                onClick={() => goto("naechstes")}
-                className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
-              >
-                Weiter →
-              </button>
-            </div>
-          </div>
+          <InputCarousel
+            kicker="Fachlicher Input · Biodiversität"
+            title="Warum Vielfalt zählt"
+            intro="Die Schweiz gehört in Europa zu den Ländern mit dem grössten Anteil bedrohter Arten. Drei Begriffe, die du für den Rat brauchst:"
+            cards={[
+              {
+                title: "Rote Liste",
+                body: "Eine offizielle Übersicht der gefährdeten Tier- und Pflanzenarten der Schweiz. Rund ein Drittel aller untersuchten Arten gilt heute als bedroht — vom Feldhasen bis zum Apollofalter.",
+                hint: "Quelle: BAFU – Bundesamt für Umwelt.",
+              },
+              {
+                title: "Lebensraum",
+                body: "Versiegelte Böden, intensive Landwirtschaft und Verkehr zerschneiden Wiesen, Hecken und Feuchtgebiete. Ohne Lebensraum keine Tiere — auch nicht auf der Lichtung hinter dem Dorf.",
+                hint: "Hecken, Trockenmauern und Tümpel sind echte Biodiversitäts-Hotspots.",
+              },
+              {
+                title: "Vernetzung",
+                body: "Tiere brauchen Wanderkorridore: Grünbrücken, Gewässer, Hecken. Werden Räume durch Strassen oder Kraftwerke getrennt, sterben Populationen lokal aus, auch wenn jede einzelne noch zu retten wäre.",
+                hint: "Stichwort: Wildtierkorridore und Renaturierung.",
+              },
+            ]}
+            onBack={() => setStep("code")}
+            nextLabel="Weiter zu Etappe 4 →"
+            onNext={() => goto("naechstes")}
+          />
         )}
 
         {step === "naechstes" && (
