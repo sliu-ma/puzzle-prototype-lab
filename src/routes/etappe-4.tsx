@@ -5,6 +5,7 @@ import { Stamp } from "@/components/case-file/Stamp";
 import { QRGate } from "@/components/case-file/QRGate";
 import { StageGate } from "@/components/case-file/StageGate";
 import { EnergyGame } from "@/components/case-file/EnergyGame";
+import { InputCarousel } from "@/components/case-file/InputCarousel";
 import { HintSystem, type Hint } from "@/components/case-file/HintSystem";
 import { completeStage, getFrozenClock } from "@/lib/progress";
 import { usePersistentState, usePersistentSet } from "@/lib/persist";
@@ -275,64 +276,32 @@ function AktePage() {
         )}
 
         {step === "input" && (
-          <div className="space-y-6">
-            <PaperCard rotate={-0.3}>
-              <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-                Fachlicher Input · Wohnen &amp; Energie
-              </p>
-              <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-                Wo zuhause Energie versickert
-              </h2>
-              <p className="mt-3 text-foreground/80">
-                Rund 40 % des Schweizer Energieverbrauchs entstehen in Gebäuden.
-                Drei Begriffe, die du fürs Hearing brauchst:
-              </p>
-
-              <div className="mt-5 grid gap-4 sm:grid-cols-3">
-                {[
-                  {
-                    title: "Effizienzklasse",
-                    body: "A+++ Geräte verbrauchen oft nur ein Drittel der Energie alter Modelle. Bei Kühlschrank, Ofen und Boiler lohnt sich der Austausch über die Lebensdauer fast immer.",
-                    hint: "Energieetikette: A (sparsam) bis G (Stromfresser).",
-                  },
-                  {
-                    title: "Wärme-Hülle",
-                    body: "Heizen ist Posten Nr. 1 im Haushalt. Ein Grad kühler zu heizen bringt sofort viele Energiesparpunkte — ohne einen Franken Investition.",
-                    hint: "Faustregel: 1 °C kühler heizen spart ca. 6 % Heizenergie.",
-                  },
-                  {
-                    title: "Verhalten",
-                    body: "Kurz duschen, Wäsche aufhängen, Deckel auf den Topf, Eco-Programme wählen — diese Schritte kosten nichts und wirken sofort. Technik allein bringt wenig, wenn die Gewohnheiten nicht passen.",
-                    hint: "Verhalten schlägt teure Geräte im Preis-Leistungs-Vergleich.",
-                  },
-                ].map((c) => (
-                  <div key={c.title} className="rounded-sm border border-border bg-paper p-4 shadow-sm">
-                    <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">Karte</p>
-                    <h4 className="mt-1 font-serif text-xl font-bold">{c.title}</h4>
-                    <p className="mt-2 text-sm text-foreground/85">{c.body}</p>
-                    <p className="mt-3 border-t border-dashed border-border pt-2 text-xs italic text-foreground/60">
-                      {c.hint}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </PaperCard>
-
-            <div className="flex justify-between">
-              <button
-                onClick={() => setStep("spiel")}
-                className="rounded-sm border border-border bg-card px-4 py-2.5 font-serif text-sm hover:bg-secondary"
-              >
-                ← Zurück zum Spiel
-              </button>
-              <button
-                onClick={() => goto("naechstes")}
-                className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
-              >
-                Weiter →
-              </button>
-            </div>
-          </div>
+          <InputCarousel
+            kicker="Fachlicher Input · Wohnen & Energie"
+            title="Wo zuhause Energie versickert"
+            intro="Rund 40 % des Schweizer Energieverbrauchs entstehen in Gebäuden. Drei Begriffe, die du fürs Hearing brauchst:"
+            cards={[
+              {
+                title: "Effizienzklasse",
+                body: "A+++ Geräte verbrauchen oft nur ein Drittel der Energie alter Modelle. Bei Kühlschrank, Ofen und Boiler lohnt sich der Austausch über die Lebensdauer fast immer.",
+                hint: "Energieetikette: A (sparsam) bis G (Stromfresser).",
+              },
+              {
+                title: "Wärme-Hülle",
+                body: "Heizen ist Posten Nr. 1 im Haushalt. Ein Grad kühler zu heizen bringt sofort viele Energiesparpunkte — ohne einen Franken Investition.",
+                hint: "Faustregel: 1 °C kühler heizen spart ca. 6 % Heizenergie.",
+              },
+              {
+                title: "Verhalten",
+                body: "Kurz duschen, Wäsche aufhängen, Deckel auf den Topf, Eco-Programme wählen — diese Schritte kosten nichts und wirken sofort. Technik allein bringt wenig, wenn die Gewohnheiten nicht passen.",
+                hint: "Verhalten schlägt teure Geräte im Preis-Leistungs-Vergleich.",
+              },
+            ]}
+            backLabel="← Zurück zum Spiel"
+            onBack={() => setStep("spiel")}
+            nextLabel="Weiter zu Etappe 5 →"
+            onNext={() => goto("naechstes")}
+          />
         )}
 
         {step === "naechstes" && (
