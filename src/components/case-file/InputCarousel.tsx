@@ -36,6 +36,15 @@ export function InputCarousel({
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [active, setActive] = useState(0);
   const [showFirstHint, setShowFirstHint] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(false);
+
+  useEffect(() => {
+    const mql = window.matchMedia("(min-width: 768px)");
+    const apply = () => setIsDesktop(mql.matches);
+    apply();
+    mql.addEventListener("change", apply);
+    return () => mql.removeEventListener("change", apply);
+  }, []);
 
   useEffect(() => {
     try {
@@ -50,6 +59,7 @@ export function InputCarousel({
   }, []);
 
   useEffect(() => {
+    if (isDesktop) return;
     const scroller = scrollerRef.current;
     if (!scroller) return;
     const obs = new IntersectionObserver(
@@ -65,7 +75,7 @@ export function InputCarousel({
     );
     cardRefs.current.forEach((el) => el && obs.observe(el));
     return () => obs.disconnect();
-  }, [cards.length]);
+  }, [cards.length, isDesktop]);
 
   const dismissFirstHint = () => {
     if (!showFirstHint) return;
@@ -86,18 +96,19 @@ export function InputCarousel({
 
   const isLast = active === cards.length - 1;
   const remaining = cards.length - 1 - active;
+  const showNext = isDesktop || isLast;
 
   return (
     <div className="space-y-5">
-      <PaperCard rotate={-0.3}>
+      <PaperCard rotate={-0.3} className="overflow-hidden">
         <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
           {kicker}
         </p>
         <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">{title}</h2>
         <p className="mt-3 text-foreground/80">{intro}</p>
 
-        {/* Swipe explainer */}
-        <div className="mt-5 flex items-center justify-between gap-3 rounded-sm border border-dashed border-stamp/40 bg-stamp/5 px-3 py-2">
+        {/* Swipe explainer — nur auf Mobile */}
+        <div className="mt-5 flex items-center justify-between gap-3 rounded-sm border border-dashed border-stamp/40 bg-stamp/5 px-3 py-2 md:hidden">
           <div className="flex items-center gap-2 font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
             <Hand className="h-3.5 w-3.5" />
             Wischen für nächste Karte
@@ -110,12 +121,17 @@ export function InputCarousel({
           </div>
         </div>
 
-        {/* Carousel */}
+        {/* Desktop/Tablet: Grid — Mobile: Carousel */}
         <div className="relative mt-4">
           <div
             ref={scrollerRef}
             onScroll={dismissFirstHint}
-            className="-mx-6 flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth px-6 pb-3 pt-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            className={cn(
+              // Mobile: horizontales snap-carousel
+              "-mx-6 flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth px-6 pb-3 pt-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+              // Desktop/Tablet: Grid, kein scroll
+              "md:mx-0 md:grid md:grid-cols-3 md:gap-4 md:overflow-visible md:px-0 md:snap-none",
+            )}
             style={{ scrollPaddingInline: "1.5rem" }}
           >
             {cards.map((c, i) => (
@@ -125,14 +141,14 @@ export function InputCarousel({
                   cardRefs.current[i] = el;
                 }}
                 data-idx={i}
-                className="w-[82%] max-w-[360px] shrink-0 snap-center"
+                className="w-[82%] max-w-[360px] shrink-0 snap-center md:w-auto md:max-w-none md:shrink"
               >
                 <div className="h-full rounded-sm border border-border bg-paper p-4 shadow-sm">
                   <div className="flex items-center justify-between">
                     <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
                       Karte {i + 1} / {cards.length}
                     </p>
-                    <span className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+                    <span className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground md:hidden">
                       {i === cards.length - 1 ? "Letzte Karte" : "→"}
                     </span>
                   </div>
@@ -146,28 +162,28 @@ export function InputCarousel({
             ))}
           </div>
 
-          {/* Right peek fade */}
+          {/* Right peek fade — nur Mobile */}
           {!isLast && (
             <div
               aria-hidden
-              className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-card to-transparent"
+              className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-card to-transparent md:hidden"
             />
           )}
 
-          {/* First-time floating hint */}
+          {/* First-time floating hint — nur Mobile */}
           {showFirstHint && !isLast && (
-            <div className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-ink px-3 py-2 font-mono-typed text-[10px] uppercase tracking-wider text-paper shadow-lg animate-pulse">
+            <div className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-ink px-3 py-2 font-mono-typed text-[10px] uppercase tracking-wider text-paper shadow-lg animate-pulse md:hidden">
               👉 Wischen
             </div>
           )}
 
-          {/* Desktop arrows */}
+          {/* Desktop arrows — nur wenn nicht Grid (also sm bis md), hier komplett aus */}
           <button
             type="button"
             aria-label="Vorherige Karte"
             onClick={() => scrollTo(active - 1)}
             disabled={active === 0}
-            className="absolute left-0 top-1/2 hidden -translate-y-1/2 rounded-full border border-border bg-card p-1.5 shadow-sm hover:bg-secondary disabled:opacity-30 sm:block"
+            className="absolute left-0 top-1/2 hidden -translate-y-1/2 rounded-full border border-border bg-card p-1.5 shadow-sm hover:bg-secondary disabled:opacity-30 sm:block md:hidden"
           >
             <ChevronLeft className="h-4 w-4" />
           </button>
@@ -176,14 +192,14 @@ export function InputCarousel({
             aria-label="Nächste Karte"
             onClick={() => scrollTo(active + 1)}
             disabled={isLast}
-            className="absolute right-0 top-1/2 hidden -translate-y-1/2 rounded-full border border-border bg-card p-1.5 shadow-sm hover:bg-secondary disabled:opacity-30 sm:block"
+            className="absolute right-0 top-1/2 hidden -translate-y-1/2 rounded-full border border-border bg-card p-1.5 shadow-sm hover:bg-secondary disabled:opacity-30 sm:block md:hidden"
           >
             <ChevronRight className="h-4 w-4" />
           </button>
         </div>
 
-        {/* Dots */}
-        <div className="mt-3 flex items-center justify-center gap-2">
+        {/* Dots — nur Mobile */}
+        <div className="mt-3 flex items-center justify-center gap-2 md:hidden">
           {cards.map((_, i) => (
             <button
               key={i}
@@ -208,7 +224,7 @@ export function InputCarousel({
           {backLabel}
         </button>
 
-        {isLast ? (
+        {showNext ? (
           <button
             onClick={onNext}
             className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
