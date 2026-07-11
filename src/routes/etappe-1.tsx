@@ -345,62 +345,31 @@ function AktePage() {
         )}
 
         {step === "input" && (
-          <div className="space-y-6">
-            <PaperCard rotate={-0.3}>
-              <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-                Fachlicher Input · Nachhaltige Mobilität
-              </p>
-              <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">Wie wir reisen, formt das Klima</h2>
-              <p className="mt-3 text-foreground/80">
-                Der Verkehr verursacht in der Schweiz rund ein Drittel aller Treibhausgase. Drei Begriffe, die du für
-                das Hearing brauchst:
-              </p>
-
-              <div className="mt-5 grid gap-4 sm:grid-cols-3">
-                {[
-                  {
-                    title: "CO₂ pro Person",
-                    body: "Auf der gleichen Strecke produziert ein Inlandflug etwa 30-mal mehr CO₂ als der Zug, ein Auto mit einer Person rund 13-mal mehr. Voll besetzte Autos sind besser — aber Zug bleibt führend.",
-                    hint: "Quelle: BAFU, mobitool.ch",
-                  },
-                  {
-                    title: "Modal Shift",
-                    body: "„Modal Shift“ heisst: Verkehr von Auto/Flug auf Zug, Velo und ÖV verlagern. Die Schweiz hat dafür eines der dichtesten Bahnnetze weltweit — fast jeder Ort ist erreichbar.",
-                    hint: "Stichwort: Halbtax, GA, Mobilitätsabos.",
-                  },
-                  {
-                    title: "Aktive Mobilität",
-                    body: "Velo und zu Fuss verursachen praktisch kein CO₂, fördern die Gesundheit und brauchen wenig Fläche. Jeder zweite Autoweg in der Schweiz ist kürzer als 5 km — perfekte Velo-Distanz.",
-                    hint: "BFS: 50 % aller Pendlerwege < 5 km.",
-                  },
-                ].map((c) => (
-                  <div key={c.title} className="rounded-sm border border-border bg-paper p-4 shadow-sm">
-                    <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">Karte</p>
-                    <h4 className="mt-1 font-serif text-xl font-bold">{c.title}</h4>
-                    <p className="mt-2 text-sm text-foreground/85">{c.body}</p>
-                    <p className="mt-3 border-t border-dashed border-border pt-2 text-xs italic text-foreground/60">
-                      {c.hint}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </PaperCard>
-
-            <div className="flex justify-between">
-              <button
-                onClick={() => setStep("routen")}
-                className="rounded-sm border border-border bg-card px-4 py-2.5 font-serif text-sm hover:bg-secondary"
-              >
-                ← Zurück
-              </button>
-              <button
-                onClick={() => goto("naechstes")}
-                className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
-              >
-                Weiter zu Etappe 2 →
-              </button>
-            </div>
-          </div>
+          <InputCarousel
+            kicker="Fachlicher Input · Nachhaltige Mobilität"
+            title="Wie wir reisen, formt das Klima"
+            intro="Der Verkehr verursacht in der Schweiz rund ein Drittel aller Treibhausgase. Drei Begriffe, die du für das Hearing brauchst:"
+            cards={[
+              {
+                title: "CO₂ pro Person",
+                body: "Auf der gleichen Strecke produziert ein Inlandflug etwa 30-mal mehr CO₂ als der Zug, ein Auto mit einer Person rund 13-mal mehr. Voll besetzte Autos sind besser — aber Zug bleibt führend.",
+                hint: "Quelle: BAFU, mobitool.ch",
+              },
+              {
+                title: "Modal Shift",
+                body: "„Modal Shift“ heisst: Verkehr von Auto/Flug auf Zug, Velo und ÖV verlagern. Die Schweiz hat dafür eines der dichtesten Bahnnetze weltweit — fast jeder Ort ist erreichbar.",
+                hint: "Stichwort: Halbtax, GA, Mobilitätsabos.",
+              },
+              {
+                title: "Aktive Mobilität",
+                body: "Velo und zu Fuss verursachen praktisch kein CO₂, fördern die Gesundheit und brauchen wenig Fläche. Jeder zweite Autoweg in der Schweiz ist kürzer als 5 km — perfekte Velo-Distanz.",
+                hint: "BFS: 50 % aller Pendlerwege < 5 km.",
+              },
+            ]}
+            onBack={() => setStep("routen")}
+            nextLabel="Weiter zu Etappe 2 →"
+            onNext={() => goto("naechstes")}
+          />
         )}
 
         {step === "naechstes" && (
