@@ -61,7 +61,7 @@ export function RouteMap({ segments, stops, color = "#5eead4", minHeight = 420 }
   ];
 
   return (
-    <div className="overflow-hidden rounded-sm border border-border" style={{ minHeight }}>
+    <div className="overflow-hidden rounded-sm border border-border" style={{ minHeight, isolation: "isolate", position: "relative", zIndex: 0 }}>
       <MapContainer
         bounds={bounds}
         scrollWheelZoom={false}
