@@ -1,25 +1,20 @@
-## Ziel
-Sobald die Spielenden das Spiel erfolgreich abschliessen (Outro / Hearing bestanden, Stage 7), wird der 90-Minuten-Timer eingefroren. Der Countdown läuft nicht mehr weiter, das Time-Up-Overlay kann nicht mehr auslösen, und Maja-Popups erscheinen nicht mehr.
+# Etappe 2 (Konsum) — Produkt-Anpassungen
 
-## Änderungen
+## 1. ProduktDetailDialog: Barometer vereinfachen
+In `src/components/case-file/ProduktDetailDialog.tsx`:
+- Entferne die Detail-Kategorien Regionalität, Saisonalität, Verpackung, Label & Standard (die `KAT_LABELS`-Liste mit vier Dots-Zeilen).
+- Behalte den **Gesamt-Score** (Zahl /5, Label „Sehr nachhaltig" etc., grosse Dots-Anzeige).
+- Behalte die Erklärung (`n.erklaerung`) unter dem Barometer.
+- Der Durchschnittswert wird weiterhin aus den vier Feldern in `maya-data.ts` berechnet — keine Datenmodell-Änderung nötig.
 
-**`src/lib/progress.ts`**
-- Neue Konstante `KEY_END_TS` (`"maya-end-ts"`).
-- Neue Funktion `finishGame()`: schreibt `Date.now()` in `KEY_END_TS` (nur beim ersten Mal), dispatched `maya-progress`.
-- Neue Funktion `getEndTs(): number | null`.
-- `isTimeUp()` gibt `false` zurück, sobald `getEndTs()` gesetzt ist.
-- `resetAll()` entfernt auch `maya-end-ts` (bereits durch `maya-*`-Prefix abgedeckt — verifizieren).
+## 2. GruenerMarkt: Label-Logos statt Text-Chips in den Kacheln
+In `src/components/case-file/GruenerMarkt.tsx` (Komponente `ProduktKarte`):
+- Ersetze die Text-Pills (`SIEGEL[key].label`) durch kleine Logo-Bilder (`SIEGEL[key].logoUrl`) — z. B. runde/quadratische Badges ~18–20px mit weissem Hintergrund und Border.
+- Fallback auf Text, falls ein Siegel kein `logoUrl` hat.
+- „Saison"-Pill bleibt als Text-Chip (kein Logo).
+- Alt-Text = `SIEGEL[key].label` für Screenreader.
 
-**`src/components/case-file/GlobalTimer.tsx`**
-- `endTs` aus `getEndTs()` mit gleicher Sync-Logik wie `startTs` lesen.
-- Wenn `endTs` gesetzt: `now` auf `endTs` klemmen → `remaining` bleibt konstant, kein Overlay, keine neuen Beats.
-- Interval stoppen, sobald `endTs` gesetzt ist (Performance).
-- Optische Kennzeichnung: Timer-Chip in ruhiger Farbe (border-border) + kleines Häkchen/„Fertig" Label statt Uhr, damit klar ist, dass die Zeit gestoppt wurde.
-
-**Aufruf von `finishGame()`**
-- In `src/routes/finale.tsx` beim Übergang zum Outro (dort wo `completeStage(6)` bereits läuft, bzw. beim Erreichen von Stage 7). Genaue Stelle wird beim Umsetzen aus der Datei gelesen — Trigger ist das erfolgreiche Beenden des Hearings / Anzeige des `OutroScreen`.
-
-## Verhalten nach Abschluss
-- Timer-Anzeige bleibt sichtbar mit der Endzeit (z. B. „⏱ 42:17 · Fertig"), läuft nicht weiter.
-- `TimeUpOverlay` wird nicht mehr getriggert, auch wenn die Seite nach 90 min erneut geöffnet wird.
-- Bei „Neues Spiel" (`resetAll`) wird auch der End-Zeitstempel gelöscht.
+## Nicht verändert
+- Datenmodell `maya-data.ts` (Nachhaltigkeits-Werte bleiben, werden nur nicht mehr einzeln gezeigt).
+- Detail-Bereiche Bild, Labels-Sektion, Herkunft/Preis/Saison im Dialog.
+- Spiellogik / Warenkorb-Prüfung.

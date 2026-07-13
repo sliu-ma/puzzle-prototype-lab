@@ -7,13 +7,6 @@ interface ProduktDetailDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
-type NumKey = "regional" | "saisonal" | "verpackung" | "label";
-const KAT_LABELS: { key: NumKey; label: string }[] = [
-  { key: "regional", label: "Regionalität" },
-  { key: "saisonal", label: "Saisonalität" },
-  { key: "verpackung", label: "Verpackung" },
-  { key: "label", label: "Label & Standard" },
-];
 
 function Dots({ value, max = 5 }: { value: number; max?: number }) {
   return (
