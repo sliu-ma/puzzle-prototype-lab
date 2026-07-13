@@ -324,7 +324,7 @@ function ProduktKarte({
                   "rounded-full border border-border bg-card px-1.5 py-0.5 font-mono-typed text-[9px] sm:text-[10px]";
                 img.replaceWith(fallback);
               }}
-              className="h-5 w-5 rounded-full border border-border bg-white object-contain p-0.5 sm:h-[22px] sm:w-[22px]"
+              className="h-7 w-7 rounded-full border border-border bg-white object-contain p-1 sm:h-8 sm:w-8"
             />
           ) : (
             <span
