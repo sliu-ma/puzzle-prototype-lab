@@ -91,7 +91,7 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
       </div>
 
       {/* Rezept-Akkordeon */}
-      <details className="border-b border-border bg-paper-deep/20 px-3 py-2 sm:px-5">
+      <details open className="border-b border-border bg-paper-deep/20 px-3 py-2 sm:px-5">
         <summary className="cursor-pointer font-mono-typed text-[11px] uppercase tracking-wider text-stamp">
           Rezept · {REZEPT.titel}
         </summary>
