@@ -306,15 +306,35 @@ function ProduktKarte({
         </span>
       </div>
 
-      <div className="mt-1.5 flex flex-wrap gap-1">
-        {produkt.siegel.map((key) => (
-          <span
-            key={key}
-            className="rounded-full border border-border bg-card px-1.5 py-0.5 font-mono-typed text-[9px] sm:text-[10px]"
-          >
-            {SIEGEL[key].label}
-          </span>
-        ))}
+      <div className="mt-1.5 flex flex-wrap items-center gap-1">
+        {produkt.siegel.map((key) => {
+          const info = SIEGEL[key];
+          return info.logoUrl ? (
+            <img
+              key={key}
+              src={info.logoUrl}
+              alt={info.label}
+              title={info.label}
+              loading="lazy"
+              onError={(e) => {
+                const img = e.currentTarget;
+                const fallback = document.createElement("span");
+                fallback.textContent = info.label;
+                fallback.className =
+                  "rounded-full border border-border bg-card px-1.5 py-0.5 font-mono-typed text-[9px] sm:text-[10px]";
+                img.replaceWith(fallback);
+              }}
+              className="h-5 w-5 rounded-full border border-border bg-white object-contain p-0.5 sm:h-[22px] sm:w-[22px]"
+            />
+          ) : (
+            <span
+              key={key}
+              className="rounded-full border border-border bg-card px-1.5 py-0.5 font-mono-typed text-[9px] sm:text-[10px]"
+            >
+              {info.label}
+            </span>
+          );
+        })}
         {produkt.saison === "in" && (
           <span className="rounded-full bg-emerald-700/10 px-1.5 py-0.5 font-mono-typed text-[9px] text-emerald-800 sm:text-[10px]">
             Saison
