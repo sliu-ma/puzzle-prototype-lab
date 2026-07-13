@@ -151,14 +151,8 @@ export function ProduktDetailDialog({ produkt, onOpenChange }: ProduktDetailDial
             <Dots value={Math.round(avg)} />
           </div>
 
-          <ul className="space-y-2">
-            {KAT_LABELS.map(({ key, label }) => (
-              <li key={key} className="flex items-center justify-between gap-3">
-                <span className="text-sm">{label}</span>
-                <Dots value={n[key]} />
-              </li>
-            ))}
-          </ul>
+
+
 
           <p className="mt-4 border-t border-dashed border-border pt-3 text-xs leading-relaxed text-foreground/80">
             {n.erklaerung}
