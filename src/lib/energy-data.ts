@@ -63,7 +63,6 @@ export const DEVICES: EnergyDevice[] = [
     options: [
       { id: "22", label: "22 °C (aktuell)", description: "Angenehm warm, hoher Verbrauch.", cost: 0, energy: 0 },
       { id: "20", label: "20 °C heizen", description: "Ein Pullover mehr — spart viel.", cost: 0, energy: 740 },
-      { id: "18", label: "18 °C heizen", description: "Sportlich frisch, maximaler Effekt.", cost: 0, energy: 1480 },
     ],
   },
   {
