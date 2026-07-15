@@ -136,7 +136,7 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
               imKorb={inKorb(p.id)}
               onAdd={() => hinzufuegen(p.id)}
               onRemove={() => entfernen(p.id)}
-              onOpenDetail={() => setDetail(p)}
+              onOpenDetail={() => { markProductOpened(p.id); setDetail(p); }}
             />
           ))}
         </div>
