@@ -117,6 +117,14 @@ export function StageGate({ stage, children }: Props) {
   }
 
   const isReview = current > stage;
+
+  // Rückblick-Öffnung fürs Achievement "Zurückgeblickt" tracken.
+  useEffect(() => {
+    if (isReview && stage >= 1 && stage <= 5) {
+      import("@/lib/achievements").then((m) => m.markReviewOpened(stage)).catch(() => {});
+    }
+  }, [isReview, stage]);
+
   return (
     <>
       {isReview && (

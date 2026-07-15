@@ -11,6 +11,7 @@ import { RouteDetail } from "@/components/case-file/RouteDetail";
 import { InputCarousel } from "@/components/case-file/InputCarousel";
 import { VALID_START, VALID_ZIEL, type RouteOption } from "@/lib/mobility-data";
 import { completeStage } from "@/lib/progress";
+import { markWrongAttempt, hadWrongAttempt, unlock } from "@/lib/achievements";
 import { usePersistentState, usePersistentSet } from "@/lib/persist";
 
 import { cn } from "@/lib/utils";
