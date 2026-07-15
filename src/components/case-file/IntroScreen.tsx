@@ -124,36 +124,37 @@ export function IntroScreen({
     {
       id: "maja",
       name: "Maja",
-      alter: "17",
+      alter: "15",
       rolle: "Das seid ihr.",
       color: "bg-amber-100 text-amber-700",
       icon: <Camera className="h-6 w-6" />,
       fact:
-        "Fotografiert am liebsten mit einer alten Analogkamera vom Flohmarkt. Trägt immer ein zerknittertes Notizbuch mit Filmrollen-Nummern dabei.",
+        "Fotografiert am liebsten mit einer alten Analogkamera, die sie von ihrem Grossvater bekommen hat. Trägt immer ein zerknittertes Notizbuch mit Filmrollen-Nummern dabei.",
     },
     {
-      id: "elvira",
-      name: "Elvira",
-      alter: "68",
-      rolle: "Majas Grosstante.",
+      id: "jakob",
+      name: "Grossvater Jakob",
+      alter: "74",
+      rolle: "Majas Grossvater. Pensionierter Förster in Speicher.",
       color: "bg-emerald-100 text-emerald-700",
       icon: <Bird className="h-6 w-6" />,
       fact:
-        "War 40 Jahre lang Biologielehrerin an der Kanti. Steht seit ihrer Pensionierung fast täglich vor Sonnenaufgang auf, um Vögel zu zählen — und hat einen Ordner voller handgezeichneter Karten von Speicher.",
+        "War 45 Jahre lang Revierförster im Appenzell. Kennt jede Lichtung, jeden Tierpfad. Momentan ist er im Spital — hat aber vorher noch fünf Umschläge im Dorf hinterlegt und einen Vertrauten losgeschickt.",
     },
   ];
 
   const finish = () => {
     envelope.ask({
       nr: 1,
-      ort: "Küchentisch · Elviras Haus",
-      etappeLabel: "Umschlag 1 · Küchentisch",
+      ort: "Bank vor dem Bahnhof · Speicher",
+      etappeLabel: "Umschlag 1 · Bahnhof",
       onConfirm: () => {
         markIntroSeen();
         onDone();
       },
     });
   };
+
 
   const next = () => {
     if (step < total - 1) setStep(step + 1);
