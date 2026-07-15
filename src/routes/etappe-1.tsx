@@ -39,7 +39,7 @@ const HINTS_003: Hint[] = [
     unlockMin: 3,
     label: "Tipp 1",
     title: "Schau dir die Unterlagen genau an",
-    body: "Wo hat Jakob geschlafen, und von wo aus ist sie am nächsten Morgen aufgebrochen?",
+    body: "Wo hat Jakob übernachtet, und von wo aus ist er am nächsten Morgen aufgebrochen?",
   },
   {
     id: 1,
@@ -222,7 +222,7 @@ function AktePage() {
             <p className="mt-5 text-[15px] leading-relaxed">
               Das alte Bahnhofsgebäude dient heute als kleines Heimatmuseum. Am ehemaligen Fahrkartenschalter findet
               Maja ein Couvert, das an sie adressiert ist. Darin: ein vergilbtes Zugticket, ein Flugticket und eine
-              Autobahnvignette, alle für dieselbe Strecke, für die Jakob einst zu einer Umweltkonferenz gereist war.
+              Autobahnvignette, alle für dieselbe Strecke, für die Jakob einst zu einer Umweltkonferenz gereist ist.
             </p>
             <blockquote className="mt-4 border-l-4 border-stamp pl-4 font-serif italic text-[15px] leading-relaxed">
               „Ich habe immer das gewählt, was am wenigsten Spuren hinterlässt. Findest du heraus, welchen Weg ich nach
@@ -246,7 +246,7 @@ function AktePage() {
               <MapPin className="h-6 w-6 text-stamp" /> Rekonstruiere Jakobs Reiseroute
             </h2>
             <p className="mt-3 text-[15px] text-foreground/80">
-              Jakob hat ihre Hinweise gut versteckt. Vielleicht lohnt sich ein zweiter Blick auf ihre Unterlagen.
+              Jakob hat seine Hinweise gut versteckt. Vielleicht lohnt sich ein zweiter Blick auf seine Unterlagen.
             </p>
 
             <form onSubmit={handleEingabe} className="mt-6 space-y-4">
