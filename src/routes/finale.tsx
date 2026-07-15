@@ -316,8 +316,14 @@ function FinalePage() {
     if (status === "won") {
       completeStage(6);
       finishGame();
+      checkFinishAchievements({
+        totalHints: getTotalRevealedHints(),
+        perfectFinale: fehler === 0,
+        allProductsCount: PRODUKTE.length,
+        totalStages: 5,
+      });
     }
-  }, [status]);
+  }, [status, fehler]);
 
   const handleResult = (correct: boolean) => {
     setErgebnisse((prev) => {
