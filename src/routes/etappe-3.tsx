@@ -28,7 +28,7 @@ export const Route = createFileRoute("/etappe-3")({
       {
         name: "description",
         content:
-          "Etappe 3: Auf der Lichtung steht Elviras Beobachtungsposten. Sortiere die Tiere und entschlüssele den Code des Zahlenschlosses.",
+          "Etappe 3: Auf der Lichtung steht Jakobs Beobachtungsposten. Sortiere die Tiere und entschlüssele den Code des Zahlenschlosses.",
       },
     ],
   }),
@@ -69,7 +69,7 @@ function AkteGated() {
         token={AKTE_002_TOKEN}
         storageKey="akte-002-unlocked"
         title={<>Etappe 3 — QR-Code an der Hütte scannen</>}
-        description="Diese Etappe ist versiegelt. Scanne den QR-Code an Elviras Beobachtungsposten auf der Lichtung."
+        description="Diese Etappe ist versiegelt. Scanne den QR-Code an Jakobs Beobachtungsposten auf der Lichtung."
         label="Etappe 3 · Versiegelt"
       >
         <AktePage />
@@ -133,7 +133,7 @@ function AktePage() {
               Etappe 3 · Wald-Lichtung
             </h1>
             <p className="mt-0.5 font-serif italic text-sm text-foreground/70 sm:text-base">
-              Elviras Beobachtungsposten
+              Jakobs Beobachtungsposten
             </p>
           </div>
           <Stamp rotate={-6}>Vertraulich</Stamp>
@@ -197,7 +197,7 @@ function AktePage() {
               <br />
               Die Hütte steht noch, windschief wie immer. Am alten
               Beobachtungsposten mit dem Fernglas liegen Fotokarten von Tieren,
-              die Elvira über Jahrzehnte hier gesichtet hat – daneben ihr
+              die Jakob über Jahrzehnte hier gesichtet hat – daneben ihr
               vollgeschriebenes Beobachtungsbuch. Die letzten Einträge sind
               kürzer geworden. Manche Arten kommen seit Jahren nicht mehr vor.
               <br />
@@ -280,7 +280,7 @@ function AktePage() {
           <PaperCard rotate={-0.5} tape="top-left">
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
 
-              Etappe 4 · Elviras Haus
+              Etappe 4 · Jakobs Haus
             </p>
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
               „Geh zurück ins Haus."
@@ -309,8 +309,8 @@ function AktePage() {
                 onClick={() =>
                   envelope.ask({
                     nr: 4,
-                    ort: "Elviras Haus · Etappe 4",
-                    etappeLabel: "Etappe 4 · Elviras Haus",
+                    ort: "Jakobs Haus · Etappe 4",
+                    etappeLabel: "Etappe 4 · Jakobs Haus",
                     onConfirm: () => navigate({ to: "/etappe-4" }),
                   })
                 }

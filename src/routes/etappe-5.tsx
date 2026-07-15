@@ -259,9 +259,9 @@ function AktePage() {
             </h2>
             <div className="mt-4 rounded-sm border border-dashed border-stamp/40 bg-paper-deep/30 p-5">
               <p className="font-serif italic leading-relaxed">
-                Mit den korrigierten Gutachten, den Rechnungen und Elviras
+                Mit den korrigierten Gutachten, den Rechnungen und Jakobs
                 Notizen im Rucksack rennt ihr zum Gemeindesaal. Draussen stösst
-                euch auf den letzten Metern jemand entgegen — Tante Elvira,
+                euch auf den letzten Metern jemand entgegen — Grossvater Jakob,
                 atemlos, einen Stapel Papiere unterm Arm.
                 <br /><br />
                 „Maja! Ich dachte, du kommst vielleicht direkt hierher — ich
