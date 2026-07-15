@@ -263,21 +263,22 @@ export function IntroScreen({
         {step === 2 && (
           <PaperCard rotate={-0.2} tape="top-left">
             <div className="absolute right-4 top-6 sm:right-8 sm:top-8">
-              <Stamp rotate={-8}>Küchentisch</Stamp>
+              <Stamp rotate={-8}>Bahnhof</Stamp>
             </div>
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-              Der Brief
+              Rückkehr an die Lichtung
             </p>
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-              Maja sitzt im Zug nach Speicher …
+              Maja steigt in Speicher aus dem Zug …
             </h2>
             <p className="mt-3 text-[15px] leading-relaxed text-foreground/85">
-              Ihr letzter Sommer vor der Matura. Grosstante Elvira hat sie zu
-              sich aufs Land eingeladen. Doch als sie ankommt, ist das Haus
-              leer. Auf dem Küchentisch liegt nur ein Brief:
+              Als sie fünf war, hat Grossvater Jakob sie zum ersten Mal an die
+              Lichtung mitgenommen — zwei Rehe, ein Fuchs, ein Versprechen.
+              Zehn Jahre später steht Maja wieder da: rote Absperrbänder,
+              gelbe Schilder, „Bauzone Gaskraftwerk". Von der Bank vor dem
+              Bahnhof löst sich ein älterer Mann, ein Bekannter von Jakob. Er
+              drückt ihr einen abgegriffenen Umschlag in die Hand.
             </p>
-
-
 
             <div
               className="mt-5 rounded-sm border border-border bg-paper-deep/40 p-5 font-serif text-[15px] leading-relaxed text-foreground/90 shadow-inner"
@@ -285,23 +286,20 @@ export function IntroScreen({
             >
               <Mail className="mb-2 h-4 w-4 text-stamp" />
               <p>
-                „Liebe Maja, falls du das liest, bin ich gerade im Dorf
-                unterwegs. Du erinnerst dich an unsere Hütte im Wald – dort, wo
-                wir als Kind stundenlang Vögel beobachtet haben? Die Gemeinde
-                sucht wegen drohender Stromengpässe dringend nach Lösungen und
-                plant dort ein neues <strong>Gaskraftwerk</strong>. Heute Abend
-                um <strong>{getHearingClock() ?? "19:00"} Uhr</strong> findet
-                die Gemeinderatssitzung statt – dann wird abgestimmt.
+                „Liebe Maja, wenn du das liest, liege ich noch im Spital — die
+                Ärzte lassen mich diesmal nicht so schnell heim. Aber du bist
+                da, und das genügt.
               </p>
               <p className="mt-3">
-                Ich bin sicher, dass wir mit den richtigen Fakten eine viel
-                nachhaltigere Lösung für Speicher zeigen können! Ich bin
-                unterwegs und sammle die letzten Daten. Kannst du mir helfen?
-                Fang am <strong>alten Bahnhof</strong> an – dort liegt ein
-                Hinweis für dich."
+                Heute Abend um{" "}
+                <strong>{getHearingClock() ?? "19:00"} Uhr</strong> stimmt der
+                Gemeinderat über <strong>unsere Lichtung</strong> ab —
+                Gaskraftwerk oder Wald. Ich habe fünf Umschläge im Dorf
+                verteilt. Fang am <strong>alten Bahnhof</strong> an. Der Rest
+                findet dich."
               </p>
               <p className="mt-4 text-right italic text-foreground/70">
-                – Elvira
+                – Grossvater Jakob
               </p>
             </div>
           </PaperCard>
