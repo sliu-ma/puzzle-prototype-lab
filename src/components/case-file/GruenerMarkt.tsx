@@ -64,9 +64,11 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
     const fehlend = REZEPT_ZUTATEN_KEYS.filter((z) => !abgedeckt.has(z));
 
     if (fehlend.length > 0 || schlechteImKorb.length > 0) {
+      markWrongAttempt(2);
       setFeedback(true);
       return;
     }
+    if (!hadWrongAttempt(2)) unlock("gruener-daumen");
     setFeedback(false);
     setStatus("erfolg");
     setCartOpen(false);
