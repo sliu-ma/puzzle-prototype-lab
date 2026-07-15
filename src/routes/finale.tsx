@@ -1666,7 +1666,76 @@ function OutroScreen() {
   );
 }
 
+/* ---------- Badge-Galerie ---------- */
+
+function BadgeGallery() {
+  const [unlockedIds, setUnlockedIds] = useState<string[]>(() => getUnlockedIds());
+
+  useEffect(() => {
+    const onUpdate = () => setUnlockedIds(getUnlockedIds());
+    window.addEventListener("maya-achievements", onUpdate);
+    return () => window.removeEventListener("maya-achievements", onUpdate);
+  }, []);
+
+  const total = ACHIEVEMENTS.length;
+  const count = unlockedIds.length;
+
+  return (
+    <div className="mt-8 rounded-sm border border-border bg-paper-deep/40 p-4 sm:p-5 animate-fade-in">
+      <div className="mb-3 flex items-baseline justify-between gap-2">
+        <p className="font-mono-typed text-[10px] uppercase tracking-[0.3em] text-stamp">
+          Eure Auszeichnungen
+        </p>
+        <p className="font-serif text-sm tabular-nums text-foreground/70">
+          {count} / {total}
+        </p>
+      </div>
+
+      <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5">
+        {ACHIEVEMENTS.map((a) => {
+          const isUnlocked = unlockedIds.includes(a.id);
+          return (
+            <div
+              key={a.id}
+              className={cn(
+                "group relative flex flex-col items-center gap-1.5 rounded-sm border p-2 text-center transition-all",
+                isUnlocked
+                  ? "border-emerald-500/40 bg-emerald-500/5 animate-scale-in"
+                  : "border-border/60 bg-muted/20",
+              )}
+              title={a.beschreibung}
+            >
+              <img
+                src={a.badge}
+                alt={a.titel}
+                className={cn(
+                  "h-16 w-16 object-contain sm:h-20 sm:w-20",
+                  !isUnlocked && "opacity-25 grayscale",
+                )}
+              />
+              <p
+                className={cn(
+                  "font-mono-typed text-[9px] uppercase leading-tight tracking-wider",
+                  isUnlocked ? "text-emerald-800" : "text-muted-foreground",
+                )}
+              >
+                {a.titel}
+              </p>
+            </div>
+          );
+        })}
+      </div>
+
+      <p className="mt-3 font-serif text-[12px] leading-relaxed text-muted-foreground">
+        Tipp: Startet die Ermittlung erneut, um weitere Badges freizuschalten.
+      </p>
+    </div>
+  );
+}
+
 /* ---------- Sprechblase ---------- */
+
+
 
 function SpeechBubble({
   name,
