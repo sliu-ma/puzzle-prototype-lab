@@ -12,6 +12,7 @@ import {
   type Produkt,
 } from "@/lib/maya-data";
 import { ProduktDetailDialog } from "./ProduktDetailDialog";
+import { markWrongAttempt, hadWrongAttempt, unlock, markProductOpened } from "@/lib/achievements";
 
 interface GruenerMarktProps {
   startWarenkorb: string[];
