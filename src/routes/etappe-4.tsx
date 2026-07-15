@@ -41,11 +41,11 @@ const HINTS_004: Hint[] = [
 export const Route = createFileRoute("/etappe-4")({
   head: () => ({
     meta: [
-      { title: "Etappe 4 — Elviras Haus" },
+      { title: "Etappe 4 — Jakobs Haus" },
       {
         name: "description",
         content:
-          "Etappe 4: Zurück bei Elvira. Eine Querschnittszeichnung des Hauses, alte Rechnungen — und das Ziel: 3'500 Energiesparpunkte sammeln.",
+          "Etappe 4: Zurück bei Jakob. Eine Querschnittszeichnung des Hauses, alte Rechnungen — und das Ziel: 3'500 Energiesparpunkte sammeln.",
       },
     ],
   }),
@@ -60,8 +60,8 @@ function AkteGated() {
       <QRGate
         token={AKTE_004_TOKEN}
         storageKey="akte-004-unlocked"
-        title={<>Etappe 4 — QR-Code in Elviras Haus scannen</>}
-        description="Diese Etappe ist versiegelt. Scanne den QR-Code, der bei Elvira auf dem Küchentisch liegt."
+        title={<>Etappe 4 — QR-Code in Jakobs Haus scannen</>}
+        description="Diese Etappe ist versiegelt. Scanne den QR-Code, der bei Jakob auf dem Küchentisch liegt."
         label="Etappe 4 · Versiegelt"
       >
         <AktePage />
@@ -125,7 +125,7 @@ function AktePage() {
               Etappe 4 · Zuhause
             </h1>
             <p className="mt-0.5 font-serif italic text-sm text-foreground/70 sm:text-base">
-              Elviras Haus, Querschnitt auf dem Küchentisch
+              Jakobs Haus, Querschnitt auf dem Küchentisch
             </p>
           </div>
           <Stamp rotate={-6}>Vertraulich</Stamp>
@@ -180,7 +180,7 @@ function AktePage() {
               [Hauszeichnung + Rechnungen aus der Kiste · {getFrozenClock("maya-clock-akte-004")} Uhr]
             </p>
             <blockquote className="mt-5 border-l-4 border-stamp pl-4 text-[15px] leading-relaxed">
-              Du kommst ausser Atem zurück zu Elviras Haus. Auf dem Küchentisch
+              Du kommst ausser Atem zurück zu Jakobs Haus. Auf dem Küchentisch
               — genau dort, wo der erste Brief lag — liegt jetzt eine grosse
               Zeichnung: eine Querschnittsansicht des Hauses mit Schlafzimmer,
               Bad, Wäscheraum, Wohnzimmer und Küche. Daneben ein Zettel:
@@ -207,10 +207,10 @@ function AktePage() {
         {step === "raetselkarte" && (
           <PaperCard rotate={0.3} tape="top">
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-              Rätselkarte · Auftrag von Elvira
+              Rätselkarte · Auftrag von Jakob
             </p>
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-              Plane Elviras Haus um
+              Plane Jakobs Haus um
             </h2>
             <div className="mt-5 grid gap-4 sm:grid-cols-2">
               <div className="rounded-sm border border-border bg-paper p-4">
@@ -358,7 +358,7 @@ function AktePage() {
         )}
 
         <p className="mt-12 text-center font-mono-typed text-xs uppercase tracking-[0.2em] text-muted-foreground">
-          — Etappe 4 · Elviras Haus —
+          — Etappe 4 · Jakobs Haus —
         </p>
       </div>
 

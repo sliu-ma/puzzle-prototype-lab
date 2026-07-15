@@ -30,7 +30,7 @@ const BEATS: MajaBeat[] = [
   {
     at: 30,
     body: (h) =>
-      `Eine halbe Stunde. Elviras Notizen ergeben langsam Sinn. Hearing ist um ${h} — wir haben Zeit, aber nicht ewig.`,
+      `Eine halbe Stunde. Jakobs Notizen ergeben langsam Sinn. Hearing ist um ${h} — wir haben Zeit, aber nicht ewig.`,
   },
   {
     at: 45,

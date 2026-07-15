@@ -1543,7 +1543,7 @@ function OutroScreen() {
         </PaperCard>
       )}
 
-      {/* STEP 1 — Nach dem Saal, Maja & Elvira */}
+      {/* STEP 1 — Nach dem Saal, Maja alleine */}
       {step === 1 && (
         <PaperCard rotate={0.2} tape="top-right">
           <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
@@ -1555,30 +1555,41 @@ function OutroScreen() {
 
           <div className="mt-5 space-y-4 font-serif text-[15px] leading-relaxed text-foreground/90">
             <p>
-              Draussen atmen Maja und Elvira gleichzeitig aus. Elvira legt
-              ihrer Grossnichte die Hand auf die Schulter und sagt nichts. Sie
-              müssen nichts sagen.
+              Draussen steht Maja allein auf den Stufen des Gemeindesaals. Der
+              Rucksack mit den Unterlagen hängt schwer an ihrer Schulter. Sie
+              atmet einmal tief aus — und lächelt zum ersten Mal an diesem
+              Tag.
             </p>
             <p>
-              Maja schaut auf ihr Handy. <strong>{nowClock} Uhr.</strong> Dann
-              schaut sie Elvira an.
+              Maja schaut auf ihr Handy. <strong>{nowClock} Uhr.</strong> Ihr
+              Zug nach Hause geht erst später. Zeit genug für einen Umweg.
             </p>
           </div>
 
           <div className="mt-4 space-y-3">
             <SpeechBubble name="Maja" side="left" tone="amber">
-              „Gehen wir zur Hütte?“
-            </SpeechBubble>
-            <SpeechBubble name="Elvira" side="right" tone="emerald">
-              „Klar. Das ist eine gute Idee.“
+              „Ich schaue kurz bei der Lichtung vorbei. Das habe ich ihm
+              versprochen.“
             </SpeechBubble>
           </div>
 
           <p className="mt-5 font-serif text-[15px] leading-relaxed text-foreground/90">
-            Sie gehen zu zweit den Waldweg hinauf, die Sonne noch warm auf der
-            Haut. Das rote Band hängt noch an den Bäumen. Aber heute stört es
-            niemanden.
+            Sie geht den Waldweg hinauf, die Sonne noch warm auf der Haut. Das
+            rote Band hängt noch an den Bäumen. Aber heute stört es niemanden
+            mehr.
           </p>
+
+          <div className="mt-5 rounded-sm border border-dashed border-stamp/40 bg-paper-deep/30 p-4">
+            <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
+              Wenige Monate später
+            </p>
+            <p className="mt-2 font-serif italic text-[14px] leading-relaxed text-foreground/85">
+              Grossvater Jakob stirbt im Herbst, ruhig, in seinem Haus im
+              Speicher. Was er Maja hinterlassen hat, ist mehr als ein
+              Schlüsselbund und ein paar Umschläge: ein Versprechen, das sie
+              gehalten hat.
+            </p>
+          </div>
 
           <div className="mt-6 flex justify-between gap-3">
             <button
@@ -1599,6 +1610,7 @@ function OutroScreen() {
           </div>
         </PaperCard>
       )}
+
 
       {/* STEP 2 — Abschluss der gesamten Ermittlung */}
       {step === 2 && (

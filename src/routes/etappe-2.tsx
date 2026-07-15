@@ -59,7 +59,7 @@ const DORFLADEN_HINTS: Hint[] = [
     id: 0,
     unlockMin: 3,
     label: "Tipp 1",
-    title: "Starte mit Elviras Rezept",
+    title: "Starte mit Jakobs Rezept",
     body: "Der Korb ist leer — das ist Absicht. Öffne oben das Rezept-Akkordeon und geh die Zutaten Schritt für Schritt durch. Für jede Zutat gibt es im Laden mindestens eine Option.",
   },
   {
@@ -180,9 +180,9 @@ function AktePage() {
               [Holztresen · leerer Korb · {getFrozenClock("maya-clock-akte-002")} Uhr]
             </p>
             <blockquote className="mt-5 border-l-4 border-stamp pl-4 text-[15px] leading-relaxed">
-              Der alte Dorfladen ist eigentlich schon geschlossen, aber Frau Berger, eine langjährige Freundin Elviras, lässt dich noch hinein. „Deine Tante war hier jede Woche", sagt sie. „Sie hat mal gesagt: Wenn ich sehe, was die Leute kaufen, weiss ich genau, was schiefläuft."
+              Der alte Dorfladen ist eigentlich schon geschlossen, aber Frau Berger, eine langjährige Freundin deines Grossvaters Jakob, lässt dich noch hinein. „Dein Grossvater war hier jede Woche", sagt sie. „Er hat mal gesagt: Wenn ich sehe, was die Leute kaufen, weiss ich genau, was schiefläuft."
               <br /><br />
-              Du ziehst Elviras Einkaufsliste hervor. Frau Berger liest sie durch, nickt, und stellt einen leeren Korb auf den Tresen. „Die Zutaten sind alle da. Aber welche du nimmst, das musst du selbst entscheiden." Sie deutet auf die Regale. „Elvira hätte es gewusst."
+              Du ziehst Jakobs Einkaufsliste hervor. Frau Berger liest sie durch, nickt, und stellt einen leeren Korb auf den Tresen. „Die Zutaten sind alle da. Aber welche du nimmst, das musst du selbst entscheiden." Sie deutet auf die Regale. „Jakob hätte es gewusst."
             </blockquote>
             <div className="mt-6 flex justify-end">
               <button
@@ -253,7 +253,7 @@ function AktePage() {
               <p className="font-serif italic leading-relaxed">
                 Die alte Registrierkasse springt mit einem lauten Ping an und
                 druckt einen Bon. Frau Berger reicht ihn dir mit einem wissenden
-                Lächeln. Auf der Rückseite steht in Elviras Handschrift:
+                Lächeln. Auf der Rückseite steht in Jakobs Handschrift:
                 <br /><br />
                 „Gut gemacht! Geh zur Lichtung im Wald, wo wir früher Vögel
                 beobachtet haben. Dort findest du meinen Beobachtungsposten."
