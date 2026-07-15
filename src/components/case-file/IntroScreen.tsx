@@ -124,37 +124,36 @@ export function IntroScreen({
     {
       id: "maja",
       name: "Maja",
-      alter: "15",
+      alter: "17",
       rolle: "Das seid ihr.",
       color: "bg-amber-100 text-amber-700",
       icon: <Camera className="h-6 w-6" />,
       fact:
-        "Fotografiert am liebsten mit einer alten Analogkamera, die sie von ihrem Grossvater bekommen hat. Trägt immer ein zerknittertes Notizbuch mit Filmrollen-Nummern dabei.",
+        "Fotografiert am liebsten mit einer alten Analogkamera vom Flohmarkt. Trägt immer ein zerknittertes Notizbuch mit Filmrollen-Nummern dabei.",
     },
     {
-      id: "jakob",
-      name: "Grossvater Jakob",
-      alter: "74",
-      rolle: "Majas Grossvater. Pensionierter Förster in Speicher.",
+      id: "elvira",
+      name: "Elvira",
+      alter: "68",
+      rolle: "Majas Grosstante.",
       color: "bg-emerald-100 text-emerald-700",
       icon: <Bird className="h-6 w-6" />,
       fact:
-        "War 45 Jahre lang Revierförster im Appenzell. Kennt jede Lichtung, jeden Tierpfad. Momentan ist er im Spital — hat aber vorher noch fünf Umschläge im Dorf hinterlegt und einen Vertrauten losgeschickt.",
+        "War 40 Jahre lang Biologielehrerin an der Kanti. Steht seit ihrer Pensionierung fast täglich vor Sonnenaufgang auf, um Vögel zu zählen — und hat einen Ordner voller handgezeichneter Karten von Speicher.",
     },
   ];
 
   const finish = () => {
     envelope.ask({
       nr: 1,
-      ort: "Bank vor dem Bahnhof · Speicher",
-      etappeLabel: "Umschlag 1 · Bahnhof",
+      ort: "Küchentisch · Elviras Haus",
+      etappeLabel: "Umschlag 1 · Küchentisch",
       onConfirm: () => {
         markIntroSeen();
         onDone();
       },
     });
   };
-
 
   const next = () => {
     if (step < total - 1) setStep(step + 1);
@@ -202,9 +201,8 @@ export function IntroScreen({
             </h2>
             <p className="mt-4 text-[15px] leading-relaxed text-foreground/85">
               Ihr habt bis <strong>{getHearingClock() ?? "19:00"} Uhr</strong>,
-              um das Waldstück von Grossvater Jakob zu retten. An jedem Ort im
-              Dorf wartet ein Rätsel. Löst ihr es, schaltet sich die nächste
-              Etappe frei.
+              um Majas Grosstante Elvira zu helfen. An jedem Ort im Dorf
+              wartet ein Rätsel. Löst ihr es, schaltet sich die nächste Etappe frei.
             </p>
             <ul className="mt-5 space-y-3 text-[15px]">
               <li className="flex gap-3">
@@ -263,22 +261,21 @@ export function IntroScreen({
         {step === 2 && (
           <PaperCard rotate={-0.2} tape="top-left">
             <div className="absolute right-4 top-6 sm:right-8 sm:top-8">
-              <Stamp rotate={-8}>Bahnhof</Stamp>
+              <Stamp rotate={-8}>Küchentisch</Stamp>
             </div>
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-              Rückkehr an die Lichtung
+              Der Brief
             </p>
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-              Maja steigt in Speicher aus dem Zug …
+              Maja sitzt im Zug nach Speicher …
             </h2>
             <p className="mt-3 text-[15px] leading-relaxed text-foreground/85">
-              Als sie fünf war, hat Grossvater Jakob sie zum ersten Mal an die
-              Lichtung mitgenommen — zwei Rehe, ein Fuchs, ein Versprechen.
-              Zehn Jahre später steht Maja wieder da: rote Absperrbänder,
-              gelbe Schilder, „Bauzone Gaskraftwerk". Von der Bank vor dem
-              Bahnhof löst sich ein älterer Mann, ein Bekannter von Jakob. Er
-              drückt ihr einen abgegriffenen Umschlag in die Hand.
+              Ihr letzter Sommer vor der Matura. Grosstante Elvira hat sie zu
+              sich aufs Land eingeladen. Doch als sie ankommt, ist das Haus
+              leer. Auf dem Küchentisch liegt nur ein Brief:
             </p>
+
+
 
             <div
               className="mt-5 rounded-sm border border-border bg-paper-deep/40 p-5 font-serif text-[15px] leading-relaxed text-foreground/90 shadow-inner"
@@ -286,20 +283,23 @@ export function IntroScreen({
             >
               <Mail className="mb-2 h-4 w-4 text-stamp" />
               <p>
-                „Liebe Maja, wenn du das liest, liege ich noch im Spital — die
-                Ärzte lassen mich diesmal nicht so schnell heim. Aber du bist
-                da, und das genügt.
+                „Liebe Maja, falls du das liest, bin ich gerade im Dorf
+                unterwegs. Du erinnerst dich an unsere Hütte im Wald – dort, wo
+                wir als Kind stundenlang Vögel beobachtet haben? Die Gemeinde
+                sucht wegen drohender Stromengpässe dringend nach Lösungen und
+                plant dort ein neues <strong>Gaskraftwerk</strong>. Heute Abend
+                um <strong>{getHearingClock() ?? "19:00"} Uhr</strong> findet
+                die Gemeinderatssitzung statt – dann wird abgestimmt.
               </p>
               <p className="mt-3">
-                Heute Abend um{" "}
-                <strong>{getHearingClock() ?? "19:00"} Uhr</strong> stimmt der
-                Gemeinderat über <strong>unsere Lichtung</strong> ab —
-                Gaskraftwerk oder Wald. Ich habe fünf Umschläge im Dorf
-                verteilt. Fang am <strong>alten Bahnhof</strong> an. Der Rest
-                findet dich."
+                Ich bin sicher, dass wir mit den richtigen Fakten eine viel
+                nachhaltigere Lösung für Speicher zeigen können! Ich bin
+                unterwegs und sammle die letzten Daten. Kannst du mir helfen?
+                Fang am <strong>alten Bahnhof</strong> an – dort liegt ein
+                Hinweis für dich."
               </p>
               <p className="mt-4 text-right italic text-foreground/70">
-                – Grossvater Jakob
+                – Elvira
               </p>
             </div>
           </PaperCard>

@@ -259,16 +259,17 @@ function AktePage() {
             </h2>
             <div className="mt-4 rounded-sm border border-dashed border-stamp/40 bg-paper-deep/30 p-5">
               <p className="font-serif italic leading-relaxed">
-                Mit den korrigierten Gutachten, den Rechnungen und Jakobs
-                Notizen im Rucksack rennst du zum Gemeindesaal. Auf dem letzten
-                Meter drückst du dir den Rucksack ans Bein und atmest kurz
-                durch. Grossvater Jakob kann heute nicht dabei sein — aber
-                seine Unterlagen sind es.
+                Mit den korrigierten Gutachten, den Rechnungen und Elviras
+                Notizen im Rucksack rennt ihr zum Gemeindesaal. Draussen stösst
+                euch auf den letzten Metern jemand entgegen — Tante Elvira,
+                atemlos, einen Stapel Papiere unterm Arm.
                 <br /><br />
-                „Ich habe alles, was ich brauche.“
+                „Maja! Ich dachte, du kommst vielleicht direkt hierher — ich
+                habe noch die letzten Messdaten vom Bachamt. Wir haben alles,
+                was wir brauchen!"
               </p>
               <p className="mt-3 font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
-                — Maja
+                — E.
               </p>
             </div>
             <p className="mt-5 text-sm text-foreground/70">
