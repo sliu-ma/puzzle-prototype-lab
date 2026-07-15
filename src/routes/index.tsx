@@ -214,10 +214,13 @@ function StartForm({
     <div className="mt-8 grid gap-6 sm:grid-cols-[1.4fr_1fr]">
       <div className="space-y-3 text-[15px] leading-relaxed text-foreground/90">
         <p>
-          <strong className="font-serif">Maja, 17,</strong> findet das Haus
-          ihrer Grosstante leer. Auf dem Tisch ein Brief: Heute Abend stimmt der
-          Gemeinderat über ein <span className="ink-underline">Gaskraftwerk</span> ab.
-          Elvira hat fünf Hinweise im Dorf hinterlegt.
+          <strong className="font-serif">Maja, 15,</strong> kehrt an die
+          Waldlichtung zurück, an der sie als Kind mit ihrem Grossvater Jakob
+          Rehe beobachtet hat. Statt Ruhe: rote Absperrbänder und ein Schild —
+          heute Abend stimmt der Gemeinderat über ein{" "}
+          <span className="ink-underline">Gaskraftwerk</span> ab. Ein Fremder
+          drückt ihr einen Brief in die Hand: von Jakob. Fünf Hinweise. Fünf
+          Etappen.
         </p>
         <p className="font-serif italic text-foreground/70">
           Tragt euren Teamnamen und den Startcode eurer Lehrperson ein, um
