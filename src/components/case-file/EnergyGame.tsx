@@ -93,14 +93,8 @@ export function EnergyGame({ onErfolg }: { onErfolg: () => void }) {
   };
 
   const pruefen = () => {
-    if (erreicht && totals.invested <= BUDGET) {
-      if (totals.energy > 4000) {
-        import("@/lib/achievements").then((m) => m.unlock("energie-champion")).catch(() => {});
-      }
-      onErfolg();
-    } else {
-      setShowFail(true);
-    }
+    if (erreicht && totals.invested <= BUDGET) onErfolg();
+    else setShowFail(true);
   };
 
   return (

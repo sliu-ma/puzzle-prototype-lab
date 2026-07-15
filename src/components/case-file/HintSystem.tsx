@@ -151,18 +151,6 @@ export function HintSystem({ hints = DEFAULT_HINTS, storageKey = DEFAULT_STORAGE
       }
       return next;
     });
-    // Achievement-Tracking: markiere die zugehörige Etappe als "Hinweis genutzt".
-    const stageFromKey: Record<string, number> = {
-      "akte-001-hints-start": 2,
-      "akte-002-hints-start": 3,
-      "akte-003-hints-start": 1,
-      "akte-004-hints-start": 4,
-      "akte-005-hints-start": 5,
-    };
-    const stage = stageFromKey[STORAGE_KEY];
-    if (stage) {
-      import("@/lib/achievements").then((m) => m.markHintRevealed(stage)).catch(() => {});
-    }
   };
 
 

@@ -1,17 +1,12 @@
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { markWrongAttempt, hadWrongAttempt, unlock, type AchievementId } from "@/lib/achievements";
 
 interface CodeLockProps {
   expected: string; // digit string, length defines field count
   onUnlock: () => void;
-  /** Wenn gesetzt, wird bei jeder Falscheingabe markWrongAttempt(stage) aufgerufen. */
-  achievementStage?: number;
-  /** Wenn ohne Fehlversuch gelöst, wird dieses Achievement freigeschaltet. */
-  firstTryAchievement?: AchievementId;
 }
 
-export function CodeLock({ expected, onUnlock, achievementStage, firstTryAchievement }: CodeLockProps) {
+export function CodeLock({ expected, onUnlock }: CodeLockProps) {
   const length = expected.length;
   const [digits, setDigits] = useState<string[]>(() => Array(length).fill(""));
   const [status, setStatus] = useState<"idle" | "wrong" | "correct">("idle");
@@ -41,13 +36,9 @@ export function CodeLock({ expected, onUnlock, achievementStage, firstTryAchieve
     const code = digits.join("");
     if (code.length < length) return;
     if (code === expected) {
-      if (firstTryAchievement && achievementStage && !hadWrongAttempt(achievementStage)) {
-        unlock(firstTryAchievement);
-      }
       setStatus("correct");
       setTimeout(onUnlock, 600);
     } else {
-      if (achievementStage) markWrongAttempt(achievementStage);
       setStatus("wrong");
       setShake(true);
       setTimeout(() => setShake(false), 500);

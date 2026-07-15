@@ -152,12 +152,9 @@ export function getCurrentStage(): number {
 export function completeStage(n: number) {
   try {
     const current = getCurrentStage();
-    const wasAlreadyDone = n + 1 <= current;
-    if (!wasAlreadyDone) {
+    if (n + 1 > current) {
       localStorage.setItem(KEY_STAGE, String(n + 1));
       window.dispatchEvent(new Event("maya-progress"));
-      // Erst beim Erst-Abschluss die Achievements prüfen.
-      import("./achievements").then((m) => m.checkStageAchievements(n)).catch(() => {});
     }
   } catch {
     /* ignore */
