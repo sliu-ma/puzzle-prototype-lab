@@ -12,6 +12,7 @@ import {
   type Produkt,
 } from "@/lib/maya-data";
 import { ProduktDetailDialog } from "./ProduktDetailDialog";
+import { markWrongAttempt, hadWrongAttempt, unlock, markProductOpened } from "@/lib/achievements";
 
 interface GruenerMarktProps {
   startWarenkorb: string[];
@@ -63,9 +64,11 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
     const fehlend = REZEPT_ZUTATEN_KEYS.filter((z) => !abgedeckt.has(z));
 
     if (fehlend.length > 0 || schlechteImKorb.length > 0) {
+      markWrongAttempt(2);
       setFeedback(true);
       return;
     }
+    if (!hadWrongAttempt(2)) unlock("gruener-daumen");
     setFeedback(false);
     setStatus("erfolg");
     setCartOpen(false);
@@ -133,7 +136,7 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
               imKorb={inKorb(p.id)}
               onAdd={() => hinzufuegen(p.id)}
               onRemove={() => entfernen(p.id)}
-              onOpenDetail={() => setDetail(p)}
+              onOpenDetail={() => { markProductOpened(p.id); setDetail(p); }}
             />
           ))}
         </div>
