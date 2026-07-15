@@ -197,7 +197,7 @@ function AktePage() {
               <br />
               Die Hütte steht noch, windschief wie immer. Am alten
               Beobachtungsposten mit dem Fernglas liegen Fotokarten von Tieren,
-              die Jakob über Jahrzehnte hier gesichtet hat – daneben ihr
+              die Jakob über Jahrzehnte hier gesichtet hat – daneben sein
               vollgeschriebenes Beobachtungsbuch. Die letzten Einträge sind
               kürzer geworden. Manche Arten kommen seit Jahren nicht mehr vor.
               <br />

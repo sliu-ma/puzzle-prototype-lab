@@ -180,7 +180,7 @@ function AktePage() {
               [Holztresen · leerer Korb · {getFrozenClock("maya-clock-akte-002")} Uhr]
             </p>
             <blockquote className="mt-5 border-l-4 border-stamp pl-4 text-[15px] leading-relaxed">
-              Der alte Dorfladen ist eigentlich schon geschlossen, aber Frau Berger, eine langjähriger Freund deines Grossvaters Jakob, lässt dich noch hinein. „Dein Grossvater war hier jede Woche", sagt sie. „Sie hat mal gesagt: Wenn ich sehe, was die Leute kaufen, weiss ich genau, was schiefläuft."
+              Der alte Dorfladen ist eigentlich schon geschlossen, aber Frau Berger, eine langjährige Freundin deines Grossvaters Jakob, lässt dich noch hinein. „Dein Grossvater war hier jede Woche", sagt sie. „Sie hat mal gesagt: Wenn ich sehe, was die Leute kaufen, weiss ich genau, was schiefläuft."
               <br /><br />
               Du ziehst Jakobs Einkaufsliste hervor. Frau Berger liest sie durch, nickt, und stellt einen leeren Korb auf den Tresen. „Die Zutaten sind alle da. Aber welche du nimmst, das musst du selbst entscheiden." Sie deutet auf die Regale. „Jakob hätte es gewusst."
             </blockquote>
