@@ -122,8 +122,9 @@ export function EnvelopeDialog({
 
             <DialogDescription asChild>
               <p className="mt-3 text-center font-serif text-[15px] leading-relaxed text-foreground/85">
-                Elviras nächster Hinweis liegt bereit. Nimm den Umschlag mit
-                der grossen Nummer <strong>{nr}</strong> und öffne ihn jetzt.
+                Der nächste Hinweis von Grossvater Jakob liegt bereit. Nimm
+                den Umschlag mit der grossen Nummer <strong>{nr}</strong> und
+                öffne ihn jetzt.
               </p>
             </DialogDescription>
 
