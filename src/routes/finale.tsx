@@ -7,6 +7,8 @@ import { Stamp } from "@/components/case-file/Stamp";
 import { StageGate } from "@/components/case-file/StageGate";
 import { getTotalRevealedHints } from "@/components/case-file/HintSystem";
 import { completeStage, finishGame, getHearingClock, getStartTs } from "@/lib/progress";
+import { checkFinishAchievements, ACHIEVEMENTS, getUnlockedIds } from "@/lib/achievements";
+import { PRODUKTE } from "@/lib/maya-data";
 import { usePersistentState } from "@/lib/persist";
 import { cn } from "@/lib/utils";
 
