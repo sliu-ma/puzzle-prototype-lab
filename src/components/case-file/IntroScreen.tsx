@@ -202,8 +202,9 @@ export function IntroScreen({
             </h2>
             <p className="mt-4 text-[15px] leading-relaxed text-foreground/85">
               Ihr habt bis <strong>{getHearingClock() ?? "19:00"} Uhr</strong>,
-              um Majas Grosstante Elvira zu helfen. An jedem Ort im Dorf
-              wartet ein Rätsel. Löst ihr es, schaltet sich die nächste Etappe frei.
+              um das Waldstück von Grossvater Jakob zu retten. An jedem Ort im
+              Dorf wartet ein Rätsel. Löst ihr es, schaltet sich die nächste
+              Etappe frei.
             </p>
             <ul className="mt-5 space-y-3 text-[15px]">
               <li className="flex gap-3">
