@@ -336,8 +336,10 @@ function AktePage() {
             onChoose={(r: RouteOption) => {
               if (r.correct) {
                 setRouteError(null);
+                if (!hadWrongAttempt(1)) unlock("weltreisende");
                 goto("input");
               } else {
+                markWrongAttempt(1);
                 setRouteError(
                   "Diese Route ist nicht die nachhaltigste. Vergleiche CO₂-Werte und realen Aufwand und wähle erneut.",
                 );
