@@ -95,6 +95,7 @@ const norm = (s: string) =>
 function AktePage() {
   const navigate = useNavigate();
   const envelope = useEnvelopePrompt();
+  const { burst, celebrate } = useSuccessBurst();
   const [step, setStep] = usePersistentState<Step>("akte-1-step", "brief");
   const [unlockedSteps, setUnlockedSteps] = usePersistentSet<Step>(
     "akte-1-unlocked-steps",
