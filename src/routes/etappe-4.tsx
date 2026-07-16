@@ -84,6 +84,7 @@ const STEPS: { id: Step; label: string }[] = [
 function AktePage() {
   const navigate = useNavigate();
   const envelope = useEnvelopePrompt();
+  const { burst, celebrate } = useSuccessBurst();
   const [step, setStep] = usePersistentState<Step>("akte-4-step", "brief");
   const [unlockedSteps, setUnlockedSteps] = usePersistentSet<Step>(
     "akte-4-unlocked-steps",
