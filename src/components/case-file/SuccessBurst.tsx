@@ -16,7 +16,7 @@ export function SuccessBurst({
   show,
   onDone,
   label = "Gelöst!",
-  duration = 1200,
+  duration = 2000,
 }: SuccessBurstProps) {
   useEffect(() => {
     if (!show) return;
@@ -29,7 +29,7 @@ export function SuccessBurst({
   return (
     <div
       className="pointer-events-none fixed inset-0 z-[90] flex items-center justify-center bg-background/40 backdrop-blur-[2px]"
-      style={{ animation: "sb-fade 1200ms ease-out forwards" }}
+      style={{ animation: `sb-fade ${duration}ms ease-out forwards` }}
       role="status"
       aria-live="polite"
     >
@@ -116,7 +116,7 @@ export function SuccessBurst({
  *   {burst}
  *   <Kind onErfolg={() => celebrate(() => goto("input"))} />
  */
-export function useSuccessBurst(duration = 1200) {
+export function useSuccessBurst(duration = 2000) {
   const [show, setShow] = useState(false);
   const [cb, setCb] = useState<(() => void) | null>(null);
 
