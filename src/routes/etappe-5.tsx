@@ -11,6 +11,7 @@ import { completeStage, getFrozenClock, getHearingClock } from "@/lib/progress";
 import { usePersistentState, usePersistentSet } from "@/lib/persist";
 
 import { cn } from "@/lib/utils";
+import { useSuccessBurst } from "@/components/case-file/SuccessBurst";
 
 export const Route = createFileRoute("/etappe-5")({
   head: () => ({
