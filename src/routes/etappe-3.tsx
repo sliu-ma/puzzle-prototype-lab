@@ -13,6 +13,8 @@ import { usePersistentState, usePersistentSet } from "@/lib/persist";
 import { cn } from "@/lib/utils";
 import { useEnvelopePrompt } from "@/components/case-file/EnvelopeDialog";
 import { useSuccessBurst } from "@/components/case-file/SuccessBurst";
+import { IconStamp } from "@/components/case-file/IconStamp";
+import { Search } from "lucide-react";
 
 import {
   Dialog,
@@ -343,7 +345,8 @@ function AktePage() {
       <Dialog open={showCodeHint} onOpenChange={setShowCodeHint}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Recherche-Tipp</DialogTitle>
+            <IconStamp icon={Search} tone="neutral" rotate={-5} className="mb-2" />
+            <DialogTitle className="text-center">Recherche-Tipp</DialogTitle>
             <DialogDescription>
               Falls du dir nicht sicher bist, ob ein Tier in der Schweiz
               gefährdet ist: Recherchiere im Internet. Das hilft dir, die
