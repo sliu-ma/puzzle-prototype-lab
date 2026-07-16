@@ -29,7 +29,7 @@ export function SuccessBurst({
   return (
     <div
       className="pointer-events-none fixed inset-0 z-[90] flex items-center justify-center bg-background/40 backdrop-blur-[2px]"
-      style={{ animation: "sb-fade 1200ms ease-out forwards" }}
+      style={{ animation: `sb-fade ${duration}ms ease-out forwards` }}
       role="status"
       aria-live="polite"
     >
