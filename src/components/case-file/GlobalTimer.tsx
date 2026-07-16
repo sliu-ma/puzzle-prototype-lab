@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Clock, AlertTriangle, CheckCircle2 } from "lucide-react";
+import { Clock, AlertTriangle, CheckCircle2, Mail } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -16,6 +16,7 @@ import {
 } from "@/lib/progress";
 import { cn } from "@/lib/utils";
 import { TimeUpOverlay } from "./TimeUpOverlay";
+import { IconStamp } from "./IconStamp";
 
 // Marker (Minuten seit Start), bei denen ein Maja-Popup erscheint.
 // Erste 75 Min: alle 15 Min. Letzte 15 Min: alle 5 Min.
@@ -176,13 +177,18 @@ export function GlobalTimer() {
       <Dialog open={!!popup} onOpenChange={(o) => !o && setPopup(null)}>
         <DialogContent className="max-w-sm">
           <DialogHeader>
+            <IconStamp
+              icon={popup?.urgent ? AlertTriangle : Mail}
+              tone={popup?.urgent ? "urgent" : "neutral"}
+              rotate={-5}
+              className={cn("mb-2", popup?.urgent && "animate-pulse")}
+            />
             <DialogTitle
               className={cn(
-                "font-serif",
+                "text-center font-serif",
                 popup?.urgent && "text-destructive",
               )}
             >
-              {popup?.urgent ? "⚠ " : "✉ "}
               {popupTitle}
             </DialogTitle>
             <DialogDescription className="pt-3 font-serif text-base italic leading-relaxed text-foreground/85">
