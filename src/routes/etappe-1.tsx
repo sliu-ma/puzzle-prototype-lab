@@ -147,6 +147,7 @@ function AktePage() {
 
   return (
     <main className="relative min-h-screen px-3 py-6 sm:px-4 sm:py-14">
+      {burst}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 opacity-[0.05]"
