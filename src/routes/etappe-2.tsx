@@ -67,8 +67,8 @@ const DORFLADEN_HINTS: Hint[] = [
     id: 1,
     unlockMin: 6,
     label: "Tipp 2",
-    title: "Regionalität schlägt Import",
-    body: "Es ist Sommer — Erdbeeren gibt es in der Schweiz und in Spanien. Der viel kürzere Weg macht die Schweizer Variante nachhaltiger. Auch bei Zitronen lohnt der Blick auf die Herkunft: Bio/Demeter aus Italien ist deutlich näher als Südafrika.",
+    title: "Bio-Import oder regional & saisonal?",
+    body: "Beide Erdbeeren haben ihre Stärken: Die spanischen sind bio, die Schweizer sind regional und mitten in der Saison. Bio sagt etwas über den Anbau — aber nicht über Transport und Saison. Kurze Wege und Saisonware schlagen den Import meist deutlich.",
   },
   {
     id: 2,

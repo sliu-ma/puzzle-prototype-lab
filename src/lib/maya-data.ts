@@ -82,21 +82,21 @@ export const PRODUKTE: Produkt[] = [
     kategorie: "fruechte-gemuese",
     herkunft: "Spanien",
     preis: 6.8,
-    siegel: [],
+    siegel: ["bio"],
     saison: "out",
     emoji: "🍓",
     bildUrl: erdbeerenEsAsset.url,
     bewertung: "schlecht",
     zutat: "erdbeeren",
     problemHinweis:
-      "Erdbeeren wachsen in der Schweiz erst ab Mai/Juni. Importe aus Südeuropa im März bedeuten lange Transporte oder Plastiktunnel — viel Energie für wenig Geschmack.",
+      "Auch Bio-Erdbeeren aus Spanien reisen im März tausende Kilometer. Bio sagt etwas über den Anbau — nichts über Transport und Saison.",
     nachhaltigkeit: {
       regional: 1,
       saisonal: 1,
-      verpackung: 1,
-      label: 1,
+      verpackung: 2,
+      label: 4,
       erklaerung:
-        "Importware aus Südeuropa, oft aus beheizten Folientunneln. Plastikverpackung, lange Transportwege und ausserhalb der Schweizer Saison.",
+        "Bio-Anbau ohne synthetische Pestizide — aber Importware aus Südeuropa ausserhalb der Schweizer Saison. Lange Transportwege und meist Plastikverpackung.",
     },
   },
   {
