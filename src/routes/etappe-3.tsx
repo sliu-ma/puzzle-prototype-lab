@@ -12,6 +12,7 @@ import { usePersistentState, usePersistentSet } from "@/lib/persist";
 
 import { cn } from "@/lib/utils";
 import { useEnvelopePrompt } from "@/components/case-file/EnvelopeDialog";
+import { useSuccessBurst } from "@/components/case-file/SuccessBurst";
 
 import {
   Dialog,
@@ -90,6 +91,7 @@ const STEPS: { id: Step; label: string }[] = [
 function AktePage() {
   const navigate = useNavigate();
   const envelope = useEnvelopePrompt();
+  const { burst, celebrate } = useSuccessBurst();
   const [step, setStep] = usePersistentState<Step>("akte-3-step", "brief");
   const [unlockedSteps, setUnlockedSteps] = usePersistentSet<Step>(
     "akte-3-unlocked-steps",
@@ -111,6 +113,7 @@ function AktePage() {
 
   return (
     <main className="relative min-h-screen px-3 py-6 sm:px-4 sm:py-14">
+      {burst}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 opacity-[0.05]"
@@ -234,7 +237,7 @@ function AktePage() {
             </p>
 
             <div className="mt-6">
-              <CodeLock expected={EXPECTED_CODE} onUnlock={() => goto("input")} />
+              <CodeLock expected={EXPECTED_CODE} onUnlock={() => celebrate(() => goto("input"))} />
             </div>
 
             <div className="mt-6 flex justify-start">

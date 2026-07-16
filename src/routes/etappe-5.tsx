@@ -11,6 +11,7 @@ import { completeStage, getFrozenClock, getHearingClock } from "@/lib/progress";
 import { usePersistentState, usePersistentSet } from "@/lib/persist";
 
 import { cn } from "@/lib/utils";
+import { useSuccessBurst } from "@/components/case-file/SuccessBurst";
 
 export const Route = createFileRoute("/etappe-5")({
   head: () => ({
@@ -78,6 +79,7 @@ const STEPS: { id: Step; label: string }[] = [
 ];
 
 function AktePage() {
+  const { burst, celebrate } = useSuccessBurst();
   const [step, setStep] = usePersistentState<Step>("akte-5-step", "brief");
   const [unlockedSteps, setUnlockedSteps] = usePersistentSet<Step>(
     "akte-5-unlocked-steps",
@@ -98,6 +100,7 @@ function AktePage() {
 
   return (
     <main className="relative min-h-screen px-3 py-6 sm:px-4 sm:py-14">
+      {burst}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 opacity-[0.05]"
@@ -209,7 +212,7 @@ function AktePage() {
 
         {step === "spiel" && (
           <div className="space-y-4">
-            <GutachtenRaetsel onErfolg={() => goto("input")} />
+            <GutachtenRaetsel onErfolg={() => celebrate(() => goto("input"))} />
             <div className="flex justify-start">
               <button
                 onClick={() => setStep("brief")}

@@ -15,6 +15,7 @@ import { usePersistentState, usePersistentSet } from "@/lib/persist";
 
 import { cn } from "@/lib/utils";
 import { useEnvelopePrompt } from "@/components/case-file/EnvelopeDialog";
+import { useSuccessBurst } from "@/components/case-file/SuccessBurst";
 
 
 export const Route = createFileRoute("/etappe-1")({
@@ -94,6 +95,7 @@ const norm = (s: string) =>
 function AktePage() {
   const navigate = useNavigate();
   const envelope = useEnvelopePrompt();
+  const { burst, celebrate } = useSuccessBurst();
   const [step, setStep] = usePersistentState<Step>("akte-1-step", "brief");
   const [unlockedSteps, setUnlockedSteps] = usePersistentSet<Step>(
     "akte-1-unlocked-steps",
@@ -145,6 +147,7 @@ function AktePage() {
 
   return (
     <main className="relative min-h-screen px-3 py-6 sm:px-4 sm:py-14">
+      {burst}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 opacity-[0.05]"
@@ -335,7 +338,7 @@ function AktePage() {
             onChoose={(r: RouteOption) => {
               if (r.correct) {
                 setRouteError(null);
-                goto("input");
+                celebrate(() => goto("input"));
               } else {
                 setRouteError(
                   "Diese Route ist nicht die nachhaltigste. Vergleiche CO₂-Werte und realen Aufwand und wähle erneut.",
