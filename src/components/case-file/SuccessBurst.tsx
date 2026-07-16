@@ -116,7 +116,7 @@ export function SuccessBurst({
  *   {burst}
  *   <Kind onErfolg={() => celebrate(() => goto("input"))} />
  */
-export function useSuccessBurst(duration = 1200) {
+export function useSuccessBurst(duration = 2000) {
   const [show, setShow] = useState(false);
   const [cb, setCb] = useState<(() => void) | null>(null);
 
