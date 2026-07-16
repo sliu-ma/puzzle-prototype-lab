@@ -266,7 +266,7 @@ function AktePage() {
 
         {step === "spiel" && (
           <div className="space-y-4">
-            <EnergyGame onErfolg={() => goto("input")} />
+            <EnergyGame onErfolg={() => celebrate(() => goto("input"))} />
             <div className="flex justify-start">
               <button
                 onClick={() => setStep("raetselkarte")}
