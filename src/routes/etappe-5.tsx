@@ -212,7 +212,7 @@ function AktePage() {
 
         {step === "spiel" && (
           <div className="space-y-4">
-            <GutachtenRaetsel onErfolg={() => goto("input")} />
+            <GutachtenRaetsel onErfolg={() => celebrate(() => goto("input"))} />
             <div className="flex justify-start">
               <button
                 onClick={() => setStep("brief")}
