@@ -201,7 +201,7 @@ function AktePage() {
           <div className="space-y-4">
             <GruenerMarkt
               startWarenkorb={START_WARENKORB}
-              onErfolg={() => goto("input")}
+              onErfolg={() => celebrate(() => goto("input"))}
             />
             <div className="flex justify-start">
               <button
