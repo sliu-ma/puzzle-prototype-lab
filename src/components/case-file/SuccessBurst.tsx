@@ -16,7 +16,7 @@ export function SuccessBurst({
   show,
   onDone,
   label = "Gelöst!",
-  duration = 1200,
+  duration = 2000,
 }: SuccessBurstProps) {
   useEffect(() => {
     if (!show) return;
