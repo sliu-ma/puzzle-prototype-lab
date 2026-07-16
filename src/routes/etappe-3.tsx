@@ -12,6 +12,7 @@ import { usePersistentState, usePersistentSet } from "@/lib/persist";
 
 import { cn } from "@/lib/utils";
 import { useEnvelopePrompt } from "@/components/case-file/EnvelopeDialog";
+import { useSuccessBurst } from "@/components/case-file/SuccessBurst";
 
 import {
   Dialog,
