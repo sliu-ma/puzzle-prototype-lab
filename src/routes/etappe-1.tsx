@@ -338,7 +338,7 @@ function AktePage() {
             onChoose={(r: RouteOption) => {
               if (r.correct) {
                 setRouteError(null);
-                goto("input");
+                celebrate(() => goto("input"));
               } else {
                 setRouteError(
                   "Diese Route ist nicht die nachhaltigste. Vergleiche CO₂-Werte und realen Aufwand und wähle erneut.",
