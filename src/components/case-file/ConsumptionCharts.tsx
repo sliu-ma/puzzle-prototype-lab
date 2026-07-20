@@ -110,25 +110,52 @@ export function FoodWasteChart() {
 }
 
 export function LabelUebersicht() {
-  const labels = [
+  const labels: { key: keyof typeof SIEGEL; text: string }[] = [
     {
       key: "suisse-garantie",
-      name: "Suisse Garantie",
-      logo: "/__l5e/assets-v1/36810701-4152-4b21-b371-055b863c2bd5/suisse-garantie.webp",
       text: "Rohstoffe und Verarbeitung zu 100 % aus der Schweiz.",
     },
     {
       key: "ip-suisse",
-      name: "IP-Suisse",
-      logo: null as string | null,
       text: "Schweizer Landwirtschaft mit erhöhten Anforderungen an Umwelt und Tierwohl.",
     },
     {
       key: "bio",
-      name: "Bio",
-      logo: null as string | null,
       text: "Anbau ohne synthetische Pestizide, artgerechte Tierhaltung.",
     },
   ];
-  return null;
+  return (
+    <div className="space-y-2">
+      {labels.map(({ key, text }) => {
+        const s = SIEGEL[key];
+        return (
+          <div
+            key={key}
+            className="flex items-center gap-3 rounded-sm border border-dashed border-stamp/40 bg-paper-deep/30 p-2"
+          >
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-sm bg-paper">
+              {s.logoUrl ? (
+                <img
+                  src={s.logoUrl}
+                  alt={s.label}
+                  className="max-h-10 max-w-10 object-contain"
+                  loading="lazy"
+                />
+              ) : (
+                <span className="font-mono-typed text-[10px] uppercase text-stamp">
+                  {s.label}
+                </span>
+              )}
+            </div>
+            <div className="min-w-0">
+              <p className="font-serif text-sm font-semibold leading-tight">
+                {s.label}
+              </p>
+              <p className="mt-0.5 text-xs text-foreground/75">{text}</p>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
 }
