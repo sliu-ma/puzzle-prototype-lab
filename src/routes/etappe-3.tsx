@@ -15,6 +15,11 @@ import { useEnvelopePrompt } from "@/components/case-file/EnvelopeDialog";
 import { useSuccessBurst } from "@/components/case-file/SuccessBurst";
 import { IconStamp } from "@/components/case-file/IconStamp";
 import { Search } from "lucide-react";
+import {
+  RoteListeChart,
+  UrsachenCarousel,
+  VielfaltGrid,
+} from "@/components/case-file/BiodiversityCharts";
 
 import {
   Dialog,
@@ -261,18 +266,18 @@ function AktePage() {
             cards={[
               {
                 title: "Rote Liste",
-                body: "Eine offizielle Übersicht der gefährdeten Tier- und Pflanzenarten der Schweiz. Rund ein Drittel aller untersuchten Arten gilt heute als bedroht — vom Feldhasen bis zum Apollofalter.",
-                hint: "Quelle: BAFU – Bundesamt für Umwelt.",
+                body: "Jede dritte untersuchte Art in der Schweiz gilt heute als gefährdet oder ist bereits ausgestorben. Diese bedrohten Arten stehen auf der sogenannten Roten Liste.",
+                visual: <RoteListeChart />,
               },
               {
-                title: "Lebensraum",
-                body: "Versiegelte Böden, intensive Landwirtschaft und Verkehr zerschneiden Wiesen, Hecken und Feuchtgebiete. Ohne Lebensraum keine Tiere — auch nicht auf der Lichtung hinter dem Dorf.",
-                hint: "Hecken, Trockenmauern und Tümpel sind echte Biodiversitäts-Hotspots.",
+                title: "Ursachen",
+                body: "Die Gründe für den Rückgang der Biodiversität sind vielfältig — zum Beispiel Versiegelung von Boden, Pestizide oder begradigte Gewässer.",
+                visual: <UrsachenCarousel />,
               },
               {
-                title: "Vernetzung",
-                body: "Tiere brauchen Wanderkorridore: Grünbrücken, Gewässer, Hecken. Werden Räume durch Strassen oder Kraftwerke getrennt, sterben Populationen lokal aus, auch wenn jede einzelne noch zu retten wäre.",
-                hint: "Stichwort: Wildtierkorridore und Renaturierung.",
+                title: "Biodiversität bedeutet Vielfalt",
+                body: "Sauberes Trinkwasser, saubere Luft, fruchtbare Böden und bestäubte Pflanzen — all das brauchen wir zum Leben. Die Vielfalt an Arten sichert uns genau das.",
+                visual: <VielfaltGrid />,
               },
             ]}
             onBack={() => setStep("code")}
