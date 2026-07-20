@@ -9,7 +9,7 @@ import { HintSystem, type Hint } from "@/components/case-file/HintSystem";
 import { RouteCards } from "@/components/case-file/RouteCards";
 import { RouteDetail } from "@/components/case-file/RouteDetail";
 import { InputCarousel } from "@/components/case-file/InputCarousel";
-import { CostPerKm, TrainVsCars } from "@/components/case-file/MobilityCharts";
+import { CostPerKm, TrainVsCars, ShortTripsShare } from "@/components/case-file/MobilityCharts";
 import { VALID_START, VALID_ZIEL, type RouteOption } from "@/lib/mobility-data";
 import { completeStage } from "@/lib/progress";
 import { usePersistentState, usePersistentSet } from "@/lib/persist";
@@ -368,6 +368,7 @@ function AktePage() {
               {
                 title: "Aktive Mobilität",
                 body: "45 Prozent aller Autofahrten in der Schweiz sind kürzer als 5 Kilometer — perfekte Velo-Distanz. Gerade auf diesen kurzen Strecken sitzt oft nur eine Person im Auto.",
+                visual: <ShortTripsShare />,
               },
             ]}
             onBack={() => setStep("routen")}

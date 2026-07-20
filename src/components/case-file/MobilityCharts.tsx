@@ -1,4 +1,53 @@
-import { Car, Train } from "lucide-react";
+import { Bike, Car, Train } from "lucide-react";
+
+/** 45 % aller Autofahrten in CH sind kürzer als 5 km. */
+export function ShortTripsShare() {
+  const pct = 45;
+  return (
+    <div className="rounded-sm border border-dashed border-stamp/40 bg-paper-deep/20 p-3">
+      <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
+        Autofahrten in der Schweiz
+      </p>
+
+      <div className="mt-3 flex items-center gap-3">
+        <div className="relative h-20 w-20 shrink-0">
+          <svg viewBox="0 0 36 36" className="h-full w-full -rotate-90">
+            <circle cx="18" cy="18" r="15.5" className="fill-none stroke-border" strokeWidth="4" />
+            <circle
+              cx="18"
+              cy="18"
+              r="15.5"
+              className="fill-none stroke-emerald-500/80"
+              strokeWidth="4"
+              strokeDasharray={`${pct} ${100 - pct}`}
+              pathLength={100}
+              strokeLinecap="round"
+            />
+          </svg>
+          <div className="absolute inset-0 flex flex-col items-center justify-center">
+            <span className="font-serif text-xl font-bold leading-none">{pct}%</span>
+            <span className="font-mono-typed text-[8px] uppercase text-muted-foreground">&lt; 5 km</span>
+          </div>
+        </div>
+        <div className="min-w-0 text-[11px] leading-snug">
+          <div className="flex items-center gap-1.5 font-mono-typed">
+            <Car className="h-3.5 w-3.5 text-rose-500" />
+            <span>Kurzstrecke im Auto</span>
+          </div>
+          <div className="mt-1 flex items-center gap-1.5 font-mono-typed text-emerald-700">
+            <Bike className="h-3.5 w-3.5" />
+            <span>Ideal für Velo &amp; zu Fuss</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-3 flex items-center justify-between border-t border-dashed border-border pt-2 font-mono-typed text-[11px]">
+        <span className="text-muted-foreground">Meist nur 1 Person im Auto</span>
+        <span className="font-bold text-emerald-700">Potenzial hoch</span>
+      </div>
+    </div>
+  );
+}
 
 /** Vergleich Vollkosten pro Kilometer: Auto 74 Rp vs ÖV 46 Rp. */
 export function CostPerKm() {
