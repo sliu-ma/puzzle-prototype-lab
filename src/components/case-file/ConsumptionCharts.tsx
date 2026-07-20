@@ -7,6 +7,7 @@ import kuerbisAsset from "@/assets/produkte/kuerbis.webp.asset.json";
 import zwetschgeAsset from "@/assets/produkte/zwetschge.jxl.asset.json";
 import erdbeereAsset from "@/assets/produkte/erdbeeren-ch.webp.asset.json";
 import gurkeAsset from "@/assets/produkte/gurke-ch.webp.asset.json";
+import { SIEGEL } from "@/lib/maya-data";
 
 type Saison = "winter" | "fruehling" | "sommer" | "herbst";
 
