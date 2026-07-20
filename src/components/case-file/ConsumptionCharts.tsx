@@ -67,17 +67,25 @@ export function getSaisonInfo() {
 function seasonRangeLabel(months: number[]): string {
   if (months.length === 0) return "";
   const names = [
-    "Januar", "Februar", "März", "April", "Mai", "Juni",
-    "Juli", "August", "September", "Oktober", "November", "Dezember",
+    "Januar",
+    "Februar",
+    "März",
+    "April",
+    "Mai",
+    "Juni",
+    "Juli",
+    "August",
+    "September",
+    "Oktober",
+    "November",
+    "Dezember",
   ];
   // detect wrap-around (e.g. [10,11,12,1,2])
   const sorted = [...months].sort((a, b) => a - b);
   const isWrap = sorted.some((m, i) => i > 0 && m - sorted[i - 1] > 1);
   if (isWrap) {
     // find gap
-    const idx = sorted.findIndex(
-      (m, i) => i > 0 && m - sorted[i - 1] > 1,
-    );
+    const idx = sorted.findIndex((m, i) => i > 0 && m - sorted[i - 1] > 1);
     const start = sorted[idx];
     const end = sorted[idx - 1];
     return `${names[start - 1]} – ${names[end - 1]}`;
@@ -99,9 +107,7 @@ function MonthBar({ months }: { months: number[] }) {
             key={i}
             className={
               "flex h-4 flex-1 items-center justify-center rounded-[2px] font-mono-typed text-[8px] leading-none " +
-              (isActive
-                ? "bg-stamp text-paper"
-                : "bg-paper text-muted-foreground/70 border border-border") +
+              (isActive ? "bg-stamp text-paper" : "bg-paper text-muted-foreground/70 border border-border") +
               (isNow ? " ring-1 ring-ink" : "")
             }
             aria-hidden
@@ -118,28 +124,16 @@ export function SaisonProdukte() {
   const info = getSaisonInfo();
   return (
     <div className="rounded-sm border border-dashed border-stamp/40 bg-white p-3">
-      <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
-        Saison: {info.label}
-      </p>
-      <div className="mt-1 space-y-1">
+      <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">Saison: {info.label}</p>
+      <div className="mt-0.5 space-y-0.5">
         {info.items.map((it) => (
-          <div
-            key={it.name}
-            className="rounded-sm bg-white p-2"
-          >
+          <div key={it.name} className="rounded-sm bg-white p-2">
             <div className="flex items-center gap-3">
               <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-sm bg-white">
-                <img
-                  src={it.url}
-                  alt={it.name}
-                  className="max-h-full max-w-full object-contain"
-                  loading="lazy"
-                />
+                <img src={it.url} alt={it.name} className="max-h-full max-w-full object-contain" loading="lazy" />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="font-serif text-sm font-semibold leading-tight">
-                  {it.name}
-                </p>
+                <p className="font-serif text-sm font-semibold leading-tight">{it.name}</p>
                 <p className="mt-0.5 font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
                   CH-Saison: {seasonRangeLabel(it.months)}
                 </p>
@@ -155,16 +149,13 @@ export function SaisonProdukte() {
   );
 }
 
-
 export function FoodWasteChart() {
   return (
     <div className="space-y-2">
       <div className="flex items-center gap-3 rounded-sm border border-dashed border-stamp/40 bg-paper-deep/30 p-3">
         <Trash2 className="h-8 w-8 shrink-0 text-stamp" strokeWidth={2.25} />
         <div className="min-w-0">
-          <div className="font-serif text-2xl font-bold leading-none">
-            90 kg
-          </div>
+          <div className="font-serif text-2xl font-bold leading-none">90 kg</div>
           <div className="mt-1 font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
             Lebensmittel · pro Person / Jahr
           </div>
@@ -173,9 +164,7 @@ export function FoodWasteChart() {
       <div className="flex items-center gap-3 rounded-sm border border-dashed border-stamp/40 bg-paper-deep/30 p-3">
         <Banknote className="h-8 w-8 shrink-0 text-stamp" strokeWidth={2.25} />
         <div className="min-w-0">
-          <div className="font-serif text-2xl font-bold leading-none">
-            &gt; CHF 600.–
-          </div>
+          <div className="font-serif text-2xl font-bold leading-none">&gt; CHF 600.–</div>
           <div className="mt-1 font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
             Wert · pro Haushalt / Jahr
           </div>
@@ -211,22 +200,13 @@ export function LabelUebersicht() {
           >
             <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-sm bg-paper">
               {s.logoUrl ? (
-                <img
-                  src={s.logoUrl}
-                  alt={s.label}
-                  className="max-h-10 max-w-10 object-contain"
-                  loading="lazy"
-                />
+                <img src={s.logoUrl} alt={s.label} className="max-h-10 max-w-10 object-contain" loading="lazy" />
               ) : (
-                <span className="font-mono-typed text-[10px] uppercase text-stamp">
-                  {s.label}
-                </span>
+                <span className="font-mono-typed text-[10px] uppercase text-stamp">{s.label}</span>
               )}
             </div>
             <div className="min-w-0">
-              <p className="font-serif text-sm font-semibold leading-tight">
-                {s.label}
-              </p>
+              <p className="font-serif text-sm font-semibold leading-tight">{s.label}</p>
               <p className="mt-0.5 text-xs text-foreground/75">{text}</p>
             </div>
           </div>
