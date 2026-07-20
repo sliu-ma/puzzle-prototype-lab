@@ -4,6 +4,12 @@ import { PaperCard } from "@/components/case-file/PaperCard";
 import { Stamp } from "@/components/case-file/Stamp";
 import { GruenerMarkt } from "@/components/case-file/GruenerMarkt";
 import { InputCarousel } from "@/components/case-file/InputCarousel";
+import {
+  SaisonProdukte,
+  FoodWasteChart,
+  LabelUebersicht,
+  getSaisonInfo,
+} from "@/components/case-file/ConsumptionCharts";
 import { QRGate } from "@/components/case-file/QRGate";
 import { StageGate } from "@/components/case-file/StageGate";
 import { HintSystem, type Hint } from "@/components/case-file/HintSystem";
@@ -215,26 +221,28 @@ function AktePage() {
           </div>
         )}
 
-        {step === "input" && (
+        {step === "input" && (() => {
+          const saison = getSaisonInfo();
+          return (
           <InputCarousel
             kicker="Fachlicher Input · 3 Lernkarten"
-            title={`Was heißt eigentlich „nachhaltig einkaufen"?`}
-            intro="Drei Begriffe, die du gerade angewendet hast — und die der Rat heute Abend hören will:"
+            title="Nachhaltig einkaufen — worauf es ankommt"
+            intro="Drei Grundregeln, die du gerade angewendet hast — und die der Rat heute Abend hören will:"
             cards={[
               {
-                title: "Saisonal",
-                body: "Obst und Gemüse, das gerade in der Schweiz wächst und geerntet werden kann. Wer im März Erdbeeren kauft, kauft Ware aus dem Süden oder beheizten Tunneln — viel Energie für wenig Geschmack.",
-                hint: "Im Frühling in CH saisonal: Lauch, Karotten, Feldsalat …",
+                title: "Regional & saisonal einkaufen",
+                body: `Regionale und saisonale Lebensmittel haben kürzere Transportwege und kürzere Lagerzeiten als importierte Ware. Im ${saison.label} sind zum Beispiel folgende Lebensmittel saisonal: ${saison.items.map((i) => i.name).join(" und ")}.`,
+                visual: <SaisonProdukte />,
               },
               {
-                title: "Regional",
-                body: "Lebensmittel aus deiner Umgebung — meist 50–100 km. Kurzer Transport, frischer, oft kleinere Höfe. Achtung: «Aus der Schweiz» ist nicht automatisch regional. Region heißt: aus deiner Gegend.",
-                hint: "Bio Suisse & IP-Suisse stehen für Schweizer Herkunft mit klaren Standards.",
+                title: "Food-Waste vermeiden",
+                body: "Pro Person werden in der Schweiz jährlich rund 90 kg Lebensmittel weggeworfen — weil zu viel eingekauft wird oder das Haltbarkeitsdatum abläuft. Im Schnitt wirft jeder Schweizer Haushalt somit Lebensmittel im Wert von über CHF 600.– weg.",
+                visual: <FoodWasteChart />,
               },
               {
-                title: "Tiergerecht & Bio",
-                body: "Bio-Freilandhaltung garantiert Auslauf und Bio-Futter — Bodenhaltung nicht. Importeier reisen oft über tausende Kilometer. Hinter günstigen Preisen stehen meist enge Ställe und industrielle Logistik.",
-                hint: "Schweizer Bio-Eier sind teurer, halten aber, was die Werbung verspricht.",
+                title: "Auf die Verpackung achten",
+                body: "Labels auf Verpackungen zeigen besondere Eigenschaften eines Produkts — zum Beispiel gute Qualität, faire Herstellung oder Umweltschutz. Auf der Plattform labelinfo.ch findest du die wichtigsten Informationen zu allen Labels.",
+                visual: <LabelUebersicht />,
               },
             ]}
             backLabel="← Zurück in den Laden"
@@ -242,7 +250,8 @@ function AktePage() {
             nextLabel="Weiter zu Etappe 3 →"
             onNext={() => goto("naechstes")}
           />
-        )}
+          );
+        })()}
 
         {step === "naechstes" && (
           <PaperCard rotate={-0.5} tape="top-left">
