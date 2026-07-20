@@ -9,7 +9,7 @@ import { HintSystem, type Hint } from "@/components/case-file/HintSystem";
 import { RouteCards } from "@/components/case-file/RouteCards";
 import { RouteDetail } from "@/components/case-file/RouteDetail";
 import { InputCarousel } from "@/components/case-file/InputCarousel";
-import { CostPerKm, TrainVsCars } from "@/components/case-file/MobilityCharts";
+import { CostPerKm, TrainVsCars, ShortTripsShare } from "@/components/case-file/MobilityCharts";
 import { VALID_START, VALID_ZIEL, type RouteOption } from "@/lib/mobility-data";
 import { completeStage } from "@/lib/progress";
 import { usePersistentState, usePersistentSet } from "@/lib/persist";
