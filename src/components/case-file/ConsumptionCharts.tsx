@@ -117,7 +117,7 @@ function MonthBar({ months }: { months: number[] }) {
 export function SaisonProdukte() {
   const info = getSaisonInfo();
   return (
-    <div className="rounded-sm border border-dashed border-stamp/40 bg-paper-deep/30 p-3">
+    <div className="rounded-sm border border-dashed border-stamp/40 bg-white p-3">
       <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
         Saison: {info.label}
       </p>
@@ -125,26 +125,28 @@ export function SaisonProdukte() {
         {info.items.map((it) => (
           <div
             key={it.name}
-            className="flex items-center gap-3 rounded-sm bg-paper p-2"
+            className="rounded-sm bg-white p-2"
           >
-            <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-sm bg-paper-deep/30">
-              <img
-                src={it.url}
-                alt={it.name}
-                className="max-h-full max-w-full object-contain"
-                loading="lazy"
-              />
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="font-serif text-sm font-semibold leading-tight">
-                {it.name}
-              </p>
-              <p className="mt-0.5 font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
-                CH-Saison: {seasonRangeLabel(it.months)}
-              </p>
-              <div className="mt-1.5">
-                <MonthBar months={it.months} />
+            <div className="flex items-center gap-3">
+              <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-sm bg-white">
+                <img
+                  src={it.url}
+                  alt={it.name}
+                  className="max-h-full max-w-full object-contain"
+                  loading="lazy"
+                />
               </div>
+              <div className="min-w-0 flex-1">
+                <p className="font-serif text-sm font-semibold leading-tight">
+                  {it.name}
+                </p>
+                <p className="mt-0.5 font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+                  CH-Saison: {seasonRangeLabel(it.months)}
+                </p>
+              </div>
+            </div>
+            <div className="mt-2">
+              <MonthBar months={it.months} />
             </div>
           </div>
         ))}
@@ -152,6 +154,7 @@ export function SaisonProdukte() {
     </div>
   );
 }
+
 
 export function FoodWasteChart() {
   return (
