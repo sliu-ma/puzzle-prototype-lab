@@ -8,52 +8,37 @@ import begradigungAsset from "@/assets/ursachen/begradigung.jpg.asset.json";
 /** Rote Liste: rund 1/3 der untersuchten Arten in der Schweiz gefährdet. */
 export function RoteListeChart() {
   const pct = 33;
+  const total = 100;
+  const endangered = 33;
   return (
     <div className="rounded-sm border border-dashed border-stamp/40 bg-paper-deep/20 p-3">
       <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
         Untersuchte Arten in der Schweiz
       </p>
-      <div className="mt-3 flex items-center gap-3">
-        <div className="relative h-20 w-20 shrink-0">
-          <svg viewBox="0 0 36 36" className="h-full w-full -rotate-90">
-            <circle cx="18" cy="18" r="15.5" className="fill-none stroke-border" strokeWidth="4" />
-            <circle
-              cx="18"
-              cy="18"
-              r="15.5"
-              className="fill-none stroke-rose-500/80"
-              strokeWidth="4"
-              strokeDasharray={`${pct} ${100 - pct}`}
-              pathLength={100}
-              strokeLinecap="round"
-            />
-          </svg>
-          <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="font-serif text-xl font-bold leading-none">⅓</span>
-            <span className="font-mono-typed text-[8px] uppercase text-muted-foreground">
-              gefährdet
-            </span>
-          </div>
-        </div>
-        <div className="min-w-0 text-[11px] leading-snug">
-          <div className="font-mono-typed text-rose-700">
-            Gefährdet oder ausgestorben
-          </div>
-          <div className="mt-1 font-mono-typed text-muted-foreground">
-            → Rote Liste (BAFU)
-          </div>
-        </div>
-      </div>
-      <div className="mt-3 grid grid-cols-3 gap-1">
-        {Array.from({ length: 30 }).map((_, i) => (
+      <div className="mt-3 grid grid-cols-10 gap-1">
+        {Array.from({ length: total }).map((_, i) => (
           <div
             key={i}
             className={cn(
-              "h-1.5 rounded-full",
-              i < 10 ? "bg-rose-500/80" : "bg-border",
+              "flex aspect-square items-center justify-center rounded-sm text-[11px] leading-none",
+              i < endangered
+                ? "bg-rose-500/15 text-rose-600"
+                : "bg-border/40 text-muted-foreground/60",
             )}
-          />
+            aria-hidden
+          >
+            🐾
+          </div>
         ))}
+      </div>
+      <div className="mt-3 flex items-center justify-between gap-2 text-[11px] leading-snug">
+        <div className="flex items-center gap-1.5">
+          <span className="inline-block h-2.5 w-2.5 rounded-sm bg-rose-500/60" />
+          <span className="font-mono-typed text-rose-700">
+            {endangered} von {total} gefährdet / ausgestorben
+          </span>
+        </div>
+        <span className="font-mono-typed text-muted-foreground">→ Rote Liste (BAFU)</span>
       </div>
     </div>
   );
