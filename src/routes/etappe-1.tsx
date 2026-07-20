@@ -368,6 +368,7 @@ function AktePage() {
               {
                 title: "Aktive Mobilität",
                 body: "45 Prozent aller Autofahrten in der Schweiz sind kürzer als 5 Kilometer — perfekte Velo-Distanz. Gerade auf diesen kurzen Strecken sitzt oft nur eine Person im Auto.",
+                visual: <ShortTripsShare />,
               },
             ]}
             onBack={() => setStep("routen")}
