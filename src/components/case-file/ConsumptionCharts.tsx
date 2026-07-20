@@ -11,42 +11,48 @@ import { SIEGEL } from "@/lib/maya-data";
 
 type Saison = "winter" | "fruehling" | "sommer" | "herbst";
 
-const SAISON_MAP: Record<
-  Saison,
-  { label: string; items: { name: string; url: string }[] }
-> = {
+type SaisonItem = {
+  name: string;
+  url: string;
+  /** 1-basierte Monate, in denen das Produkt CH-Saison hat */
+  months: number[];
+};
+
+const SAISON_MAP: Record<Saison, { label: string; items: SaisonItem[] }> = {
   winter: {
     label: "Winter",
     items: [
-      { name: "Rosenkohl", url: rosenkohlAsset.url },
-      { name: "Orange", url: orangeAsset.url },
+      { name: "Rosenkohl", url: rosenkohlAsset.url, months: [10, 11, 12, 1, 2] },
+      { name: "Orange", url: orangeAsset.url, months: [11, 12, 1, 2, 3] },
     ],
   },
   fruehling: {
     label: "Frühling",
     items: [
-      { name: "Spargel", url: spargelAsset.url },
-      { name: "Rhabarber", url: rhabarberAsset.url },
+      { name: "Spargel", url: spargelAsset.url, months: [4, 5, 6] },
+      { name: "Rhabarber", url: rhabarberAsset.url, months: [4, 5, 6] },
     ],
   },
   sommer: {
     label: "Sommer",
     items: [
-      { name: "Erdbeere", url: erdbeereAsset.url },
-      { name: "Gurke", url: gurkeAsset.url },
+      { name: "Erdbeere", url: erdbeereAsset.url, months: [5, 6, 7, 8, 9] },
+      { name: "Gurke", url: gurkeAsset.url, months: [6, 7, 8, 9] },
     ],
   },
   herbst: {
     label: "Herbst",
     items: [
-      { name: "Kürbis", url: kuerbisAsset.url },
-      { name: "Zwetschge", url: zwetschgeAsset.url },
+      { name: "Kürbis", url: kuerbisAsset.url, months: [9, 10, 11] },
+      { name: "Zwetschge", url: zwetschgeAsset.url, months: [8, 9, 10] },
     ],
   },
 };
 
+const MONTH_INITIALS = ["J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"];
+
 function currentSeason(d = new Date()): Saison {
-  const m = d.getMonth(); // 0 = Jan
+  const m = d.getMonth();
   if (m === 11 || m <= 1) return "winter";
   if (m <= 4) return "fruehling";
   if (m <= 7) return "sommer";
@@ -58,6 +64,56 @@ export function getSaisonInfo() {
   return { key: s, ...SAISON_MAP[s] };
 }
 
+function seasonRangeLabel(months: number[]): string {
+  if (months.length === 0) return "";
+  const names = [
+    "Januar", "Februar", "März", "April", "Mai", "Juni",
+    "Juli", "August", "September", "Oktober", "November", "Dezember",
+  ];
+  // detect wrap-around (e.g. [10,11,12,1,2])
+  const sorted = [...months].sort((a, b) => a - b);
+  const isWrap = sorted.some((m, i) => i > 0 && m - sorted[i - 1] > 1);
+  if (isWrap) {
+    // find gap
+    const idx = sorted.findIndex(
+      (m, i) => i > 0 && m - sorted[i - 1] > 1,
+    );
+    const start = sorted[idx];
+    const end = sorted[idx - 1];
+    return `${names[start - 1]} – ${names[end - 1]}`;
+  }
+  return `${names[sorted[0] - 1]} – ${names[sorted[sorted.length - 1] - 1]}`;
+}
+
+function MonthBar({ months }: { months: number[] }) {
+  const active = new Set(months);
+  const currentMonth = new Date().getMonth() + 1;
+  return (
+    <div className="flex w-full gap-[2px]">
+      {MONTH_INITIALS.map((letter, i) => {
+        const m = i + 1;
+        const isActive = active.has(m);
+        const isNow = m === currentMonth;
+        return (
+          <div
+            key={i}
+            className={
+              "flex h-4 flex-1 items-center justify-center rounded-[2px] font-mono-typed text-[8px] leading-none " +
+              (isActive
+                ? "bg-stamp text-paper"
+                : "bg-paper text-muted-foreground/70 border border-border") +
+              (isNow ? " ring-1 ring-ink" : "")
+            }
+            aria-hidden
+          >
+            {letter}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 export function SaisonProdukte() {
   const info = getSaisonInfo();
   return (
@@ -65,10 +121,13 @@ export function SaisonProdukte() {
       <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
         Saison: {info.label}
       </p>
-      <div className="mt-2 grid grid-cols-2 gap-3">
+      <div className="mt-2 space-y-2">
         {info.items.map((it) => (
-          <figure key={it.name} className="flex flex-col items-center gap-1.5">
-            <div className="flex h-24 w-full items-center justify-center overflow-hidden rounded-sm bg-paper">
+          <div
+            key={it.name}
+            className="flex items-center gap-3 rounded-sm bg-paper p-2"
+          >
+            <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-sm bg-paper-deep/30">
               <img
                 src={it.url}
                 alt={it.name}
@@ -76,10 +135,18 @@ export function SaisonProdukte() {
                 loading="lazy"
               />
             </div>
-            <figcaption className="font-serif text-sm font-semibold">
-              {it.name}
-            </figcaption>
-          </figure>
+            <div className="min-w-0 flex-1">
+              <p className="font-serif text-sm font-semibold leading-tight">
+                {it.name}
+              </p>
+              <p className="mt-0.5 font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+                CH-Saison: {seasonRangeLabel(it.months)}
+              </p>
+              <div className="mt-1.5">
+                <MonthBar months={it.months} />
+              </div>
+            </div>
+          </div>
         ))}
       </div>
     </div>
@@ -88,21 +155,27 @@ export function SaisonProdukte() {
 
 export function FoodWasteChart() {
   return (
-    <div className="grid grid-cols-2 gap-3">
-      <div className="flex flex-col items-center gap-2 rounded-sm border border-dashed border-stamp/40 bg-paper-deep/30 p-3 text-center">
-        <Trash2 className="h-6 w-6 text-stamp" strokeWidth={2.25} />
-        <div className="font-serif text-2xl font-bold leading-none">90 kg</div>
-        <div className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
-          pro Person / Jahr
+    <div className="space-y-2">
+      <div className="flex items-center gap-3 rounded-sm border border-dashed border-stamp/40 bg-paper-deep/30 p-3">
+        <Trash2 className="h-8 w-8 shrink-0 text-stamp" strokeWidth={2.25} />
+        <div className="min-w-0">
+          <div className="font-serif text-2xl font-bold leading-none">
+            90 kg
+          </div>
+          <div className="mt-1 font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+            Lebensmittel · pro Person / Jahr
+          </div>
         </div>
       </div>
-      <div className="flex flex-col items-center gap-2 rounded-sm border border-dashed border-stamp/40 bg-paper-deep/30 p-3 text-center">
-        <Banknote className="h-6 w-6 text-stamp" strokeWidth={2.25} />
-        <div className="font-serif text-2xl font-bold leading-none">
-          &gt; 600.–
-        </div>
-        <div className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
-          CHF pro Haushalt / Jahr
+      <div className="flex items-center gap-3 rounded-sm border border-dashed border-stamp/40 bg-paper-deep/30 p-3">
+        <Banknote className="h-8 w-8 shrink-0 text-stamp" strokeWidth={2.25} />
+        <div className="min-w-0">
+          <div className="font-serif text-2xl font-bold leading-none">
+            &gt; CHF 600.–
+          </div>
+          <div className="mt-1 font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+            Wert · pro Haushalt / Jahr
+          </div>
         </div>
       </div>
     </div>
