@@ -121,7 +121,7 @@ export function SaisonProdukte() {
       <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
         Saison: {info.label}
       </p>
-      <div className="mt-2 space-y-2">
+      <div className="mt-1 space-y-1">
         {info.items.map((it) => (
           <div
             key={it.name}
