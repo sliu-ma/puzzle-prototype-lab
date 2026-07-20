@@ -352,22 +352,24 @@ function AktePage() {
           <InputCarousel
             kicker="Fachlicher Input · Nachhaltige Mobilität"
             title="Wie wir reisen, formt das Klima"
-            intro="Der Verkehr verursacht in der Schweiz rund ein Drittel aller Treibhausgase. Drei Begriffe, die du für das Hearing brauchst:"
+            intro="Der Verkehr verursacht in der Schweiz rund ein Drittel aller Treibhausgase. Drei Karten, die du für das Hearing brauchst:"
             cards={[
               {
-                title: "CO₂ pro Person",
-                body: "Auf der gleichen Strecke produziert ein Inlandflug etwa 30-mal mehr CO₂ als der Zug, ein Auto mit einer Person rund 13-mal mehr. Voll besetzte Autos sind besser — aber Zug bleibt führend.",
-                hint: "Quelle: BAFU, mobitool.ch",
+                title: "Was kostet ein Kilometer wirklich?",
+                body: "Zu den Autokosten gehören nicht nur Benzin, sondern auch Versicherung, Reparaturen und Wertverlust — zusammen die Vollkosten. Diese liegen bei 74 Rappen pro Kilometer, beim öffentlichen Verkehr (ÖV) nur bei 46 Rappen.",
+                hint: "Quelle: TCS / LITRA — Vollkostenrechnung.",
+                visual: <CostPerKm />,
               },
               {
-                title: "Modal Shift",
-                body: "„Modal Shift“ heisst: Verkehr von Auto/Flug auf Zug, Velo und ÖV verlagern. Die Schweiz hat dafür eines der dichtesten Bahnnetze weltweit — fast jeder Ort ist erreichbar.",
-                hint: "Stichwort: Halbtax, GA, Mobilitätsabos.",
+                title: "Ein Zug ersetzt viele Autos",
+                body: "Vergleicht man die durchschnittliche Auslastung von Zug und Auto, ersetzt ein Zug rund 90 Autos — bei voller Kapazität (maximale Platzzahl) wären es sogar bis zu 310. Der grosse Unterschied zeigt: Züge sind oft nicht voll besetzt.",
+                hint: "Quelle: SBB / VöV Auslastungsstatistik.",
+                visual: <TrainVsCars />,
               },
               {
                 title: "Aktive Mobilität",
-                body: "Velo und zu Fuss verursachen praktisch kein CO₂, fördern die Gesundheit und brauchen wenig Fläche. Jeder zweite Autoweg in der Schweiz ist kürzer als 5 km — perfekte Velo-Distanz.",
-                hint: "BFS: 50 % aller Pendlerwege < 5 km.",
+                body: "45 Prozent aller Autofahrten in der Schweiz sind kürzer als 5 Kilometer — perfekte Velo-Distanz. Gerade auf diesen kurzen Strecken sitzt oft nur eine Person im Auto.",
+                hint: "Quelle: BFS Mikrozensus Mobilität.",
               },
             ]}
             onBack={() => setStep("routen")}
