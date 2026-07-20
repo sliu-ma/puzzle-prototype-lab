@@ -25,10 +25,11 @@ import mandelnAsset from "@/assets/produkte/mandeln.jxl.asset.json";
 import bioLogo from "@/assets/labels/bio.png.asset.json";
 import ipSuisseLogo from "@/assets/labels/ip-suisse.png.asset.json";
 import demeterLogo from "@/assets/labels/demeter.png.asset.json";
+import suisseGarantieLogo from "@/assets/labels/suisse-garantie.webp.asset.json";
 
 export type Kategorie = "milch-eier" | "fruechte-gemuese" | "backzutaten" | "andere";
 
-export type SiegelKey = "bio" | "ip-suisse" | "demeter";
+export type SiegelKey = "bio" | "ip-suisse" | "demeter" | "suisse-garantie";
 
 export interface SiegelInfo {
   key: SiegelKey;
@@ -40,6 +41,7 @@ export const SIEGEL: Record<SiegelKey, SiegelInfo> = {
   bio: { key: "bio", label: "Bio", logoUrl: bioLogo.url },
   "ip-suisse": { key: "ip-suisse", label: "IP-Suisse", logoUrl: ipSuisseLogo.url },
   demeter: { key: "demeter", label: "Demeter", logoUrl: demeterLogo.url },
+  "suisse-garantie": { key: "suisse-garantie", label: "Suisse Garantie", logoUrl: suisseGarantieLogo.url },
 };
 
 export interface Nachhaltigkeit {
@@ -105,7 +107,7 @@ export const PRODUKTE: Produkt[] = [
     kategorie: "fruechte-gemuese",
     herkunft: "Region Thurgau (CH)",
     preis: 6.0,
-    siegel: ["ip-suisse"],
+    siegel: ["suisse-garantie"],
     saison: "in",
     emoji: "🍓",
     bildUrl: erdbeerenChAsset.url,
@@ -149,7 +151,7 @@ export const PRODUKTE: Produkt[] = [
     kategorie: "fruechte-gemuese",
     herkunft: "Schweiz",
     preis: 2.8,
-    siegel: ["ip-suisse"],
+    siegel: ["suisse-garantie"],
     saison: "in",
     emoji: "🍎",
     bildUrl: aepfelAsset.url,
@@ -275,7 +277,7 @@ export const PRODUKTE: Produkt[] = [
     kategorie: "milch-eier",
     herkunft: "Schweiz",
     preis: 3.85,
-    siegel: ["ip-suisse"],
+    siegel: ["suisse-garantie"],
     saison: "ganzjahr",
     emoji: "🧈",
     bildUrl: butterAsset.url,
@@ -446,7 +448,7 @@ export const PRODUKTE: Produkt[] = [
     kategorie: "fruechte-gemuese",
     herkunft: "Schweiz",
     preis: 2.3,
-    siegel: ["bio"],
+    siegel: ["bio", "suisse-garantie"],
     saison: "in",
     emoji: "🥒",
     bildUrl: gurkeChAsset.url,
