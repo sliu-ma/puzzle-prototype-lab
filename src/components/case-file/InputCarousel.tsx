@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 export type InputCard = {
   title: string;
   body: string;
-  hint: string;
+  hint?: string;
   visual?: React.ReactNode;
 };
 
@@ -156,9 +156,11 @@ export function InputCarousel({
                   <h4 className="mt-1 font-serif text-xl font-bold">{c.title}</h4>
                   <p className="mt-2 text-sm text-foreground/85">{c.body}</p>
                   {c.visual && <div className="mt-3">{c.visual}</div>}
-                  <p className="mt-3 border-t border-dashed border-border pt-2 text-xs italic text-foreground/60">
-                    {c.hint}
-                  </p>
+                  {c.hint && (
+                    <p className="mt-3 border-t border-dashed border-border pt-2 text-xs italic text-foreground/60">
+                      {c.hint}
+                    </p>
+                  )}
                 </div>
               </div>
             ))}
