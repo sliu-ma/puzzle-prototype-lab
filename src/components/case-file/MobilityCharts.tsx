@@ -68,7 +68,7 @@ function Row({
   );
 }
 
-/** 1 Zug = 90 Autos (∅ Auslastung) bzw. 310 Autos (max. Kapazität). */
+/** 1 Zug = 90 Autos (∅ Auslastung). */
 export function TrainVsCars() {
   return (
     <div className="space-y-3 rounded-sm border border-dashed border-stamp/40 bg-paper-deep/20 p-3">
@@ -81,14 +81,6 @@ export function TrainVsCars() {
         count={90}
         display={90}
         cols={15}
-      />
-      <div className="border-t border-dashed border-border" />
-      <CompareRow
-        badge="Max. Kapazität"
-        count={310}
-        display={40}
-        cols={20}
-        note="von 310 Autos gezeigt"
       />
     </div>
   );
