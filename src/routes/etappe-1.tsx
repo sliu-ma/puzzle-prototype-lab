@@ -362,7 +362,7 @@ function AktePage() {
               },
               {
                 title: "Ein Zug ersetzt viele Autos",
-                body: "Vergleicht man die durchschnittliche Auslastung von Zug und Auto, ersetzt ein Zug rund 90 Autos. Züge sind oft nicht voll besetzt — trotzdem bündeln sie viele Einzelfahrten.",
+                body: "Vergleicht man die durchschnittliche Auslastung von Zug und Auto, ersetzt ein Zug rund 90 Autos, bei voller Kapazität (maximale Platzzahl) wären es sogar bis zu 310. Der grosse Unterschied zeigt: Züge sind oft nicht voll besetzt.",
                 visual: <TrainVsCars />,
               },
               {
