@@ -88,22 +88,53 @@ export function SaisonProdukte() {
 
 export function FoodWasteChart() {
   return (
-    <div className="grid grid-cols-2 gap-3">
-      <div className="flex flex-col items-center gap-2 rounded-sm border border-dashed border-stamp/40 bg-paper-deep/30 p-3 text-center">
-        <Trash2 className="h-6 w-6 text-stamp" strokeWidth={2.25} />
-        <div className="font-serif text-2xl font-bold leading-none">90 kg</div>
-        <div className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
-          pro Person / Jahr
+    <div className="space-y-2">
+      <div className="grid grid-cols-2 gap-2">
+        <div className="flex flex-col items-center gap-1.5 rounded-sm border border-dashed border-stamp/40 bg-paper-deep/30 p-3 text-center">
+          <Trash2 className="h-6 w-6 text-stamp" strokeWidth={2.25} />
+          <div className="font-serif text-2xl font-bold leading-none">90 kg</div>
+          <div className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+            pro Person / Jahr
+          </div>
+        </div>
+        <div className="flex flex-col items-center gap-1.5 rounded-sm border border-dashed border-stamp/40 bg-paper-deep/30 p-3 text-center">
+          <Banknote className="h-6 w-6 text-stamp" strokeWidth={2.25} />
+          <div className="font-serif text-2xl font-bold leading-none">&gt; 600.–</div>
+          <div className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+            CHF pro Haushalt / Jahr
+          </div>
         </div>
       </div>
-      <div className="flex flex-col items-center gap-2 rounded-sm border border-dashed border-stamp/40 bg-paper-deep/30 p-3 text-center">
-        <Banknote className="h-6 w-6 text-stamp" strokeWidth={2.25} />
-        <div className="font-serif text-2xl font-bold leading-none">
-          &gt; 600.–
+
+      <div className="rounded-sm border border-dashed border-stamp/40 bg-paper-deep/30 p-3">
+        <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
+          Wo entsteht der Food-Waste?
+        </p>
+        <div className="mt-2 space-y-1.5">
+          <WasteRow label="Haushalte" value={38} />
+          <WasteRow label="Landwirtschaft & Verarbeitung" value={40} />
+          <WasteRow label="Gastronomie & Handel" value={22} />
         </div>
-        <div className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
-          CHF pro Haushalt / Jahr
-        </div>
+        <p className="mt-2 font-mono-typed text-[10px] italic text-muted-foreground">
+          Rund ein Drittel aller Lebensmittel weltweit landet im Abfall.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function WasteRow({ label, value }: { label: string; value: number }) {
+  return (
+    <div>
+      <div className="mb-0.5 flex items-center justify-between font-mono-typed text-[11px]">
+        <span>{label}</span>
+        <span className="font-bold">{value}%</span>
+      </div>
+      <div className="h-2 w-full overflow-hidden rounded-full bg-border/60">
+        <div
+          className="h-full bg-stamp/70"
+          style={{ width: `${value}%` }}
+        />
       </div>
     </div>
   );
