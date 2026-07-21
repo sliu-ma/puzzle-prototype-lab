@@ -24,7 +24,7 @@ export function RoteListeChart() {
         </span>
       </div>
 
-      <div className="mt-4 grid grid-cols-3 gap-3 justify-items-center">
+      <div className="mt-4 grid grid-cols-3 gap-1.5 justify-items-center">
         {icons.map((Icon, i) => {
           const isEndangered = endangered.has(i);
           return (
@@ -45,7 +45,7 @@ export function RoteListeChart() {
         })}
       </div>
 
-      <div className="mt-3 flex items-center gap-3 text-[10px] font-mono-typed">
+      <div className="mt-auto pt-3 flex items-center gap-3 text-[10px] font-mono-typed">
         <span className="flex items-center gap-1.5">
           <span className="inline-block h-2.5 w-2.5 rounded-sm border border-rose-500/60 bg-rose-500/30" />
           <span className="text-rose-700">gefährdet</span>
@@ -55,10 +55,6 @@ export function RoteListeChart() {
           <span className="text-muted-foreground">nicht gefährdet</span>
         </span>
       </div>
-
-      <p className="mt-auto pt-3 font-mono-typed text-[10px] text-muted-foreground">
-        → Rote Liste (BAFU)
-      </p>
     </div>
   );
 }
