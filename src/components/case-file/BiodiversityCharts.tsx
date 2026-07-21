@@ -117,7 +117,7 @@ export function UrsachenCarousel() {
                 <img
                   src={u.src}
                   alt={u.title}
-                  className="h-31 w-full object-cover sm:h-39"
+                  className="h-[7.7rem] w-full object-cover sm:h-[9.8rem]"
                   loading="lazy"
                 />
                 <div
