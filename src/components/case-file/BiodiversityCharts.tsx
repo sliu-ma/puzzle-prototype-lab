@@ -1,60 +1,63 @@
 import { useRef, useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Bird, Fish, Bug, Rabbit, Squirrel, Turtle, Snail, Cat, Dog } from "lucide-react";
 import { cn } from "@/lib/utils";
 import versiegelungAsset from "@/assets/ursachen/versiegelung.jpg.asset.json";
 import pestizideAsset from "@/assets/ursachen/pestizide.jpg.asset.json";
 import begradigungAsset from "@/assets/ursachen/begradigung.jpg.asset.json";
 
-/** Rote Liste: rund 1/3 der untersuchten Arten in der Schweiz gefährdet. */
+/** Rote Liste: 3 von 9 Arten gefährdet (≈ 1/3). */
 export function RoteListeChart() {
-  const pct = 33;
+  const icons = [Bird, Bug, Fish, Rabbit, Turtle, Squirrel, Snail, Cat, Dog];
+  // Drei zufällig verteilte "gefährdete" Positionen
+  const endangered = new Set([0, 3, 6]);
+
   return (
-    <div className="rounded-sm border border-dashed border-stamp/40 bg-paper-deep/20 p-3">
+    <div className="flex h-full flex-col rounded-sm border border-dashed border-stamp/40 bg-paper-deep/20 p-3">
       <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
         Untersuchte Arten in der Schweiz
       </p>
-      <div className="mt-3 flex items-center gap-3">
-        <div className="relative h-20 w-20 shrink-0">
-          <svg viewBox="0 0 36 36" className="h-full w-full -rotate-90">
-            <circle cx="18" cy="18" r="15.5" className="fill-none stroke-border" strokeWidth="4" />
-            <circle
-              cx="18"
-              cy="18"
-              r="15.5"
-              className="fill-none stroke-rose-500/80"
-              strokeWidth="4"
-              strokeDasharray={`${pct} ${100 - pct}`}
-              pathLength={100}
-              strokeLinecap="round"
-            />
-          </svg>
-          <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="font-serif text-xl font-bold leading-none">⅓</span>
-            <span className="font-mono-typed text-[8px] uppercase text-muted-foreground">
-              gefährdet
-            </span>
-          </div>
-        </div>
-        <div className="min-w-0 text-[11px] leading-snug">
-          <div className="font-mono-typed text-rose-700">
-            Gefährdet oder ausgestorben
-          </div>
-          <div className="mt-1 font-mono-typed text-muted-foreground">
-            → Rote Liste (BAFU)
-          </div>
-        </div>
+
+      <div className="mt-3 flex items-baseline gap-2">
+        <span className="font-serif text-3xl font-bold leading-none">⅓</span>
+        <span className="font-mono-typed text-[11px] text-muted-foreground">
+          gefährdet oder ausgestorben
+        </span>
       </div>
-      <div className="mt-3 grid grid-cols-3 gap-1">
-        {Array.from({ length: 30 }).map((_, i) => (
-          <div
-            key={i}
-            className={cn(
-              "h-1.5 rounded-full",
-              i < 10 ? "bg-rose-500/80" : "bg-border",
-            )}
-          />
-        ))}
+
+      <div className="mt-4 grid grid-cols-9 gap-1.5">
+        {icons.map((Icon, i) => {
+          const isEndangered = endangered.has(i);
+          return (
+            <div
+              key={i}
+              className={cn(
+                "flex aspect-square items-center justify-center rounded-sm border",
+                isEndangered
+                  ? "border-rose-500/60 bg-rose-500/15 text-rose-600"
+                  : "border-border bg-paper text-muted-foreground/60",
+              )}
+              aria-label={isEndangered ? "gefährdet" : "nicht gefährdet"}
+            >
+              <Icon className="h-3.5 w-3.5 sm:h-4 sm:w-4" strokeWidth={2} />
+            </div>
+          );
+        })}
       </div>
+
+      <div className="mt-3 flex items-center gap-3 text-[10px] font-mono-typed">
+        <span className="flex items-center gap-1.5">
+          <span className="inline-block h-2.5 w-2.5 rounded-sm border border-rose-500/60 bg-rose-500/30" />
+          <span className="text-rose-700">gefährdet</span>
+        </span>
+        <span className="flex items-center gap-1.5">
+          <span className="inline-block h-2.5 w-2.5 rounded-sm border border-border bg-paper" />
+          <span className="text-muted-foreground">nicht gefährdet</span>
+        </span>
+      </div>
+
+      <p className="mt-auto pt-3 font-mono-typed text-[10px] text-muted-foreground">
+        → Rote Liste (BAFU)
+      </p>
     </div>
   );
 }
@@ -92,7 +95,7 @@ export function UrsachenCarousel() {
   };
 
   return (
-    <div className="rounded-sm border border-dashed border-stamp/40 bg-paper-deep/20 p-3">
+    <div className="flex h-full flex-col rounded-sm border border-dashed border-stamp/40 bg-paper-deep/20 p-3">
       <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
         Drei Ursachen · Bild {active + 1}/{URSACHEN.length}
       </p>
@@ -148,7 +151,7 @@ export function UrsachenCarousel() {
         </button>
       </div>
 
-      <div className="mt-2 flex items-center justify-center gap-1.5">
+      <div className="mt-auto flex items-center justify-center gap-1.5 pt-2">
         {URSACHEN.map((_, i) => (
           <button
             key={i}
@@ -166,7 +169,7 @@ export function UrsachenCarousel() {
   );
 }
 
-/** Vielfalt = Lebensgrundlage. Vier Icons/Werte in Kompaktraster. */
+/** Vielfalt = Lebensgrundlage. Vier Icons/Werte. */
 export function VielfaltGrid() {
   const items = [
     { icon: "💧", label: "Trinkwasser" },
@@ -175,11 +178,12 @@ export function VielfaltGrid() {
     { icon: "🐝", label: "Bestäubung" },
   ];
   return (
-    <div className="rounded-sm border border-dashed border-stamp/40 bg-paper-deep/20 p-3">
+    <div className="flex h-full flex-col rounded-sm border border-dashed border-stamp/40 bg-paper-deep/20 p-3">
       <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
         Was uns die Biodiversität schenkt
       </p>
-      <div className="mt-3 grid grid-cols-2 gap-2">
+      {/* Untereinander bis sm, dann 2x2 */}
+      <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
         {items.map((it) => (
           <div
             key={it.label}
