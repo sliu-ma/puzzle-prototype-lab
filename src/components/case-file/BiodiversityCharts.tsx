@@ -113,16 +113,20 @@ export function UrsachenCarousel() {
         >
           {URSACHEN.map((u) => (
             <div key={u.title} className="w-full shrink-0 snap-center">
-              <div className="overflow-hidden rounded-sm border border-border bg-paper">
+              <div className="relative overflow-hidden rounded-sm border border-border bg-paper">
                 <img
                   src={u.src}
                   alt={u.title}
-                  className="h-32 w-full object-cover sm:h-40"
+                  className="h-44 w-full object-cover sm:h-56"
                   loading="lazy"
                 />
-                <div className="p-2">
-                  <p className="font-serif text-sm font-bold">{u.title}</p>
-                  <p className="mt-1 text-[11px] leading-snug text-foreground/80">
+                <div
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"
+                />
+                <div className="absolute inset-x-0 bottom-0 p-2.5 text-white">
+                  <p className="font-serif text-sm font-bold drop-shadow">{u.title}</p>
+                  <p className="mt-0.5 text-[11px] leading-snug text-white/90 drop-shadow">
                     {u.desc}
                   </p>
                 </div>
