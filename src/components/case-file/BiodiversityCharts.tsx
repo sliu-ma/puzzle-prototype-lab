@@ -8,6 +8,7 @@ import begradigungAsset from "@/assets/ursachen/begradigung.jpg.asset.json";
 /** Rote Liste: 3 von 9 Arten gefährdet (≈ 1/3). */
 export function RoteListeChart() {
   const icons = [Bird, Bug, Fish, Rabbit, Turtle, Squirrel, Snail, Cat, Dog];
+  // Drei zufällig verteilte "gefährdete" Positionen
   const endangered = new Set([0, 3, 6]);
 
   return (
@@ -23,34 +24,41 @@ export function RoteListeChart() {
         </span>
       </div>
 
-      <div className="mt-5 flex justify-center">
-        <div className="grid grid-cols-3 gap-3">
-          {icons.map((Icon, i) => {
-            const isEndangered = endangered.has(i);
-
-            return (
-              <div key={i} aria-label={isEndangered ? "gefährdet" : "nicht gefährdet"}>
-                <Icon
-                  className={cn("h-8 w-8 sm:h-9 sm:w-9", isEndangered ? "text-rose-600" : "text-muted-foreground/60")}
-                  strokeWidth={2}
-                />
-              </div>
-            );
-          })}
-        </div>
+      <div className="mt-4 grid grid-cols-3 gap-3 justify-items-center">
+        {icons.map((Icon, i) => {
+          const isEndangered = endangered.has(i);
+          return (
+            <div
+              key={i}
+              className="flex aspect-square w-full items-center justify-center"
+              aria-label={isEndangered ? "gefährdet" : "nicht gefährdet"}
+            >
+              <Icon
+                className={cn(
+                  "h-9 w-9 sm:h-11 sm:w-11",
+                  isEndangered ? "text-rose-600" : "text-muted-foreground/60",
+                )}
+                strokeWidth={2}
+              />
+            </div>
+          );
+        })}
       </div>
 
-      <div className="mt-auto flex items-center gap-3 pt-3 text-[10px] font-mono-typed">
+      <div className="mt-3 flex items-center gap-3 text-[10px] font-mono-typed">
         <span className="flex items-center gap-1.5">
           <span className="inline-block h-2.5 w-2.5 rounded-sm border border-rose-500/60 bg-rose-500/30" />
           <span className="text-rose-700">gefährdet</span>
         </span>
-
         <span className="flex items-center gap-1.5">
           <span className="inline-block h-2.5 w-2.5 rounded-sm border border-border bg-paper" />
           <span className="text-muted-foreground">nicht gefährdet</span>
         </span>
       </div>
+
+      <p className="mt-auto pt-3 font-mono-typed text-[10px] text-muted-foreground">
+        → Rote Liste (BAFU)
+      </p>
     </div>
   );
 }
@@ -107,10 +115,17 @@ export function UrsachenCarousel() {
           {URSACHEN.map((u) => (
             <div key={u.title} className="w-full shrink-0 snap-center">
               <div className="overflow-hidden rounded-sm border border-border bg-paper">
-                <img src={u.src} alt={u.title} className="h-32 w-full object-cover sm:h-40" loading="lazy" />
+                <img
+                  src={u.src}
+                  alt={u.title}
+                  className="h-32 w-full object-cover sm:h-40"
+                  loading="lazy"
+                />
                 <div className="p-2">
                   <p className="font-serif text-sm font-bold">{u.title}</p>
-                  <p className="mt-1 text-[11px] leading-snug text-foreground/80">{u.desc}</p>
+                  <p className="mt-1 text-[11px] leading-snug text-foreground/80">
+                    {u.desc}
+                  </p>
                 </div>
               </div>
             </div>
@@ -144,7 +159,10 @@ export function UrsachenCarousel() {
             type="button"
             aria-label={`Ursache ${i + 1}`}
             onClick={() => goto(i)}
-            className={cn("h-1.5 rounded-full transition-all", i === active ? "w-5 bg-stamp" : "w-1.5 bg-border")}
+            className={cn(
+              "h-1.5 rounded-full transition-all",
+              i === active ? "w-5 bg-stamp" : "w-1.5 bg-border",
+            )}
           />
         ))}
       </div>
@@ -168,7 +186,10 @@ export function VielfaltGrid() {
       {/* Untereinander bis sm, dann 2x2 */}
       <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
         {items.map((it) => (
-          <div key={it.label} className="flex items-center gap-2 rounded-sm border border-border bg-paper px-2 py-1.5">
+          <div
+            key={it.label}
+            className="flex items-center gap-2 rounded-sm border border-border bg-paper px-2 py-1.5"
+          >
             <span className="text-lg leading-none">{it.icon}</span>
             <span className="font-mono-typed text-[11px]">{it.label}</span>
           </div>
