@@ -24,7 +24,7 @@ export function RoteListeChart() {
         </span>
       </div>
 
-      <div className="mt-4 grid grid-cols-3 gap-1.5 justify-items-center">
+      <div className="mt-4 grid grid-cols-3 gap-0 justify-items-center">
         {icons.map((Icon, i) => {
           const isEndangered = endangered.has(i);
           return (
