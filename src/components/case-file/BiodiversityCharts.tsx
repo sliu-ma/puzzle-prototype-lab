@@ -17,29 +17,28 @@ export function RoteListeChart() {
         Untersuchte Arten in der Schweiz
       </p>
 
-      <div className="mt-3 flex items-center gap-2">
-        <span className="font-serif text-4xl font-bold leading-none">⅓</span>
-        <span className="font-mono-typed text-[11px] leading-tight text-muted-foreground">
+      <div className="mt-3 flex items-baseline gap-2">
+        <span className="font-serif text-3xl font-bold leading-none">⅓</span>
+        <span className="font-mono-typed text-[11px] text-muted-foreground">
           gefährdet oder ausgestorben
         </span>
       </div>
 
-      <div className="mt-4 grid grid-cols-3 gap-3 justify-items-center">
+      <div className="mt-4 grid grid-cols-9 gap-1.5">
         {icons.map((Icon, i) => {
           const isEndangered = endangered.has(i);
           return (
             <div
               key={i}
-              className="flex aspect-square w-full items-center justify-center"
+              className={cn(
+                "flex aspect-square items-center justify-center rounded-sm border",
+                isEndangered
+                  ? "border-rose-500/60 bg-rose-500/15 text-rose-600"
+                  : "border-border bg-paper text-muted-foreground/60",
+              )}
               aria-label={isEndangered ? "gefährdet" : "nicht gefährdet"}
             >
-              <Icon
-                className={cn(
-                  "h-9 w-9 sm:h-11 sm:w-11",
-                  isEndangered ? "text-rose-600" : "text-muted-foreground/60",
-                )}
-                strokeWidth={2}
-              />
+              <Icon className="h-3.5 w-3.5 sm:h-4 sm:w-4" strokeWidth={2} />
             </div>
           );
         })}
