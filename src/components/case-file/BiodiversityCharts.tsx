@@ -34,10 +34,7 @@ export function RoteListeChart() {
               aria-label={isEndangered ? "gefährdet" : "nicht gefährdet"}
             >
               <Icon
-                className={cn(
-                  "h-16 w-16 sm:h-20 sm:w-20",
-                  isEndangered ? "text-rose-600" : "text-muted-foreground/60",
-                )}
+                className={cn("h-16 w-16 sm:h-10 sm:w-10", isEndangered ? "text-rose-600" : "text-muted-foreground/60")}
                 strokeWidth={2}
               />
             </div>
@@ -111,17 +108,10 @@ export function UrsachenCarousel() {
           {URSACHEN.map((u) => (
             <div key={u.title} className="w-full shrink-0 snap-center">
               <div className="overflow-hidden rounded-sm border border-border bg-paper">
-                <img
-                  src={u.src}
-                  alt={u.title}
-                  className="h-32 w-full object-cover sm:h-40"
-                  loading="lazy"
-                />
+                <img src={u.src} alt={u.title} className="h-32 w-full object-cover sm:h-40" loading="lazy" />
                 <div className="p-2">
                   <p className="font-serif text-sm font-bold">{u.title}</p>
-                  <p className="mt-1 text-[11px] leading-snug text-foreground/80">
-                    {u.desc}
-                  </p>
+                  <p className="mt-1 text-[11px] leading-snug text-foreground/80">{u.desc}</p>
                 </div>
               </div>
             </div>
@@ -155,10 +145,7 @@ export function UrsachenCarousel() {
             type="button"
             aria-label={`Ursache ${i + 1}`}
             onClick={() => goto(i)}
-            className={cn(
-              "h-1.5 rounded-full transition-all",
-              i === active ? "w-5 bg-stamp" : "w-1.5 bg-border",
-            )}
+            className={cn("h-1.5 rounded-full transition-all", i === active ? "w-5 bg-stamp" : "w-1.5 bg-border")}
           />
         ))}
       </div>
@@ -182,10 +169,7 @@ export function VielfaltGrid() {
       {/* Untereinander bis sm, dann 2x2 */}
       <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
         {items.map((it) => (
-          <div
-            key={it.label}
-            className="flex items-center gap-2 rounded-sm border border-border bg-paper px-2 py-1.5"
-          >
+          <div key={it.label} className="flex items-center gap-2 rounded-sm border border-border bg-paper px-2 py-1.5">
             <span className="text-lg leading-none">{it.icon}</span>
             <span className="font-mono-typed text-[11px]">{it.label}</span>
           </div>
