@@ -13,6 +13,7 @@ import { usePersistentState, usePersistentSet } from "@/lib/persist";
 import { cn } from "@/lib/utils";
 import { useEnvelopePrompt } from "@/components/case-file/EnvelopeDialog";
 import { useSuccessBurst } from "@/components/case-file/SuccessBurst";
+import energieetiketteAsset from "@/assets/energieetikette.png.asset.json";
 
 
 const HINTS_004: Hint[] = [
@@ -287,6 +288,13 @@ function AktePage() {
               {
                 title: "Effizienzklasse",
                 body: "A+++ Geräte verbrauchen oft nur ein Drittel der Energie alter Modelle. Bei Kühlschrank, Ofen und Boiler lohnt sich der Austausch über die Lebensdauer fast immer.",
+                visual: (
+                  <img
+                    src={energieetiketteAsset.url}
+                    alt="Energieetikette Skala A bis G"
+                    className="mx-auto block h-auto w-full max-w-[220px]"
+                  />
+                ),
                 hint: "Energieetikette: A (sparsam) bis G (Stromfresser).",
               },
               {
