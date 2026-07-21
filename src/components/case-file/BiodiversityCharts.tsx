@@ -35,7 +35,7 @@ export function RoteListeChart() {
             >
               <Icon
                 className={cn(
-                  "h-9 w-9 sm:h-11 sm:w-11",
+                  "h-16 w-16 sm:h-20 sm:w-20",
                   isEndangered ? "text-rose-600" : "text-muted-foreground/60",
                 )}
                 strokeWidth={2}
