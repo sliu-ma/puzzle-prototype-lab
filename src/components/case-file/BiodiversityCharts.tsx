@@ -17,10 +17,10 @@ export function RoteListeChart() {
         Untersuchte Arten in der Schweiz
       </p>
 
-      <div className="mt-3 flex items-baseline gap-2">
+      <div className="mt-3 flex items-center gap-2">
         <span className="font-serif text-3xl font-bold leading-none">⅓</span>
-        <span className="font-mono-typed text-[11px] text-muted-foreground">
-          gefährdet oder ausgestorben
+        <span className="font-mono-typed text-[11px] leading-tight text-muted-foreground">
+          gefährdet oder<br />ausgestorben
         </span>
       </div>
 
