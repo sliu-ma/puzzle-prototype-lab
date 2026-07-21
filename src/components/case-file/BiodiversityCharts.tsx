@@ -8,7 +8,6 @@ import begradigungAsset from "@/assets/ursachen/begradigung.jpg.asset.json";
 /** Rote Liste: 3 von 9 Arten gefährdet (≈ 1/3). */
 export function RoteListeChart() {
   const icons = [Bird, Bug, Fish, Rabbit, Turtle, Squirrel, Snail, Cat, Dog];
-  // Drei zufällig verteilte "gefährdete" Positionen
   const endangered = new Set([0, 3, 6]);
 
   return (
@@ -24,29 +23,29 @@ export function RoteListeChart() {
         </span>
       </div>
 
-      <div className="mt-4 grid grid-cols-3 gap-0 justify-items-center">
-        {icons.map((Icon, i) => {
-          const isEndangered = endangered.has(i);
-          return (
-            <div
-              key={i}
-              className="flex aspect-square w-full items-center justify-center"
-              aria-label={isEndangered ? "gefährdet" : "nicht gefährdet"}
-            >
-              <Icon
-                className={cn("h-8 w-8 sm:h-10 sm:w-10", isEndangered ? "text-rose-600" : "text-muted-foreground/60")}
-                strokeWidth={2}
-              />
-            </div>
-          );
-        })}
+      <div className="mt-5 flex justify-center">
+        <div className="grid grid-cols-3 gap-3">
+          {icons.map((Icon, i) => {
+            const isEndangered = endangered.has(i);
+
+            return (
+              <div key={i} aria-label={isEndangered ? "gefährdet" : "nicht gefährdet"}>
+                <Icon
+                  className={cn("h-8 w-8 sm:h-9 sm:w-9", isEndangered ? "text-rose-600" : "text-muted-foreground/60")}
+                  strokeWidth={2}
+                />
+              </div>
+            );
+          })}
+        </div>
       </div>
 
-      <div className="mt-auto pt-3 flex items-center gap-3 text-[10px] font-mono-typed">
+      <div className="mt-auto flex items-center gap-3 pt-3 text-[10px] font-mono-typed">
         <span className="flex items-center gap-1.5">
           <span className="inline-block h-2.5 w-2.5 rounded-sm border border-rose-500/60 bg-rose-500/30" />
           <span className="text-rose-700">gefährdet</span>
         </span>
+
         <span className="flex items-center gap-1.5">
           <span className="inline-block h-2.5 w-2.5 rounded-sm border border-border bg-paper" />
           <span className="text-muted-foreground">nicht gefährdet</span>
