@@ -34,7 +34,7 @@ export function RoteListeChart() {
               aria-label={isEndangered ? "gefährdet" : "nicht gefährdet"}
             >
               <Icon
-                className={cn("h-16 w-16 sm:h-10 sm:w-10", isEndangered ? "text-rose-600" : "text-muted-foreground/60")}
+                className={cn("h-8 w-8 sm:h-10 sm:w-10", isEndangered ? "text-rose-600" : "text-muted-foreground/60")}
                 strokeWidth={2}
               />
             </div>
