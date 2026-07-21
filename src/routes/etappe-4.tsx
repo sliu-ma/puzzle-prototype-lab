@@ -288,6 +288,13 @@ function AktePage() {
               {
                 title: "Effizienzklasse",
                 body: "A+++ Geräte verbrauchen oft nur ein Drittel der Energie alter Modelle. Bei Kühlschrank, Ofen und Boiler lohnt sich der Austausch über die Lebensdauer fast immer.",
+                visual: (
+                  <img
+                    src={energieetiketteAsset.url}
+                    alt="Energieetikette Skala A bis G"
+                    className="mx-auto block h-auto w-full max-w-[220px]"
+                  />
+                ),
                 hint: "Energieetikette: A (sparsam) bis G (Stromfresser).",
               },
               {
