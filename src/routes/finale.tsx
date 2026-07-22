@@ -924,7 +924,7 @@ function FrageRenderer({
 }: {
   frage: Frage;
   answered: boolean;
-  onResult: (correct: boolean) => void;
+  onResult: (correct: boolean, userAnswer?: unknown) => void;
 }) {
   switch (frage.type) {
     case "single":
