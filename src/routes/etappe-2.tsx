@@ -231,7 +231,7 @@ function AktePage() {
             cards={[
               {
                 title: "Regional & saisonal einkaufen",
-                body: `Regionale und saisonale Lebensmittel haben kürzere Transportwege und kürzere Lagerzeiten als importierte Ware. Im ${saison.label} sind zum Beispiel folgende Lebensmittel saisonal: ${saison.items.map((i) => i.name).join(" und ")}.`,
+                body: `Regionale und saisonale Lebensmittel haben kürzere Transportwege und kürzere Lagerzeiten als importierte Ware. Im ${saison.label} sind zum Beispiel folgende Lebensmittel saisonal und regional:\u00a0`,
                 visual: <SaisonProdukte />,
               },
               {
