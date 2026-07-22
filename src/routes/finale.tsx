@@ -1699,15 +1699,16 @@ function EitherView({
 }: {
   frage: EitherFrage;
   answered: boolean;
-  onResult: (c: boolean) => void;
+  onResult: (c: boolean, userAnswer?: unknown) => void;
 }) {
+  const optionenShuffled = useMemo(() => shuffleArr(frage.optionen), [frage]);
   const [mine, setMine] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
 
   const submit = () => {
     if (submitted || answered || !mine) return;
     setSubmitted(true);
-    onResult(mine === frage.korrekt);
+    onResult(mine === frage.korrekt, mine);
   };
 
   return (
@@ -1716,7 +1717,8 @@ function EitherView({
         Vergleiche die beiden Etiketten und wähle die energiesparendere Maschine.
       </p>
       <div className="grid grid-cols-2 gap-3">
-        {frage.optionen.map((opt) => {
+        {optionenShuffled.map((opt) => {
+
           const isMine = mine === opt.id;
           const isCorrect = opt.id === frage.korrekt;
           const reveal = submitted;
