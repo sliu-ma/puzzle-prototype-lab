@@ -91,181 +91,249 @@ type BucketFrage = Base & {
   solution: Record<string, string>; // itemId -> bucketId
 };
 
-type Frage = SingleFrage | MultiFrage | ShortFrage | MatchFrage | OrderFrage | BucketFrage;
+type SliderFrage = Base & {
+  type: "slider";
+  min: number;
+  max: number;
+  step: number;
+  unit: string;
+  zielwert: number;
+  toleranz: number;
+};
 
-const FRAGEN: Frage[] = [
-  // Mobilität
-  {
-    id: 1,
-    type: "single",
-    thema: "Mobilität",
-    ratsmitglied: "Ratsmitglied Schmid",
-    frage:
-      "Wie viel mehr CO₂ verursacht ein Inlandflug gegenüber dem Zug auf gleicher Strecke ungefähr?",
-    optionen: ["Etwa gleich viel", "Rund 3-mal mehr", "Rund 30-mal mehr"],
-    korrekt: 2,
-    erklaerung:
-      "Ein Inlandflug stösst etwa 30-mal mehr CO₂ pro Person aus als der Zug (BAFU, mobitool.ch).",
-  },
-  {
-    id: 2,
-    type: "multi",
-    thema: "Mobilität",
-    ratsmitglied: "Ratsmitglied Schmid",
-    frage:
-      "Welche dieser Aussagen zum Verkehr in der Schweiz stimmen? (Mehrfachauswahl)",
-    optionen: [
-      "Rund die Hälfte aller Pendlerwege ist kürzer als 5 km.",
-      "Ein voll besetztes Auto ist klimafreundlicher als ein voller Zug.",
-      "Velo und zu Fuss verursachen praktisch kein CO₂.",
-      "Der Verkehr ist für unter 5 % der CH-Treibhausgase verantwortlich.",
-    ],
-    korrekt: [0, 2],
-    erklaerung:
-      "Rund 50 % der Pendlerwege sind unter 5 km, Velo/zu Fuss sind nahezu CO₂-frei. Der Verkehr macht aber rund ein Drittel der CH-Emissionen aus — nicht 5 %. Die Auto-Aussage ist eine Scheinrechnung.",
-  },
+type EitherFrage = Base & {
+  type: "either";
+  optionen: { id: string; label: string; image: string }[];
+  korrekt: string;
+};
 
-  // Konsum
-  {
-    id: 3,
-    type: "match",
-    thema: "Konsum",
-    ratsmitglied: "Ratsherr Brunner",
-    frage:
-      "Ordne jedes Label seinem Zweck zu. Ziehe das Label per Drag & Drop auf den passenden Zweck.",
-    links: [
-      { id: "biosuisse", label: "Bio Suisse", icon: bioLogo.url },
-      { id: "ipsuisse", label: "IP-Suisse", icon: ipSuisseLogo.url },
-      { id: "demeter", label: "Demeter", icon: demeterLogo.url },
-    ],
-    rechts: [
-      { id: "ch-bio", label: "Schweizer Bio-Landwirtschaft" },
-      { id: "ch-ip", label: "Integrierte CH-Produktion, weniger Pestizide" },
-      { id: "biodyn", label: "Biologisch-dynamische Landwirtschaft" },
-    ],
-    paare: { biosuisse: "ch-bio", ipsuisse: "ch-ip", demeter: "biodyn" },
-    erklaerung:
-      "Bio Suisse = CH-Bio; IP-Suisse = integrierte Produktion; Demeter = biologisch-dynamisch (strengster Anbau).",
-  },
-  {
-    id: 4,
-    type: "short",
-    thema: "Konsum",
-    ratsmitglied: "Ratsherr Brunner",
-    frage:
-      "Nennt ein Schweizer Saison-Gemüse, das im April typischerweise geerntet wird.",
-    akzeptiert: [
-      "lauch",
-      "feldsalat",
-      "nuesslisalat",
-      "nüsslisalat",
-      "karotten",
-      "rhabarber",
-      "spinat",
-      "spargel",
-      "radieschen",
-    ],
-    hint: "Es ist Frühling — Erdbeeren und Tomaten kommen erst später.",
-    erklaerung:
-      "Im April sind in CH u. a. Lauch, Feldsalat, Spinat, Radieschen, Spargel und Rhabarber saisonal verfügbar.",
-  },
+type Frage =
+  | SingleFrage
+  | MultiFrage
+  | ShortFrage
+  | MatchFrage
+  | OrderFrage
+  | BucketFrage
+  | SliderFrage
+  | EitherFrage;
 
-  // Biodiversität
-  {
-    id: 5,
-    type: "multi",
-    thema: "Biodiversität",
-    ratsmitglied: "Ratsfrau Lindenmann",
-    frage: "Was sind Massnahmen zur Förderung der Biodiversität?",
-    optionen: [
-      "Vernetzung von Lebensräumen (Korridore, Hecken)",
-      "Renaturierung von Bächen und Waldrändern",
-      "Blühstreifen am Feldrand anlegen",
-      "Aufforstung mit einer einzigen Baumart",
-    ],
-    korrekt: [0, 1, 2],
-    erklaerung:
-      "Vernetzung und Renaturierung schaffen ganze Lebensraum-Systeme, Blühstreifen sind punktuell hilfreich, Monokulturen schaden der Biodiversität sogar.",
-  },
-  {
-    id: 6,
-    type: "single",
-    thema: "Biodiversität",
-    ratsmitglied: "Ratsfrau Lindenmann",
-    frage:
-      "Wie viele der untersuchten Arten in der Schweiz stehen auf der Roten Liste?",
-    optionen: ["Rund 1 von 20", "Rund 1 von 3", "Rund 1 von 100"],
-    korrekt: 1,
-    erklaerung: "Rund ein Drittel der untersuchten Arten ist gefährdet (BAFU).",
-  },
+// F4 ist saisonadaptiv: Frage und akzeptierte Antworten hängen von der
+// aktuellen Jahreszeit ab (Nordhalbkugel, Schweiz).
+type Season = "Winter" | "Frühling" | "Sommer" | "Herbst";
 
-  // Wohnen
-  {
-    id: 7,
-    type: "short",
-    thema: "Wohnen",
-    ratsmitglied: "Ratsherr Frei",
-    frage:
-      "Wie viel Prozent Heizenergie spart eine Absenkung der Raumtemperatur um 1 °C ungefähr?",
-    akzeptiert: ["6", "6%", "6 prozent", "ca 6", "rund 6", "etwa 6"],
-    hint: "Faustregel im Energiebereich — eine einstellige Zahl.",
-    erklaerung:
-      "Faustregel: 1 °C kühler entspricht ca. 6 % weniger Heizenergie.",
-  },
-  {
-    id: 8,
-    type: "single",
-    thema: "Wohnen",
-    ratsmitglied: "Ratsherr Frei",
-    frage:
-      "In welchem Bereich entsteht der grösste Teil des Energieverbrauchs eines Schweizer Haushalts?",
-    optionen: ["Beleuchtung", "Heizung und Warmwasser", "Kühlschrank"],
-    korrekt: 1,
-    erklaerung:
-      "Heizung und Warmwasser machen oft 70–80 % des Haushaltsenergieverbrauchs aus.",
-  },
+function currentSeason(d: Date = new Date()): Season {
+  const m = d.getMonth() + 1;
+  if (m === 12 || m <= 2) return "Winter";
+  if (m <= 5) return "Frühling";
+  if (m <= 8) return "Sommer";
+  return "Herbst";
+}
 
-  // Energie
-  {
-    id: 9,
-    type: "bucket",
-    thema: "Energie",
-    ratsmitglied: "Gemeindepräsident",
-    frage: "Ordne die Energiequellen in erneuerbare und nicht erneuerbare ein.",
-    items: [
-      { id: "pv", label: "Photovoltaik" },
-      { id: "wasser", label: "Wasserkraft" },
-      { id: "gas", label: "Erdgas" },
-      { id: "kohle", label: "Steinkohle" },
-      { id: "wind", label: "Windkraft" },
-    ],
-    buckets: [
-      { id: "erneuerbar", label: "Erneuerbar" },
-      { id: "nicht", label: "Nicht erneuerbar" },
-    ],
-    solution: {
-      pv: "erneuerbar",
-      wasser: "erneuerbar",
-      wind: "erneuerbar",
-      gas: "nicht",
-      kohle: "nicht",
+const SAISON_ANTWORTEN: Record<Season, string[]> = {
+  Winter: [
+    "rosenkohl", "apfel", "äpfel", "aepfel", "lauch", "feldsalat",
+    "nüsslisalat", "nuesslisalat", "karotten", "karotte", "rande", "randen",
+    "sellerie", "pastinake", "pastinaken", "chicoree", "wirsing", "kohl",
+    "rotkohl", "weisskohl", "zwiebel", "zwiebeln", "kartoffel", "kartoffeln",
+  ],
+  Frühling: [
+    "spargel", "rhabarber", "radieschen", "spinat", "lauch",
+    "nüsslisalat", "nuesslisalat", "bärlauch", "baerlauch", "salat",
+    "kohlrabi", "mangold", "rucola",
+  ],
+  Sommer: [
+    "erdbeere", "erdbeeren", "gurke", "tomate", "tomaten", "zucchini",
+    "kirsche", "kirschen", "aprikose", "aprikosen", "bohnen", "salat",
+    "himbeere", "himbeeren", "peperoni", "melone", "melonen", "mais",
+    "heidelbeere", "heidelbeeren",
+  ],
+  Herbst: [
+    "kürbis", "kuerbis", "zwetschge", "zwetschgen", "apfel", "äpfel", "aepfel",
+    "birne", "birnen", "trauben", "kohl", "karotten", "karotte", "rande",
+    "randen", "lauch", "sellerie", "rotkohl", "wirsing", "pilze",
+  ],
+};
+
+function buildFragen(): Frage[] {
+  const season = currentSeason();
+  return [
+    // F1 · Mobilität · Slider
+    {
+      id: 1,
+      type: "slider",
+      thema: "Mobilität",
+      ratsmitglied: "Ratsmitglied Schmid",
+      frage:
+        "Um wie viel Rappen pro Kilometer ist das Auto teurer als der ÖV?",
+      min: 0,
+      max: 50,
+      step: 1,
+      unit: "Rp./km",
+      zielwert: 28,
+      toleranz: 3,
+      erklaerung:
+        "Vollkosten Auto ≈ 70 Rp./km, ÖV ≈ 42 Rp./km. Differenz: rund 28 Rp./km (Toleranz ±3).",
     },
-    erklaerung:
-      "Photovoltaik, Wasserkraft und Windkraft sind erneuerbar. Erdgas und Steinkohle sind fossile Brennstoffe und nicht erneuerbar.",
-  },
-  {
-    id: 10,
-    type: "single",
-    thema: "Energie",
-    ratsmitglied: "Gemeindepräsident",
-    frage:
-      "Im Gas-Gutachten stehen 95 g CO₂/kWh. Was stösst ein modernes Erdgaskraftwerk realistisch aus?",
-    optionen: ["Rund 95 g", "Rund 400 g", "Rund 820 g"],
-    korrekt: 1,
-    erklaerung:
-      "Erdgas liegt real bei rund 400 g CO₂/kWh — die 95-g-Angabe ist um den Faktor 4 zu tief.",
-  },
-];
+    // F2 · Mobilität · Single
+    {
+      id: 2,
+      type: "single",
+      thema: "Mobilität",
+      ratsmitglied: "Ratsmitglied Schmid",
+      frage:
+        "Wie viel Prozent aller Autofahrten in der Schweiz sind kürzer als 5 Kilometer?",
+      optionen: ["22 %", "32 %", "46 %", "60 %"],
+      korrekt: 2,
+      erklaerung:
+        "Rund 46 % aller Autofahrten in der Schweiz sind kürzer als 5 km — Strecken, die sich gut mit Velo oder zu Fuss zurücklegen liessen.",
+    },
+
+    // F3 · Konsum · Match (Drag & Drop mit Icons)
+    {
+      id: 3,
+      type: "match",
+      thema: "Konsum",
+      ratsmitglied: "Ratsherr Brunner",
+      frage:
+        "Ordne jedes Label seinem Zweck zu. Ziehe das Label per Drag & Drop auf die passende Beschreibung.",
+      links: [
+        { id: "biosuisse", label: "Bio Suisse", icon: bioLogo.url },
+        { id: "ipsuisse", label: "IP-Suisse", icon: ipSuisseLogo.url },
+        { id: "suissegar", label: "Suisse Garantie", icon: suisseGarantieLogo.url },
+      ],
+      rechts: [
+        { id: "bio", label: "Anbau ohne synthetische Pestizide, artengerechte Tierhaltung." },
+        { id: "ip", label: "Schweizer Landwirtschaft mit erhöhten Anforderungen an Umwelt und Tierwohl." },
+        { id: "garantie", label: "Rohstoffe und Verarbeitung zu 100 % aus der Schweiz." },
+      ],
+      paare: { biosuisse: "bio", ipsuisse: "ip", suissegar: "garantie" },
+      erklaerung:
+        "Bio Suisse = konsequenter Bio-Anbau. IP-Suisse = integrierte CH-Produktion mit erhöhten Öko- und Tierwohl-Standards. Suisse Garantie = 100 % Schweizer Herkunft und Verarbeitung.",
+    },
+
+    // F4 · Konsum · Short (saisonadaptiv)
+    {
+      id: 4,
+      type: "short",
+      thema: "Konsum",
+      ratsmitglied: "Ratsherr Brunner",
+      frage: `Nenne ein Schweizer Saisongemüse oder eine Saisonfrucht im ${season}.`,
+      akzeptiert: SAISON_ANTWORTEN[season],
+      hint: `Es ist ${season} — was wächst gerade wirklich in der Schweiz?`,
+      erklaerung:
+        `Im ${season} sind in der Schweiz z. B. ${SAISON_ANTWORTEN[season].slice(0, 4).join(", ")} saisonal verfügbar.`,
+    },
+
+    // F5 · Biodiversität · Multi
+    {
+      id: 5,
+      type: "multi",
+      thema: "Biodiversität",
+      ratsmitglied: "Ratsfrau Lindenmann",
+      frage:
+        "Welche Ursachen tragen zum Rückgang der Biodiversität in der Schweiz bei?",
+      optionen: [
+        "Versiegelung von Boden",
+        "Pestizide",
+        "Zu viel Regen",
+        "Begradigte Gewässer",
+      ],
+      korrekt: [0, 1, 3],
+      erklaerung:
+        "Versiegelung, Pestizide und begradigte Gewässer zerstören Lebensräume. „Zu viel Regen" gehört nicht zu den Hauptursachen.",
+    },
+    // F6 · Biodiversität · Single
+    {
+      id: 6,
+      type: "single",
+      thema: "Biodiversität",
+      ratsmitglied: "Ratsfrau Lindenmann",
+      frage:
+        "Wie viele der untersuchten Arten in der Schweiz stehen auf der Roten Liste?",
+      optionen: ["Rund 1 von 20", "Rund 1 von 3", "Rund 1 von 100"],
+      korrekt: 1,
+      erklaerung: "Rund ein Drittel — also 1 von 3 — der untersuchten Arten ist gefährdet (BAFU).",
+    },
+
+    // F7 · Wohnen · Short
+    {
+      id: 7,
+      type: "short",
+      thema: "Wohnen",
+      ratsmitglied: "Ratsherr Frei",
+      frage:
+        "Wie viel Prozent Heizenergie spart eine Absenkung der Raumtemperatur um 1 °C?",
+      akzeptiert: ["6", "6%", "6 prozent", "ca 6", "rund 6", "etwa 6", "circa 6"],
+      hint: "Faustregel — eine einstellige Zahl.",
+      erklaerung:
+        "Faustregel: 1 °C kühler entspricht ca. 6 % weniger Heizenergie.",
+    },
+    // F8 · Wohnen · Either (Bildvergleich Waschmaschinen)
+    {
+      id: 8,
+      type: "either",
+      thema: "Wohnen",
+      ratsmitglied: "Ratsherr Frei",
+      frage: "Welche Waschmaschine spart mehr Energie?",
+      optionen: [
+        { id: "a", label: "Klasse A", image: waschmaschineA.url },
+        { id: "e", label: "Klasse E", image: waschmaschineE.url },
+      ],
+      korrekt: "a",
+      erklaerung:
+        "Klasse A steht für die höchste Energieeffizienz. Klasse E verbraucht deutlich mehr Strom für dieselbe Wäscheladung.",
+    },
+
+    // F9 · Energie · Bucket
+    {
+      id: 9,
+      type: "bucket",
+      thema: "Energie",
+      ratsmitglied: "Gemeindepräsident",
+      frage: "Ordne die Energiequellen in erneuerbare und nicht erneuerbare ein.",
+      items: [
+        { id: "sonne", label: "Sonne" },
+        { id: "wasser", label: "Wasserkraft" },
+        { id: "wind", label: "Windkraft" },
+        { id: "geo", label: "Geothermie" },
+        { id: "gas", label: "Gas" },
+        { id: "kohle", label: "Kohle" },
+      ],
+      buckets: [
+        { id: "erneuerbar", label: "Erneuerbar" },
+        { id: "nicht", label: "Nicht erneuerbar" },
+      ],
+      solution: {
+        sonne: "erneuerbar",
+        wasser: "erneuerbar",
+        wind: "erneuerbar",
+        geo: "erneuerbar",
+        gas: "nicht",
+        kohle: "nicht",
+      },
+      erklaerung:
+        "Sonne, Wasserkraft, Windkraft und Geothermie sind erneuerbar. Gas und Kohle sind fossile Brennstoffe.",
+    },
+    // F10 · Energie · Short
+    {
+      id: 10,
+      type: "short",
+      thema: "Energie",
+      ratsmitglied: "Gemeindepräsident",
+      frage:
+        "Wie hoch ist der Anteil erneuerbarer Energien am Schweizer Energiemix (in %)?",
+      akzeptiert: [
+        "28", "28%", "28 prozent", "ca 28", "rund 28", "etwa 28",
+        "27", "29", "circa 28",
+      ],
+      hint: "Etwas mehr als ein Viertel.",
+      erklaerung:
+        "2023 lag der Anteil erneuerbarer Energien am Schweizer Endenergieverbrauch bei rund 28 %.",
+    },
+  ];
+}
+
+const FRAGEN: Frage[] = buildFragen();
 
 const MAX_FEHLER = 3;
 
