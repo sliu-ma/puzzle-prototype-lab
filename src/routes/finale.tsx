@@ -1252,7 +1252,7 @@ function MatchView({
   const startDrag = (lid: string) => (e: React.PointerEvent) => {
     if (submitted) return;
     e.preventDefault();
-    (e.target as Element).setPointerCapture?.(e.pointerId);
+    (e.currentTarget as Element).setPointerCapture?.(e.pointerId);
     setDragging(lid);
     setGhost({ x: e.clientX, y: e.clientY });
   };
