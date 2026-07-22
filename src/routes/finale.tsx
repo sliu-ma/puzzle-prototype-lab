@@ -954,15 +954,16 @@ function SingleView({
 }: {
   frage: SingleFrage;
   answered: boolean;
-  onResult: (c: boolean) => void;
+  onResult: (c: boolean, userAnswer?: unknown) => void;
 }) {
   const order = useMemo(() => shuffleIndices(frage.optionen.length), [frage]);
   const [mine, setMine] = useState<number | null>(null);
   const choose = (i: number) => {
     if (mine !== null) return;
     setMine(i);
-    onResult(i === frage.korrekt);
+    onResult(i === frage.korrekt, i);
   };
+
   return (
     <div className="grid gap-2">
       {order.map((i) => {
