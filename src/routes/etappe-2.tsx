@@ -236,9 +236,8 @@ function AktePage() {
               },
               {
                 title: "Food-Waste vermeiden",
-                body: "Pro Person werden in der Schweiz jährlich rund 90 kg Lebensmittel weggeworfen. Ein Grund dafür: Es wird zu viel eingekauft. Ein anderer Grund: Das Haltbarkeitsdatum läuft ab. Im Schnitt wirft jeder Schweizer Haushalt so Lebensmittel im Wert von über CHF 600.– weg.",
+                body: "Pro Person werden in der Schweiz jährlich viele Lebensmittel weggeworfen. Ein Grund dafür: Es wird zu viel eingekauft. Ein anderer Grund: Das Haltbarkeitsdatum läuft ab. Diese Grafik zeigt, wie viel das ausmacht.",
                 visual: <FoodWasteChart />,
-
               },
               {
                 title: "Auf die Verpackung achten",
