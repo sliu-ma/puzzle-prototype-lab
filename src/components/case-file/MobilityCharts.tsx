@@ -3,9 +3,9 @@ import { Bike, Car, Train } from "lucide-react";
 /** Anteil kurzer Autofahrten in der Schweiz nach Distanz. */
 export function ShortTripsShare() {
   const rows = [
-    { label: "< 2 km", pct: 22, color: "bg-emerald-600/85" },
-    { label: "< 3 km", pct: 32, color: "bg-emerald-500/80" },
-    { label: "< 5 km", pct: 46, color: "bg-amber-500/80" },
+    { label: "unter\u00a02 km", pct: 22, color: "bg-emerald-600/85" },
+    { label: "unter\u00a03 km", pct: 32, color: "bg-emerald-500/80" },
+    { label: "unter\u00a05 km", pct: 46, color: "bg-amber-500/80" },
   ];
   return (
     <div className="rounded-sm border border-dashed border-stamp/40 bg-paper-deep/20 p-3">
@@ -19,7 +19,7 @@ export function ShortTripsShare() {
             <div className="mb-1 flex items-center justify-between font-mono-typed text-[11px]">
               <span className="inline-flex items-center gap-1.5">
                 <Car className="h-3.5 w-3.5 text-rose-500" />
-                Autofahrten {r.label}
+                {r.label}
               </span>
               <span className="font-bold">{r.pct}%</span>
             </div>
@@ -52,14 +52,14 @@ export function CostPerKm() {
         <Row
           icon={<Car className="h-3.5 w-3.5" />}
           label="Auto"
-          value="74 Rp."
+          value="74 Rappen"
           width={pct(auto)}
           color="bg-rose-400/80"
         />
         <Row
           icon={<Train className="h-3.5 w-3.5" />}
           label="ÖV"
-          value="46 Rp."
+          value="46 Rappen"
           width={pct(oev)}
           color="bg-emerald-500/80"
         />

@@ -357,17 +357,17 @@ function AktePage() {
             cards={[
               {
                 title: "Was kostet ein Kilometer wirklich?",
-                body: "Zu den Autokosten gehören nicht nur Benzin, sondern auch Versicherung, Reparaturen und Wertverlust — zusammen die Vollkosten. Diese liegen bei 74 Rappen pro Kilometer, beim öffentlichen Verkehr (ÖV) nur bei 46 Rappen.",
+                body: "Zu den Autokosten gehören nicht nur Benzin. Auch Versicherung, Parken und Reparaturen gehören dazu. Das ergibt zusammen die Vollkosten.",
                 visual: <CostPerKm />,
               },
               {
                 title: "Ein Zug ersetzt viele Autos",
-                body: "Vergleicht man die durchschnittliche Auslastung von Zug und Auto, ersetzt ein Zug rund 90 Autos, bei voller Kapazität (maximale Platzzahl) wären es sogar bis zu 310. Der grosse Unterschied zeigt: Züge sind oft nicht voll besetzt.",
+                body: "Ein Zug transportiert im Schnitt so viele Personen wie 90 Autos. Bei voller Kapazität wären es sogar bis zu 310. Der Grund: Züge sind oft nicht voll besetzt.",
                 visual: <TrainVsCars />,
               },
               {
                 title: "Aktive Mobilität",
-                body: "Viele Autofahrten in der Schweiz sind sehr kurz. 22 % aller Autofahrten sind kürzer als 2 Kilometer. 32 % aller Autofahrten sind kürzer als 3 Kilometer. 46 % aller Autofahrten sind kürzer als 5 Kilometer. Solche kurzen Strecken kann man gut mit dem Velo oder zu Fuss zurücklegen.",
+                body: "Viele Autofahrten in der Schweiz sind sehr kurz. Fast die Hälfte ist kürzer als 5 Kilometer. Solche kurzen Strecken kann man gut mit dem Velo oder zu Fuss zurücklegen.",
                 visual: <ShortTripsShare />,
               },
             ]}
