@@ -1155,8 +1155,10 @@ function MatchView({
 }: {
   frage: MatchFrage;
   answered: boolean;
-  onResult: (c: boolean) => void;
+  onResult: (c: boolean, userAnswer?: unknown) => void;
 }) {
+  const linksShuffled = useMemo(() => shuffleArr(frage.links), [frage]);
+  const rechtsShuffled = useMemo(() => shuffleArr(frage.rechts), [frage]);
   const [pairs, setPairs] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
   const [dragging, setDragging] = useState<string | null>(null);
@@ -1167,6 +1169,7 @@ function MatchView({
   const usedRight = new Set(Object.values(pairs));
   const leftById = Object.fromEntries(frage.links.map((l) => [l.id, l]));
   const rechtsById = Object.fromEntries(frage.rechts.map((r) => [r.id, r.label]));
+
 
   const findRightAt = (x: number, y: number): string | null => {
     for (const [rid, el] of Object.entries(rightRefs.current)) {
