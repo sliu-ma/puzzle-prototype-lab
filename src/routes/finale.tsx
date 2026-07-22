@@ -1483,6 +1483,140 @@ function BucketView({
   );
 }
 
+/* ---- Slider ---- */
+function SliderView({
+  frage,
+  answered,
+  onResult,
+}: {
+  frage: SliderFrage;
+  answered: boolean;
+  onResult: (c: boolean) => void;
+}) {
+  const start = Math.round((frage.min + frage.max) / 2);
+  const [val, setVal] = useState<number>(start);
+  const [submitted, setSubmitted] = useState(false);
+
+  const submit = () => {
+    if (submitted || answered) return;
+    const ok = Math.abs(val - frage.zielwert) <= frage.toleranz;
+    setSubmitted(true);
+    onResult(ok);
+  };
+
+  return (
+    <div className="space-y-4">
+      <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+        Ziehe den Regler auf deinen Schätzwert.
+      </p>
+      <div className="rounded-sm border border-border bg-paper-deep/30 px-4 py-4">
+        <div className="text-center font-serif">
+          <span className="text-3xl font-bold tabular-nums">{val}</span>
+          <span className="ml-1 text-sm text-muted-foreground">{frage.unit}</span>
+        </div>
+        <input
+          type="range"
+          min={frage.min}
+          max={frage.max}
+          step={frage.step}
+          value={val}
+          disabled={submitted || answered}
+          onChange={(e) => setVal(Number(e.target.value))}
+          className="mt-3 w-full accent-stamp"
+        />
+        <div className="mt-1 flex justify-between font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+          <span>{frage.min} {frage.unit}</span>
+          <span>{frage.max} {frage.unit}</span>
+        </div>
+      </div>
+      {submitted && (
+        <p className="font-mono-typed text-[11px] uppercase tracking-wider text-stamp">
+          Zielwert: {frage.zielwert} {frage.unit} (Toleranz ±{frage.toleranz})
+        </p>
+      )}
+      {!submitted && (
+        <button
+          onClick={submit}
+          className="w-full rounded-sm border border-border bg-card px-4 py-2.5 font-serif text-sm hover:bg-secondary"
+        >
+          Antwort abgeben
+        </button>
+      )}
+    </div>
+  );
+}
+
+/* ---- Either (Bildvergleich) ---- */
+function EitherView({
+  frage,
+  answered,
+  onResult,
+}: {
+  frage: EitherFrage;
+  answered: boolean;
+  onResult: (c: boolean) => void;
+}) {
+  const [mine, setMine] = useState<string | null>(null);
+  const [submitted, setSubmitted] = useState(false);
+
+  const submit = () => {
+    if (submitted || answered || !mine) return;
+    setSubmitted(true);
+    onResult(mine === frage.korrekt);
+  };
+
+  return (
+    <div className="space-y-3">
+      <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+        Vergleiche die beiden Etiketten und wähle die energiesparendere Maschine.
+      </p>
+      <div className="grid grid-cols-2 gap-3">
+        {frage.optionen.map((opt) => {
+          const isMine = mine === opt.id;
+          const isCorrect = opt.id === frage.korrekt;
+          const reveal = submitted;
+          return (
+            <button
+              key={opt.id}
+              onClick={() => !submitted && !answered && setMine(opt.id)}
+              disabled={submitted || answered}
+              className={cn(
+                "flex flex-col items-center gap-2 rounded-sm border p-3 transition-colors",
+                !reveal && isMine && "border-stamp bg-stamp/10",
+                !reveal && !isMine && "border-border bg-paper hover:bg-secondary",
+                reveal && isCorrect && "border-emerald-500/60 bg-emerald-500/10",
+                reveal && isMine && !isCorrect && "border-destructive/60 bg-destructive/10",
+                reveal && !isCorrect && !isMine && "border-border bg-paper opacity-60",
+              )}
+            >
+              <img
+                src={opt.image}
+                alt={opt.label}
+                className="h-40 w-full object-contain"
+              />
+              <div className="flex items-center gap-1.5 font-serif text-sm font-bold">
+                {opt.label}
+                {reveal && isCorrect && <CheckCircle2 className="h-4 w-4 text-emerald-600" />}
+                {reveal && isMine && !isCorrect && <XCircle className="h-4 w-4 text-destructive" />}
+              </div>
+            </button>
+          );
+        })}
+      </div>
+      {!submitted && (
+        <button
+          onClick={submit}
+          disabled={!mine}
+          className="w-full rounded-sm border border-border bg-card px-4 py-2.5 font-serif text-sm hover:bg-secondary disabled:opacity-50"
+        >
+          Antwort abgeben
+        </button>
+      )}
+    </div>
+  );
+}
+
+
 /* -------------------------------------------------- */
 /*  Outro (Auflösung + Statistiken)                     */
 /* -------------------------------------------------- */
