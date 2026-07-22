@@ -367,7 +367,7 @@ function AktePage() {
               },
               {
                 title: "Aktive Mobilität",
-                body: "In der Schweiz sind 22 % aller Autofahrten kürzer als 2 km, 32 % kürzer als 3 km und 46 % kürzer als 5 km — perfekte Distanzen für Velo oder zu Fuss. Gerade auf diesen kurzen Strecken sitzt oft nur eine Person im Auto.",
+                body: "Viele Autofahrten in der Schweiz sind sehr kurz. 22 % aller Autofahrten sind kürzer als 2 Kilometer. 32 % aller Autofahrten sind kürzer als 3 Kilometer. 46 % aller Autofahrten sind kürzer als 5 Kilometer. Solche kurzen Strecken kann man gut mit dem Velo oder zu Fuss zurücklegen.",
                 visual: <ShortTripsShare />,
               },
             ]}
