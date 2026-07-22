@@ -1351,7 +1351,8 @@ function OrderView({
 }: {
   frage: OrderFrage;
   answered: boolean;
-  onResult: (c: boolean) => void;
+  onResult: (c: boolean, userAnswer?: unknown) => void;
+
 }) {
   // Anfangsreihenfolge stabil deterministisch invertiert
   const [order, setOrder] = useState<string[]>(() =>
