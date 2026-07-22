@@ -109,7 +109,7 @@ export function SparPotenzialChart() {
         {/* Mit Massnahmen */}
         <div>
           <div className="mb-1 flex items-baseline justify-between gap-2">
-            <span className="font-serif text-[12px]">Mit einfachen Massnahmen</span>
+            <span className="font-serif text-[12px]">Mit Massnahmen</span>
             <span className="font-mono-typed text-[11px] text-foreground">
               CHF {mit.toLocaleString("de-CH")}.–
             </span>
