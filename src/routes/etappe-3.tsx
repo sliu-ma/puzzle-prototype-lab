@@ -271,12 +271,12 @@ function AktePage() {
               },
               {
                 title: "Ursachen",
-                body: "Die Gründe für den Rückgang der Biodiversität sind vielfältig — zum Beispiel Versiegelung von Boden, Pestizide oder begradigte Gewässer.",
+                body: "Die Gründe für den Rückgang der Biodiversität sind vielfältig. Zum Beispiel Versiegelung von Boden, Pestizide oder begradigte Gewässer.",
                 visual: <UrsachenCarousel />,
               },
               {
                 title: "Biodiversität bedeutet Vielfalt",
-                body: "Sauberes Trinkwasser, saubere Luft, fruchtbare Böden und bestäubte Pflanzen — all das brauchen wir zum Leben. Die Vielfalt an Arten sichert uns genau das.",
+                body: "Sauberes Trinkwasser, saubere Luft, fruchtbare Böden und bestäubte Pflanzen. All das brauchen wir zum Leben. Die Vielfalt an Arten sichert uns genau das.",
                 visual: <VielfaltGrid />,
               },
             ]}
