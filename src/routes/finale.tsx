@@ -807,6 +807,10 @@ function FrageRenderer({
       return <OrderView frage={frage} answered={answered} onResult={onResult} />;
     case "bucket":
       return <BucketView frage={frage} answered={answered} onResult={onResult} />;
+    case "slider":
+      return <SliderView frage={frage} answered={answered} onResult={onResult} />;
+    case "either":
+      return <EitherView frage={frage} answered={answered} onResult={onResult} />;
   }
 }
 
