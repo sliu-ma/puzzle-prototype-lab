@@ -125,7 +125,7 @@ export function AnteilErneuerbarChart() {
           </li>
           <li className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
             <span className="h-3 w-3 shrink-0 rounded-sm bg-rose-500/60" />
-            <span className="font-serif">Fossil (Öl, Gas, …)</span>
+            <span className="font-serif">Fossil</span>
             <span className="font-mono-typed text-foreground">{rest} %</span>
           </li>
         </ul>
