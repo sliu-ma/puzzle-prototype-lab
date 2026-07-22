@@ -8,6 +8,7 @@ export type InputCard = {
   body: string;
   hint?: string;
   visual?: React.ReactNode;
+  visualFirst?: boolean;
 };
 
 interface InputCarouselProps {
