@@ -150,44 +150,34 @@ export function ImportabhaengigkeitChart() {
         Energiebedarf Schweiz · Herkunft
       </p>
 
-      <div className="mt-3 flex flex-col gap-3">
-        <div>
-          <div className="mb-1 flex items-center justify-between gap-2">
-            <span className="inline-flex items-center gap-1.5 font-serif text-[12px]">
-              <Ship className="h-3.5 w-3.5 text-rose-600" strokeWidth={2.2} />
-              Import
-            </span>
-            <span className="font-mono-typed text-[11px] text-foreground">
-              {importAnteil} %
-            </span>
-          </div>
-          <div className="h-4 overflow-hidden rounded-sm border border-border bg-paper">
-            <div
-              className="h-full bg-rose-500/60"
-              style={{ width: `${importAnteil}%` }}
-            />
-          </div>
+      <div className="mt-4 flex h-8 w-full overflow-hidden rounded-sm border border-border bg-paper">
+        <div
+          className="flex items-center justify-center bg-rose-500/60 font-mono-typed text-[11px] text-foreground"
+          style={{ width: `${importAnteil}%` }}
+        >
+          {importAnteil} %
         </div>
-
-        <div>
-          <div className="mb-1 flex items-center justify-between gap-2">
-            <span className="inline-flex items-center gap-1.5 font-serif text-[12px]">
-              <MapPin className="h-3.5 w-3.5 text-emerald-600" strokeWidth={2.2} />
-              Inland
-            </span>
-            <span className="font-mono-typed text-[11px] text-foreground">
-              {inland} %
-            </span>
-          </div>
-          <div className="h-4 overflow-hidden rounded-sm border border-border bg-paper">
-            <div
-              className="h-full bg-emerald-500/70"
-              style={{ width: `${inland}%` }}
-            />
-          </div>
+        <div
+          className="flex items-center justify-center bg-emerald-500/70 font-mono-typed text-[11px] text-foreground"
+          style={{ width: `${inland}%` }}
+        >
+          {inland} %
         </div>
       </div>
 
+      <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 font-mono-typed text-[11px] text-muted-foreground">
+        <span className="inline-flex items-center gap-1.5">
+          <Ship className="h-3.5 w-3.5 text-rose-600" strokeWidth={2.2} />
+          <span className="font-serif text-[12px] text-foreground">Import</span>
+          <span>{importAnteil} %</span>
+        </span>
+        <span className="inline-flex items-center gap-1.5">
+          <MapPin className="h-3.5 w-3.5 text-emerald-600" strokeWidth={2.2} />
+          <span className="font-serif text-[12px] text-foreground">Inland</span>
+          <span>{inland} %</span>
+        </span>
+      </div>
     </div>
+
   );
 }
