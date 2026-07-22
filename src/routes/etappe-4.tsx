@@ -304,7 +304,7 @@ function AktePage() {
               },
               {
                 title: "Energie sparen bedeutet Geld sparen",
-                body: "Wer Energie spart, spart auch Geld. Kleine Veränderungen im Alltag und energieeffiziente Geräte senken die Energie- und Heizkosten — bei einem Haus sogar um mehrere hundert Franken pro Jahr.",
+                body: "Es lohnt sich, Energie zu sparen. Wer Energie spart, spart auch Geld. Du kannst deine Nebenkosten um bis zu 30 % senken. Ein Beispiel:",
                 visual: <SparPotenzialChart />,
               },
             ]}
