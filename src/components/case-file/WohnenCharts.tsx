@@ -133,7 +133,7 @@ export function SparPotenzialChart() {
             Ersparnis
           </p>
           <p className="font-serif text-lg font-bold leading-tight">
-            − CHF {diff}.– / Jahr
+            CHF {diff}.–
           </p>
         </div>
         <TrendingDown className="h-5 w-5 text-emerald-600" strokeWidth={2} />
