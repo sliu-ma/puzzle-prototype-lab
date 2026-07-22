@@ -512,9 +512,10 @@ function FinalePage() {
                       {meinErgebnis ? "Treffer · Barometer steigt" : "Fehler · Barometer fällt"}
                     </p>
                   </div>
-                  <p className="mt-2 text-foreground/85">{frage.erklaerung}</p>
-                </div>
-              )}
+                  <p className="mt-2 whitespace-pre-line text-foreground/85">
+                    {buildFeedback(frage, meineAntwort, meinErgebnis)}
+                  </p>
+
 
               {meinErgebnis !== null && (
                 <div className="mt-6 flex justify-end">
