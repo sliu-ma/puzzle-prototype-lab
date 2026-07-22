@@ -30,13 +30,6 @@ export function ShortTripsShare() {
         ))}
       </div>
 
-      <div className="mt-3 flex items-center justify-between border-t border-dashed border-border pt-2 font-mono-typed text-[11px]">
-        <span className="inline-flex items-center gap-1.5 text-emerald-700">
-          <Bike className="h-3.5 w-3.5" />
-          Ideal für Velo &amp; zu Fuss
-        </span>
-        <span className="font-bold text-emerald-700">{"\n"}</span>
-      </div>
     </div>
   );
 }
