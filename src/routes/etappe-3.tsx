@@ -271,7 +271,7 @@ function AktePage() {
               },
               {
                 title: "Ursachen",
-                body: "Die Gründe für den Rückgang der Biodiversität sind vielfältig. Zum Beispiel Versiegelung von Boden, Pestizide oder begradigte Gewässer.",
+                body: "Die Gründe für den Rückgang der Biodiversität sind vielfältig. Diese Bilder zeigen drei davon.",
                 visual: <UrsachenCarousel />,
               },
               {
