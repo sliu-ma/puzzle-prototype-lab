@@ -1529,7 +1529,7 @@ function BucketView({
 
       {/* Buckets */}
       <div className="grid grid-cols-2 gap-3">
-        {frage.buckets.map((bucket) => {
+        {bucketsShuffled.map((bucket) => {
           const isHover = hoverTarget === bucket.id && dragging;
           const assigned = itemsInBucket(bucket.id);
           return (
