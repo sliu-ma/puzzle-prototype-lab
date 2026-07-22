@@ -1635,7 +1635,7 @@ function SliderView({
 }: {
   frage: SliderFrage;
   answered: boolean;
-  onResult: (c: boolean) => void;
+  onResult: (c: boolean, userAnswer?: unknown) => void;
 }) {
   const start = Math.round((frage.min + frage.max) / 2);
   const [val, setVal] = useState<number>(start);
@@ -1645,8 +1645,9 @@ function SliderView({
     if (submitted || answered) return;
     const ok = Math.abs(val - frage.zielwert) <= frage.toleranz;
     setSubmitted(true);
-    onResult(ok);
+    onResult(ok, val);
   };
+
 
   return (
     <div className="space-y-4">
