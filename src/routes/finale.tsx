@@ -1004,7 +1004,7 @@ function MultiView({
 }: {
   frage: MultiFrage;
   answered: boolean;
-  onResult: (c: boolean) => void;
+  onResult: (c: boolean, userAnswer?: unknown) => void;
 }) {
   const order = useMemo(() => shuffleIndices(frage.optionen.length), [frage]);
   const [selected, setSelected] = useState<Set<number>>(new Set());
@@ -1027,8 +1027,9 @@ function MultiView({
       selected.size === korrektSet.size &&
       [...selected].every((i) => korrektSet.has(i));
     setSubmitted(true);
-    onResult(isEqual);
+    onResult(isEqual, [...selected]);
   };
+
 
   return (
     <div className="space-y-3">
