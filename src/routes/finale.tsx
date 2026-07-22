@@ -1549,7 +1549,7 @@ function BucketView({
   const startDrag = (itemId: string) => (e: React.PointerEvent) => {
     if (submitted) return;
     e.preventDefault();
-    (e.target as Element).setPointerCapture?.(e.pointerId);
+    (e.currentTarget as Element).setPointerCapture?.(e.pointerId);
     setDragging(itemId);
     setGhost({ x: e.clientX, y: e.clientY });
   };
