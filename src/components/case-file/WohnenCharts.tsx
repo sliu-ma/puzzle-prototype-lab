@@ -124,19 +124,19 @@ export function SparPotenzialChart() {
       </div>
 
       {/* Ersparnis Highlight */}
-      <div className="mt-4 flex items-center gap-2 rounded-sm border border-stamp/50 bg-paper px-3 py-2">
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-stamp/50 bg-paper-deep/40 text-stamp">
+      <div className="mt-4 flex items-center gap-3 rounded-sm border border-stamp/50 bg-paper px-3 py-2">
+        <span className="flex h-8 w-8 items-center justify-center rounded-full border border-stamp/50 bg-paper-deep/40 text-stamp">
           <Coins className="h-4 w-4" strokeWidth={2} />
         </span>
-        <div className="flex min-w-0 flex-1 items-center justify-between gap-2 whitespace-nowrap">
+        <div className="min-w-0 flex-1">
           <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
             Ersparnis
           </p>
-          <p className="font-serif text-base font-bold leading-tight">
+          <p className="font-serif text-lg font-bold leading-tight">
             − CHF {diff}.– / Jahr
           </p>
         </div>
-        <TrendingDown className="h-5 w-5 shrink-0 text-emerald-600" strokeWidth={2} />
+        <TrendingDown className="h-5 w-5 text-emerald-600" strokeWidth={2} />
       </div>
 
       <p className="mt-auto pt-3 font-mono-typed text-[10px] text-muted-foreground">
