@@ -324,11 +324,7 @@ function buildFragen(): Frage[] {
       ratsmitglied: "Gemeindepräsident",
       frage:
         "Wie hoch ist der Anteil erneuerbarer Energien am Schweizer Energiemix (in %)?",
-      akzeptiert: [
-        "28", "28%", "28 prozent", "ca 28", "rund 28", "etwa 28",
-        "27", "29", "circa 28",
-      ],
-      hint: "",
+      akzeptiert: ["27", "28", "29"],
       erklaerung:
         "2023 lag der Anteil erneuerbarer Energien am Schweizer Endenergieverbrauch bei rund 28 %.",
     },
