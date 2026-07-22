@@ -1446,8 +1446,10 @@ function BucketView({
 }: {
   frage: BucketFrage;
   answered: boolean;
-  onResult: (c: boolean) => void;
+  onResult: (c: boolean, userAnswer?: unknown) => void;
 }) {
+  const bucketsShuffled = useMemo(() => shuffleArr(frage.buckets), [frage]);
+  const itemsShuffled = useMemo(() => shuffleArr(frage.items), [frage]);
   const [placements, setPlacements] = useState<Record<string, string | null>>(() => {
     const initial: Record<string, string | null> = {};
     frage.items.forEach((it) => {
@@ -1509,14 +1511,15 @@ function BucketView({
     if (submitted || answered) return;
     const ok = frage.items.every((it) => placements[it.id] === frage.solution[it.id]);
     setSubmitted(true);
-    onResult(ok);
+    onResult(ok, { ...placements });
   };
 
   const draggedItem = dragging ? frage.items.find((it) => it.id === dragging) : null;
 
   const itemsInBucket = (bucketId: string) =>
-    frage.items.filter((it) => placements[it.id] === bucketId);
-  const itemsInPool = frage.items.filter((it) => placements[it.id] === null);
+    itemsShuffled.filter((it) => placements[it.id] === bucketId);
+  const itemsInPool = itemsShuffled.filter((it) => placements[it.id] === null);
+
 
   return (
     <div className="space-y-3" onPointerMove={onMove} onPointerUp={endDrag} onPointerCancel={endDrag}>
