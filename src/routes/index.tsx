@@ -155,12 +155,17 @@ function CoverPage() {
                 onStart={(name, code) => {
                   resetAll();
                   registerTeam(name, code);
+                  if (code.toUpperCase() === CHEAT_CODE) {
+                    // Debug-Modus: alle Etappen freischalten
+                    for (let i = 1; i <= 6; i++) completeStage(i);
+                  }
                   setIntroSeen(false);
                   setTeam({ name, code });
                   setStage(getCurrentStage());
                 }}
 
               />
+
             )}
           </article>
 
