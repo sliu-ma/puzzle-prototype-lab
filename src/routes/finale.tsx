@@ -172,7 +172,7 @@ function buildFragen(): Frage[] {
       zielwert: 28,
       toleranz: 3,
       erklaerung:
-        "Vollkosten Auto ≈ 70 Rp./km, ÖV ≈ 42 Rp./km. Differenz: rund 28 Rp./km (Toleranz ±3).",
+        "Vollkosten Auto ≈ 74 Rp./km, ÖV ≈ 46 Rp./km. Differenz: rund 28 Rp./km (Toleranz ±3).",
     },
     // F2 · Mobilität · Single
     {
