@@ -1104,7 +1104,7 @@ function ShortView({
 }: {
   frage: ShortFrage;
   answered: boolean;
-  onResult: (c: boolean) => void;
+  onResult: (c: boolean, userAnswer?: unknown) => void;
 }) {
   const [text, setText] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -1115,8 +1115,9 @@ function ShortView({
     const n = normalize(text);
     const ok = frage.akzeptiert.some((a) => normalize(a) === n);
     setSubmitted(true);
-    onResult(ok);
+    onResult(ok, text);
   };
+
 
   return (
     <form onSubmit={submit} className="space-y-3">
