@@ -763,6 +763,121 @@ function typeLabel(t: Frage["type"]) {
   }
 }
 
+function shuffleArr<T>(arr: readonly T[]): T[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+/* -------------------------------------------------- */
+/*  Adaptives Feedback pro Frage                        */
+/* -------------------------------------------------- */
+
+function buildFeedback(frage: Frage, userAnswer: unknown, correct: boolean): string {
+  switch (frage.type) {
+    case "slider": {
+      const val = typeof userAnswer === "number" ? userAnswer : NaN;
+      if (correct) return `Treffer — ${frage.erklaerung}`;
+      if (!isNaN(val) && val < frage.zielwert) {
+        return `Zu tief geschätzt. Die Vollkosten des Autos (rund 74 Rp./km) werden oft unterschätzt. ${frage.erklaerung}`;
+      }
+      return `Zu hoch geschätzt. Der ÖV kostet zwar weniger als das Auto, aber nicht so viel weniger wie oft angenommen. ${frage.erklaerung}`;
+    }
+    case "single": {
+      const idx = typeof userAnswer === "number" ? userAnswer : -1;
+      if (frage.id === 2) {
+        const map = [
+          "Zu wenig — der Anteil ist mehr als doppelt so hoch.",
+          "In die richtige Richtung, aber immer noch zu tief.",
+          "Richtig — knapp die Hälfte aller Autofahrten ist kürzer als 5 km.",
+          "Etwas zu hoch — es ist knapp die Hälfte, nicht deutlich mehr.",
+        ];
+        return `${map[idx] ?? ""} ${frage.erklaerung}`.trim();
+      }
+      if (frage.id === 6) {
+        const map = [
+          "Zu optimistisch — es ist rund ein Drittel, nicht 1 von 20.",
+          "Richtig — rund ein Drittel der untersuchten Arten ist gefährdet.",
+          "Weit daneben — tatsächlich ist rund 1 von 3 Arten gefährdet, nicht 1 von 100.",
+        ];
+        return `${map[idx] ?? ""} ${frage.erklaerung}`.trim();
+      }
+      return frage.erklaerung;
+    }
+    case "multi": {
+      const sel = new Set(Array.isArray(userAnswer) ? (userAnswer as number[]) : []);
+      const korrekt = new Set(frage.korrekt);
+      const falschGewaehlt = [...sel].filter((i) => !korrekt.has(i)).map((i) => frage.optionen[i]);
+      const uebersehen = [...korrekt].filter((i) => !sel.has(i)).map((i) => frage.optionen[i]);
+      const parts: string[] = [];
+      if (falschGewaehlt.length) {
+        parts.push(`Fälschlich gewählt: ${falschGewaehlt.join(", ")}. „Zu viel Regen" ist keine Hauptursache des Biodiversitätsverlusts.`);
+      }
+      if (uebersehen.length) {
+        parts.push(`Übersehen: ${uebersehen.join(", ")}.`);
+      }
+      if (parts.length === 0) return `Alle drei Hauptursachen richtig erkannt. ${frage.erklaerung}`;
+      return `${parts.join(" ")} ${frage.erklaerung}`;
+    }
+    case "short": {
+      const text = typeof userAnswer === "string" ? userAnswer.trim() : "";
+      if (frage.id === 4) {
+        const season = currentSeason();
+        const beispiele = SAISON_ANTWORTEN[season].slice(0, 5).join(", ");
+        if (correct) {
+          return `Richtig — „${text}" hat im ${season} in der Schweiz Saison. Weitere Beispiele: ${beispiele}.`;
+        }
+        return `„${text || "—"}" hat im ${season} in der Schweiz keine Saison. Aktuell saisonal: ${beispiele}.`;
+      }
+      if (frage.id === 7) {
+        if (correct) return `Richtig — die Faustregel lautet: 1 °C weniger ≈ 6 % weniger Heizenergie.`;
+        return `Nicht ganz — die Faustregel lautet ca. 6 % pro °C, nicht „${text}".`;
+      }
+      if (frage.id === 10) {
+        if (correct) return `Richtig — 2023 lag der Anteil bei rund 28 %.`;
+        const num = parseInt(text.replace(/[^0-9]/g, ""), 10);
+        if (!isNaN(num) && num < 25) {
+          return `Zu tief — der Anteil ist inzwischen deutlich höher: rund 28 %.`;
+        }
+        if (!isNaN(num) && num > 31) {
+          return `Zu hoch — der Anteil liegt bei rund 28 %, nicht bei ${num} %.`;
+        }
+        return `Der Anteil erneuerbarer Energien lag 2023 bei rund 28 %.`;
+      }
+      return frage.erklaerung;
+    }
+    case "either": {
+      if (correct) return `Richtig — Klasse A ist die effizienteste Energiekategorie.`;
+      return `Klasse E verbraucht deutlich mehr Strom pro Waschgang. Die Energieetikette geht von A (grün, sehr effizient) bis G (rot, ineffizient).`;
+    }
+    case "match": {
+      const userPairs = (userAnswer as Record<string, string>) ?? {};
+      const beschreibungen = Object.fromEntries(frage.rechts.map((r) => [r.id, r.label]));
+      const labels = Object.fromEntries(frage.links.map((l) => [l.id, l.label]));
+      const wrong = frage.links.filter((l) => userPairs[l.id] !== frage.paare[l.id]);
+      if (wrong.length === 0) return `Alle Labels richtig zugeordnet. ${frage.erklaerung}`;
+      const lines = wrong.map(
+        (l) => `• ${labels[l.id]} → „${beschreibungen[frage.paare[l.id]]}"`,
+      );
+      return `Richtig wäre:\n${lines.join("\n")}`;
+    }
+    case "bucket": {
+      const placements = (userAnswer as Record<string, string | null>) ?? {};
+      const bucketLabel = Object.fromEntries(frage.buckets.map((b) => [b.id, b.label]));
+      const wrong = frage.items.filter((it) => placements[it.id] !== frage.solution[it.id]);
+      if (wrong.length === 0) return `Alle Energiequellen richtig einsortiert. ${frage.erklaerung}`;
+      const lines = wrong.map((it) => `• ${it.label} gehört zu „${bucketLabel[frage.solution[it.id]]}"`);
+      return `Falsch einsortiert:\n${lines.join("\n")}\n\nGas und Kohle sind fossile Brennstoffe und damit nicht erneuerbar. Sonne, Wasserkraft, Windkraft und Geothermie sind erneuerbare Quellen.`;
+    }
+    case "order":
+      return frage.erklaerung;
+  }
+}
+
+
 function shuffleIndices(n: number): number[] {
   const arr: number[] = Array.from({ length: n }, (_, i) => i);
   for (let i = arr.length - 1; i > 0; i--) {
