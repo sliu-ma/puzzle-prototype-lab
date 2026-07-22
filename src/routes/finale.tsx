@@ -412,6 +412,10 @@ function FinalePage() {
   const handleWeiter = () => {
     if (aktuell < FRAGEN.length - 1) setAktuell(aktuell + 1);
   };
+  const handleZurueck = () => {
+    if (aktuell > 0) setAktuell(aktuell - 1);
+  };
+
 
   const reset = () => {
     setErgebnisse(Array(FRAGEN.length).fill(null));
