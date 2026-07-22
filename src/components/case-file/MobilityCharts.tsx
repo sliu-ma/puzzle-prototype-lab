@@ -35,7 +35,7 @@ export function ShortTripsShare() {
           <Bike className="h-3.5 w-3.5" />
           Ideal für Velo &amp; zu Fuss
         </span>
-        <span className="font-bold text-emerald-700">Potenzial hoch</span>
+        <span className="font-bold text-emerald-700">{"\n"}</span>
       </div>
     </div>
   );
