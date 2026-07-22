@@ -7,7 +7,7 @@ type Quelle = {
 };
 
 const QUELLEN: Quelle[] = [
-  { name: "Wind", co2: 12, typ: "erneuerbar" },
+  { name: "Windkraft", co2: 12, typ: "erneuerbar" },
   { name: "Wasserkraft", co2: 24, typ: "erneuerbar" },
   { name: "Geothermie", co2: 38, typ: "erneuerbar" },
   { name: "Sonne", co2: 48, typ: "erneuerbar" },
