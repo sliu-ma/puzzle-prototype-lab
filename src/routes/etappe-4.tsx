@@ -299,7 +299,7 @@ function AktePage() {
               },
               {
                 title: "Kleine Veränderungen, grosse Wirkung",
-                body: "Schon kleine Änderungen im Alltag sparen viel Energie: die Wäsche aufhängen statt trocknen, mit Deckel kochen oder den Wohnraum maximal auf 20 Grad heizen.",
+                body: "Schon kleine Änderungen im Alltag sparen viel Energie.",
                 visual: <AlltagsTippsGrid />,
               },
               {

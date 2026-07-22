@@ -11,14 +11,14 @@ type Tipp = {
 const TIPPS: Tipp[] = [
   {
     icon: Shirt,
-    action: "Wäsche aufhängen statt trocknen",
-    effect: "bis −70 % Strom",
+    action: "Wäsche bei 60 statt 95 Grad waschen",
+    effect: "bis −35 % Energie",
     bar: 85,
   },
   {
     icon: CookingPot,
     action: "Mit Deckel kochen",
-    effect: "bis −30 % Energie",
+    effect: "bis −40 % Energie",
     bar: 55,
   },
   {
