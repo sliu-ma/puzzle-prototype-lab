@@ -276,7 +276,7 @@ function AktePage() {
               },
               {
                 title: "Biodiversität bedeutet Vielfalt",
-                body: "All das brauchen wir zum Leben. Die Vielfalt an Arten sichert uns genau das.",
+                body: "Sauberes Trinkwasser, saubere Luft, fruchtbare Böden und bestäubte Pflanzen. All das brauchen wir zum Leben. Die Vielfalt an Arten sichert uns genau das.",
                 visual: <VielfaltGrid />,
               },
             ]}
