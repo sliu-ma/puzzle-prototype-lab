@@ -1292,7 +1292,7 @@ function MatchView({
         </div>
         {/* Rechts (drop targets) */}
         <div className="space-y-2">
-          {frage.rechts.map((r) => {
+          {rechtsShuffled.map((r) => {
             const used = usedRight.has(r.id);
             const isHover = hoverRight === r.id && dragging;
             return (
