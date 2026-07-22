@@ -70,7 +70,7 @@ export function AlltagsTippsGrid() {
       </ul>
 
       <p className="mt-auto pt-3 font-mono-typed text-[10px] text-muted-foreground">
-        → Richtwerte EnergieSchweiz
+        {"\n"}
       </p>
     </div>
   );
