@@ -13,13 +13,13 @@ const TIPPS: Tipp[] = [
     icon: Shirt,
     action: "Wäsche bei 60 statt 95 Grad waschen",
     effect: "bis −35 % Energie",
-    bar: 85,
+    bar: 35,
   },
   {
     icon: CookingPot,
     action: "Mit Deckel kochen",
     effect: "bis −40 % Energie",
-    bar: 55,
+    bar: 40,
   },
   {
     icon: Thermometer,
@@ -41,27 +41,17 @@ export function AlltagsTippsGrid() {
         {TIPPS.map((t) => {
           const Icon = t.icon;
           return (
-            <li
-              key={t.action}
-              className="flex items-center gap-3 rounded-sm border border-border bg-paper px-2.5 py-2"
-            >
+            <li key={t.action} className="flex items-center gap-3 rounded-sm border border-border bg-paper px-2.5 py-2">
               <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-sm border border-stamp/40 bg-paper-deep/40 text-stamp">
                 <Icon className="h-4 w-4" strokeWidth={2} />
               </span>
               <div className="min-w-0 flex-1">
-                <p className="font-serif text-[13px] leading-tight">
-                  {t.action}
-                </p>
+                <p className="font-serif text-[13px] leading-tight">{t.action}</p>
                 <div className="mt-1.5 flex items-center gap-2">
                   <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-secondary">
-                    <div
-                      className="h-full rounded-full bg-stamp/70"
-                      style={{ width: `${t.bar}%` }}
-                    />
+                    <div className="h-full rounded-full bg-stamp/70" style={{ width: `${t.bar}%` }} />
                   </div>
-                  <span className="font-mono-typed text-[10px] text-stamp whitespace-nowrap">
-                    {t.effect}
-                  </span>
+                  <span className="font-mono-typed text-[10px] text-stamp whitespace-nowrap">{t.effect}</span>
                 </div>
               </div>
             </li>
@@ -69,9 +59,7 @@ export function AlltagsTippsGrid() {
         })}
       </ul>
 
-      <p className="mt-auto pt-3 font-mono-typed text-[10px] text-muted-foreground">
-        → Richtwerte EnergieSchweiz
-      </p>
+      <p className="mt-auto pt-3 font-mono-typed text-[10px] text-muted-foreground">→ Richtwerte EnergieSchweiz</p>
     </div>
   );
 }
@@ -94,15 +82,10 @@ export function SparPotenzialChart() {
         <div>
           <div className="mb-1 flex items-baseline justify-between gap-2">
             <span className="font-serif text-[12px]">Ohne Massnahmen</span>
-            <span className="font-mono-typed text-[11px] text-foreground">
-              CHF {ohne.toLocaleString("de-CH")}.–
-            </span>
+            <span className="font-mono-typed text-[11px] text-foreground">CHF {ohne.toLocaleString("de-CH")}.–</span>
           </div>
           <div className="h-4 overflow-hidden rounded-sm border border-border bg-paper">
-            <div
-              className="h-full bg-rose-500/60"
-              style={{ width: `${(ohne / max) * 100}%` }}
-            />
+            <div className="h-full bg-rose-500/60" style={{ width: `${(ohne / max) * 100}%` }} />
           </div>
         </div>
 
@@ -110,15 +93,10 @@ export function SparPotenzialChart() {
         <div>
           <div className="mb-1 flex items-baseline justify-between gap-2">
             <span className="font-serif text-[12px]">Mit einfachen Massnahmen</span>
-            <span className="font-mono-typed text-[11px] text-foreground">
-              CHF {mit.toLocaleString("de-CH")}.–
-            </span>
+            <span className="font-mono-typed text-[11px] text-foreground">CHF {mit.toLocaleString("de-CH")}.–</span>
           </div>
           <div className="h-4 overflow-hidden rounded-sm border border-border bg-paper">
-            <div
-              className="h-full bg-emerald-500/60"
-              style={{ width: `${(mit / max) * 100}%` }}
-            />
+            <div className="h-full bg-emerald-500/60" style={{ width: `${(mit / max) * 100}%` }} />
           </div>
         </div>
       </div>
@@ -129,12 +107,8 @@ export function SparPotenzialChart() {
           <Coins className="h-4 w-4" strokeWidth={2} />
         </span>
         <div className="min-w-0 flex-1">
-          <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
-            Ersparnis
-          </p>
-          <p className="font-serif text-lg font-bold leading-tight">
-            − CHF {diff}.– / Jahr
-          </p>
+          <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">Ersparnis</p>
+          <p className="font-serif text-lg font-bold leading-tight">− CHF {diff}.– / Jahr</p>
         </div>
         <TrendingDown className="h-5 w-5 text-emerald-600" strokeWidth={2} />
       </div>
