@@ -283,11 +283,11 @@ function AktePage() {
           <InputCarousel
             kicker="Fachlicher Input · Wohnen & Energie"
             title="Wo zuhause Energie versickert"
-            intro="Rund 40 % des Schweizer Energieverbrauchs entstehen in Gebäuden. Drei Begriffe, die du fürs Hearing brauchst:"
+            intro="Rund 40 % des Schweizer Energieverbrauchs entstehen in Gebäuden. Drei Impulse, die du fürs Hearing brauchst:"
             cards={[
               {
-                title: "Effizienzklasse",
-                body: "A+++ Geräte verbrauchen oft nur ein Drittel der Energie alter Modelle. Bei Kühlschrank, Ofen und Boiler lohnt sich der Austausch über die Lebensdauer fast immer.",
+                title: "Energieetiketten",
+                body: "Energieetiketten verraten, wie sparsam ein Gerät mit Strom umgeht. Geräte der Klasse A brauchen wenig Strom, Geräte der Klasse G deutlich mehr.",
                 visual: (
                   <img
                     src={energieetiketteAsset.url}
@@ -295,17 +295,14 @@ function AktePage() {
                     className="mx-auto block h-auto w-full max-w-[220px]"
                   />
                 ),
-                hint: "Energieetikette: A (sparsam) bis G (Stromfresser).",
               },
               {
-                title: "Wärme-Hülle",
-                body: "Heizen ist Posten Nr. 1 im Haushalt. Ein Grad kühler zu heizen bringt sofort viele Energiesparpunkte — ohne einen Franken Investition.",
-                hint: "Faustregel: 1 °C kühler heizen spart ca. 6 % Heizenergie.",
+                title: "Kleine Veränderungen, grosse Wirkung",
+                body: "Schon kleine Änderungen im Alltag sparen viel Energie: die Wäsche aufhängen statt trocknen, mit Deckel kochen oder den Wohnraum maximal auf 20 Grad heizen.",
               },
               {
-                title: "Verhalten",
-                body: "Kurz duschen, Wäsche aufhängen, Deckel auf den Topf, Eco-Programme wählen — diese Schritte kosten nichts und wirken sofort. Technik allein bringt wenig, wenn die Gewohnheiten nicht passen.",
-                hint: "Verhalten schlägt teure Geräte im Preis-Leistungs-Vergleich.",
+                title: "Energie sparen bedeutet Geld sparen",
+                body: "Wer Energie spart, spart auch Geld. Kleine Veränderungen im Alltag und energieeffiziente Geräte senken die Energie- und Heizkosten — bei einem Haus sogar um mehrere hundert Franken pro Jahr.",
               },
             ]}
             backLabel="← Zurück zum Spiel"
