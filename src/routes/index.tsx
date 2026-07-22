@@ -211,10 +211,11 @@ function StartForm({
       setError("Bitte gebt einen Teamnamen ein (mind. 2 Zeichen).");
       return;
     }
-    if (cleanCode !== START_CODE) {
+    if (cleanCode !== START_CODE && cleanCode !== CHEAT_CODE) {
       setError("Der Startcode stimmt nicht. Frag deine Lehrperson.");
       return;
     }
+
     setError(null);
     onStart(cleanName, cleanCode);
   };
