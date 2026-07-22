@@ -14,6 +14,7 @@ import { cn } from "@/lib/utils";
 import { useEnvelopePrompt } from "@/components/case-file/EnvelopeDialog";
 import { useSuccessBurst } from "@/components/case-file/SuccessBurst";
 import energieetiketteAsset from "@/assets/energieetikette.png.asset.json";
+import { AlltagsTippsGrid, SparPotenzialChart } from "@/components/case-file/WohnenCharts";
 
 
 const HINTS_004: Hint[] = [
@@ -299,10 +300,12 @@ function AktePage() {
               {
                 title: "Kleine Veränderungen, grosse Wirkung",
                 body: "Schon kleine Änderungen im Alltag sparen viel Energie: die Wäsche aufhängen statt trocknen, mit Deckel kochen oder den Wohnraum maximal auf 20 Grad heizen.",
+                visual: <AlltagsTippsGrid />,
               },
               {
                 title: "Energie sparen bedeutet Geld sparen",
                 body: "Wer Energie spart, spart auch Geld. Kleine Veränderungen im Alltag und energieeffiziente Geräte senken die Energie- und Heizkosten — bei einem Haus sogar um mehrere hundert Franken pro Jahr.",
+                visual: <SparPotenzialChart />,
               },
             ]}
             backLabel="← Zurück zum Spiel"
