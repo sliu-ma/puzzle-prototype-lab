@@ -262,7 +262,7 @@ function AktePage() {
           <InputCarousel
             kicker="Fachlicher Input · Biodiversität"
             title="Warum Vielfalt zählt"
-            intro="Die Schweiz gehört in Europa zu den Ländern mit dem grössten Anteil bedrohter Arten. Drei Begriffe, die du für den Rat brauchst:"
+            intro="Die Schweiz gehört in Europa zu den Ländern mit dem grössten Anteil bedrohter Arten. Drei Informationen, die du für den Rat brauchst:"
             cards={[
               {
                 title: "Rote Liste",
