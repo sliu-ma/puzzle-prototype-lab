@@ -350,6 +350,10 @@ function FinalePage() {
     "akte-finale-ergebnisse",
     () => Array(FRAGEN.length).fill(null),
   );
+  const [antworten, setAntworten] = usePersistentState<unknown[]>(
+    "akte-finale-antworten",
+    () => Array(FRAGEN.length).fill(null),
+  );
   const [resetKey, setResetKey] = useState(0);
   const [pulse, setPulse] = useState<null | "up" | "down">(null);
 
@@ -387,10 +391,15 @@ function FinalePage() {
     }
   }, [status]);
 
-  const handleResult = (correct: boolean) => {
+  const handleResult = (correct: boolean, userAnswer?: unknown) => {
     setErgebnisse((prev) => {
       const next = [...prev];
       next[aktuell] = correct;
+      return next;
+    });
+    setAntworten((prev) => {
+      const next = [...prev];
+      next[aktuell] = userAnswer ?? null;
       return next;
     });
     setPulse(correct ? "up" : "down");
@@ -404,6 +413,7 @@ function FinalePage() {
 
   const reset = () => {
     setErgebnisse(Array(FRAGEN.length).fill(null));
+    setAntworten(Array(FRAGEN.length).fill(null));
     setAktuell(0);
     setStarted(true);
     setResetKey((k) => k + 1);
@@ -412,6 +422,8 @@ function FinalePage() {
 
   const frage = FRAGEN[aktuell];
   const meinErgebnis = ergebnisse[aktuell];
+  const meineAntwort = antworten[aktuell];
+
 
   return (
     <main className="relative min-h-screen px-3 py-6 sm:px-4 sm:py-14">
