@@ -316,7 +316,7 @@ function AktePage() {
                       </div>
                     </div>
                     <figcaption className="mt-2 text-center font-serif text-xs italic text-ink/70">
-                      Zwei Waschmaschinen im Vergleich — links sparsam, rechts deutlich stromhungriger.
+                      Zwei Waschmaschinen im Vergleich. Links sparsam. Rechts stromhungrig.
                     </figcaption>
                   </figure>
                 ),
