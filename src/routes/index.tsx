@@ -9,9 +9,13 @@ import {
   getCurrentStage,
   registerTeam,
   resetAll,
+  completeStage,
   getNowClock,
   getHearingClock,
 } from "@/lib/progress";
+
+const CHEAT_CODE = "KRXZMVBQ";
+
 
 
 import { IntroScreen, hasSeenIntro } from "@/components/case-file/IntroScreen";
