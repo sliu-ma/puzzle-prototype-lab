@@ -223,7 +223,6 @@ function buildFragen(): Frage[] {
       ratsmitglied: "Ratsherr Brunner",
       frage: `Nenne ein Schweizer Saisongemüse oder eine Saisonfrucht im ${season}.`,
       akzeptiert: SAISON_ANTWORTEN[season],
-      hint: `Es ist ${season} — was wächst gerade wirklich in der Schweiz?`,
       erklaerung:
         `Im ${season} sind in der Schweiz z. B. ${SAISON_ANTWORTEN[season].slice(0, 4).map(capitalize).join(", ")} saisonal verfügbar.`,
     },
