@@ -14,8 +14,8 @@ import { cn } from "@/lib/utils";
 import { useEnvelopePrompt } from "@/components/case-file/EnvelopeDialog";
 import { useSuccessBurst } from "@/components/case-file/SuccessBurst";
 import energieetiketteAsset from "@/assets/energieetikette.png.asset.json";
-import waschmaschineEtiketteAsset from "@/assets/waschmaschine-energieetikette.avif.asset.json";
-import waschmaschineEtiketteEAsset from "@/assets/waschmaschine-etikette-e.avif.asset.json";
+import waschmaschineEtiketteAsset from "@/assets/waschmaschine-klasse-a.png.asset.json";
+import waschmaschineEtiketteEAsset from "@/assets/waschmaschine-klasse-e.png.asset.json";
 import { AlltagsTippsGrid, SparPotenzialChart } from "@/components/case-file/WohnenCharts";
 
 
