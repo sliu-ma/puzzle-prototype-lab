@@ -6,6 +6,11 @@ import { QRGate } from "@/components/case-file/QRGate";
 import { StageGate } from "@/components/case-file/StageGate";
 import { GutachtenRaetsel } from "@/components/case-file/GutachtenRaetsel";
 import { InputCarousel } from "@/components/case-file/InputCarousel";
+import {
+  CO2VergleichChart,
+  AnteilErneuerbarChart,
+  ImportabhaengigkeitChart,
+} from "@/components/case-file/EnergietraegerCharts";
 import { HintSystem, type Hint } from "@/components/case-file/HintSystem";
 import { completeStage, getFrozenClock, getHearingClock } from "@/lib/progress";
 import { usePersistentState, usePersistentSet } from "@/lib/persist";
@@ -228,22 +233,22 @@ function AktePage() {
           <InputCarousel
             kicker="Fachlicher Input · Energieträger"
             title="Was wirklich nachhaltig ist"
-            intro="Drei Begriffe, an denen du jede Energiestudie messen kannst — und an denen das Hearing entschieden wird:"
+            intro="Drei Blickwinkel auf unsere Energie — an ihnen entscheidet sich, was im Hearing zählt:"
             cards={[
               {
-                title: "CO₂ pro kWh",
-                body: "Erdgas liegt real bei ca. 400 g/kWh, Steinkohle bei 820 g, Photovoltaik im Betrieb bei 0 g. Wer mit 95 g/kWh für Gas wirbt, schummelt um den Faktor 4.",
-                hint: "Quelle: BAFU, BFE 2024.",
+                title: "Vergleich Energieträger",
+                body: "Verschiedene Energiequellen verursachen unterschiedlich viel Gramm CO₂ pro Kilowattstunde Strom. Im Betrieb verursachen erneuerbare Energien praktisch keine CO₂-Emissionen.",
+                visual: <CO2VergleichChart />,
               },
               {
-                title: "Wirkungsgrad",
-                body: "Moderne Kohlekraftwerke kommen real auf 43–46 %, GuD-Erdgas auf rund 60 %, Wind und PV liegen darunter — produzieren aber ohne Brennstoff. Mehr als 70 % bei Kohle gibt es nicht.",
-                hint: "Wirkungsgrad ≠ Nachhaltigkeit. Auch ein effizienter Kohleblock bleibt fossil.",
+                title: "Anteil erneuerbare Energien",
+                body: "Der Anteil erneuerbarer Energien in der Schweiz betrug 2023 rund 28 Prozent. Der grösste Teil der Energie stammt also weiterhin aus fossilen Quellen wie Öl oder Gas.",
+                visual: <AnteilErneuerbarChart />,
               },
               {
-                title: "Versorgungssicherheit",
-                body: "PV + Wind brauchen Speicher und Netz, sind aber kombinierbar. Fossile Anlagen wirken stabil, hängen aber an Importen und Weltmarktpreisen. Die Mischung entscheidet — nicht ein einzelner Träger.",
-                hint: "Stichworte: Speicher, Sektorenkopplung, Stromnetz.",
+                title: "Abhängigkeit von Importen",
+                body: "Mehr als 70 Prozent des Schweizer Energiebedarfs werden importiert. Solar- und Windenergie machen die Schweiz unabhängiger von diesen Importen, die vor allem in Krisenzeiten stark schwanken können.",
+                visual: <ImportabhaengigkeitChart />,
               },
             ]}
             onBack={() => setStep("spiel")}
