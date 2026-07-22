@@ -356,6 +356,8 @@ function FinalePage() {
   );
   const [resetKey, setResetKey] = useState(0);
   const [pulse, setPulse] = useState<null | "up" | "down">(null);
+  const [review, setReview] = useState(false);
+
 
   const pulseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
