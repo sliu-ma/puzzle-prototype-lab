@@ -330,7 +330,7 @@ function buildFragen(): Frage[] {
         "28", "28%", "28 prozent", "ca 28", "rund 28", "etwa 28",
         "27", "29", "circa 28",
       ],
-      hint: "Etwas mehr als ein Viertel.",
+      hint: "",
       erklaerung:
         "2023 lag der Anteil erneuerbarer Energien am Schweizer Endenergieverbrauch bei rund 28 %.",
     },
