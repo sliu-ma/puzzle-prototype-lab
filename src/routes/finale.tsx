@@ -19,7 +19,7 @@ import waschmaschineE from "@/assets/waschmaschine-klasse-e.png.asset.json";
 export const Route = createFileRoute("/finale")({
   head: () => ({
     meta: [
-      { title: "Finale — Hearing im Gemeindesaal" },
+      { title: "Finale: Hearing im Gemeindesaal" },
       {
         name: "description",
         content:
@@ -189,7 +189,7 @@ function buildFragen(): Frage[] {
       optionen: ["22 %", "32 %", "46 %", "60 %"],
       korrekt: 2,
       erklaerung:
-        "Rund 46 % aller Autofahrten in der Schweiz sind kürzer als 5 km — Strecken, die sich gut mit Velo oder zu Fuss zurücklegen liessen.",
+        "Rund 46 % aller Autofahrten in der Schweiz sind kürzer als 5 km. Strecken, die sich gut mit Velo oder zu Fuss zurücklegen liessen.",
     },
 
     // F3 · Konsum · Match (Drag & Drop mit Icons)
@@ -223,7 +223,6 @@ function buildFragen(): Frage[] {
       ratsmitglied: "Ratsherr Brunner",
       frage: `Nenne ein Schweizer Saisongemüse oder eine Saisonfrucht im ${season}.`,
       akzeptiert: SAISON_ANTWORTEN[season],
-      hint: `Es ist ${season} — was wächst gerade wirklich in der Schweiz?`,
       erklaerung:
         `Im ${season} sind in der Schweiz z. B. ${SAISON_ANTWORTEN[season].slice(0, 4).map(capitalize).join(", ")} saisonal verfügbar.`,
     },
@@ -256,7 +255,7 @@ function buildFragen(): Frage[] {
         "Wie viele der untersuchten Arten in der Schweiz stehen auf der Roten Liste?",
       optionen: ["Rund 1 von 20", "Rund 1 von 3", "Rund 1 von 100"],
       korrekt: 1,
-      erklaerung: "Rund ein Drittel — also 1 von 3 — der untersuchten Arten ist gefährdet (BAFU).",
+      erklaerung: "Rund ein Drittel. also 1 von 3. der untersuchten Arten ist gefährdet (BAFU).",
     },
 
     // F7 · Wohnen · Short
@@ -267,8 +266,7 @@ function buildFragen(): Frage[] {
       ratsmitglied: "Ratsherr Frei",
       frage:
         "Wie viel Prozent Heizenergie spart eine Absenkung der Raumtemperatur um 1 °C?",
-      akzeptiert: ["6", "6%", "6 prozent", "ca 6", "rund 6", "etwa 6", "circa 6"],
-      hint: "Faustregel — eine einstellige Zahl.",
+      akzeptiert: ["6"],
       erklaerung:
         "Faustregel: 1 °C kühler entspricht ca. 6 % weniger Heizenergie.",
     },
@@ -326,11 +324,7 @@ function buildFragen(): Frage[] {
       ratsmitglied: "Gemeindepräsident",
       frage:
         "Wie hoch ist der Anteil erneuerbarer Energien am Schweizer Energiemix (in %)?",
-      akzeptiert: [
-        "28", "28%", "28 prozent", "ca 28", "rund 28", "etwa 28",
-        "27", "29", "circa 28",
-      ],
-      hint: "",
+      akzeptiert: ["27", "28", "29"],
       erklaerung:
         "2023 lag der Anteil erneuerbarer Energien am Schweizer Endenergieverbrauch bei rund 28 %.",
     },
@@ -600,7 +594,7 @@ function FinalePage() {
             </h2>
             <p className="mt-4 text-[15px] leading-relaxed text-foreground/85">
               Das Barometer ist auf null gefallen. Geh die Etappen-Karten
-              nochmals durch — besonders die fachlichen Inputs am Ende jeder
+              nochmals durch. besonders die fachlichen Inputs am Ende jeder
               Etappe.
             </p>
             <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
@@ -827,7 +821,7 @@ function buildFeedback(frage: Frage, userAnswer: unknown, correct: boolean): str
   switch (frage.type) {
     case "slider": {
       const val = typeof userAnswer === "number" ? userAnswer : NaN;
-      if (correct) return `Treffer — ${frage.erklaerung}`;
+      if (correct) return `Treffer. ${frage.erklaerung}`;
       if (!isNaN(val) && val < frage.zielwert) {
         return `Zu tief geschätzt. Die Vollkosten des Autos (rund 74 Rp./km) werden oft unterschätzt. ${frage.erklaerung}`;
       }
@@ -837,18 +831,18 @@ function buildFeedback(frage: Frage, userAnswer: unknown, correct: boolean): str
       const idx = typeof userAnswer === "number" ? userAnswer : -1;
       if (frage.id === 2) {
         const map = [
-          "Zu wenig — der Anteil ist mehr als doppelt so hoch.",
+          "Zu wenig. der Anteil ist mehr als doppelt so hoch.",
           "In die richtige Richtung, aber immer noch zu tief.",
-          "Richtig — knapp die Hälfte aller Autofahrten ist kürzer als 5 km.",
-          "Etwas zu hoch — es ist knapp die Hälfte, nicht deutlich mehr.",
+          "Richtig. knapp die Hälfte aller Autofahrten ist kürzer als 5 km.",
+          "Etwas zu hoch. es ist knapp die Hälfte, nicht deutlich mehr.",
         ];
         return `${map[idx] ?? ""} ${frage.erklaerung}`.trim();
       }
       if (frage.id === 6) {
         const map = [
-          "Zu optimistisch — es ist rund ein Drittel, nicht 1 von 20.",
-          "Richtig — rund ein Drittel der untersuchten Arten ist gefährdet.",
-          "Weit daneben — tatsächlich ist rund 1 von 3 Arten gefährdet, nicht 1 von 100.",
+          "Zu optimistisch. es ist rund ein Drittel, nicht 1 von 20.",
+          "Richtig. rund ein Drittel der untersuchten Arten ist gefährdet.",
+          "Weit daneben. tatsächlich ist rund 1 von 3 Arten gefährdet, nicht 1 von 100.",
         ];
         return `${map[idx] ?? ""} ${frage.erklaerung}`.trim();
       }
@@ -875,29 +869,29 @@ function buildFeedback(frage: Frage, userAnswer: unknown, correct: boolean): str
         const season = currentSeason();
         const beispiele = SAISON_ANTWORTEN[season].slice(0, 5).map(capitalize).join(", ");
         if (correct) {
-          return `Richtig — „${capitalize(text)}" hat im ${season} in der Schweiz Saison. Weitere Beispiele: ${beispiele}.`;
+          return `Richtig. „${capitalize(text)}" hat im ${season} in der Schweiz Saison. Weitere Beispiele: ${beispiele}.`;
         }
-        return `„${text ? capitalize(text) : "—"}" hat im ${season} in der Schweiz keine Saison. Aktuell saisonal: ${beispiele}.`;
+        return `„${text ? capitalize(text) : "..."}" hat im ${season} in der Schweiz keine Saison. Aktuell saisonal: ${beispiele}.`;
       }
       if (frage.id === 7) {
-        if (correct) return `Richtig — die Faustregel lautet: 1 °C weniger ≈ 6 % weniger Heizenergie.`;
-        return `Nicht ganz — die Faustregel lautet ca. 6 % pro °C, nicht „${text}".`;
+        if (correct) return `Richtig. Die Faustregel lautet: 1 °C weniger ≈ 6 % weniger Heizenergie.`;
+        return `Nicht ganz. Die Faustregel lautet ca. 6 % pro °C, nicht „${text}".`;
       }
       if (frage.id === 10) {
-        if (correct) return `Richtig — 2023 lag der Anteil bei rund 28 %.`;
+        if (correct) return `Richtig. 2023 lag der Anteil bei rund 28 %.`;
         const num = parseInt(text.replace(/[^0-9]/g, ""), 10);
         if (!isNaN(num) && num < 25) {
-          return `Zu tief — der Anteil ist inzwischen deutlich höher: rund 28 %.`;
+          return `Zu tief. Der Anteil ist inzwischen deutlich höher: rund 28 %.`;
         }
         if (!isNaN(num) && num > 31) {
-          return `Zu hoch — der Anteil liegt bei rund 28 %, nicht bei ${num} %.`;
+          return `Zu hoch. Der Anteil liegt bei rund 28 %, nicht bei ${num} %.`;
         }
         return `Der Anteil erneuerbarer Energien lag 2023 bei rund 28 %.`;
       }
       return frage.erklaerung;
     }
     case "either": {
-      if (correct) return `Richtig — Klasse A ist die effizienteste Energiekategorie.`;
+      if (correct) return `Richtig. Klasse A ist die effizienteste Energiekategorie.`;
       return `Klasse E verbraucht deutlich mehr Strom pro Waschgang. Die Energieetikette geht von A (grün, sehr effizient) bis G (rot, ineffizient).`;
     }
     case "match": {
@@ -1135,14 +1129,41 @@ function MultiView({
 }
 
 /* ---- Short Answer ---- */
+const ZAHLWOERTER: Record<string, number> = {
+  null: 0, eins: 1, ein: 1, eine: 1, zwei: 2, drei: 3, vier: 4, fuenf: 5,
+  sechs: 6, sieben: 7, acht: 8, neun: 9, zehn: 10, elf: 11, zwoelf: 12,
+  dreizehn: 13, vierzehn: 14, fuenfzehn: 15, sechzehn: 16, siebzehn: 17,
+  achtzehn: 18, neunzehn: 19, zwanzig: 20, dreissig: 30, vierzig: 40,
+  fuenfzig: 50, sechzig: 60, siebzig: 70, achtzig: 80, neunzig: 90, hundert: 100,
+};
+
+const FUELLWOERTER = new Set([
+  "ca", "circa", "cirka", "zirka", "rund", "etwa", "ungefaehr", "ungefähr",
+  "knapp", "gut", "prozent", "%",
+]);
+
 const normalize = (s: string) =>
   s
     .trim()
     .toLowerCase()
+    .replace(/ß/g, "ss")
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9% ]/g, "")
-    .replace(/\s+/g, " ");
+    .replace(/[^a-z0-9% ]/g, " ")
+    .replace(/%/g, " ")
+    .split(/\s+/)
+    .filter((w) => w.length > 0 && !FUELLWOERTER.has(w))
+    .map((w) => (w in ZAHLWOERTER ? String(ZAHLWOERTER[w]) : w))
+    .join(" ");
+
+const toNumber = (s: string): number | null => {
+  const n = normalize(s);
+  const digits = n.replace(/[^0-9]/g, "");
+  if (!digits) return null;
+  const only = n.replace(/[0-9 ]/g, "");
+  if (only.length > 0) return null;
+  return parseInt(digits, 10);
+};
 
 function ShortView({
   frage,
@@ -1160,7 +1181,12 @@ function ShortView({
     e.preventDefault();
     if (submitted || answered) return;
     const n = normalize(text);
-    const ok = frage.akzeptiert.some((a) => normalize(a) === n);
+    const userNum = toNumber(text);
+    const ok = frage.akzeptiert.some((a) => {
+      if (normalize(a) === n) return true;
+      const aNum = toNumber(a);
+      return userNum !== null && aNum !== null && userNum === aNum;
+    });
     setSubmitted(true);
     onResult(ok, text);
   };
@@ -1176,11 +1202,6 @@ function ShortView({
         placeholder="Deine Antwort …"
         className="w-full rounded-sm border border-border bg-paper-deep/30 px-4 py-3 font-serif text-[15px] focus:border-stamp focus:outline-none"
       />
-      {frage.hint && !submitted && (
-        <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
-          Hinweis: {frage.hint}
-        </p>
-      )}
       {!submitted && (
         <button
           type="submit"
@@ -1193,6 +1214,7 @@ function ShortView({
     </form>
   );
 }
+
 
 /* ---- Match (Drag & Drop) ---- */
 function MatchView({
@@ -1230,7 +1252,7 @@ function MatchView({
   const startDrag = (lid: string) => (e: React.PointerEvent) => {
     if (submitted) return;
     e.preventDefault();
-    (e.target as Element).setPointerCapture?.(e.pointerId);
+    (e.currentTarget as Element).setPointerCapture?.(e.pointerId);
     setDragging(lid);
     setGhost({ x: e.clientX, y: e.clientY });
   };
@@ -1431,7 +1453,7 @@ function OrderView({
   return (
     <div className="space-y-3">
       <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
-        Verschiebe per Pfeil — oben = wirksamste Massnahme.
+        Verschiebe per Pfeil. oben = wirksamste Massnahme.
       </p>
       <ol className="space-y-2">
         {order.map((id, i) => {
@@ -1527,7 +1549,7 @@ function BucketView({
   const startDrag = (itemId: string) => (e: React.PointerEvent) => {
     if (submitted) return;
     e.preventDefault();
-    (e.target as Element).setPointerCapture?.(e.pointerId);
+    (e.currentTarget as Element).setPointerCapture?.(e.pointerId);
     setDragging(itemId);
     setGhost({ x: e.clientX, y: e.clientY });
   };
@@ -1823,7 +1845,7 @@ function OutroScreen() {
   // Benötigte Zeit einmalig beim Mount einfrieren.
   const elapsedLabel = useState(() => {
     const start = getStartTs();
-    if (!start) return "–";
+    if (!start) return "...";
     const ms = Math.max(0, Date.now() - start);
     const totalSec = Math.floor(ms / 1000);
     const h = Math.floor(totalSec / 3600);
@@ -1866,7 +1888,7 @@ function OutroScreen() {
       side: "right",
       tone: "amber",
       text:
-        "„Die Zahlen sind sauber. Damit können wir arbeiten — nicht mit dem alten Gutachten.“",
+        "„Die Zahlen sind sauber. Damit können wir arbeiten, nicht mit dem alten Gutachten.“",
     },
     {
       name: "Ratsfrau Lindenmann",
@@ -1902,7 +1924,7 @@ function OutroScreen() {
         ))}
       </div>
 
-      {/* STEP 0 — Reaktionen im Saal als Sprechblasen */}
+      {/* STEP 0. Reaktionen im Saal als Sprechblasen */}
       {step === 0 && (
         <PaperCard rotate={-0.3} tape="top-left">
           <div className="absolute right-4 top-6 sm:right-8 sm:top-8">
@@ -1949,7 +1971,7 @@ function OutroScreen() {
         </PaperCard>
       )}
 
-      {/* STEP 1 — Nach dem Saal, Maja & Elvira */}
+      {/* STEP 1. Nach dem Saal, Maja & Elvira */}
       {step === 1 && (
         <PaperCard rotate={0.2} tape="top-right">
           <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
@@ -2006,7 +2028,7 @@ function OutroScreen() {
         </PaperCard>
       )}
 
-      {/* STEP 2 — Abschluss der gesamten Ermittlung */}
+      {/* STEP 2. Abschluss der gesamten Ermittlung */}
       {step === 2 && (
         <PaperCard rotate={-0.3} tape="top-left" className="relative overflow-hidden">
           <SuccessConfetti />
@@ -2020,7 +2042,7 @@ function OutroScreen() {
             Ihr habt es geschafft.
           </h2>
           <p className="mt-3 text-[15px] leading-relaxed text-foreground/85">
-            Fünf Etappen, ein Hearing — und eine Gemeinde, die zum ersten Mal
+            Fünf Etappen, ein Hearing. und eine Gemeinde, die zum ersten Mal
             genau hingeschaut hat. Das war eure Arbeit.
           </p>
 
@@ -2165,7 +2187,7 @@ const INTRO_SEQUENCE: IntroStep[] = [
     rolle: "Vorsitz",
     side: "right",
     tone: "stamp",
-    text: "„Dann kommen wir nun zur finalen Abstimmung über das Projekt Waldlichtung–“",
+    text: "„Dann kommen wir nun zur finalen Abstimmung über das Projekt Waldlichtung...“",
   },
   {
     kind: "narration",
@@ -2176,7 +2198,7 @@ const INTRO_SEQUENCE: IntroStep[] = [
     name: "Maja",
     side: "left",
     tone: "amber",
-    text: "„Entschuldigung – dürfen wir kurz das Wort ergreifen? Wir haben neue Daten, die für die Abstimmung relevant sind.“",
+    text: "„Entschuldigung, dürfen wir kurz das Wort ergreifen? Wir haben neue Daten, die für die Abstimmung relevant sind.“",
   },
   {
     kind: "bubble",
@@ -2189,7 +2211,7 @@ const INTRO_SEQUENCE: IntroStep[] = [
   },
   {
     kind: "narration",
-    text: "Maja legt die Unterlagen auf den Tisch. Der Saal wird still. Reihum stellt jetzt jedes Ratsmitglied eine Frage — jede richtige Antwort bringt euch näher an eine Vertagung.",
+    text: "Maja legt die Unterlagen auf den Tisch. Der Saal wird still. Reihum stellt jetzt jedes Ratsmitglied eine Frage. jede richtige Antwort bringt euch näher an eine Vertagung.",
   },
 ];
 

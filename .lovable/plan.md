@@ -1,55 +1,43 @@
+## Anpassungen Hearing (`src/routes/finale.tsx`)
 
-## Ziel
+### 1. Kurzantworten robuster prüfen
 
-Hearing im `src/routes/finale.tsx` in zwei Punkten überarbeiten:
+Die Prüfung in `ShortView` vergleicht normalisierten Text 1:1 mit `frage.akzeptiert`. Zahlwörter, „%" und Groß/Klein werden zwar teilweise abgedeckt, sind aber pro Frage hart gepflegt. Ziel: alternative Schreibweisen zentral behandeln.
 
-1. **Adaptives, sauberes Feedback** pro Frage — mit korrekter Rechtschreibung und mit Erklärungen, die zu den überarbeiteten Faktenkarten passen. Bei falscher Antwort soll begründet werden, warum genau *diese* Antwort/Zuordnung falsch ist.
-2. **Konsistente Zufalls-Anordnung** aller Antwortoptionen bei jeder Fragen-Anzeige — auch bei den Drag-&-Drop-Aufgaben.
+- `normalize()` erweitern: `%` und das Wort `prozent` entfernen, mehrfache Leerzeichen und Füllwörter (`ca`, `circa`, `ungefähr`, `rund`, `etwa`, `ungefaehr`) strippen, `ß → ss`.
+- Zahl-Normalisierung: deutsche Zahlwörter 0–20 sowie 30, 40 … 100 auf Ziffern mappen (`sechs → 6`, `achtundzwanzig → 28`).
+- Prüfung: nach Normalisierung zusätzlich einen reinen Zahlenvergleich versuchen (falls sowohl Nutzertext als auch ein Akzeptanzwert als Zahl parsebar sind, gilt Gleichheit).
+- `akzeptiert`-Listen dadurch deutlich kürzen: F7 → `["6"]`, F10 → `["28"]` (mit Toleranz ±1 über Zahlvergleich → 27/28/29 gelten weiter).
+- Fruchtnamen (F4): Groß/Kleinschreibung ist bereits egal, aber Umlaute doppelt gepflegt. Nach `normalize()` (bereits mit Diakritika-Strip) reicht die einfache Form (`apfel`, `kuerbis` bleibt via NFD-Strip). Duplikate wie `äpfel`/`aepfel` können raus.
 
-## Adaptives Feedback
+### 2. Hinweise bei Kurzantworten entfernen
 
-Aktuell wird nach dem Antworten für alle Fragen dieselbe generische `frage.erklaerung` gezeigt. Neu:
+`hint` in F4, F7, F10 auf leeren String setzen und im Rendering (`ShortView`) den kompletten Hint-Block entfernen. Das `hint`-Feld bleibt im Typ optional bestehen.
 
-- Das grüne/rote Feedback-Kästchen zeigt weiterhin die Kern-Erklärung (Grammatik korrigiert).
-- Zusätzlich bekommt jede Frage eine `feedback`-Funktion, die abhängig von der konkret abgegebenen Antwort einen kurzen adaptiven Text liefert, z. B.:
-  - **F1 Slider (28 Rp./km)**: „Du liegst zu tief — der Auto-Vollkostensatz von 74 Rp./km wird oft unterschätzt." / „Zu hoch — der ÖV kostet rund 46 Rp./km, nicht viel weniger." / bei richtig eine Bestätigung.
-  - **F2 Autofahrten <5 km**: 22 % → „Zu wenig — der Anteil ist über doppelt so hoch." · 32 % → „Wärmer, aber noch zu tief." · 60 % → „Etwas zu hoch — es ist knapp die Hälfte, nicht die Mehrheit."
-  - **F3 Labels (Match)**: Bei jeder falsch gepaarten Karte einzeilig aufzeigen, was das Label wirklich bedeutet und warum die andere Beschreibung besser passt (z. B. „Bio Suisse steht für Anbau ohne synthetische Pestizide — die Beschreibung ‚100 % CH-Herkunft' beschreibt Suisse Garantie.").
-  - **F4 Saisongemüse**: Bei falsch — „‚{Eingabe}' hat in der Schweiz aktuell keine Saison. Aktuell im {Jahreszeit}: {Beispiele}."; bei richtig — kurze Bestätigung mit Nennung von zwei weiteren Beispielen.
-  - **F5 Biodiversität (Multi)**: Fehlerbeschreibung listet, welche Ursachen fälschlich gewählt („Zu viel Regen ist keine Hauptursache") bzw. übersehen wurden.
-  - **F6 Rote Liste**: „1 von 20" → „Zu optimistisch — es ist rund ein Drittel." · „1 von 100" → „Weit daneben — tatsächlich rund 1 von 3."
-  - **F7 Heizen**: bei zahlenmäßig danebenliegend Hinweis auf die 6-%-Faustregel und Bedeutung (nicht 1 %, nicht 20 %).
-  - **F8 Waschmaschinen**: „Klasse E verbraucht deutlich mehr Strom pro Waschgang — die Etikette geht von A (grün) nach G (rot)."
-  - **F9 Energiequellen (Bucket)**: Für jedes falsch einsortierte Item ein kurzer Grund („Gas ist ein fossiler Brennstoff und daher nicht erneuerbar.").
-  - **F10 Anteil erneuerbar**: „Zu tief — der Anteil ist höher als vor zehn Jahren." bzw. „Zu hoch — 2023 lag er bei rund 28 %."
+### 3. Gedankenstriche vermeiden
 
-Umsetzung: neue Renderer-Prop `feedbackNode` oder das Feedback-Kästchen zieht Text über eine Helper-Funktion `buildFeedback(frage, userAnswer, correct)`. Die konkreten Nutzer-Antworten (Slider-Wert, Multi-Auswahl, Match-Paare, Bucket-Placements, Either-Wahl, Short-Text) müssen von `FrageRenderer` an `FinalePage` hochgereicht werden — dafür wird `onResult` auf `onResult(correct, userAnswer)` erweitert und die aktuelle Antwort im `FinalePage`-State abgelegt (z. B. `antworten[]` neben `ergebnisse[]`, persistiert).
+Alle `—` (em-dash) und `–` (en-dash) in Fragen, Feedback (`buildFeedback`) und Erklärungen durch Punkt, Komma oder Doppelpunkt ersetzen. Betroffen sind u. a. `SliderView`-Feedback, F4/F7/F10-Feedback, F5/F6-Mappings und mehrere Erklärungstexte.
 
-Grammatik-Durchgang aller Fragen-, `erklaerung`- und `hint`-Texte (Groß-/Kleinschreibung der Nomen, Bindestriche, „%") — u. a. „prozent" → „Prozent", „ca 28" bleibt in `akzeptiert`-Liste (Vergleich läuft normalisiert), aber Anzeigetexte werden korrekt gesetzt.
+### 4. Zuordnungs-Kontrolle prüfen und fixen
 
-## Zufalls-Anordnung überall
+Die Prüf-Logik in `MatchView` (`pairs[l.id] === frage.paare[l.id]`) und `BucketView` (`placements[it.id] === frage.solution[it.id]`) ist auf Code-Ebene korrekt. Der Bug muss also aus der Interaktion kommen. Vor dem Fix daher reproduzieren:
 
-Aktueller Stand:
+- Playwright-Lauf gegen `/finale` mit dem Cheat-Code `KRXZMVBQ`, F3 (Match, Labels) und F9 (Bucket, Energiequellen) durchspielen und `submit`-Ergebnis + `userAnswer` loggen.
+- Verdachtsmomente, die dabei geprüft werden:
+  - **Shuffle-Instabilität:** `useMemo(..., [frage])` wird bei jedem Rerender neu evaluiert, wenn `frage` referenziell wechselt (Frage-Objekt kommt aus `buildFragen()` in einem Modul-Scope, sollte stabil sein — im Review-Modus wird `FRAGEN[i]` reingereicht, ebenfalls stabil). Falls doch instabil, würden Ref-Zuordnungen springen und ein Drop könnte auf dem falschen Ziel landen.
+  - **`setPointerCapture` auf `e.target`:** Bei einem Klick auf ein Kind-Element (Icon/Label) wird der Pointer am Kind gecaptured; nach dem Loslassen feuern `pointermove/up` nur noch dort, nicht am Container mit `onPointerMove`/`onPointerUp`. Ergebnis: `endDrag` läuft nie, `dragging` bleibt gesetzt, der nächste Klick wirkt wie ein Drop mit alten Koordinaten. Fix: Capture konsequent am umschließenden Draggable setzen (`e.currentTarget.setPointerCapture(...)`) und `onPointerMove`/`onPointerUp`/`onPointerCancel` auf das Draggable statt den äußeren Container hängen — oder Capture ganz weglassen und `document`-Listener nutzen.
+  - **Pool-Rückstellung im Bucket:** Beim Ziehen eines Items zurück in den Pool wird `placements[id] = null`, `allDone` verlangt aber `!== null` für jedes Item → Submit bleibt deaktiviert, wirkt evtl. wie „Zuordnung wird nicht geprüft". Ggf. UX-Text ergänzen („Ziehe alle Begriffe in eine Spalte").
 
-- `SingleView`, `MultiView`: nutzen `useMemo(() => shuffleIndices(...), [frage])` → schon zufällig.
-- `MatchView`: rendert `frage.links` und `frage.rechts` in Original-Reihenfolge.
-- `BucketView`: rendert `frage.items` in Original-Reihenfolge; `frage.buckets` ebenfalls fest.
-- `EitherView`: rendert `frage.optionen` fest.
-- `ShortView`, `SliderView`: keine Optionen — keine Änderung.
+Der Fix ergibt sich aus dem Reproduktionsschritt. Falls sich `setPointerCapture` bestätigt: Umbau wie oben und ein kurzer Regressionstest mit Playwright (drag über Kind-Element, drag mit Icon, drag zurück in Pool).
 
-Änderung: in `MatchView`, `BucketView`, `EitherView` je eine gemischte Kopie mit `useMemo(() => shuffle([...]), [frage])` erzeugen und für das Rendering verwenden. Die Lösung/`paare`/`solution`/`korrekt`-Prüfung arbeitet weiter mit den IDs, die Anzeige-Reihenfolge ändert sich pro Aufruf.
+### 5. Reviewmodus / Feedback
 
-Zusätzlich bei F9 die Bucket-Reihenfolge (Erneuerbar / Nicht erneuerbar) mischen, damit auch die Ziel-Spalten variieren.
+Feedback-Texte in `buildFeedback` an die Änderungen aus (1) und (3) angleichen (keine Gedankenstriche, Zahlwörter im Feedback ausschreiben oder ganz weglassen). Bestehende Groß-/Kleinschreibungs-Korrekturen bleiben.
 
-## Betroffene Datei
+### Technische Referenzen
 
-- `src/routes/finale.tsx` (einzige Datei; keine Struktur- oder Route-Änderungen, keine neuen Assets).
-
-## Nicht verändert
-
-- Fragenkatalog inhaltlich (dieselben 10 Fragen, dieselben korrekten Antworten, Grenzen des Sliders, Bilder von F8).
-- Barometer-Logik, Punktesystem, Persistenzschlüssel, Intro-/Outro-Screen.
-
-## Verifikation
-
-Build durchlaufen lassen, im Preview eine Runde spielen: bei jeder Frage einmal falsch und einmal richtig antworten und prüfen, dass (a) das Feedback konkret auf die Wahl eingeht, (b) Rechtschreibung stimmt, (c) beim Neuladen der Frage die Optionen-Reihenfolge wechselt (inkl. Drag-&-Drop-Karten und Buckets).
+- Kurzantwort-Prüfung: `src/routes/finale.tsx` Zeilen 1138–1195 (`normalize`, `ShortView`)
+- Fragen-Definitionen: Zeilen 218–336 (F4, F7, F10 Hints / akzeptiert)
+- Match-/Bucket-Prüfung: Zeilen 1197–1391 (`MatchView`), 1489–1660 (`BucketView`)
+- Feedback: Zeilen 826–924 (`buildFeedback`)
+- Saison-Listen: Zeilen 132–155
