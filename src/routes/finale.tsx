@@ -873,11 +873,11 @@ function buildFeedback(frage: Frage, userAnswer: unknown, correct: boolean): str
       const text = typeof userAnswer === "string" ? userAnswer.trim() : "";
       if (frage.id === 4) {
         const season = currentSeason();
-        const beispiele = SAISON_ANTWORTEN[season].slice(0, 5).join(", ");
+        const beispiele = SAISON_ANTWORTEN[season].slice(0, 5).map(capitalize).join(", ");
         if (correct) {
-          return `Richtig — „${text}" hat im ${season} in der Schweiz Saison. Weitere Beispiele: ${beispiele}.`;
+          return `Richtig — „${capitalize(text)}" hat im ${season} in der Schweiz Saison. Weitere Beispiele: ${beispiele}.`;
         }
-        return `„${text || "—"}" hat im ${season} in der Schweiz keine Saison. Aktuell saisonal: ${beispiele}.`;
+        return `„${text ? capitalize(text) : "—"}" hat im ${season} in der Schweiz keine Saison. Aktuell saisonal: ${beispiele}.`;
       }
       if (frage.id === 7) {
         if (correct) return `Richtig — die Faustregel lautet: 1 °C weniger ≈ 6 % weniger Heizenergie.`;
