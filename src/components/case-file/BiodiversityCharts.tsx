@@ -184,7 +184,7 @@ export function VielfaltGrid() {
   return (
     <div className="flex h-full flex-col rounded-sm border border-dashed border-stamp/40 bg-paper-deep/20 p-3">
       <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
-        Was uns die Biodiversität schenkt
+        All das brauchen wir zum Leben. Die Vielfalt an Arten sichert uns genau das.
       </p>
       {/* Untereinander bis sm, dann 2x2 */}
       <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
