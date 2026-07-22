@@ -1225,7 +1225,8 @@ function MatchView({
     if (submitted || answered) return;
     const ok = frage.links.every((l) => pairs[l.id] === frage.paare[l.id]);
     setSubmitted(true);
-    onResult(ok);
+    onResult(ok, { ...pairs });
+
   };
 
   const dragged = dragging ? leftById[dragging] : null;
