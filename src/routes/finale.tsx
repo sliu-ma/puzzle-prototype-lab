@@ -240,7 +240,7 @@ function buildFragen(): Frage[] {
       ],
       korrekt: [0, 1, 3],
       erklaerung:
-        "Versiegelung, Pestizide und begradigte Gewässer zerstören Lebensräume. „Zu viel Regen" gehört nicht zu den Hauptursachen.",
+        'Versiegelung, Pestizide und begradigte Gewässer zerstören Lebensräume. „Zu viel Regen" gehört nicht zu den Hauptursachen.',
     },
     // F6 · Biodiversität · Single
     {
