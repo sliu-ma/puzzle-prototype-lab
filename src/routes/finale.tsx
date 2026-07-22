@@ -154,6 +154,10 @@ const SAISON_ANTWORTEN: Record<Season, string[]> = {
   ],
 };
 
+function capitalize(s: string): string {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
 function buildFragen(): Frage[] {
   const season = currentSeason();
   return [
@@ -221,7 +225,7 @@ function buildFragen(): Frage[] {
       akzeptiert: SAISON_ANTWORTEN[season],
       hint: `Es ist ${season} — was wächst gerade wirklich in der Schweiz?`,
       erklaerung:
-        `Im ${season} sind in der Schweiz z. B. ${SAISON_ANTWORTEN[season].slice(0, 4).join(", ")} saisonal verfügbar.`,
+        `Im ${season} sind in der Schweiz z. B. ${SAISON_ANTWORTEN[season].slice(0, 4).map(capitalize).join(", ")} saisonal verfügbar.`,
     },
 
     // F5 · Biodiversität · Multi
@@ -869,11 +873,11 @@ function buildFeedback(frage: Frage, userAnswer: unknown, correct: boolean): str
       const text = typeof userAnswer === "string" ? userAnswer.trim() : "";
       if (frage.id === 4) {
         const season = currentSeason();
-        const beispiele = SAISON_ANTWORTEN[season].slice(0, 5).join(", ");
+        const beispiele = SAISON_ANTWORTEN[season].slice(0, 5).map(capitalize).join(", ");
         if (correct) {
-          return `Richtig — „${text}" hat im ${season} in der Schweiz Saison. Weitere Beispiele: ${beispiele}.`;
+          return `Richtig — „${capitalize(text)}" hat im ${season} in der Schweiz Saison. Weitere Beispiele: ${beispiele}.`;
         }
-        return `„${text || "—"}" hat im ${season} in der Schweiz keine Saison. Aktuell saisonal: ${beispiele}.`;
+        return `„${text ? capitalize(text) : "—"}" hat im ${season} in der Schweiz keine Saison. Aktuell saisonal: ${beispiele}.`;
       }
       if (frage.id === 7) {
         if (correct) return `Richtig — die Faustregel lautet: 1 °C weniger ≈ 6 % weniger Heizenergie.`;
