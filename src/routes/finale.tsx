@@ -1239,7 +1239,7 @@ function MatchView({
       <div className="grid gap-3 sm:grid-cols-2">
         {/* Links (draggable) */}
         <div className="space-y-2">
-          {frage.links.map((l) => {
+          {linksShuffled.map((l) => {
             const paired = pairs[l.id];
             const isDragging = dragging === l.id;
             const correct = submitted && paired === frage.paare[l.id];
