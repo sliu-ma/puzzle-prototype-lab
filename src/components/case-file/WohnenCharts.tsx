@@ -79,8 +79,8 @@ export function AlltagsTippsGrid() {
 /** Karte 3: Vergleich der jährlichen Energiekosten mit/ohne Massnahmen. */
 export function SparPotenzialChart() {
   const ohne = 2400;
-  const mit = 1800;
-  const diff = ohne - mit;
+  const mit = 1680;
+  const diff = 720;
   const max = ohne;
 
   return (
