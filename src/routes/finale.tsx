@@ -266,8 +266,7 @@ function buildFragen(): Frage[] {
       ratsmitglied: "Ratsherr Frei",
       frage:
         "Wie viel Prozent Heizenergie spart eine Absenkung der Raumtemperatur um 1 °C?",
-      akzeptiert: ["6", "6%", "6 prozent", "ca 6", "rund 6", "etwa 6", "circa 6"],
-      hint: "Faustregel — eine einstellige Zahl.",
+      akzeptiert: ["6"],
       erklaerung:
         "Faustregel: 1 °C kühler entspricht ca. 6 % weniger Heizenergie.",
     },
