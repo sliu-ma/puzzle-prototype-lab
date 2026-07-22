@@ -356,6 +356,8 @@ function FinalePage() {
   );
   const [resetKey, setResetKey] = useState(0);
   const [pulse, setPulse] = useState<null | "up" | "down">(null);
+  const [review, setReview] = useState(false);
+
 
   const pulseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -410,6 +412,10 @@ function FinalePage() {
   const handleWeiter = () => {
     if (aktuell < FRAGEN.length - 1) setAktuell(aktuell + 1);
   };
+  const handleZurueck = () => {
+    if (aktuell > 0) setAktuell(aktuell - 1);
+  };
+
 
   const reset = () => {
     setErgebnisse(Array(FRAGEN.length).fill(null));
@@ -459,8 +465,21 @@ function FinalePage() {
           <IntroConversation onStart={() => setStarted(true)} />
         )}
 
-        {status === "running" && started && (
+        {(status === "running" || (status === "won" && review)) && started && (
           <div className="space-y-4" key={`run-${resetKey}`}>
+            {status === "won" && review && (
+              <div className="flex flex-wrap items-center justify-between gap-2 rounded-sm border border-emerald-500/40 bg-emerald-500/5 px-3 py-2">
+                <p className="font-mono-typed text-[10px] uppercase tracking-wider text-emerald-700">
+                  Rückblick · Frage {aktuell + 1} / {FRAGEN.length}
+                </p>
+                <button
+                  onClick={() => setReview(false)}
+                  className="rounded-sm border border-emerald-500/40 bg-white/50 px-3 py-1 font-mono-typed text-[10px] uppercase tracking-wider text-emerald-700 hover:bg-white"
+                >
+                  Zum Ergebnis →
+                </button>
+              </div>
+            )}
             {/* Barometer */}
             <Barometer
               value={barometer}
@@ -518,22 +537,30 @@ function FinalePage() {
                 </div>
               )}
 
-
-
-
-              {meinErgebnis !== null && (
-                <div className="mt-6 flex justify-end">
+              {(meinErgebnis !== null || (status === "won" && review)) && (
+                <div className="mt-6 flex items-center justify-between gap-2">
+                  <button
+                    onClick={handleZurueck}
+                    disabled={aktuell === 0}
+                    className="rounded-sm border border-border bg-card px-4 py-2.5 font-serif text-sm hover:bg-secondary disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    ← Zurück
+                  </button>
                   <button
                     onClick={
                       aktuell < FRAGEN.length - 1
                         ? handleWeiter
-                        : () => setErgebnisse((a) => [...a])
+                        : status === "won" && review
+                          ? () => setReview(false)
+                          : () => setErgebnisse((a) => [...a])
                     }
                     className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
                   >
                     {aktuell < FRAGEN.length - 1
                       ? "Nächste Frage →"
-                      : "Ergebnis ansehen →"}
+                      : status === "won" && review
+                        ? "Zum Ergebnis →"
+                        : "Ergebnis ansehen →"}
                   </button>
                 </div>
               )}
@@ -541,7 +568,23 @@ function FinalePage() {
           </div>
         )}
 
-        {status === "won" && <OutroScreen />}
+        {status === "won" && !review && (
+          <div className="space-y-4">
+            <OutroScreen />
+            <div className="flex justify-center">
+              <button
+                onClick={() => {
+                  setAktuell(0);
+                  setReview(true);
+                }}
+                className="inline-flex items-center gap-2 rounded-sm border border-border bg-card px-4 py-2 font-serif text-sm hover:bg-secondary"
+              >
+                Fragen und Antworten nochmals ansehen →
+              </button>
+            </div>
+          </div>
+        )}
+
 
         {status === "lost" && (
           <PaperCard rotate={0.3} tape="top-right">

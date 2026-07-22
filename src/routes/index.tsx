@@ -9,9 +9,13 @@ import {
   getCurrentStage,
   registerTeam,
   resetAll,
+  completeStage,
   getNowClock,
   getHearingClock,
 } from "@/lib/progress";
+
+const CHEAT_CODE = "KRXZMVBQ";
+
 
 
 import { IntroScreen, hasSeenIntro } from "@/components/case-file/IntroScreen";
@@ -151,12 +155,17 @@ function CoverPage() {
                 onStart={(name, code) => {
                   resetAll();
                   registerTeam(name, code);
+                  if (code.toUpperCase() === CHEAT_CODE) {
+                    // Debug-Modus: alle Etappen freischalten
+                    for (let i = 1; i <= 6; i++) completeStage(i);
+                  }
                   setIntroSeen(false);
                   setTeam({ name, code });
                   setStage(getCurrentStage());
                 }}
 
               />
+
             )}
           </article>
 
@@ -202,10 +211,11 @@ function StartForm({
       setError("Bitte gebt einen Teamnamen ein (mind. 2 Zeichen).");
       return;
     }
-    if (cleanCode !== START_CODE) {
+    if (cleanCode !== START_CODE && cleanCode !== CHEAT_CODE) {
       setError("Der Startcode stimmt nicht. Frag deine Lehrperson.");
       return;
     }
+
     setError(null);
     onStart(cleanName, cleanCode);
   };
