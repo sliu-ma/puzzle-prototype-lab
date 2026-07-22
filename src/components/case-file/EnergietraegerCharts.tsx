@@ -83,7 +83,7 @@ export function AnteilErneuerbarChart() {
         Energiemix Schweiz · 2023
       </p>
 
-      <div className="mt-3 flex items-center gap-4">
+      <div className="mt-3 flex items-center gap-3">
         <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="shrink-0">
           <circle
             cx={size / 2}
@@ -117,19 +117,20 @@ export function AnteilErneuerbarChart() {
           </text>
         </svg>
 
-        <ul className="flex flex-col gap-2 text-[12px]">
-          <li className="flex items-center gap-2">
-            <span className="h-3 w-3 rounded-sm bg-emerald-500/70" />
+        <ul className="flex min-w-0 flex-1 flex-col gap-2 text-[12px]">
+          <li className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+            <span className="h-3 w-3 shrink-0 rounded-sm bg-emerald-500/70" />
             <span className="font-serif">Erneuerbar</span>
             <span className="font-mono-typed text-foreground">{anteil} %</span>
           </li>
-          <li className="flex items-center gap-2">
-            <span className="h-3 w-3 rounded-sm bg-rose-500/60" />
+          <li className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+            <span className="h-3 w-3 shrink-0 rounded-sm bg-rose-500/60" />
             <span className="font-serif">Fossil (Öl, Gas, …)</span>
             <span className="font-mono-typed text-foreground">{rest} %</span>
           </li>
         </ul>
       </div>
+
 
       <p className="mt-auto pt-3 font-mono-typed text-[10px] text-muted-foreground">
         → Quelle: BFS 2023
