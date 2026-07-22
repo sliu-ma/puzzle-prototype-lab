@@ -133,7 +133,7 @@ export function AnteilErneuerbarChart() {
 
 
       <p className="mt-auto pt-3 font-mono-typed text-[10px] text-muted-foreground">
-        → Quelle: BFS 2023
+        {"\n"}
       </p>
     </div>
   );
