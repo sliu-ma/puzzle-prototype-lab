@@ -70,7 +70,7 @@ const URSACHEN = [
   },
   {
     title: "Pestizide",
-    desc: "Chemische Pflanzenschutzmittel schaden Insekten, Vögeln und dem Boden — auch weit weg vom Feld.",
+    desc: "Chemische Pflanzenschutzmittel schaden Insekten, Vögeln und dem Boden.",
     src: pestizideAsset.url,
   },
   {
