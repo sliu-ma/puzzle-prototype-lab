@@ -739,6 +739,10 @@ function typeLabel(t: Frage["type"]) {
       return "Reihenfolge";
     case "bucket":
       return "Zuordnen";
+    case "slider":
+      return "Schieberegler";
+    case "either":
+      return "Bildvergleich";
   }
 }
 
