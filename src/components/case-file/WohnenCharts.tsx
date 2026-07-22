@@ -13,13 +13,13 @@ const TIPPS: Tipp[] = [
     icon: Shirt,
     action: "Wäsche bei 60 statt 95 Grad waschen",
     effect: "bis −35 % Strom",
-    bar: 85,
+    bar: 35,
   },
   {
     icon: CookingPot,
     action: "Mit Deckel kochen",
     effect: "bis −40 % Strom",
-    bar: 55,
+    bar: 40,
   },
   {
     icon: Thermometer,
