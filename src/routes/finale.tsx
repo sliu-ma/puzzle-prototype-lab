@@ -515,6 +515,10 @@ function FinalePage() {
                   <p className="mt-2 whitespace-pre-line text-foreground/85">
                     {buildFeedback(frage, meineAntwort, meinErgebnis)}
                   </p>
+                </div>
+              )}
+
+
 
 
               {meinErgebnis !== null && (
