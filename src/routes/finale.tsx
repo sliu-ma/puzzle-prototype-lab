@@ -12,7 +12,9 @@ import { cn } from "@/lib/utils";
 
 import bioLogo from "@/assets/labels/bio.png.asset.json";
 import ipSuisseLogo from "@/assets/labels/ip-suisse.png.asset.json";
-import demeterLogo from "@/assets/labels/demeter.png.asset.json";
+import suisseGarantieLogo from "@/assets/labels/suisse-garantie.webp.asset.json";
+import waschmaschineA from "@/assets/waschmaschine-klasse-a.png.asset.json";
+import waschmaschineE from "@/assets/waschmaschine-klasse-e.png.asset.json";
 
 export const Route = createFileRoute("/finale")({
   head: () => ({
