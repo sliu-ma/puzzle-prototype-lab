@@ -14,6 +14,7 @@ import { cn } from "@/lib/utils";
 import { useEnvelopePrompt } from "@/components/case-file/EnvelopeDialog";
 import { useSuccessBurst } from "@/components/case-file/SuccessBurst";
 import energieetiketteAsset from "@/assets/energieetikette.png.asset.json";
+import waschmaschineEtiketteAsset from "@/assets/waschmaschine-energieetikette.avif.asset.json";
 import { AlltagsTippsGrid, SparPotenzialChart } from "@/components/case-file/WohnenCharts";
 
 
@@ -290,11 +291,16 @@ function AktePage() {
                 title: "Energieetiketten",
                 body: "Energieetiketten verraten, wie sparsam ein Gerät mit Strom umgeht. Geräte der Klasse A brauchen wenig Strom, Geräte der Klasse G deutlich mehr.",
                 visual: (
-                  <img
-                    src={energieetiketteAsset.url}
-                    alt="Energieetikette Skala A bis G"
-                    className="mx-auto block h-auto w-full max-w-[220px]"
-                  />
+                  <figure className="mx-auto flex w-full flex-col items-center">
+                    <img
+                      src={waschmaschineEtiketteAsset.url}
+                      alt="Energieetikette einer Waschmaschine"
+                      className="block h-[220px] w-auto max-w-full object-contain"
+                    />
+                    <figcaption className="mt-2 text-center font-serif text-xs italic text-ink/70">
+                      Beispiel: Energieetikette einer Waschmaschine
+                    </figcaption>
+                  </figure>
                 ),
               },
               {
