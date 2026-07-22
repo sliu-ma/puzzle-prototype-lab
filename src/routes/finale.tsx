@@ -19,7 +19,7 @@ import waschmaschineE from "@/assets/waschmaschine-klasse-e.png.asset.json";
 export const Route = createFileRoute("/finale")({
   head: () => ({
     meta: [
-      { title: "Finale. Hearing im Gemeindesaal" },
+      { title: "Finale: Hearing im Gemeindesaal" },
       {
         name: "description",
         content:
@@ -871,20 +871,20 @@ function buildFeedback(frage: Frage, userAnswer: unknown, correct: boolean): str
         if (correct) {
           return `Richtig. „${capitalize(text)}" hat im ${season} in der Schweiz Saison. Weitere Beispiele: ${beispiele}.`;
         }
-        return `„${text ? capitalize(text) : "—"}" hat im ${season} in der Schweiz keine Saison. Aktuell saisonal: ${beispiele}.`;
+        return `„${text ? capitalize(text) : "..."}" hat im ${season} in der Schweiz keine Saison. Aktuell saisonal: ${beispiele}.`;
       }
       if (frage.id === 7) {
-        if (correct) return `Richtig. die Faustregel lautet: 1 °C weniger ≈ 6 % weniger Heizenergie.`;
-        return `Nicht ganz. die Faustregel lautet ca. 6 % pro °C, nicht „${text}".`;
+        if (correct) return `Richtig. Die Faustregel lautet: 1 °C weniger ≈ 6 % weniger Heizenergie.`;
+        return `Nicht ganz. Die Faustregel lautet ca. 6 % pro °C, nicht „${text}".`;
       }
       if (frage.id === 10) {
         if (correct) return `Richtig. 2023 lag der Anteil bei rund 28 %.`;
         const num = parseInt(text.replace(/[^0-9]/g, ""), 10);
         if (!isNaN(num) && num < 25) {
-          return `Zu tief. der Anteil ist inzwischen deutlich höher: rund 28 %.`;
+          return `Zu tief. Der Anteil ist inzwischen deutlich höher: rund 28 %.`;
         }
         if (!isNaN(num) && num > 31) {
-          return `Zu hoch. der Anteil liegt bei rund 28 %, nicht bei ${num} %.`;
+          return `Zu hoch. Der Anteil liegt bei rund 28 %, nicht bei ${num} %.`;
         }
         return `Der Anteil erneuerbarer Energien lag 2023 bei rund 28 %.`;
       }
@@ -1845,7 +1845,7 @@ function OutroScreen() {
   // Benötigte Zeit einmalig beim Mount einfrieren.
   const elapsedLabel = useState(() => {
     const start = getStartTs();
-    if (!start) return "–";
+    if (!start) return "...";
     const ms = Math.max(0, Date.now() - start);
     const totalSec = Math.floor(ms / 1000);
     const h = Math.floor(totalSec / 3600);
@@ -1888,7 +1888,7 @@ function OutroScreen() {
       side: "right",
       tone: "amber",
       text:
-        "„Die Zahlen sind sauber. Damit können wir arbeiten. nicht mit dem alten Gutachten.“",
+        "„Die Zahlen sind sauber. Damit können wir arbeiten, nicht mit dem alten Gutachten.“",
     },
     {
       name: "Ratsfrau Lindenmann",
@@ -2187,7 +2187,7 @@ const INTRO_SEQUENCE: IntroStep[] = [
     rolle: "Vorsitz",
     side: "right",
     tone: "stamp",
-    text: "„Dann kommen wir nun zur finalen Abstimmung über das Projekt Waldlichtung–“",
+    text: "„Dann kommen wir nun zur finalen Abstimmung über das Projekt Waldlichtung...“",
   },
   {
     kind: "narration",
@@ -2198,7 +2198,7 @@ const INTRO_SEQUENCE: IntroStep[] = [
     name: "Maja",
     side: "left",
     tone: "amber",
-    text: "„Entschuldigung – dürfen wir kurz das Wort ergreifen? Wir haben neue Daten, die für die Abstimmung relevant sind.“",
+    text: "„Entschuldigung, dürfen wir kurz das Wort ergreifen? Wir haben neue Daten, die für die Abstimmung relevant sind.“",
   },
   {
     kind: "bubble",
