@@ -1,4 +1,4 @@
-import { Trash2, Banknote } from "lucide-react";
+import { Sandwich } from "lucide-react";
 import orangeAsset from "@/assets/produkte/orange.webp.asset.json";
 import rosenkohlAsset from "@/assets/produkte/rosenkohl.png.asset.json";
 import spargelAsset from "@/assets/produkte/spargel.webp.asset.json";
@@ -150,26 +150,47 @@ export function SaisonProdukte() {
 }
 
 export function FoodWasteChart() {
+  const count = 52;
   return (
-    <div className="space-y-2">
-      <div className="flex items-center gap-3 rounded-sm border border-dashed border-stamp/40 bg-paper-deep/30 p-3">
-        <Trash2 className="h-8 w-8 shrink-0 text-stamp" strokeWidth={2.25} />
-        <div className="min-w-0">
-          <div className="font-serif text-2xl font-bold leading-none">90 kg</div>
-          <div className="mt-1 font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
-            Lebensmittel · pro Person / Jahr
+    <div className="rounded-sm border border-dashed border-stamp/40 bg-paper-deep/30 p-3">
+      <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
+        Finanzieller Vergleich
+      </p>
+      <div className="mt-2 flex items-center justify-center gap-3">
+        <div className="text-center">
+          <div className="font-serif text-2xl font-bold leading-none">CHF 600.–</div>
+          <div className="mt-1 font-mono-typed text-[9px] uppercase tracking-wider text-muted-foreground">
+            pro Haushalt / Jahr
+          </div>
+        </div>
+        <div className="font-serif text-2xl text-stamp">=</div>
+        <div className="text-center">
+          <div className="flex items-center justify-center gap-1">
+            <Sandwich className="h-6 w-6 text-stamp" strokeWidth={2.25} />
+            <span className="font-serif text-2xl font-bold leading-none">× 52</span>
+          </div>
+          <div className="mt-1 font-mono-typed text-[9px] uppercase tracking-wider text-muted-foreground">
+            Döner
           </div>
         </div>
       </div>
-      <div className="flex items-center gap-3 rounded-sm border border-dashed border-stamp/40 bg-paper-deep/30 p-3">
-        <Banknote className="h-8 w-8 shrink-0 text-stamp" strokeWidth={2.25} />
-        <div className="min-w-0">
-          <div className="font-serif text-2xl font-bold leading-none">&gt; CHF 600.–</div>
-          <div className="mt-1 font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
-            Wert · pro Haushalt / Jahr
+      <div
+        className="mt-3 grid gap-[3px]"
+        style={{ gridTemplateColumns: "repeat(13, minmax(0, 1fr))" }}
+        aria-hidden
+      >
+        {Array.from({ length: count }).map((_, i) => (
+          <div
+            key={i}
+            className="flex aspect-square items-center justify-center rounded-[2px] bg-stamp/10"
+          >
+            <Sandwich className="h-3 w-3 text-stamp" strokeWidth={2.25} />
           </div>
-        </div>
+        ))}
       </div>
+      <p className="mt-3 text-center font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+        ≈ 1 Döner pro Woche · ein ganzes Jahr lang
+      </p>
     </div>
   );
 }
