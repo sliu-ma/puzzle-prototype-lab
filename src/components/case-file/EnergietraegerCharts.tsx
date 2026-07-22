@@ -187,18 +187,6 @@ export function ImportabhaengigkeitChart() {
         </div>
       </div>
 
-      <div className="mt-4 rounded-sm border border-stamp/40 bg-paper px-3 py-2">
-        <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
-          Wind & Sonne
-        </p>
-        <p className="mt-1 font-serif text-[13px] leading-snug">
-          machen die Schweiz unabhängiger von Importen und Preisschwankungen.
-        </p>
-      </div>
-
-      <p className="mt-auto pt-3 font-mono-typed text-[10px] text-muted-foreground">
-        → Quelle: BFS 2023
-      </p>
     </div>
   );
 }
