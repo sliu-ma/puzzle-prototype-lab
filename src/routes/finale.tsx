@@ -1135,14 +1135,41 @@ function MultiView({
 }
 
 /* ---- Short Answer ---- */
+const ZAHLWOERTER: Record<string, number> = {
+  null: 0, eins: 1, ein: 1, eine: 1, zwei: 2, drei: 3, vier: 4, fuenf: 5,
+  sechs: 6, sieben: 7, acht: 8, neun: 9, zehn: 10, elf: 11, zwoelf: 12,
+  dreizehn: 13, vierzehn: 14, fuenfzehn: 15, sechzehn: 16, siebzehn: 17,
+  achtzehn: 18, neunzehn: 19, zwanzig: 20, dreissig: 30, vierzig: 40,
+  fuenfzig: 50, sechzig: 60, siebzig: 70, achtzig: 80, neunzig: 90, hundert: 100,
+};
+
+const FUELLWOERTER = new Set([
+  "ca", "circa", "cirka", "zirka", "rund", "etwa", "ungefaehr", "ungefähr",
+  "knapp", "gut", "prozent", "%",
+]);
+
 const normalize = (s: string) =>
   s
     .trim()
     .toLowerCase()
+    .replace(/ß/g, "ss")
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9% ]/g, "")
-    .replace(/\s+/g, " ");
+    .replace(/[^a-z0-9% ]/g, " ")
+    .replace(/%/g, " ")
+    .split(/\s+/)
+    .filter((w) => w.length > 0 && !FUELLWOERTER.has(w))
+    .map((w) => (w in ZAHLWOERTER ? String(ZAHLWOERTER[w]) : w))
+    .join(" ");
+
+const toNumber = (s: string): number | null => {
+  const n = normalize(s);
+  const digits = n.replace(/[^0-9]/g, "");
+  if (!digits) return null;
+  const only = n.replace(/[0-9 ]/g, "");
+  if (only.length > 0) return null;
+  return parseInt(digits, 10);
+};
 
 function ShortView({
   frage,
@@ -1160,7 +1187,12 @@ function ShortView({
     e.preventDefault();
     if (submitted || answered) return;
     const n = normalize(text);
-    const ok = frage.akzeptiert.some((a) => normalize(a) === n);
+    const userNum = toNumber(text);
+    const ok = frage.akzeptiert.some((a) => {
+      if (normalize(a) === n) return true;
+      const aNum = toNumber(a);
+      return userNum !== null && aNum !== null && userNum === aNum;
+    });
     setSubmitted(true);
     onResult(ok, text);
   };
@@ -1176,11 +1208,6 @@ function ShortView({
         placeholder="Deine Antwort …"
         className="w-full rounded-sm border border-border bg-paper-deep/30 px-4 py-3 font-serif text-[15px] focus:border-stamp focus:outline-none"
       />
-      {frage.hint && !submitted && (
-        <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
-          Hinweis: {frage.hint}
-        </p>
-      )}
       {!submitted && (
         <button
           type="submit"
@@ -1193,6 +1220,7 @@ function ShortView({
     </form>
   );
 }
+
 
 /* ---- Match (Drag & Drop) ---- */
 function MatchView({
