@@ -169,12 +169,12 @@ export function ImportabhaengigkeitChart() {
         <span className="inline-flex items-center gap-1.5">
           <Ship className="h-3.5 w-3.5 text-rose-600" strokeWidth={2.2} />
           <span className="font-serif text-[12px] text-foreground">Import</span>
-          <span>{importAnteil} %</span>
+          <span>{"\n"}</span>
         </span>
         <span className="inline-flex items-center gap-1.5">
           <MapPin className="h-3.5 w-3.5 text-emerald-600" strokeWidth={2.2} />
           <span className="font-serif text-[12px] text-foreground">Inland</span>
-          <span>{inland} %</span>
+          <span>{"\n"}</span>
         </span>
       </div>
     </div>
