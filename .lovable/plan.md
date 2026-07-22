@@ -1,107 +1,55 @@
-# Hearing überarbeiten (finale.tsx)
 
-Ziel: Alle 10 Fragen des Hearings gemäss neuer Faktenkarte ersetzen. Dabei zwei neue Antworttypen einführen und die Saisonfrage jahreszeit-adaptiv machen.
+## Ziel
 
-## Neue Antworttypen
+Hearing im `src/routes/finale.tsx` in zwei Punkten überarbeiten:
 
-Ergänze im `Frage`-Union in `src/routes/finale.tsx`:
+1. **Adaptives, sauberes Feedback** pro Frage — mit korrekter Rechtschreibung und mit Erklärungen, die zu den überarbeiteten Faktenkarten passen. Bei falscher Antwort soll begründet werden, warum genau *diese* Antwort/Zuordnung falsch ist.
+2. **Konsistente Zufalls-Anordnung** aller Antwortoptionen bei jeder Fragen-Anzeige — auch bei den Drag-&-Drop-Aufgaben.
 
-- `slider` — Nutzer wählt Zahl auf Schieberegler; korrekt bei `|value - target| ≤ tolerance`.
-  - Felder: `min`, `max`, `step`, `unit`, `zielwert`, `toleranz`.
-- `either` — Zwei Bild-Optionen nebeneinander, eine ist korrekt.
-  - Felder: `optionen: { id; label; image }[]`, `korrekt: string`.
+## Adaptives Feedback
 
-Beide bekommen einen Renderer in `FrageRenderer` und ein Label in `typeLabel()`.
-`bucket`-Renderer bleibt bestehen und wird für F9 weiterverwendet.
+Aktuell wird nach dem Antworten für alle Fragen dieselbe generische `frage.erklaerung` gezeigt. Neu:
 
-## Saison-Helfer
+- Das grüne/rote Feedback-Kästchen zeigt weiterhin die Kern-Erklärung (Grammatik korrigiert).
+- Zusätzlich bekommt jede Frage eine `feedback`-Funktion, die abhängig von der konkret abgegebenen Antwort einen kurzen adaptiven Text liefert, z. B.:
+  - **F1 Slider (28 Rp./km)**: „Du liegst zu tief — der Auto-Vollkostensatz von 74 Rp./km wird oft unterschätzt." / „Zu hoch — der ÖV kostet rund 46 Rp./km, nicht viel weniger." / bei richtig eine Bestätigung.
+  - **F2 Autofahrten <5 km**: 22 % → „Zu wenig — der Anteil ist über doppelt so hoch." · 32 % → „Wärmer, aber noch zu tief." · 60 % → „Etwas zu hoch — es ist knapp die Hälfte, nicht die Mehrheit."
+  - **F3 Labels (Match)**: Bei jeder falsch gepaarten Karte einzeilig aufzeigen, was das Label wirklich bedeutet und warum die andere Beschreibung besser passt (z. B. „Bio Suisse steht für Anbau ohne synthetische Pestizide — die Beschreibung ‚100 % CH-Herkunft' beschreibt Suisse Garantie.").
+  - **F4 Saisongemüse**: Bei falsch — „‚{Eingabe}' hat in der Schweiz aktuell keine Saison. Aktuell im {Jahreszeit}: {Beispiele}."; bei richtig — kurze Bestätigung mit Nennung von zwei weiteren Beispielen.
+  - **F5 Biodiversität (Multi)**: Fehlerbeschreibung listet, welche Ursachen fälschlich gewählt („Zu viel Regen ist keine Hauptursache") bzw. übersehen wurden.
+  - **F6 Rote Liste**: „1 von 20" → „Zu optimistisch — es ist rund ein Drittel." · „1 von 100" → „Weit daneben — tatsächlich rund 1 von 3."
+  - **F7 Heizen**: bei zahlenmäßig danebenliegend Hinweis auf die 6-%-Faustregel und Bedeutung (nicht 1 %, nicht 20 %).
+  - **F8 Waschmaschinen**: „Klasse E verbraucht deutlich mehr Strom pro Waschgang — die Etikette geht von A (grün) nach G (rot)."
+  - **F9 Energiequellen (Bucket)**: Für jedes falsch einsortierte Item ein kurzer Grund („Gas ist ein fossiler Brennstoff und daher nicht erneuerbar.").
+  - **F10 Anteil erneuerbar**: „Zu tief — der Anteil ist höher als vor zehn Jahren." bzw. „Zu hoch — 2023 lag er bei rund 28 %."
 
-Kleine Utility in derselben Datei:
+Umsetzung: neue Renderer-Prop `feedbackNode` oder das Feedback-Kästchen zieht Text über eine Helper-Funktion `buildFeedback(frage, userAnswer, correct)`. Die konkreten Nutzer-Antworten (Slider-Wert, Multi-Auswahl, Match-Paare, Bucket-Placements, Either-Wahl, Short-Text) müssen von `FrageRenderer` an `FinalePage` hochgereicht werden — dafür wird `onResult` auf `onResult(correct, userAnswer)` erweitert und die aktuelle Antwort im `FinalePage`-State abgelegt (z. B. `antworten[]` neben `ergebnisse[]`, persistiert).
 
-```ts
-function currentSeason(d = new Date()): "Winter"|"Frühling"|"Sommer"|"Herbst"
-```
+Grammatik-Durchgang aller Fragen-, `erklaerung`- und `hint`-Texte (Groß-/Kleinschreibung der Nomen, Bindestriche, „%") — u. a. „prozent" → „Prozent", „ca 28" bleibt in `akzeptiert`-Liste (Vergleich läuft normalisiert), aber Anzeigetexte werden korrekt gesetzt.
 
-(Monat 12,1,2 = Winter; 3–5 = Frühling; 6–8 = Sommer; 9–11 = Herbst.)
+## Zufalls-Anordnung überall
 
-Wird zur Laufzeit für F4 verwendet, um Fragetext + akzeptierte Antworten zu bestimmen. Damit die `FRAGEN`-Konstante statisch bleibt, wird F4 als Funktion/Getter aufgebaut oder das FRAGEN-Array via `useMemo` im `FinalePage` gebildet.
+Aktueller Stand:
 
-## Die 10 neuen Fragen
+- `SingleView`, `MultiView`: nutzen `useMemo(() => shuffleIndices(...), [frage])` → schon zufällig.
+- `MatchView`: rendert `frage.links` und `frage.rechts` in Original-Reihenfolge.
+- `BucketView`: rendert `frage.items` in Original-Reihenfolge; `frage.buckets` ebenfalls fest.
+- `EitherView`: rendert `frage.optionen` fest.
+- `ShortView`, `SliderView`: keine Optionen — keine Änderung.
 
-Reihenfolge und Themen wie bisher (Mobilität, Konsum, Biodiversität, Wohnen, Energie), Ratsmitglieder bleiben.
+Änderung: in `MatchView`, `BucketView`, `EitherView` je eine gemischte Kopie mit `useMemo(() => shuffle([...]), [frage])` erzeugen und für das Rendering verwenden. Die Lösung/`paare`/`solution`/`korrekt`-Prüfung arbeitet weiter mit den IDs, die Anzeige-Reihenfolge ändert sich pro Aufruf.
 
-**F1 · Mobilität · slider**
-„Um wie viel Rappen pro Kilometer ist das Auto teurer als der ÖV?"
-`min: 0, max: 50, step: 1, unit: "Rp./km", zielwert: 28, toleranz: 3`.  
-Erklärung: Vollkosten Auto ≈ 74 Rp./km, ÖV ≈ 46 Rp./km → Differenz ca. 28 Rp./km.
+Zusätzlich bei F9 die Bucket-Reihenfolge (Erneuerbar / Nicht erneuerbar) mischen, damit auch die Ziel-Spalten variieren.
 
-**F2 · Mobilität · single**
-„Wie viel Prozent aller Autofahrten in der Schweiz sind kürzer als 5 Kilometer?"
-Optionen: 22 %, 32 %, 46 %, 60 %. Korrekt: 46 %.
+## Betroffene Datei
 
-**F3 · Konsum · match** (Drag & Drop mit Icons)
-Links (mit Logos): Bio Suisse (`bioLogo`), IP-Suisse (`ipSuisseLogo`), Suisse Garantie (`suisseGarantieLogo`).
-Rechts:
+- `src/routes/finale.tsx` (einzige Datei; keine Struktur- oder Route-Änderungen, keine neuen Assets).
 
-- Bio Suisse → „Anbau ohne synthetische Pestizide, artengerechte Tierhaltung"
-- IP-Suisse → „Schweizer Landwirtschaft mit erhöhten Anforderungen an Umwelt und Tierwohl"
-- Suisse Garantie → „Rohstoffe und Verarbeitung zu 100 % aus der Schweiz"
+## Nicht verändert
 
-Import ergänzen: `import suisseGarantieLogo from "@/assets/labels/suisse-garantie.webp.asset.json"` (Asset existiert bereits). Demeter-Import entfernen.
-
-**F4 · Konsum · short (saisonadaptiv)**
-Fragetext: „Nenne ein Schweizer Saisongemüse oder eine Saisonfrucht im {Jahreszeit}."
-Akzeptierte Antworten (normalisiert, Escape-Room-Produkte gelten als korrekt, plus gängige Ergänzungen):
-
-- Winter: rosenkohl, apfel, äpfel, lauch, feldsalat, nüsslisalat, nuesslisalat, karotten, rande, sellerie, pastinake, chicoree, wirsing.
-- Frühling: spargel, rhabarber, radieschen, spinat, lauch, nüsslisalat, nuesslisalat, bärlauch, baerlauch.
-- Sommer: erdbeere, erdbeeren, gurke, tomate, tomaten, zucchini, kirsche, kirschen, aprikose, aprikosen, bohnen, salat, himbeere, himbeeren.
-- Herbst: kürbis, kuerbis, zwetschge, zwetschgen, apfel, äpfel, birne, birnen, trauben, kohl, karotten, rande.
-
-**F5 · Biodiversität · multi**
-„Welche Ursachen tragen zum Rückgang der Biodiversität in der Schweiz bei?"
-A) Versiegelung von Boden ✓ · B) Pestizide ✓ · C) Zu viel Regen · D) Begradigte Gewässer ✓.
-
-**F6 · Biodiversität · single** (Text bleibt sinngemäss)
-„Wie viele der untersuchten Arten in der Schweiz stehen auf der Roten Liste?"
-Optionen: „Rund 1 von 20", „Rund 1 von 3", „Rund 1 von 100". Korrekt: 1 von 3.
-
-**F7 · Wohnen · short**
-„Wie viel Prozent Heizenergie spart eine Absenkung um 1 °C?"
-Akzeptiert: 6, 6%, 6 prozent, ca 6, rund 6, etwa 6, ~6.
-Erklärung: Faustregel ca. 6 %.
-
-**F8 · Wohnen · either** (Bildvergleich Waschmaschinen)
-Fragetext: „Welche Waschmaschine spart mehr Energie?"
-Optionen:
-
-- A: Bild `waschmaschine-klasse-a.png` (korrekt)
-- E: Bild `waschmaschine-klasse-e.png`
-Erklärung: Klasse A verbraucht deutlich weniger Energie als Klasse E.
-
-**F9 · Energie · bucket** (bestehender Renderer)
-„Ordne die Energiequellen ein."
-Items: Sonne, Wasserkraft, Windkraft, Geothermie, Gas, Kohle.
-Buckets: Erneuerbar / Nicht erneuerbar.
-Solution: Sonne, Wasserkraft, Windkraft, Geothermie → erneuerbar; Gas, Kohle → nicht.
-
-**F10 · Energie · short**
-„Wie hoch ist der Anteil erneuerbarer Energien am Schweizer Energiemix (in %)?"
-Akzeptiert: 28, 28%, ca 28, rund 28, etwa 28, 27, 29, ~28.
-Erklärung: 2023 lag der Anteil bei rund 28 %.
-
-## Renderer-Details
-
-- **Slider**: `<input type="range">` + Wert-Anzeige. Button „Antwort abgeben" ruft `onResult(|val - zielwert| <= toleranz)`. Nach Antwort Slider sperren und Zielwert + Toleranz einblenden.
-- **Either**: zwei grosse Karten (Bild + Label), Klick wählt aus, „Antwort abgeben" prüft. Auf Mobile Grid `grid-cols-2 gap-3`.
-- **Match** (F3): Icon-Grösse leicht anpassen — aktueller Renderer nutzt `icon`-Feld bereits.
-- **Short** (F4/F7/F10): Normalisierung wie bisher (lowercase, trim, Umlaute optional). Bei F4 kommt die `akzeptiert`-Liste aus dem Saison-Helper.
-
-## Nicht ändern
-
-- Barometer-Logik, Punktesystem, `MAX_FEHLER`, Persistenz-Keys, IntroConversation, OutroScreen, Ratsmitglied-Namen bleiben unverändert.
-- Bestehende `match`- und `bucket`-Renderer werden wiederverwendet.
+- Fragenkatalog inhaltlich (dieselben 10 Fragen, dieselben korrekten Antworten, Grenzen des Sliders, Bilder von F8).
+- Barometer-Logik, Punktesystem, Persistenzschlüssel, Intro-/Outro-Screen.
 
 ## Verifikation
 
-Nach der Implementierung Build durchlaufen lassen und im Preview die 10 Fragen einmal durchklicken (jede Antwortform mindestens einmal auslösen), F4 auf aktuelle Jahreszeit prüfen.
+Build durchlaufen lassen, im Preview eine Runde spielen: bei jeder Frage einmal falsch und einmal richtig antworten und prüfen, dass (a) das Feedback konkret auf die Wahl eingeht, (b) Rechtschreibung stimmt, (c) beim Neuladen der Frage die Optionen-Reihenfolge wechselt (inkl. Drag-&-Drop-Karten und Buckets).

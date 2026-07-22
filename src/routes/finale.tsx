@@ -350,6 +350,10 @@ function FinalePage() {
     "akte-finale-ergebnisse",
     () => Array(FRAGEN.length).fill(null),
   );
+  const [antworten, setAntworten] = usePersistentState<unknown[]>(
+    "akte-finale-antworten",
+    () => Array(FRAGEN.length).fill(null),
+  );
   const [resetKey, setResetKey] = useState(0);
   const [pulse, setPulse] = useState<null | "up" | "down">(null);
 
@@ -387,10 +391,15 @@ function FinalePage() {
     }
   }, [status]);
 
-  const handleResult = (correct: boolean) => {
+  const handleResult = (correct: boolean, userAnswer?: unknown) => {
     setErgebnisse((prev) => {
       const next = [...prev];
       next[aktuell] = correct;
+      return next;
+    });
+    setAntworten((prev) => {
+      const next = [...prev];
+      next[aktuell] = userAnswer ?? null;
       return next;
     });
     setPulse(correct ? "up" : "down");
@@ -404,6 +413,7 @@ function FinalePage() {
 
   const reset = () => {
     setErgebnisse(Array(FRAGEN.length).fill(null));
+    setAntworten(Array(FRAGEN.length).fill(null));
     setAktuell(0);
     setStarted(true);
     setResetKey((k) => k + 1);
@@ -412,6 +422,8 @@ function FinalePage() {
 
   const frage = FRAGEN[aktuell];
   const meinErgebnis = ergebnisse[aktuell];
+  const meineAntwort = antworten[aktuell];
+
 
   return (
     <main className="relative min-h-screen px-3 py-6 sm:px-4 sm:py-14">
@@ -500,9 +512,14 @@ function FinalePage() {
                       {meinErgebnis ? "Treffer · Barometer steigt" : "Fehler · Barometer fällt"}
                     </p>
                   </div>
-                  <p className="mt-2 text-foreground/85">{frage.erklaerung}</p>
+                  <p className="mt-2 whitespace-pre-line text-foreground/85">
+                    {buildFeedback(frage, meineAntwort, meinErgebnis)}
+                  </p>
                 </div>
               )}
+
+
+
 
               {meinErgebnis !== null && (
                 <div className="mt-6 flex justify-end">
@@ -746,6 +763,121 @@ function typeLabel(t: Frage["type"]) {
   }
 }
 
+function shuffleArr<T>(arr: readonly T[]): T[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+/* -------------------------------------------------- */
+/*  Adaptives Feedback pro Frage                        */
+/* -------------------------------------------------- */
+
+function buildFeedback(frage: Frage, userAnswer: unknown, correct: boolean): string {
+  switch (frage.type) {
+    case "slider": {
+      const val = typeof userAnswer === "number" ? userAnswer : NaN;
+      if (correct) return `Treffer — ${frage.erklaerung}`;
+      if (!isNaN(val) && val < frage.zielwert) {
+        return `Zu tief geschätzt. Die Vollkosten des Autos (rund 74 Rp./km) werden oft unterschätzt. ${frage.erklaerung}`;
+      }
+      return `Zu hoch geschätzt. Der ÖV kostet zwar weniger als das Auto, aber nicht so viel weniger wie oft angenommen. ${frage.erklaerung}`;
+    }
+    case "single": {
+      const idx = typeof userAnswer === "number" ? userAnswer : -1;
+      if (frage.id === 2) {
+        const map = [
+          "Zu wenig — der Anteil ist mehr als doppelt so hoch.",
+          "In die richtige Richtung, aber immer noch zu tief.",
+          "Richtig — knapp die Hälfte aller Autofahrten ist kürzer als 5 km.",
+          "Etwas zu hoch — es ist knapp die Hälfte, nicht deutlich mehr.",
+        ];
+        return `${map[idx] ?? ""} ${frage.erklaerung}`.trim();
+      }
+      if (frage.id === 6) {
+        const map = [
+          "Zu optimistisch — es ist rund ein Drittel, nicht 1 von 20.",
+          "Richtig — rund ein Drittel der untersuchten Arten ist gefährdet.",
+          "Weit daneben — tatsächlich ist rund 1 von 3 Arten gefährdet, nicht 1 von 100.",
+        ];
+        return `${map[idx] ?? ""} ${frage.erklaerung}`.trim();
+      }
+      return frage.erklaerung;
+    }
+    case "multi": {
+      const sel = new Set(Array.isArray(userAnswer) ? (userAnswer as number[]) : []);
+      const korrekt = new Set(frage.korrekt);
+      const falschGewaehlt = [...sel].filter((i) => !korrekt.has(i)).map((i) => frage.optionen[i]);
+      const uebersehen = [...korrekt].filter((i) => !sel.has(i)).map((i) => frage.optionen[i]);
+      const parts: string[] = [];
+      if (falschGewaehlt.length) {
+        parts.push(`Fälschlich gewählt: ${falschGewaehlt.join(", ")}. „Zu viel Regen" ist keine Hauptursache des Biodiversitätsverlusts.`);
+      }
+      if (uebersehen.length) {
+        parts.push(`Übersehen: ${uebersehen.join(", ")}.`);
+      }
+      if (parts.length === 0) return `Alle drei Hauptursachen richtig erkannt. ${frage.erklaerung}`;
+      return `${parts.join(" ")} ${frage.erklaerung}`;
+    }
+    case "short": {
+      const text = typeof userAnswer === "string" ? userAnswer.trim() : "";
+      if (frage.id === 4) {
+        const season = currentSeason();
+        const beispiele = SAISON_ANTWORTEN[season].slice(0, 5).join(", ");
+        if (correct) {
+          return `Richtig — „${text}" hat im ${season} in der Schweiz Saison. Weitere Beispiele: ${beispiele}.`;
+        }
+        return `„${text || "—"}" hat im ${season} in der Schweiz keine Saison. Aktuell saisonal: ${beispiele}.`;
+      }
+      if (frage.id === 7) {
+        if (correct) return `Richtig — die Faustregel lautet: 1 °C weniger ≈ 6 % weniger Heizenergie.`;
+        return `Nicht ganz — die Faustregel lautet ca. 6 % pro °C, nicht „${text}".`;
+      }
+      if (frage.id === 10) {
+        if (correct) return `Richtig — 2023 lag der Anteil bei rund 28 %.`;
+        const num = parseInt(text.replace(/[^0-9]/g, ""), 10);
+        if (!isNaN(num) && num < 25) {
+          return `Zu tief — der Anteil ist inzwischen deutlich höher: rund 28 %.`;
+        }
+        if (!isNaN(num) && num > 31) {
+          return `Zu hoch — der Anteil liegt bei rund 28 %, nicht bei ${num} %.`;
+        }
+        return `Der Anteil erneuerbarer Energien lag 2023 bei rund 28 %.`;
+      }
+      return frage.erklaerung;
+    }
+    case "either": {
+      if (correct) return `Richtig — Klasse A ist die effizienteste Energiekategorie.`;
+      return `Klasse E verbraucht deutlich mehr Strom pro Waschgang. Die Energieetikette geht von A (grün, sehr effizient) bis G (rot, ineffizient).`;
+    }
+    case "match": {
+      const userPairs = (userAnswer as Record<string, string>) ?? {};
+      const beschreibungen = Object.fromEntries(frage.rechts.map((r) => [r.id, r.label]));
+      const labels = Object.fromEntries(frage.links.map((l) => [l.id, l.label]));
+      const wrong = frage.links.filter((l) => userPairs[l.id] !== frage.paare[l.id]);
+      if (wrong.length === 0) return `Alle Labels richtig zugeordnet. ${frage.erklaerung}`;
+      const lines = wrong.map(
+        (l) => `• ${labels[l.id]} → „${beschreibungen[frage.paare[l.id]]}"`,
+      );
+      return `Richtig wäre:\n${lines.join("\n")}`;
+    }
+    case "bucket": {
+      const placements = (userAnswer as Record<string, string | null>) ?? {};
+      const bucketLabel = Object.fromEntries(frage.buckets.map((b) => [b.id, b.label]));
+      const wrong = frage.items.filter((it) => placements[it.id] !== frage.solution[it.id]);
+      if (wrong.length === 0) return `Alle Energiequellen richtig einsortiert. ${frage.erklaerung}`;
+      const lines = wrong.map((it) => `• ${it.label} gehört zu „${bucketLabel[frage.solution[it.id]]}"`);
+      return `Falsch einsortiert:\n${lines.join("\n")}\n\nGas und Kohle sind fossile Brennstoffe und damit nicht erneuerbar. Sonne, Wasserkraft, Windkraft und Geothermie sind erneuerbare Quellen.`;
+    }
+    case "order":
+      return frage.erklaerung;
+  }
+}
+
+
 function shuffleIndices(n: number): number[] {
   const arr: number[] = Array.from({ length: n }, (_, i) => i);
   for (let i = arr.length - 1; i > 0; i--) {
@@ -792,7 +924,7 @@ function FrageRenderer({
 }: {
   frage: Frage;
   answered: boolean;
-  onResult: (correct: boolean) => void;
+  onResult: (correct: boolean, userAnswer?: unknown) => void;
 }) {
   switch (frage.type) {
     case "single":
@@ -822,15 +954,16 @@ function SingleView({
 }: {
   frage: SingleFrage;
   answered: boolean;
-  onResult: (c: boolean) => void;
+  onResult: (c: boolean, userAnswer?: unknown) => void;
 }) {
   const order = useMemo(() => shuffleIndices(frage.optionen.length), [frage]);
   const [mine, setMine] = useState<number | null>(null);
   const choose = (i: number) => {
     if (mine !== null) return;
     setMine(i);
-    onResult(i === frage.korrekt);
+    onResult(i === frage.korrekt, i);
   };
+
   return (
     <div className="grid gap-2">
       {order.map((i) => {
@@ -871,7 +1004,7 @@ function MultiView({
 }: {
   frage: MultiFrage;
   answered: boolean;
-  onResult: (c: boolean) => void;
+  onResult: (c: boolean, userAnswer?: unknown) => void;
 }) {
   const order = useMemo(() => shuffleIndices(frage.optionen.length), [frage]);
   const [selected, setSelected] = useState<Set<number>>(new Set());
@@ -894,8 +1027,9 @@ function MultiView({
       selected.size === korrektSet.size &&
       [...selected].every((i) => korrektSet.has(i));
     setSubmitted(true);
-    onResult(isEqual);
+    onResult(isEqual, [...selected]);
   };
+
 
   return (
     <div className="space-y-3">
@@ -970,7 +1104,7 @@ function ShortView({
 }: {
   frage: ShortFrage;
   answered: boolean;
-  onResult: (c: boolean) => void;
+  onResult: (c: boolean, userAnswer?: unknown) => void;
 }) {
   const [text, setText] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -981,8 +1115,9 @@ function ShortView({
     const n = normalize(text);
     const ok = frage.akzeptiert.some((a) => normalize(a) === n);
     setSubmitted(true);
-    onResult(ok);
+    onResult(ok, text);
   };
+
 
   return (
     <form onSubmit={submit} className="space-y-3">
@@ -1020,8 +1155,10 @@ function MatchView({
 }: {
   frage: MatchFrage;
   answered: boolean;
-  onResult: (c: boolean) => void;
+  onResult: (c: boolean, userAnswer?: unknown) => void;
 }) {
+  const linksShuffled = useMemo(() => shuffleArr(frage.links), [frage]);
+  const rechtsShuffled = useMemo(() => shuffleArr(frage.rechts), [frage]);
   const [pairs, setPairs] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
   const [dragging, setDragging] = useState<string | null>(null);
@@ -1032,6 +1169,7 @@ function MatchView({
   const usedRight = new Set(Object.values(pairs));
   const leftById = Object.fromEntries(frage.links.map((l) => [l.id, l]));
   const rechtsById = Object.fromEntries(frage.rechts.map((r) => [r.id, r.label]));
+
 
   const findRightAt = (x: number, y: number): string | null => {
     for (const [rid, el] of Object.entries(rightRefs.current)) {
@@ -1087,7 +1225,8 @@ function MatchView({
     if (submitted || answered) return;
     const ok = frage.links.every((l) => pairs[l.id] === frage.paare[l.id]);
     setSubmitted(true);
-    onResult(ok);
+    onResult(ok, { ...pairs });
+
   };
 
   const dragged = dragging ? leftById[dragging] : null;
@@ -1100,7 +1239,7 @@ function MatchView({
       <div className="grid gap-3 sm:grid-cols-2">
         {/* Links (draggable) */}
         <div className="space-y-2">
-          {frage.links.map((l) => {
+          {linksShuffled.map((l) => {
             const paired = pairs[l.id];
             const isDragging = dragging === l.id;
             const correct = submitted && paired === frage.paare[l.id];
@@ -1153,7 +1292,7 @@ function MatchView({
         </div>
         {/* Rechts (drop targets) */}
         <div className="space-y-2">
-          {frage.rechts.map((r) => {
+          {rechtsShuffled.map((r) => {
             const used = usedRight.has(r.id);
             const isHover = hoverRight === r.id && dragging;
             return (
@@ -1212,7 +1351,8 @@ function OrderView({
 }: {
   frage: OrderFrage;
   answered: boolean;
-  onResult: (c: boolean) => void;
+  onResult: (c: boolean, userAnswer?: unknown) => void;
+
 }) {
   // Anfangsreihenfolge stabil deterministisch invertiert
   const [order, setOrder] = useState<string[]>(() =>
@@ -1235,7 +1375,8 @@ function OrderView({
     if (submitted || answered) return;
     const ok = order.every((id, i) => id === frage.reihenfolge[i]);
     setSubmitted(true);
-    onResult(ok);
+    onResult(ok, [...order]);
+
   };
 
   const itemById = Object.fromEntries(frage.items.map((it) => [it.id, it.label]));
@@ -1305,8 +1446,10 @@ function BucketView({
 }: {
   frage: BucketFrage;
   answered: boolean;
-  onResult: (c: boolean) => void;
+  onResult: (c: boolean, userAnswer?: unknown) => void;
 }) {
+  const bucketsShuffled = useMemo(() => shuffleArr(frage.buckets), [frage]);
+  const itemsShuffled = useMemo(() => shuffleArr(frage.items), [frage]);
   const [placements, setPlacements] = useState<Record<string, string | null>>(() => {
     const initial: Record<string, string | null> = {};
     frage.items.forEach((it) => {
@@ -1368,14 +1511,15 @@ function BucketView({
     if (submitted || answered) return;
     const ok = frage.items.every((it) => placements[it.id] === frage.solution[it.id]);
     setSubmitted(true);
-    onResult(ok);
+    onResult(ok, { ...placements });
   };
 
   const draggedItem = dragging ? frage.items.find((it) => it.id === dragging) : null;
 
   const itemsInBucket = (bucketId: string) =>
-    frage.items.filter((it) => placements[it.id] === bucketId);
-  const itemsInPool = frage.items.filter((it) => placements[it.id] === null);
+    itemsShuffled.filter((it) => placements[it.id] === bucketId);
+  const itemsInPool = itemsShuffled.filter((it) => placements[it.id] === null);
+
 
   return (
     <div className="space-y-3" onPointerMove={onMove} onPointerUp={endDrag} onPointerCancel={endDrag}>
@@ -1385,7 +1529,7 @@ function BucketView({
 
       {/* Buckets */}
       <div className="grid grid-cols-2 gap-3">
-        {frage.buckets.map((bucket) => {
+        {bucketsShuffled.map((bucket) => {
           const isHover = hoverTarget === bucket.id && dragging;
           const assigned = itemsInBucket(bucket.id);
           return (
@@ -1491,7 +1635,7 @@ function SliderView({
 }: {
   frage: SliderFrage;
   answered: boolean;
-  onResult: (c: boolean) => void;
+  onResult: (c: boolean, userAnswer?: unknown) => void;
 }) {
   const start = Math.round((frage.min + frage.max) / 2);
   const [val, setVal] = useState<number>(start);
@@ -1501,8 +1645,9 @@ function SliderView({
     if (submitted || answered) return;
     const ok = Math.abs(val - frage.zielwert) <= frage.toleranz;
     setSubmitted(true);
-    onResult(ok);
+    onResult(ok, val);
   };
+
 
   return (
     <div className="space-y-4">
@@ -1554,15 +1699,16 @@ function EitherView({
 }: {
   frage: EitherFrage;
   answered: boolean;
-  onResult: (c: boolean) => void;
+  onResult: (c: boolean, userAnswer?: unknown) => void;
 }) {
+  const optionenShuffled = useMemo(() => shuffleArr(frage.optionen), [frage]);
   const [mine, setMine] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
 
   const submit = () => {
     if (submitted || answered || !mine) return;
     setSubmitted(true);
-    onResult(mine === frage.korrekt);
+    onResult(mine === frage.korrekt, mine);
   };
 
   return (
@@ -1571,7 +1717,8 @@ function EitherView({
         Vergleiche die beiden Etiketten und wähle die energiesparendere Maschine.
       </p>
       <div className="grid grid-cols-2 gap-3">
-        {frage.optionen.map((opt) => {
+        {optionenShuffled.map((opt) => {
+
           const isMine = mine === opt.id;
           const isCorrect = opt.id === frage.korrekt;
           const reveal = submitted;
