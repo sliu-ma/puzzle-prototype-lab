@@ -278,6 +278,7 @@ function AktePage() {
                 title: "Biodiversität bedeutet Vielfalt",
                 body: "All das brauchen wir zum Leben. Die Vielfalt an Arten sichert uns genau das.",
                 visual: <VielfaltGrid />,
+                visualFirst: true,
               },
             ]}
             onBack={() => setStep("code")}
