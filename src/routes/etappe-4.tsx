@@ -293,13 +293,30 @@ function AktePage() {
                 body: "Energieetiketten verraten, wie sparsam ein Gerät mit Strom umgeht. Geräte der Klasse A brauchen wenig Strom, Geräte der Klasse G deutlich mehr.",
                 visual: (
                   <figure className="mx-auto flex w-full flex-col items-center">
-                    <img
-                      src={waschmaschineEtiketteAsset.url}
-                      alt="Energieetikette einer Waschmaschine"
-                      className="block h-[220px] w-auto max-w-full object-contain"
-                    />
+                    <div className="flex w-full items-end justify-center gap-3">
+                      <div className="flex flex-col items-center">
+                        <img
+                          src={waschmaschineEtiketteAsset.url}
+                          alt="Energieetikette einer Waschmaschine der Klasse A"
+                          className="block h-[220px] w-auto max-w-full object-contain"
+                        />
+                        <span className="mt-1 font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
+                          Klasse A
+                        </span>
+                      </div>
+                      <div className="flex flex-col items-center">
+                        <img
+                          src={waschmaschineEtiketteEAsset.url}
+                          alt="Energieetikette einer Waschmaschine der Klasse E"
+                          className="block h-[220px] w-auto max-w-full object-contain"
+                        />
+                        <span className="mt-1 font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
+                          Klasse E
+                        </span>
+                      </div>
+                    </div>
                     <figcaption className="mt-2 text-center font-serif text-xs italic text-ink/70">
-                      Beispiel: Energieetikette einer Waschmaschine
+                      Zwei Waschmaschinen im Vergleich — links sparsam, rechts deutlich stromhungriger.
                     </figcaption>
                   </figure>
                 ),
