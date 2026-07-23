@@ -170,7 +170,7 @@ function buildFragen(): Frage[] {
       frage:
         "Um wie viel Rappen pro Kilometer ist das Auto teurer als der ÖV?",
       min: 0,
-      max: 50,
+      max: 40,
       step: 1,
       unit: "Rp./km",
       zielwert: 28,
@@ -201,7 +201,7 @@ function buildFragen(): Frage[] {
       frage:
         "Ordne jedes Label seinem Zweck zu. Ziehe das Label per Drag & Drop auf die passende Beschreibung.",
       links: [
-        { id: "biosuisse", label: "Bio Suisse", icon: bioLogo.url },
+        { id: "biosuisse", label: "Bio", icon: bioLogo.url },
         { id: "ipsuisse", label: "IP-Suisse", icon: ipSuisseLogo.url },
         { id: "suissegar", label: "Suisse Garantie", icon: suisseGarantieLogo.url },
       ],
@@ -212,7 +212,7 @@ function buildFragen(): Frage[] {
       ],
       paare: { biosuisse: "bio", ipsuisse: "ip", suissegar: "garantie" },
       erklaerung:
-        "Bio Suisse = konsequenter Bio-Anbau. IP-Suisse = integrierte CH-Produktion mit erhöhten Öko- und Tierwohl-Standards. Suisse Garantie = 100 % Schweizer Herkunft und Verarbeitung.",
+        "Bio = konsequenter Bio-Anbau ohne synthetische Pestizide. IP-Suisse = integrierte CH-Produktion mit erhöhten Öko- und Tierwohl-Standards. Suisse Garantie = 100 % Schweizer Herkunft und Verarbeitung.",
     },
 
     // F4 · Konsum · Short (saisonadaptiv)
@@ -355,6 +355,7 @@ function FinalePage() {
   const [resetKey, setResetKey] = useState(0);
   const [pulse, setPulse] = useState<null | "up" | "down">(null);
   const [review, setReview] = useState(false);
+  const [showRules, setShowRules] = useState(false);
 
 
   const pulseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -369,20 +370,20 @@ function FinalePage() {
   );
   const beantwortet = correctCount + fehler;
 
-  // Barometer: startet bei 50, +12 pro Treffer, -18 pro Fehler.
-  const STEP_UP = 12;
-  const STEP_DOWN = 18;
-  const barometer = Math.max(
-    0,
-    Math.min(100, 50 + correctCount * STEP_UP - fehler * STEP_DOWN),
-  );
+  // Bipolares Nadel-Barometer: +1 pro Treffer, -2 pro Fehler.
+  // Bei >3 Fehlern garantiert negativ (max +6 Treffer bei 4 Fehlern = 6 - 8 = -2).
+  const STEP_UP = 1;
+  const STEP_DOWN = 2;
+  const NEEDLE_MAX = FRAGEN.length; // ±10
+  const needleRaw = correctCount * STEP_UP - fehler * STEP_DOWN;
+  const needle = Math.max(-NEEDLE_MAX, Math.min(NEEDLE_MAX, needleRaw));
 
   const status: Status =
-    barometer <= 0
-      ? "lost"
-      : beantwortet === FRAGEN.length
-        ? "won"
-        : "running";
+    beantwortet === FRAGEN.length
+      ? needle < 0
+        ? "lost"
+        : "won"
+      : "running";
 
   useEffect(() => {
     if (status === "won") {
@@ -420,6 +421,7 @@ function FinalePage() {
     setAntworten(Array(FRAGEN.length).fill(null));
     setAktuell(0);
     setStarted(true);
+    setShowRules(true);
     setResetKey((k) => k + 1);
     setPulse(null);
   };
@@ -460,10 +462,19 @@ function FinalePage() {
         </header>
 
         {status === "running" && !started && (
-          <IntroConversation onStart={() => setStarted(true)} />
+          <IntroConversation
+            onStart={() => {
+              setStarted(true);
+              setShowRules(true);
+            }}
+          />
         )}
 
-        {(status === "running" || (status === "won" && review)) && started && (
+        {status === "running" && started && showRules && (
+          <RulesOverlay onClose={() => setShowRules(false)} />
+        )}
+
+        {(status === "running" || (status === "won" && review)) && started && !(status === "running" && showRules) && (
           <div className="space-y-4" key={`run-${resetKey}`}>
             {status === "won" && review && (
               <div className="flex flex-wrap items-center justify-between gap-2 rounded-sm border border-emerald-500/40 bg-emerald-500/5 px-3 py-2">
@@ -479,8 +490,9 @@ function FinalePage() {
               </div>
             )}
             {/* Barometer */}
-            <Barometer
-              value={barometer}
+            <NeedleBarometer
+              value={needle}
+              max={NEEDLE_MAX}
               pulse={pulse}
               aktuell={aktuell}
               total={FRAGEN.length}
@@ -593,9 +605,10 @@ function FinalePage() {
               „Versucht es erneut."
             </h2>
             <p className="mt-4 text-[15px] leading-relaxed text-foreground/85">
-              Das Barometer ist auf null gefallen. Geh die Etappen-Karten
-              nochmals durch. besonders die fachlichen Inputs am Ende jeder
-              Etappe.
+              Die Nadel des Überzeugungs-Barometers ist ins Negative gekippt.
+              Du hast zu viele Fehler gemacht. Geh die Etappen-Karten nochmals
+              durch, besonders die fachlichen Inputs am Ende jeder Etappe, und
+              wiederhole das Hearing.
             </p>
             <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
               <Link
@@ -608,7 +621,7 @@ function FinalePage() {
                 onClick={reset}
                 className="inline-flex items-center gap-2 rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground hover:-translate-y-0.5 hover:shadow-md"
               >
-                <RefreshCw className="h-4 w-4" /> Neuer Versuch
+                <RefreshCw className="h-4 w-4" /> Hearing neu starten
               </button>
             </div>
           </PaperCard>
@@ -619,11 +632,12 @@ function FinalePage() {
 }
 
 /* -------------------------------------------------- */
-/*  Barometer mit Steige-/Fall-Pulse                    */
+/*  Bipolares Nadel-Barometer                           */
 /* -------------------------------------------------- */
 
-function Barometer({
+function NeedleBarometer({
   value,
+  max,
   pulse,
   aktuell,
   total,
@@ -631,22 +645,18 @@ function Barometer({
   fehler,
 }: {
   value: number;
+  max: number;
   pulse: null | "up" | "down";
   aktuell: number;
   total: number;
   treffer: number;
   fehler: number;
 }) {
-  const color =
-    value > 70
-      ? "bg-emerald-500"
-      : value > 45
-        ? "bg-emerald-500/80"
-        : value > 25
-          ? "bg-amber-500"
-          : value > 10
-            ? "bg-orange-500"
-            : "bg-destructive";
+  // value in [-max, +max] → Winkel [-90°, +90°]
+  const clamped = Math.max(-max, Math.min(max, value));
+  const angle = (clamped / max) * 90;
+  const isPositive = value >= 0;
+  const isNeutral = value === 0;
 
   return (
     <div className="sticky top-2 z-20 rounded-sm border border-border bg-card/95 p-4 shadow-sm backdrop-blur">
@@ -667,11 +677,11 @@ function Barometer({
             >
               {pulse === "up" ? (
                 <>
-                  <ArrowUp className="h-3 w-3" /> +12
+                  <ArrowUp className="h-3 w-3" /> +1
                 </>
               ) : (
                 <>
-                  <ArrowDown className="h-3 w-3" /> −18
+                  <ArrowDown className="h-3 w-3" /> −2
                 </>
               )}
             </span>
@@ -681,20 +691,182 @@ function Barometer({
           </div>
         </div>
       </div>
-      <div className="mt-2 h-3 w-full overflow-hidden rounded-full bg-secondary">
-        <div
-          className={cn("h-full transition-all duration-500", color)}
-          style={{ width: `${value}%` }}
-        />
+
+      <div className="mt-3 flex items-center justify-center">
+        <svg viewBox="0 0 200 110" className="h-24 w-full max-w-[280px]">
+          {/* Skala-Halbkreis: rot links, neutral mitte, grün rechts */}
+          <defs>
+            <linearGradient id="barGrad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stopColor="hsl(0 75% 55%)" />
+              <stop offset="45%" stopColor="hsl(35 85% 60%)" />
+              <stop offset="55%" stopColor="hsl(35 85% 60%)" />
+              <stop offset="100%" stopColor="hsl(145 55% 45%)" />
+            </linearGradient>
+          </defs>
+          <path
+            d="M 20 100 A 80 80 0 0 1 180 100"
+            fill="none"
+            stroke="url(#barGrad)"
+            strokeWidth="14"
+            strokeLinecap="round"
+            opacity={0.85}
+          />
+          {/* Ticks */}
+          {[-1, -0.5, 0, 0.5, 1].map((t, i) => {
+            const rad = (t * 90 - 90) * (Math.PI / 180);
+            const x1 = 100 + Math.cos(rad) * 68;
+            const y1 = 100 + Math.sin(rad) * 68;
+            const x2 = 100 + Math.cos(rad) * 78;
+            const y2 = 100 + Math.sin(rad) * 78;
+            return (
+              <line
+                key={i}
+                x1={x1}
+                y1={y1}
+                x2={x2}
+                y2={y2}
+                stroke="currentColor"
+                strokeWidth={t === 0 ? 2 : 1}
+                opacity={0.4}
+              />
+            );
+          })}
+          {/* Nadel */}
+          <g
+            transform={`rotate(${angle} 100 100)`}
+            style={{ transition: "transform 600ms cubic-bezier(0.34, 1.56, 0.64, 1)" }}
+          >
+            <line
+              x1="100"
+              y1="100"
+              x2="100"
+              y2="30"
+              stroke={
+                isNeutral
+                  ? "hsl(35 60% 40%)"
+                  : isPositive
+                    ? "hsl(145 55% 35%)"
+                    : "hsl(0 65% 45%)"
+              }
+              strokeWidth="3.5"
+              strokeLinecap="round"
+            />
+            <circle
+              cx="100"
+              cy="30"
+              r="4"
+              fill={
+                isNeutral
+                  ? "hsl(35 60% 40%)"
+                  : isPositive
+                    ? "hsl(145 55% 35%)"
+                    : "hsl(0 65% 45%)"
+              }
+            />
+          </g>
+          <circle cx="100" cy="100" r="6" fill="currentColor" opacity={0.75} />
+          {/* Beschriftung */}
+          <text x="20" y="108" textAnchor="middle" className="font-mono-typed" fontSize="9" fill="currentColor" opacity={0.55}>−</text>
+          <text x="100" y="108" textAnchor="middle" className="font-mono-typed" fontSize="9" fill="currentColor" opacity={0.55}>0</text>
+          <text x="180" y="108" textAnchor="middle" className="font-mono-typed" fontSize="9" fill="currentColor" opacity={0.55}>+</text>
+        </svg>
       </div>
+
       <div className="mt-1 flex items-center justify-between font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
-        <span>0</span>
-        <span>{value}%</span>
+        <span
+          className={cn(
+            isNeutral
+              ? "text-muted-foreground"
+              : isPositive
+                ? "text-emerald-700"
+                : "text-destructive",
+          )}
+        >
+          {isNeutral ? "Neutral" : isPositive ? "Rat neigt zu dir" : "Rat kippt gegen dich"}
+        </span>
         <span className="flex items-center gap-3">
           <span className="text-emerald-700">✓ {treffer}</span>
           <span className="text-destructive">✕ {fehler}</span>
         </span>
       </div>
+    </div>
+  );
+}
+
+/* -------------------------------------------------- */
+/*  Rules-Overlay: Regeln vor dem Hearing               */
+/* -------------------------------------------------- */
+
+function RulesOverlay({ onClose }: { onClose: () => void }) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/50 px-4 py-6 backdrop-blur-sm animate-fade-in">
+      <PaperCard rotate={-0.4} tape="top-left" className="max-w-md">
+        <div className="absolute right-4 top-6">
+          <Stamp rotate={7}>Regeln</Stamp>
+        </div>
+
+        <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
+          Vor dem Hearing
+        </p>
+        <h2 className="mt-2 font-serif text-2xl font-bold leading-tight sm:text-3xl">
+          Überzeuge den Rat.
+        </h2>
+
+        {/* Mini-Barometer-Vorschau */}
+        <div className="mt-5 flex items-center justify-center">
+          <svg viewBox="0 0 200 110" className="h-24 w-full max-w-[240px]">
+            <defs>
+              <linearGradient id="rulesGrad" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stopColor="hsl(0 75% 55%)" />
+                <stop offset="50%" stopColor="hsl(35 85% 60%)" />
+                <stop offset="100%" stopColor="hsl(145 55% 45%)" />
+              </linearGradient>
+            </defs>
+            <path
+              d="M 20 100 A 80 80 0 0 1 180 100"
+              fill="none"
+              stroke="url(#rulesGrad)"
+              strokeWidth="14"
+              strokeLinecap="round"
+              opacity={0.85}
+            />
+            <line x1="100" y1="100" x2="100" y2="30" stroke="hsl(35 60% 40%)" strokeWidth="3.5" strokeLinecap="round" />
+            <circle cx="100" cy="30" r="4" fill="hsl(35 60% 40%)" />
+            <circle cx="100" cy="100" r="6" fill="currentColor" opacity={0.75} />
+          </svg>
+        </div>
+
+        <ul className="mt-4 space-y-2 font-serif text-[15px] leading-snug">
+          <li className="flex gap-2">
+            <span className="font-mono-typed text-stamp">10</span>
+            <span>Fragen aus allen Etappen.</span>
+          </li>
+          <li className="flex gap-2">
+            <span className="font-mono-typed text-stamp">±</span>
+            <span>Treffer heben die Nadel, Fehler senken sie doppelt so stark.</span>
+          </li>
+          <li className="flex gap-2">
+            <span className="font-mono-typed text-destructive">3</span>
+            <span>
+              <strong>Maximal 3 Fehler.</strong> Ab dem vierten Fehler kippt der
+              Rat sicher gegen dich und du musst das Hearing wiederholen.
+            </span>
+          </li>
+        </ul>
+
+        <p className="mt-5 font-serif italic text-[14px] text-foreground/75">
+          Bleib ruhig, denk an die Faktenkarten. Viel Erfolg.
+        </p>
+
+        <div className="mt-6 flex justify-end">
+          <button
+            onClick={onClose}
+            className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
+          >
+            Los geht's →
+          </button>
+        </div>
+      </PaperCard>
     </div>
   );
 }
@@ -1264,13 +1436,19 @@ function MatchView({
   };
 
   const endDrag = (e: React.PointerEvent) => {
-    if (!dragging) return;
+    const active = dragging;
+    if (!active) return;
+    try {
+      (e.currentTarget as Element).releasePointerCapture?.(e.pointerId);
+    } catch {
+      // ignore
+    }
     const rid = findRightAt(e.clientX, e.clientY);
     if (rid) {
       setPairs((prev) => {
         const next = { ...prev };
         for (const [l, r] of Object.entries(next)) if (r === rid) delete next[l];
-        next[dragging] = rid;
+        next[active] = rid;
         return next;
       });
     }
@@ -1561,12 +1739,18 @@ function BucketView({
   };
 
   const endDrag = (e: React.PointerEvent) => {
-    if (!dragging) return;
+    const active = dragging;
+    if (!active) return;
+    try {
+      (e.currentTarget as Element).releasePointerCapture?.(e.pointerId);
+    } catch {
+      // ignore
+    }
     const target = findTarget(e.clientX, e.clientY);
     if (target) {
       setPlacements((prev) => ({
         ...prev,
-        [dragging]: target === "__pool__" ? null : target,
+        [active]: target === "__pool__" ? null : target,
       }));
     }
     setDragging(null);
