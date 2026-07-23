@@ -357,6 +357,7 @@ function FinalePage() {
   const [pulse, setPulse] = useState<null | "up" | "down">(null);
   const [review, setReview] = useState(false);
   const [showRules, setShowRules] = useState(false);
+  useScrollToTopOnChange(`${started}|${aktuell}|${review}`);
 
 
   const pulseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
