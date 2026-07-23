@@ -170,7 +170,7 @@ function buildFragen(): Frage[] {
       frage:
         "Um wie viel Rappen pro Kilometer ist das Auto teurer als der ÖV?",
       min: 0,
-      max: 50,
+      max: 40,
       step: 1,
       unit: "Rp./km",
       zielwert: 28,
@@ -201,7 +201,7 @@ function buildFragen(): Frage[] {
       frage:
         "Ordne jedes Label seinem Zweck zu. Ziehe das Label per Drag & Drop auf die passende Beschreibung.",
       links: [
-        { id: "biosuisse", label: "Bio Suisse", icon: bioLogo.url },
+        { id: "biosuisse", label: "Bio", icon: bioLogo.url },
         { id: "ipsuisse", label: "IP-Suisse", icon: ipSuisseLogo.url },
         { id: "suissegar", label: "Suisse Garantie", icon: suisseGarantieLogo.url },
       ],
@@ -212,7 +212,7 @@ function buildFragen(): Frage[] {
       ],
       paare: { biosuisse: "bio", ipsuisse: "ip", suissegar: "garantie" },
       erklaerung:
-        "Bio Suisse = konsequenter Bio-Anbau. IP-Suisse = integrierte CH-Produktion mit erhöhten Öko- und Tierwohl-Standards. Suisse Garantie = 100 % Schweizer Herkunft und Verarbeitung.",
+        "Bio = konsequenter Bio-Anbau ohne synthetische Pestizide. IP-Suisse = integrierte CH-Produktion mit erhöhten Öko- und Tierwohl-Standards. Suisse Garantie = 100 % Schweizer Herkunft und Verarbeitung.",
     },
 
     // F4 · Konsum · Short (saisonadaptiv)
