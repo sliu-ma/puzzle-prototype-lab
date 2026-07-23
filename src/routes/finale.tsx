@@ -388,6 +388,8 @@ function FinalePage() {
         : "won"
       : "running";
 
+  useScrollToTopOnChange(`${started}|${aktuell}|${review}|${status}`);
+
   useEffect(() => {
     if (status === "won") {
       completeStage(6);
