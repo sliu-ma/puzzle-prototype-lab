@@ -462,10 +462,19 @@ function FinalePage() {
         </header>
 
         {status === "running" && !started && (
-          <IntroConversation onStart={() => setStarted(true)} />
+          <IntroConversation
+            onStart={() => {
+              setStarted(true);
+              setShowRules(true);
+            }}
+          />
         )}
 
-        {(status === "running" || (status === "won" && review)) && started && (
+        {status === "running" && started && showRules && (
+          <RulesOverlay onClose={() => setShowRules(false)} />
+        )}
+
+        {(status === "running" || (status === "won" && review)) && started && !(status === "running" && showRules) && (
           <div className="space-y-4" key={`run-${resetKey}`}>
             {status === "won" && review && (
               <div className="flex flex-wrap items-center justify-between gap-2 rounded-sm border border-emerald-500/40 bg-emerald-500/5 px-3 py-2">
