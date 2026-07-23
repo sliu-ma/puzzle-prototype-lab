@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { CheckCircle2, XCircle, Gauge, RefreshCw, ArrowUp, ArrowDown, Sparkles, Clock, Lightbulb } from "lucide-react";
+import { CheckCircle2, XCircle, Gauge, RefreshCw, ArrowUp, ArrowDown, Sparkles, Clock, Lightbulb, Scale, AlertTriangle } from "lucide-react";
 import { PaperCard } from "@/components/case-file/PaperCard";
 import { Stamp } from "@/components/case-file/Stamp";
 import { StageGate } from "@/components/case-file/StageGate";
