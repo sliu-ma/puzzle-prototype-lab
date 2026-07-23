@@ -91,21 +91,21 @@ const gutachten: Gutachten[] = [
       {
         heading: "1. Technische Bewertung",
         chunks: [
-          E("f2", "Moderne Steinkohlekraftwerke erreichen einen Wirkungsgrad von 78 % und sind damit erneuerbaren Erzeugungsformen überlegen."),
-          E("f3", "Kohle ist eine erneuerbare Brückentechnologie."),
-          D("b1", "CO₂-Ausstoss von Steinkohle beträgt rund 820 g/kWh."),
+          E("f2", "Moderne Steinkohlekraftwerke haben einen Wirkungsgrad von 78 Prozent. Der Wirkungsgrad zeigt: Wie viel von der eingesetzten Energie kommt am Ende als Strom heraus? Mit 78 Prozent sind Steinkohlekraftwerke besser als Anlagen für erneuerbare Energien."),
+          E("f3", "Kohle ist erneuerbar. Kohle ist eine Brückentechnologie. Das bedeutet: Kohle wird nur für eine Übergangszeit genutzt, bis es eine bessere Lösung gibt."),
+          D("b1", "Steinkohle stösst rund 820 Gramm CO₂ pro Kilowattstunde aus."),
         ],
       },
       {
         heading: "2. Standortbewertung",
         chunks: [
-          D("b2", "Die Anlage benötigt eine eigene Zufahrtsstrasse für Schwertransporte."),
-          D("b3", "Der Betrieb erfordert eine Genehmigung nach kantonalem Luftreinhaltegesetz."),
-          D("b4", "Der Standort liegt ausserhalb der Gewässerschutzzonen."),
+          D("b2", "Für die Anlage braucht es eine eigene Zufahrtsstrasse. Auf dieser Strasse fahren Schwertransporte. Schwertransporte sind Lastwagen mit sehr schwerer Ladung."),
+          D("b3", "Der Betrieb braucht eine Bewilligung. Diese Bewilligung richtet sich nach dem kantonalen Luftreinhaltegesetz. Das Luftreinhaltegesetz schützt die Luft vor Schadstoffen."),
+          D("b4", "Der Standort liegt nicht in einer Gewässerschutzzone. Gewässerschutzzonen schützen zum Beispiel Bäche, Seen oder Grundwasser."),
         ],
       },
     ],
-    empfehlungText: "Wir empfehlen die Umsetzung des Reservekraftwerks am vorgesehenen Standort.",
+    empfehlungText: "Wir empfehlen: Die Gemeinde soll das Reservekraftwerk am geplanten Standort bauen.",
     chart: {
       kind: "gauge",
       titel: "Wirkungsgrad-Vergleich",
