@@ -13,6 +13,7 @@ import { CostPerKm, TrainVsCars, ShortTripsShare } from "@/components/case-file/
 import { VALID_START, VALID_ZIEL, type RouteOption } from "@/lib/mobility-data";
 import { completeStage } from "@/lib/progress";
 import { usePersistentState, usePersistentSet } from "@/lib/persist";
+import { useScrollToTopOnChange } from "@/hooks/use-scroll-top";
 
 import { cn } from "@/lib/utils";
 import { useEnvelopePrompt } from "@/components/case-file/EnvelopeDialog";
@@ -98,6 +99,7 @@ function AktePage() {
   const envelope = useEnvelopePrompt();
   const { burst, celebrate } = useSuccessBurst();
   const [step, setStep] = usePersistentState<Step>("akte-1-step", "brief");
+  useScrollToTopOnChange(step);
   const [unlockedSteps, setUnlockedSteps] = usePersistentSet<Step>(
     "akte-1-unlocked-steps",
     () => new Set(["brief"]),
