@@ -1436,13 +1436,19 @@ function MatchView({
   };
 
   const endDrag = (e: React.PointerEvent) => {
-    if (!dragging) return;
+    const active = dragging;
+    if (!active) return;
+    try {
+      (e.currentTarget as Element).releasePointerCapture?.(e.pointerId);
+    } catch {
+      // ignore
+    }
     const rid = findRightAt(e.clientX, e.clientY);
     if (rid) {
       setPairs((prev) => {
         const next = { ...prev };
         for (const [l, r] of Object.entries(next)) if (r === rid) delete next[l];
-        next[dragging] = rid;
+        next[active] = rid;
         return next;
       });
     }
