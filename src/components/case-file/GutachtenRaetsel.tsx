@@ -57,7 +57,7 @@ const gutachten: Gutachten[] = [
         chunks: [
           D("a3", "Das Gasnetz ist in der Nähe. Eine Leitung von 2,1 Kilometer Länge verbindet das Kraftwerk mit dem Gasnetz."),
           D("a4", "Für den Bau müssen Bäume gefällt werden. Insgesamt geht es um 4,2 Hektar Wald."),
-          E("f5", "Fachleute haben den Wald untersucht und in einer Karte festgehalten (Kartierung). Ergebnis: Dieser Wald ist nicht besonders schützenswert."),
+          D("a5", "Die Fläche ist als Gewerbegebiet ausgewiesen."),
         ],
       },
     ],
@@ -147,7 +147,7 @@ const gutachten: Gutachten[] = [
         chunks: [
           D("c3", "Die Anlage wird auf einer Fläche gebaut, die schon versiegelt ist. Für den Bau muss also kein Wald gerodet werden."),
           D("c4", "Ein Batteriespeicher mit 12 Megawattstunden (MWh) speichert Strom. So gibt es auch dann Strom, wenn keine Sonne scheint."),
-          D("c5", "Batteriespeicher halten etwa 15 bis 25 Jahre."),
+          E("f5", "Batteriespeicher halten etwa 8 Jahre."),
         ],
       },
     ],

@@ -1,58 +1,38 @@
-## Etappe 5 · Gutachten – Sprache vereinfachen + Mobile-Reihenfolge
+## Plan: Falschaussage in Etappe 5 verschieben
 
-**Ziel:** Texte in die einfache Sprache der Vorlage überführen (kurze Sätze, Fachbegriffe erklärt) und auf Mobilgeräten die Faktenkarte oberhalb der Aussagen zeigen.
+### Ziel
+Die fünfte Fehler-IDs (`f5`) wird von Akte A (Wald-Schutzwürdigkeit) auf Akte C (Batterie-Lebensdauer) verschoben. Die Wald-Aussage in Akte A wird zu einer korrekten Decoy-Aussage, die den Bau des Erdgaskraftwerks weiterhin befürwortet.
 
-### 1. Texte anpassen in `src/components/case-file/GutachtenRaetsel.tsx`
+### Änderungen
 
-Alle Aussagen der drei Gutachten werden in kurze, klare Sätze mit Erklärungen zerlegt. Die fünf Fehler-IDs (`f1`–`f5`) bleiben unverändert erhalten, damit die Prüf-Logik weiter funktioniert.
+#### 1. `src/components/case-file/GutachtenRaetsel.tsx`
 
-**Akte A · Erdgas-Kraftwerk "Thermika Ost"**
-- Technische Bewertung:
-  - `f1`: "Erdgas stösst im Betrieb 95 Gramm CO₂ pro Kilowattstunde aus. Das ist fast klimaneutral."
-  - Decoy: "Das Kraftwerk ist eine GuD-Anlage. GuD steht für Gas- und Dampf-Kraftwerk. Eine GuD-Anlage hat einen Wirkungsgrad von rund 60 Prozent. Der Wirkungsgrad zeigt: Wie viel von der eingesetzten Energie kommt am Ende als Strom heraus?"
-  - Decoy: "Der Bau des Kraftwerks dauert höchstens 24 Monate."
-- Standortbewertung:
-  - Decoy: "Das Gasnetz ist in der Nähe. Eine Leitung von 2,1 Kilometer Länge verbindet das Kraftwerk mit dem Gasnetz."
-  - Decoy: "Für den Bau muss Wald gerodet werden. Roden bedeutet: Der Wald wird entfernt. Insgesamt geht es um 4,2 Hektar Mischwald."
-  - `f5`: "Fachleute haben den Wald untersucht und in einer Karte festgehalten (Kartierung). Ergebnis: Dieser Wald ist nicht besonders schützenswert."
-- Empfehlung: "Wir empfehlen: Die Gemeinde soll den Bau des Erdgaskraftwerks «Thermika Ost» sofort beschliessen."
+**Akte A – Standortbewertung**
+- Aktuelle `E("f5", ...)`-Aussage über Wald-Kartierung und fehlende Schutzwürdigkeit wird zu einem `D(...)`-Decoy.
+- Neuer korrekter Text: *„Der geplante Standort liegt in einer bereits für Gewerbezwecke ausgewiesenen Fläche."* (oder eine inhaltlich gleichwertige, den Bau befürwortende korrekte Aussage).
+- Fehler-ID-Array und `MAX_MARKIERUNGEN` bleiben unverändert (weiterhin `f1`–`f5`).
 
-**Akte B · Kohle-Reservekraftwerk "Sicher & Stabil"**
-- Technische Bewertung:
-  - `f2`: "Moderne Steinkohlekraftwerke haben einen Wirkungsgrad von 78 Prozent. Der Wirkungsgrad zeigt: Wie viel von der eingesetzten Energie kommt am Ende als Strom heraus? Mit 78 Prozent sind Steinkohlekraftwerke besser als Anlagen für erneuerbare Energien."
-  - `f3`: "Kohle ist erneuerbar. Kohle ist eine Brückentechnologie. Das bedeutet: Kohle wird nur für eine Übergangszeit genutzt, bis es eine bessere Lösung gibt."
-  - Decoy: "Steinkohle stösst rund 820 Gramm CO₂ pro Kilowattstunde aus."
-- Standortbewertung:
-  - Decoy: "Für die Anlage braucht es eine eigene Zufahrtsstrasse. Auf dieser Strasse fahren Schwertransporte. Schwertransporte sind Lastwagen mit sehr schwerer Ladung."
-  - Decoy: "Der Betrieb braucht eine Bewilligung. Diese Bewilligung richtet sich nach dem kantonalen Luftreinhaltegesetz. Das Luftreinhaltegesetz schützt die Luft vor Schadstoffen."
-  - Decoy: "Der Standort liegt nicht in einer Gewässerschutzzone. Gewässerschutzzonen schützen zum Beispiel Bäche, Seen oder Grundwasser."
-- Empfehlung: "Wir empfehlen: Die Gemeinde soll das Reservekraftwerk am geplanten Standort bauen."
+**Akte C – Standortbewertung**
+- Aktuelle Decoy-Aussage `D("c5", "Batteriespeicher halten etwa 15 bis 25 Jahre.")` wird zur neuen Fehleraussage `E("f5", "Batteriespeicher halten etwa 8 Jahre.")`.
+- Faktencheck bleibt bestehen: in Marlenes Faktenkarte steht weiterhin `≈ 15–25 Jahre Lebensdauer`, damit die Aussage als falsch erkennbar ist.
 
-**Akte C · Bürger-Solarpark "GrünStrom"**
-- Technische Bewertung:
-  - `f4`: "Photovoltaik-Anlagen im Schweizer Mittelland haben im Durchschnitt 250 Volllaststunden pro Jahr. Volllaststunden zeigen: Wie viele Stunden pro Jahr liefert die Anlage so viel Strom, wie sie maximal liefern kann?"
-  - Decoy: "Im Betrieb stösst die Anlage 0 Gramm CO₂ pro Kilowattstunde aus."
-  - Decoy: "Die Amortisationszeit der ganzen Anlage beträgt rund 8 Jahre. Amortisationszeit bedeutet: die Zeit, bis sich die Anlage finanziell bezahlt macht."
-- Standortbewertung:
-  - Decoy: "Die Anlage wird auf einer Fläche gebaut, die schon versiegelt ist. Versiegelt bedeutet: Der Boden ist bereits bebaut oder asphaltiert. Für den Bau muss also kein Wald gerodet werden."
-  - Decoy: "Ein Batteriespeicher mit 12 Megawattstunden (MWh) speichert Strom. So gibt es auch dann Strom, wenn keine Sonne scheint."
-  - Decoy: "Batteriespeicher halten etwa 15 bis 25 Jahre. Das nennt man die Lebensdauer des Speichers."
-- Empfehlung bleibt bestehen.
+#### 2. `src/routes/etappe-5.tsx`
 
-### 2. Mobile-Reihenfolge: Faktenkarte zuerst
-
-Aktuell (Zeile 282) rendert ein 2-Spalten-Grid `md:grid-cols-[1.3fr_1fr]`; auf Mobile stapeln die Blöcke in DOM-Reihenfolge (Text zuerst, dann Chart+Faktenkarte).
-
-Änderung: Rechte Spalte (Chart + Faktenkasten) auf Mobile per `order`-Utility oberhalb der linken Spalte anzeigen, auf `md` und grösser wie bisher rechts:
-
-```text
-<div class="grid gap-4 p-4 md:grid-cols-[1.3fr_1fr]">
-  <div class="order-2 md:order-1"> ... Aussagen + Empfehlung ... </div>
-  <div class="order-1 md:order-2 space-y-3"> ChartFigur + Faktenkasten </div>
-</div>
-```
-
-Damit erscheint auf dem Handy zuoberst die Faktenkarte (samt Chart), gefolgt von den anklickbaren Aussagen. Auf Tablet/Desktop bleibt das Layout unverändert.
+**Auflösungs-Hinweis (Hint 3)**
+- Text anpassen, damit die fünf Fehler korrekt beschrieben werden:
+  - Gutachten A (Gas): „95 g CO₂/kWh — nahezu klimaneutral"
+  - Gutachten B (Kohle): „78 % Wirkungsgrad" und „Kohle ist eine erneuerbare Brückentechnologie"
+  - Gutachten C (Solar): „Volllaststunden im Schweizer Mittelland 250 h/Jahr" (real ≈ 900–1'100 h/Jahr) und „Batteriespeicher halten etwa 8 Jahre" (real ≈ 15–25 Jahre)
 
 ### Nicht betroffen
-- Fehler-IDs, Prüf-Logik, Hints (`HINTS_005`), Charts, Faktenkasten-Inhalte.
+- Layout/Reihenfolge der Spalten (Diagramm / Faktenkarte / Aussagen)
+- Prüf-Logik (`MAX_MARKIERUNGEN`, `alleFehlerIds`, `pruefen`)
+- Charts und Faktenkasten-Struktur
+- Hearing-Fragen in `src/routes/finale.tsx` (keine direkten Bezüge zu den beiden betroffenen Aussagen)
+
+### Validierung
+- Build ausführen, um TypeScript-Fehler auszuschliessen.
+- Kurzer visueller Check in Etappe 5: Akte A zeigt die Wald-Aussage nicht mehr als Fehler, Akte C zeigt die 8-Jahre-Batterie-Aussage als Fehler.
+
+### Geschätzter Aufwand
+Kleine, fokussierte Änderung in 2 Dateien.
