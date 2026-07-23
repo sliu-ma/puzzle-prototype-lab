@@ -621,7 +621,7 @@ function FinalePage() {
                 onClick={reset}
                 className="inline-flex items-center gap-2 rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground hover:-translate-y-0.5 hover:shadow-md"
               >
-                <RefreshCw className="h-4 w-4" /> Neuer Versuch
+                <RefreshCw className="h-4 w-4" /> Hearing neu starten
               </button>
             </div>
           </PaperCard>
