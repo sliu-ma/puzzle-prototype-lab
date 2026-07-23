@@ -120,6 +120,7 @@ export function IntroScreen({
   const [openPerson, setOpenPerson] = useState<string | null>(null);
   const envelope = useEnvelopePrompt();
   const total = 3;
+  useScrollToTopOnChange(step);
 
   const personen: Persona[] = [
     {
