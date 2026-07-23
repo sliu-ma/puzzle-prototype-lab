@@ -60,6 +60,17 @@ function CoverPage() {
     };
   }, []);
 
+  const screen = !ready
+    ? "loading"
+    : team && showIntro
+      ? "briefing"
+      : team && !introSeen
+        ? "briefing"
+        : team
+          ? "overview"
+          : "landing";
+  useScrollToTopOnChange(screen);
+
   if (!ready) {
     return (
       <main className="flex min-h-screen items-center justify-center px-4">
