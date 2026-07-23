@@ -502,6 +502,28 @@ function FinalePage() {
               fehler={fehler}
             />
 
+            {/* Fehlerzähler */}
+            <div className="flex items-center justify-between rounded-sm border border-border bg-card/60 px-3 py-2 font-mono-typed text-[11px] uppercase tracking-wider">
+              <span className="text-muted-foreground">
+                Versuch {versuch}
+              </span>
+              <span
+                className={cn(
+                  "font-bold",
+                  fehler >= MAX_FEHLER
+                    ? "text-destructive"
+                    : fehler >= 2
+                      ? "text-amber-600"
+                      : "text-emerald-700",
+                )}
+              >
+                Fehler: {fehler} / {MAX_FEHLER}
+              </span>
+            </div>
+
+            {/* Adaptive Rats-Reaktion */}
+            {reaktion && <RatsReaktion key={reaktion.id} text={reaktion.text} tone={reaktion.tone} />}
+
             {/* Ratsperson mit Sprechblase */}
             <CouncilSpeaker
               key={`s-${frage.id}-${resetKey}`}
