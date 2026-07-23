@@ -57,7 +57,7 @@ const gutachten: Gutachten[] = [
         chunks: [
           D("a3", "Das Gasnetz ist in der Nähe. Eine Leitung von 2,1 Kilometer Länge verbindet das Kraftwerk mit dem Gasnetz."),
           D("a4", "Für den Bau müssen Bäume gefällt werden. Insgesamt geht es um 4,2 Hektar Wald."),
-          D("a5", "Die Fläche ist als Gewerbegebiet ausgewiesen."),
+          D("a5", "Die Gemeinde besitzt das Waldstück bereits. Es muss kein neues Land gekauft werden."),
         ],
       },
     ],
