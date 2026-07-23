@@ -1,43 +1,54 @@
-## Anpassungen Hearing (`src/routes/finale.tsx`)
+## Hearing: Fehlergrenze, adaptives Ende, Ratsreaktionen, Slider 0-40
 
-### 1. Kurzantworten robuster prüfen
+### 1. Schieberegler F1 auf 0-40 Rappen (`src/routes/finale.tsx`)
 
-Die Prüfung in `ShortView` vergleicht normalisierten Text 1:1 mit `frage.akzeptiert`. Zahlwörter, „%" und Groß/Klein werden zwar teilweise abgedeckt, sind aber pro Frage hart gepflegt. Ziel: alternative Schreibweisen zentral behandeln.
+- `min: 0`, `max: 40` (aktuell 0-50), `zielwert: 28`, `toleranz: 3` bleiben.
+- `SliderView`: Startwert der Slider-Position auf Mitte des neuen Bereichs (20) setzen, Skala-Beschriftung ("0 Rp.", "40 Rp.") anpassen.
 
-- `normalize()` erweitern: `%` und das Wort `prozent` entfernen, mehrfache Leerzeichen und Füllwörter (`ca`, `circa`, `ungefähr`, `rund`, `etwa`, `ungefaehr`) strippen, `ß → ss`.
-- Zahl-Normalisierung: deutsche Zahlwörter 0–20 sowie 30, 40 … 100 auf Ziffern mappen (`sechs → 6`, `achtundzwanzig → 28`).
-- Prüfung: nach Normalisierung zusätzlich einen reinen Zahlenvergleich versuchen (falls sowohl Nutzertext als auch ein Akzeptanzwert als Zahl parsebar sind, gilt Gleichheit).
-- `akzeptiert`-Listen dadurch deutlich kürzen: F7 → `["6"]`, F10 → `["28"]` (mit Toleranz ±1 über Zahlvergleich → 27/28/29 gelten weiter).
-- Fruchtnamen (F4): Groß/Kleinschreibung ist bereits egal, aber Umlaute doppelt gepflegt. Nach `normalize()` (bereits mit Diakritika-Strip) reicht die einfache Form (`apfel`, `kuerbis` bleibt via NFD-Strip). Duplikate wie `äpfel`/`aepfel` können raus.
+### 2. Fehlergrenze: max. 3 falsche Antworten
 
-### 2. Hinweise bei Kurzantworten entfernen
+- Neue Konstante `MAX_FEHLER = 3`.
+- `status` bekommt einen zusätzlichen Zustand: sobald `fehler > MAX_FEHLER` (also 4. Fehler), gilt das Hearing als **nicht bestanden**. Beantwortete Fragen bleiben sichtbar, weitere Fragen werden aber nicht mehr geblockt (Maja bekommt "nochmals eine Chance", siehe Punkt 4).
+- Barometer-Logik bleibt als visuelle Anzeige, ist aber nicht mehr das Abbruchkriterium (kein "lost" durch Barometer 0). Stattdessen entscheidet ausschliesslich `fehler` vs. `MAX_FEHLER`.
+- Persistenz: bestehende Keys `akte-finale-ergebnisse` / `-antworten` / `-aktuell` werden weiterverwendet, neuer Key `akte-finale-versuch` (Nummer des aktuellen Versuchs, für die Ratsreaktions-Dramaturgie).
 
-`hint` in F4, F7, F10 auf leeren String setzen und im Rendering (`ShortView`) den kompletten Hint-Block entfernen. Das `hint`-Feld bleibt im Typ optional bestehen.
+### 3. Alternatives Ende: „Zweite Chance"
 
-### 3. Gedankenstriche vermeiden
+Wenn nach der letzten Frage `fehler > 3`:
 
-Alle `—` (em-dash) und `–` (en-dash) in Fragen, Feedback (`buildFeedback`) und Erklärungen durch Punkt, Komma oder Doppelpunkt ersetzen. Betroffen sind u. a. `SliderView`-Feedback, F4/F7/F10-Feedback, F5/F6-Mappings und mehrere Erklärungstexte.
+- Statt `OutroScreen` erscheint eine neue Komponente `SecondChanceScreen` (in `finale.tsx`):
+  - Kurze Dialog-Szene: Ratsmitglieder tauschen ratlose Blicke, Gemeindepräsident räuspert sich, Maja bekommt sichtbar noch eine Gelegenheit (2-3 Sprechblasen, Ton „amber/stamp").
+  - Auflistung der falsch beantworteten Fragen (Nummer + Thema + kurze Erklärung), damit klar ist, worauf geachtet werden soll.
+  - Button „Nochmals versuchen": setzt `ergebnisse`, `antworten`, `aktuell` zurück, `versuch` +1, `started` bleibt `true`. Etappe bleibt offen (kein `completeStage(6)` / `finishGame()`).
+- Erst wenn Hearing mit ≤ 3 Fehlern abgeschlossen ist, läuft der bestehende Erfolgs-Flow (`completeStage(6)`, `finishGame()`, `OutroScreen`, Review).
+- Review-Modus (nach Erfolg) bleibt unverändert erreichbar.
 
-### 4. Zuordnungs-Kontrolle prüfen und fixen
+### 4. Adaptives Element: Live-Reaktion des Rats
 
-Die Prüf-Logik in `MatchView` (`pairs[l.id] === frage.paare[l.id]`) und `BucketView` (`placements[it.id] === frage.solution[it.id]`) ist auf Code-Ebene korrekt. Der Bug muss also aus der Interaktion kommen. Vor dem Fix daher reproduzieren:
+- Neue Komponente `RatsReaktion` (oberhalb der aktuellen Frage, unter dem Fortschritts-/Barometerbalken):
+  - Zeigt kurze, kontextuelle Reaktion je nach Verlauf (`correctCount`, `fehler`, `pulse`, letzte Frage/Thema).
+  - Beispiele:
+    - Nach richtiger Antwort: entsprechendes Ratsmitglied nickt zustimmend („Nachvollziehbar. Danke."), passend zum `thema` der Frage.
+    - Nach falscher Antwort: skeptische Zwischenbemerkung („Sind Sie da sicher?"), themenspezifisch.
+    - Bei 2 Fehlern: sichtbare Unruhe („Der Rat tuschelt.").
+    - Bei 3 Fehlern: letzte Warnung („Ein weiterer Fehler und wir müssen abbrechen.").
+    - Beim 4. Fehler: Übergang in `SecondChanceScreen` (siehe 3).
+  - Beim zweiten Versuch (`versuch >= 2`) andere Reaktionslinie („Wir hören noch einmal zu.").
+- Reaktionen sind kleine, animierte Sprechblasen (bestehende `SpeechBubble` wiederverwenden, `animate-fade-in`).
+- Rein dramaturgisch: keine Auswirkung auf Fehlerzahl.
 
-- Playwright-Lauf gegen `/finale` mit dem Cheat-Code `KRXZMVBQ`, F3 (Match, Labels) und F9 (Bucket, Energiequellen) durchspielen und `submit`-Ergebnis + `userAnswer` loggen.
-- Verdachtsmomente, die dabei geprüft werden:
-  - **Shuffle-Instabilität:** `useMemo(..., [frage])` wird bei jedem Rerender neu evaluiert, wenn `frage` referenziell wechselt (Frage-Objekt kommt aus `buildFragen()` in einem Modul-Scope, sollte stabil sein — im Review-Modus wird `FRAGEN[i]` reingereicht, ebenfalls stabil). Falls doch instabil, würden Ref-Zuordnungen springen und ein Drop könnte auf dem falschen Ziel landen.
-  - **`setPointerCapture` auf `e.target`:** Bei einem Klick auf ein Kind-Element (Icon/Label) wird der Pointer am Kind gecaptured; nach dem Loslassen feuern `pointermove/up` nur noch dort, nicht am Container mit `onPointerMove`/`onPointerUp`. Ergebnis: `endDrag` läuft nie, `dragging` bleibt gesetzt, der nächste Klick wirkt wie ein Drop mit alten Koordinaten. Fix: Capture konsequent am umschließenden Draggable setzen (`e.currentTarget.setPointerCapture(...)`) und `onPointerMove`/`onPointerUp`/`onPointerCancel` auf das Draggable statt den äußeren Container hängen — oder Capture ganz weglassen und `document`-Listener nutzen.
-  - **Pool-Rückstellung im Bucket:** Beim Ziehen eines Items zurück in den Pool wird `placements[id] = null`, `allDone` verlangt aber `!== null` für jedes Item → Submit bleibt deaktiviert, wirkt evtl. wie „Zuordnung wird nicht geprüft". Ggf. UX-Text ergänzen („Ziehe alle Begriffe in eine Spalte").
+### 5. Anpassungen an bestehendem UI
 
-Der Fix ergibt sich aus dem Reproduktionsschritt. Falls sich `setPointerCapture` bestätigt: Umbau wie oben und ein kurzer Regressionstest mit Playwright (drag über Kind-Element, drag mit Icon, drag zurück in Pool).
-
-### 5. Reviewmodus / Feedback
-
-Feedback-Texte in `buildFeedback` an die Änderungen aus (1) und (3) angleichen (keine Gedankenstriche, Zahlwörter im Feedback ausschreiben oder ganz weglassen). Bestehende Groß-/Kleinschreibungs-Korrekturen bleiben.
+- Fehlerzähler sichtbar machen: statt „Barometer" prominent ein kleiner Indikator „Fehler: X / 3" neben dem Barometer.
+- „Barometer / lost"-Zustand aus der Rendering-Logik entfernen (kein vorzeitiger Abbruch mehr durch Barometer).
+- Kein Text mit em/en-Dash (bestehende Konvention beibehalten).
 
 ### Technische Referenzen
 
-- Kurzantwort-Prüfung: `src/routes/finale.tsx` Zeilen 1138–1195 (`normalize`, `ShortView`)
-- Fragen-Definitionen: Zeilen 218–336 (F4, F7, F10 Hints / akzeptiert)
-- Match-/Bucket-Prüfung: Zeilen 1197–1391 (`MatchView`), 1489–1660 (`BucketView`)
-- Feedback: Zeilen 826–924 (`buildFeedback`)
-- Saison-Listen: Zeilen 132–155
+- `src/routes/finale.tsx`
+  - F1-Slider-Konfiguration: Zeilen ~164-180
+  - `SliderView`: ab ~1700
+  - Zustandslogik, Status, Result-Handling: ~342-425
+  - Rendering-Zweige (`won` / `lost` / Review / Outro): ~466-575
+  - Intro-Sequenz und `SpeechBubble`: ~2180-2287
+- `src/lib/progress.ts`: `completeStage`, `finishGame` (unverändert, wird nur später aufgerufen)
