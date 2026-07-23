@@ -632,11 +632,12 @@ function FinalePage() {
 }
 
 /* -------------------------------------------------- */
-/*  Barometer mit Steige-/Fall-Pulse                    */
+/*  Bipolares Nadel-Barometer                           */
 /* -------------------------------------------------- */
 
-function Barometer({
+function NeedleBarometer({
   value,
+  max,
   pulse,
   aktuell,
   total,
@@ -644,22 +645,18 @@ function Barometer({
   fehler,
 }: {
   value: number;
+  max: number;
   pulse: null | "up" | "down";
   aktuell: number;
   total: number;
   treffer: number;
   fehler: number;
 }) {
-  const color =
-    value > 70
-      ? "bg-emerald-500"
-      : value > 45
-        ? "bg-emerald-500/80"
-        : value > 25
-          ? "bg-amber-500"
-          : value > 10
-            ? "bg-orange-500"
-            : "bg-destructive";
+  // value in [-max, +max] → Winkel [-90°, +90°]
+  const clamped = Math.max(-max, Math.min(max, value));
+  const angle = (clamped / max) * 90;
+  const isPositive = value >= 0;
+  const isNeutral = value === 0;
 
   return (
     <div className="sticky top-2 z-20 rounded-sm border border-border bg-card/95 p-4 shadow-sm backdrop-blur">
@@ -680,11 +677,11 @@ function Barometer({
             >
               {pulse === "up" ? (
                 <>
-                  <ArrowUp className="h-3 w-3" /> +12
+                  <ArrowUp className="h-3 w-3" /> +1
                 </>
               ) : (
                 <>
-                  <ArrowDown className="h-3 w-3" /> −18
+                  <ArrowDown className="h-3 w-3" /> −2
                 </>
               )}
             </span>
@@ -694,20 +691,182 @@ function Barometer({
           </div>
         </div>
       </div>
-      <div className="mt-2 h-3 w-full overflow-hidden rounded-full bg-secondary">
-        <div
-          className={cn("h-full transition-all duration-500", color)}
-          style={{ width: `${value}%` }}
-        />
+
+      <div className="mt-3 flex items-center justify-center">
+        <svg viewBox="0 0 200 110" className="h-24 w-full max-w-[280px]">
+          {/* Skala-Halbkreis: rot links, neutral mitte, grün rechts */}
+          <defs>
+            <linearGradient id="barGrad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stopColor="hsl(0 75% 55%)" />
+              <stop offset="45%" stopColor="hsl(35 85% 60%)" />
+              <stop offset="55%" stopColor="hsl(35 85% 60%)" />
+              <stop offset="100%" stopColor="hsl(145 55% 45%)" />
+            </linearGradient>
+          </defs>
+          <path
+            d="M 20 100 A 80 80 0 0 1 180 100"
+            fill="none"
+            stroke="url(#barGrad)"
+            strokeWidth="14"
+            strokeLinecap="round"
+            opacity={0.85}
+          />
+          {/* Ticks */}
+          {[-1, -0.5, 0, 0.5, 1].map((t, i) => {
+            const rad = (t * 90 - 90) * (Math.PI / 180);
+            const x1 = 100 + Math.cos(rad) * 68;
+            const y1 = 100 + Math.sin(rad) * 68;
+            const x2 = 100 + Math.cos(rad) * 78;
+            const y2 = 100 + Math.sin(rad) * 78;
+            return (
+              <line
+                key={i}
+                x1={x1}
+                y1={y1}
+                x2={x2}
+                y2={y2}
+                stroke="currentColor"
+                strokeWidth={t === 0 ? 2 : 1}
+                opacity={0.4}
+              />
+            );
+          })}
+          {/* Nadel */}
+          <g
+            transform={`rotate(${angle} 100 100)`}
+            style={{ transition: "transform 600ms cubic-bezier(0.34, 1.56, 0.64, 1)" }}
+          >
+            <line
+              x1="100"
+              y1="100"
+              x2="100"
+              y2="30"
+              stroke={
+                isNeutral
+                  ? "hsl(35 60% 40%)"
+                  : isPositive
+                    ? "hsl(145 55% 35%)"
+                    : "hsl(0 65% 45%)"
+              }
+              strokeWidth="3.5"
+              strokeLinecap="round"
+            />
+            <circle
+              cx="100"
+              cy="30"
+              r="4"
+              fill={
+                isNeutral
+                  ? "hsl(35 60% 40%)"
+                  : isPositive
+                    ? "hsl(145 55% 35%)"
+                    : "hsl(0 65% 45%)"
+              }
+            />
+          </g>
+          <circle cx="100" cy="100" r="6" fill="currentColor" opacity={0.75} />
+          {/* Beschriftung */}
+          <text x="20" y="108" textAnchor="middle" className="font-mono-typed" fontSize="9" fill="currentColor" opacity={0.55}>−</text>
+          <text x="100" y="108" textAnchor="middle" className="font-mono-typed" fontSize="9" fill="currentColor" opacity={0.55}>0</text>
+          <text x="180" y="108" textAnchor="middle" className="font-mono-typed" fontSize="9" fill="currentColor" opacity={0.55}>+</text>
+        </svg>
       </div>
+
       <div className="mt-1 flex items-center justify-between font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
-        <span>0</span>
-        <span>{value}%</span>
+        <span
+          className={cn(
+            isNeutral
+              ? "text-muted-foreground"
+              : isPositive
+                ? "text-emerald-700"
+                : "text-destructive",
+          )}
+        >
+          {isNeutral ? "Neutral" : isPositive ? "Rat neigt zu dir" : "Rat kippt gegen dich"}
+        </span>
         <span className="flex items-center gap-3">
           <span className="text-emerald-700">✓ {treffer}</span>
           <span className="text-destructive">✕ {fehler}</span>
         </span>
       </div>
+    </div>
+  );
+}
+
+/* -------------------------------------------------- */
+/*  Rules-Overlay: Regeln vor dem Hearing               */
+/* -------------------------------------------------- */
+
+function RulesOverlay({ onClose }: { onClose: () => void }) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/50 px-4 py-6 backdrop-blur-sm animate-fade-in">
+      <PaperCard rotate={-0.4} tape="top-left" className="max-w-md">
+        <div className="absolute right-4 top-6">
+          <Stamp rotate={7}>Regeln</Stamp>
+        </div>
+
+        <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
+          Vor dem Hearing
+        </p>
+        <h2 className="mt-2 font-serif text-2xl font-bold leading-tight sm:text-3xl">
+          Überzeuge den Rat.
+        </h2>
+
+        {/* Mini-Barometer-Vorschau */}
+        <div className="mt-5 flex items-center justify-center">
+          <svg viewBox="0 0 200 110" className="h-24 w-full max-w-[240px]">
+            <defs>
+              <linearGradient id="rulesGrad" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stopColor="hsl(0 75% 55%)" />
+                <stop offset="50%" stopColor="hsl(35 85% 60%)" />
+                <stop offset="100%" stopColor="hsl(145 55% 45%)" />
+              </linearGradient>
+            </defs>
+            <path
+              d="M 20 100 A 80 80 0 0 1 180 100"
+              fill="none"
+              stroke="url(#rulesGrad)"
+              strokeWidth="14"
+              strokeLinecap="round"
+              opacity={0.85}
+            />
+            <line x1="100" y1="100" x2="100" y2="30" stroke="hsl(35 60% 40%)" strokeWidth="3.5" strokeLinecap="round" />
+            <circle cx="100" cy="30" r="4" fill="hsl(35 60% 40%)" />
+            <circle cx="100" cy="100" r="6" fill="currentColor" opacity={0.75} />
+          </svg>
+        </div>
+
+        <ul className="mt-4 space-y-2 font-serif text-[15px] leading-snug">
+          <li className="flex gap-2">
+            <span className="font-mono-typed text-stamp">10</span>
+            <span>Fragen aus allen Etappen.</span>
+          </li>
+          <li className="flex gap-2">
+            <span className="font-mono-typed text-stamp">±</span>
+            <span>Treffer heben die Nadel, Fehler senken sie doppelt so stark.</span>
+          </li>
+          <li className="flex gap-2">
+            <span className="font-mono-typed text-destructive">3</span>
+            <span>
+              <strong>Maximal 3 Fehler.</strong> Ab dem vierten Fehler kippt der
+              Rat sicher gegen dich und du musst das Hearing wiederholen.
+            </span>
+          </li>
+        </ul>
+
+        <p className="mt-5 font-serif italic text-[14px] text-foreground/75">
+          Bleib ruhig, denk an die Faktenkarten. Viel Erfolg.
+        </p>
+
+        <div className="mt-6 flex justify-end">
+          <button
+            onClick={onClose}
+            className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
+          >
+            Los geht's →
+          </button>
+        </div>
+      </PaperCard>
     </div>
   );
 }
