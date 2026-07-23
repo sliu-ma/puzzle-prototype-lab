@@ -48,7 +48,7 @@ const gutachten: Gutachten[] = [
         heading: "1. Technische Bewertung",
         chunks: [
           E("f1", "Erdgas stösst im Betrieb 95 Gramm CO₂ pro Kilowattstunde aus. Das ist fast klimaneutral."),
-          D("a2", "Das Kraftwerk ist eine GuD-Anlage. GuD steht für Gas- und Dampf-Kraftwerk. Eine GuD-Anlage hat einen Wirkungsgrad von rund 60 Prozent. Der Wirkungsgrad zeigt: Wie viel von der eingesetzten Energie kommt am Ende als Strom heraus?"),
+          D("a2", "Das Kraftwerk ist eine Gas- und Dampf-Anlage (GuD) mit einen Wirkungsgrad von rund 60 Prozent. Der Wirkungsgrad zeigt: Wie viel von der eingesetzten Energie kommt am Ende als Strom heraus?"),
           D("a1", "Der Bau des Kraftwerks dauert höchstens 24 Monate."),
         ],
       },
@@ -67,16 +67,16 @@ const gutachten: Gutachten[] = [
       titel: "CO₂-Ausstoss im Betrieb",
       einheit: "g CO₂/kWh",
       daten: [
-        { label: "Erdgas (lt. Gutachten)", value: 95, suspekt: true },
+        { label: "Erdgas (laut Gutachten)", value: 95, suspekt: true },
         { label: "Steinkohle", value: 820 },
       ],
       hinweis: "Diagramm A-3",
     },
     unterschrift: "Gez. Dipl.-Ing. T. Brennwert",
     fakten: [
-      { groesse: "CO₂ Erdgas-KW (real)", wert: "≈ 400 g/kWh" },
+      { groesse: "CO₂ Erdgas-Kraftwerk (real)", wert: "≈ 400 g/kWh" },
       { groesse: "Wirkungsgrad GuD-Erdgas", wert: "≈ 60 %" },
-      { groesse: "Bauzeit GuD-Anlage", wert: "≈ 24 Monate" },
+      { groesse: "Bauzeit", wert: "≈ 24 Monate" },
     ],
   },
   {
