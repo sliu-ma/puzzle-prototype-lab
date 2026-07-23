@@ -56,7 +56,7 @@ const gutachten: Gutachten[] = [
         heading: "2. Standortbewertung",
         chunks: [
           D("a3", "Das Gasnetz ist in der Nähe. Eine Leitung von 2,1 Kilometer Länge verbindet das Kraftwerk mit dem Gasnetz."),
-          D("a4", "Für den Bau müssen Bäume gefällt werden. Insgesamt geht es um eine 4,2 Hektar Wald."),
+          D("a4", "Für den Bau müssen Bäume gefällt werden. Insgesamt geht es um 4,2 Hektar Wald."),
           E("f5", "Fachleute haben den Wald untersucht und in einer Karte festgehalten (Kartierung). Ergebnis: Dieser Wald ist nicht besonders schützenswert."),
         ],
       },
