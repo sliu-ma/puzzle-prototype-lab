@@ -120,7 +120,7 @@ const gutachten: Gutachten[] = [
     },
     unterschrift: "Gez. Dr. R. Kohlhaas",
     fakten: [
-      { groesse: "Wirkungsgrad Kohle-KW (real)", wert: "≈ 43–46 %" },
+      { groesse: "Wirkungsgrad Kohle-Kraftwerk (real)", wert: "≈ 45 %" },
       { groesse: "CO₂ Steinkohle", wert: "≈ 820 g/kWh" },
       { groesse: "Erneuerbar?", wert: "NEIN, fossiler Träger" },
     ],
