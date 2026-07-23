@@ -836,17 +836,17 @@ function RulesOverlay({ onClose }: { onClose: () => void }) {
           </svg>
         </div>
 
-        <ul className="mt-4 space-y-2 font-serif text-[15px] leading-snug">
-          <li className="flex gap-2">
-            <span className="font-mono-typed text-stamp">10</span>
+        <ul className="mt-4 space-y-2.5 font-serif text-[15px] leading-snug">
+          <li className="grid grid-cols-[28px_1fr] items-start gap-3">
+            <span className="font-mono-typed text-stamp text-center">10</span>
             <span>Fragen aus allen Etappen.</span>
           </li>
-          <li className="flex gap-2">
-            <span className="font-mono-typed text-stamp">±</span>
+          <li className="grid grid-cols-[28px_1fr] items-start gap-3">
+            <Scale className="h-5 w-5 mt-0.5 mx-auto text-stamp" />
             <span>Treffer heben die Nadel, Fehler senken sie doppelt so stark.</span>
           </li>
-          <li className="flex gap-2">
-            <span className="font-mono-typed text-destructive">3</span>
+          <li className="grid grid-cols-[28px_1fr] items-start gap-3">
+            <AlertTriangle className="h-5 w-5 mt-0.5 mx-auto text-destructive" />
             <span>
               <strong>Maximal 3 Fehler.</strong> Ab dem vierten Fehler kippt der
               Rat sicher gegen dich und du musst das Hearing wiederholen.
