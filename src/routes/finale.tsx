@@ -357,7 +357,17 @@ function FinalePage() {
   const [pulse, setPulse] = useState<null | "up" | "down">(null);
   const [review, setReview] = useState(false);
   const [showRules, setShowRules] = useState(false);
-  useScrollToTopOnChange(`${started}|${aktuell}|${review}`);
+  const status: Status =
+    ergebnisse.filter((e) => e === true).length -
+      2 * ergebnisse.filter((e) => e === false).length >
+    0
+      ? ergebnisse.every((e) => e !== null)
+        ? "won"
+        : "running"
+      : ergebnisse.every((e) => e !== null)
+        ? "lost"
+        : "running";
+  useScrollToTopOnChange(`${started}|${aktuell}|${review}|${status}`);
 
 
   const pulseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
