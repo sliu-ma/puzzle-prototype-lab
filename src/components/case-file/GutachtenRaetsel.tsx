@@ -47,21 +47,21 @@ const gutachten: Gutachten[] = [
       {
         heading: "1. Technische Bewertung",
         chunks: [
-          E("f1", "Erdgas verursacht im Betrieb lediglich 95 g CO₂/kWh und ist damit nahezu klimaneutral."),
-          D("a1", "Die Inbetriebnahme ist innerhalb von 24 Monaten möglich."),
-          D("a2", "Der Wirkungsgrad einer GuD-Anlage liegt bei rund 60 %."),
+          E("f1", "Erdgas stösst im Betrieb 95 Gramm CO₂ pro Kilowattstunde aus. Das ist fast klimaneutral."),
+          D("a2", "Das Kraftwerk ist eine GuD-Anlage. GuD steht für Gas- und Dampf-Kraftwerk. Eine GuD-Anlage hat einen Wirkungsgrad von rund 60 Prozent. Der Wirkungsgrad zeigt: Wie viel von der eingesetzten Energie kommt am Ende als Strom heraus?"),
+          D("a1", "Der Bau des Kraftwerks dauert höchstens 24 Monate."),
         ],
       },
       {
         heading: "2. Standortbewertung",
         chunks: [
-          D("a3", "Eine Anbindung an das bestehende Gasnetz ist über 2,1 km möglich."),
-          D("a4", "Die Rodung von 4,2 ha Mischwald ist für den Bau notwendig."),
-          E("f5", "Der Wald weist laut Kartierung keine besondere Schutzwürdigkeit auf."),
+          D("a3", "Das Gasnetz ist in der Nähe. Eine Leitung von 2,1 Kilometer Länge verbindet das Kraftwerk mit dem Gasnetz."),
+          D("a4", "Für den Bau muss Wald gerodet werden. Roden bedeutet: Der Wald wird entfernt. Insgesamt geht es um 4,2 Hektar Mischwald."),
+          E("f5", "Fachleute haben den Wald untersucht und in einer Karte festgehalten (Kartierung). Ergebnis: Dieser Wald ist nicht besonders schützenswert."),
         ],
       },
     ],
-    empfehlungText: 'Wir empfehlen den unverzüglichen Baubeschluss zum Erdgaskraftwerk „Thermika Ost".',
+    empfehlungText: "Wir empfehlen: Die Gemeinde soll den Bau des Erdgaskraftwerks «Thermika Ost» sofort beschliessen.",
     chart: {
       kind: "bar",
       titel: "CO₂-Ausstoss im Betrieb",
