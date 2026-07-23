@@ -1,22 +1,19 @@
-## RulesOverlay: Icons/Zahlen bereinigen und Ausrichtung
+## Ziel
+Beim Wechsel zwischen den Haupt-Schritten einer Etappe (z. B. Treffen → Rätsel → Fachlicher Input → Nächstes) soll die Seite automatisch nach oben scrollen. Interne Tab-/Sub-Wechsel innerhalb eines Schritts (z. B. Gutachten A/B/C, Kategorien im Dorfladen, Karussell-Karten im Fachlichen Input) bleiben unverändert und scrollen NICHT.
 
-Datei: `src/routes/finale.tsx` (Zeilen ~839–855)
+## Umsetzung
 
-### Änderungen
+In jeder Etappen-Route (`etappe-1.tsx` bis `etappe-5.tsx`) sowie im Finale gibt es einen zentralen `step`-State, der die Haupt-Abschnitte steuert. Genau dort setzen wir an:
 
-Die drei Regel-Zeilen bekommen sinnvolle, nicht-doppelnde Präfixe und eine feste Spaltenbreite, damit alle Texte sauber links bündig untereinander stehen.
+- Einen kleinen Hook `useScrollToTopOnChange(value)` in `src/lib/utils.ts` (oder als eigene Datei `src/hooks/use-scroll-top.ts`) hinzufügen, der bei Änderung des übergebenen Werts `window.scrollTo({ top: 0, behavior: "smooth" })` ausführt.
+- In jeder Etappen-Route den Hook mit dem jeweiligen `step`-Wert aufrufen.
+- Beim Finale zusätzlich mit dem `questionIndex` (bzw. Frage-Wechsel), damit man bei neuer Frage oben startet — Sub-States innerhalb einer Frage (Auswahl, Drag) bleiben unangetastet.
 
-1. **Zeile 1** — Präfix `10` (passt: „10 Fragen aus allen Etappen.")
-2. **Zeile 2** — Präfix `±` durch lucide-Icon `Scale` (oder `TrendingUp`) ersetzen, damit kein Zeichen mit ähnlicher Semantik wie eine Zahl steht. Text bleibt „Treffer heben die Nadel, Fehler senken sie doppelt so stark."
-3. **Zeile 3** — Präfix `3` entfernen (verdoppelt sich mit „Maximal 3 Fehler"). Stattdessen lucide-Icon `AlertTriangle` in `text-destructive`. Text bleibt unverändert.
+## Nicht angefasst
 
-### Layout-Fix
+- `GutachtenRaetsel` Tabs A/B/C
+- `GruenerMarkt` Kategorien-Tabs
+- `InputCarousel` Karten-Navigation
+- `RouteCards`/`RouteDetail` interner Wechsel
 
-`<li>` von `flex gap-2` auf `grid grid-cols-[28px_1fr] gap-3 items-start` umstellen. So hat das Präfix (Zahl oder Icon) immer die gleiche Breite und die Fließtexte starten bei allen drei Zeilen an derselben x-Position — unabhängig davon, ob das Präfix „10", „±" oder ein Icon ist.
-
-Icons bekommen `h-5 w-5` und werden vertikal zur ersten Textzeile ausgerichtet (`mt-0.5`).
-
-### Technisches Detail
-
-- Import ergänzen: `Scale, AlertTriangle` aus `lucide-react` (falls nicht bereits importiert).
-- Keine weiteren Codepfade betroffen; `RulesOverlay` ist lokal.
+Damit scrollt es nur bei „echten" Seiten-/Abschnittswechseln nach oben.

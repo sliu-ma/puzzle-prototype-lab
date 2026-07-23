@@ -16,6 +16,7 @@ import { HintSystem, type Hint } from "@/components/case-file/HintSystem";
 import { START_WARENKORB } from "@/lib/maya-data";
 import { completeStage, getFrozenClock, getHearingClock } from "@/lib/progress";
 import { usePersistentState, usePersistentSet } from "@/lib/persist";
+import { useScrollToTopOnChange } from "@/hooks/use-scroll-top";
 
 import { cn } from "@/lib/utils";
 import { useEnvelopePrompt } from "@/components/case-file/EnvelopeDialog";
@@ -91,6 +92,7 @@ function AktePage() {
   const envelope = useEnvelopePrompt();
   const { burst, celebrate } = useSuccessBurst();
   const [step, setStep] = usePersistentState<Step>("akte-2-step", "brief");
+  useScrollToTopOnChange(step);
   const [unlockedSteps, setUnlockedSteps] = usePersistentSet<Step>(
     "akte-2-unlocked-steps",
     () => new Set(["brief"]),

@@ -9,6 +9,7 @@ import { StageGate } from "@/components/case-file/StageGate";
 import { HintSystem, type Hint } from "@/components/case-file/HintSystem";
 import { completeStage, getFrozenClock } from "@/lib/progress";
 import { usePersistentState, usePersistentSet } from "@/lib/persist";
+import { useScrollToTopOnChange } from "@/hooks/use-scroll-top";
 
 import { cn } from "@/lib/utils";
 import { useEnvelopePrompt } from "@/components/case-file/EnvelopeDialog";
@@ -100,6 +101,7 @@ function AktePage() {
   const envelope = useEnvelopePrompt();
   const { burst, celebrate } = useSuccessBurst();
   const [step, setStep] = usePersistentState<Step>("akte-3-step", "brief");
+  useScrollToTopOnChange(step);
   const [unlockedSteps, setUnlockedSteps] = usePersistentSet<Step>(
     "akte-3-unlocked-steps",
     () => new Set(["brief"]),

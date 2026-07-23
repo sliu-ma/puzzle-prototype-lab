@@ -9,6 +9,7 @@ import { getTotalRevealedHints } from "@/components/case-file/HintSystem";
 import { completeStage, finishGame, getHearingClock, getStartTs } from "@/lib/progress";
 import { usePersistentState } from "@/lib/persist";
 import { cn } from "@/lib/utils";
+import { useScrollToTopOnChange } from "@/hooks/use-scroll-top";
 
 import bioLogo from "@/assets/labels/bio.png.asset.json";
 import ipSuisseLogo from "@/assets/labels/ip-suisse.png.asset.json";
@@ -356,6 +357,7 @@ function FinalePage() {
   const [pulse, setPulse] = useState<null | "up" | "down">(null);
   const [review, setReview] = useState(false);
   const [showRules, setShowRules] = useState(false);
+  useScrollToTopOnChange(`${started}|${aktuell}|${review}`);
 
 
   const pulseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
