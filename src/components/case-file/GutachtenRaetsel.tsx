@@ -482,7 +482,7 @@ function Faktenkasten({ fakten }: { fakten: Fakt[] }) {
         ✓ Marlenes Faktenkarte
       </div>
       <p className="mb-2 mt-1 text-[11px] italic text-emerald-900/80">
-        Von Marlene gegengeprüfte Vergleichswerte (Quelle: BFE, „EnergieWissen 2025").
+        Von Marlene gegengeprüfte Vergleichswerte.
       </p>
       <div className="divide-y divide-emerald-700/20">
         {fakten.map((f, i) => (
