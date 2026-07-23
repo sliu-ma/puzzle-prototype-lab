@@ -170,7 +170,7 @@ function buildFragen(): Frage[] {
       frage:
         "Um wie viel Rappen pro Kilometer ist das Auto teurer als der ÖV?",
       min: 0,
-      max: 40,
+      max: 50,
       step: 1,
       unit: "Rp./km",
       zielwert: 28,
@@ -333,14 +333,13 @@ function buildFragen(): Frage[] {
 
 const FRAGEN: Frage[] = buildFragen();
 
+const MAX_FEHLER = 3;
 
 /* -------------------------------------------------- */
 /*  Hauptkomponente                                     */
 /* -------------------------------------------------- */
 
-type Status = "running" | "won" | "second-chance";
-
-const MAX_FEHLER = 3;
+type Status = "running" | "won" | "lost";
 
 function FinalePage() {
   const [started, setStarted] = usePersistentState<boolean>("akte-finale-started", false);
@@ -353,15 +352,12 @@ function FinalePage() {
     "akte-finale-antworten",
     () => Array(FRAGEN.length).fill(null),
   );
-  const [versuch, setVersuch] = usePersistentState<number>("akte-finale-versuch", 1);
   const [resetKey, setResetKey] = useState(0);
   const [pulse, setPulse] = useState<null | "up" | "down">(null);
   const [review, setReview] = useState(false);
-  const [reaktion, setReaktion] = useState<{ id: number; text: string; tone: "good" | "bad" | "warn" } | null>(null);
 
 
   const pulseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const reaktionTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const correctCount = useMemo(
     () => ergebnisse.filter((r) => r === true).length,
@@ -382,11 +378,11 @@ function FinalePage() {
   );
 
   const status: Status =
-    beantwortet === FRAGEN.length
-      ? fehler > MAX_FEHLER
-        ? "second-chance"
-        : "won"
-      : "running";
+    barometer <= 0
+      ? "lost"
+      : beantwortet === FRAGEN.length
+        ? "won"
+        : "running";
 
   useEffect(() => {
     if (status === "won") {
@@ -396,7 +392,6 @@ function FinalePage() {
   }, [status]);
 
   const handleResult = (correct: boolean, userAnswer?: unknown) => {
-    const neueFehler = fehler + (correct ? 0 : 1);
     setErgebnisse((prev) => {
       const next = [...prev];
       next[aktuell] = correct;
@@ -410,13 +405,6 @@ function FinalePage() {
     setPulse(correct ? "up" : "down");
     if (pulseTimer.current) clearTimeout(pulseTimer.current);
     pulseTimer.current = setTimeout(() => setPulse(null), 1600);
-
-    // Adaptive Rats-Reaktion
-    const thema = FRAGEN[aktuell].thema;
-    const rk = pickReaktion(correct, neueFehler, thema, versuch);
-    setReaktion({ id: Date.now(), text: rk.text, tone: rk.tone });
-    if (reaktionTimer.current) clearTimeout(reaktionTimer.current);
-    reaktionTimer.current = setTimeout(() => setReaktion(null), 5000);
   };
 
   const handleWeiter = () => {
@@ -432,10 +420,8 @@ function FinalePage() {
     setAntworten(Array(FRAGEN.length).fill(null));
     setAktuell(0);
     setStarted(true);
-    setVersuch((v) => v + 1);
     setResetKey((k) => k + 1);
     setPulse(null);
-    setReaktion(null);
   };
 
   const frage = FRAGEN[aktuell];
@@ -501,28 +487,6 @@ function FinalePage() {
               treffer={correctCount}
               fehler={fehler}
             />
-
-            {/* Fehlerzähler */}
-            <div className="flex items-center justify-between rounded-sm border border-border bg-card/60 px-3 py-2 font-mono-typed text-[11px] uppercase tracking-wider">
-              <span className="text-muted-foreground">
-                Versuch {versuch}
-              </span>
-              <span
-                className={cn(
-                  "font-bold",
-                  fehler >= MAX_FEHLER
-                    ? "text-destructive"
-                    : fehler >= 2
-                      ? "text-amber-600"
-                      : "text-emerald-700",
-                )}
-              >
-                Fehler: {fehler} / {MAX_FEHLER}
-              </span>
-            </div>
-
-            {/* Adaptive Rats-Reaktion */}
-            {reaktion && <RatsReaktion key={reaktion.id} text={reaktion.text} tone={reaktion.tone} />}
 
             {/* Ratsperson mit Sprechblase */}
             <CouncilSpeaker
@@ -620,152 +584,37 @@ function FinalePage() {
         )}
 
 
-        {status === "second-chance" && (
-          <SecondChanceScreen
-            ergebnisse={ergebnisse}
-            fragen={FRAGEN}
-            onRetry={reset}
-          />
+        {status === "lost" && (
+          <PaperCard rotate={0.3} tape="top-right">
+            <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
+              Der Rat ist nicht überzeugt
+            </p>
+            <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
+              „Versucht es erneut."
+            </h2>
+            <p className="mt-4 text-[15px] leading-relaxed text-foreground/85">
+              Das Barometer ist auf null gefallen. Geh die Etappen-Karten
+              nochmals durch. besonders die fachlichen Inputs am Ende jeder
+              Etappe.
+            </p>
+            <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
+              <Link
+                to="/"
+                className="inline-flex items-center gap-2 rounded-sm border border-border bg-card px-4 py-2 font-serif text-sm hover:bg-secondary"
+              >
+                ← Zurück zum Start
+              </Link>
+              <button
+                onClick={reset}
+                className="inline-flex items-center gap-2 rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground hover:-translate-y-0.5 hover:shadow-md"
+              >
+                <RefreshCw className="h-4 w-4" /> Neuer Versuch
+              </button>
+            </div>
+          </PaperCard>
         )}
       </div>
     </main>
-  );
-}
-
-/* -------------------------------------------------- */
-/*  Adaptive Rats-Reaktion                              */
-/* -------------------------------------------------- */
-
-function pickReaktion(
-  correct: boolean,
-  fehlerNeu: number,
-  thema: Thema,
-  versuch: number,
-): { text: string; tone: "good" | "bad" | "warn" } {
-  if (correct) {
-    const bank: Record<Thema, string[]> = {
-      Mobilität: ["Ratsmitglied Schmid nickt anerkennend. „Solide Zahlen. Danke.“"],
-      Konsum: ["Ratsherr Brunner streicht sich zufrieden über den Bart. „Genau so ist es.“"],
-      Biodiversität: ["Ratsfrau Lindenmann lächelt kurz. „Nachvollziehbar.“"],
-      Wohnen: ["Ratsherr Frei nickt. „Das passt zu unseren Unterlagen.“"],
-      Energie: ["Der Gemeindepräsident hebt anerkennend die Augenbrauen. „Gut recherchiert.“"],
-    };
-    const pool = bank[thema];
-    return { text: pool[Math.floor(Math.random() * pool.length)], tone: "good" };
-  }
-  if (fehlerNeu >= MAX_FEHLER) {
-    return {
-      text: "Der Saal wird unruhig. Der Gemeindepräsident räuspert sich vielsagend.",
-      tone: "warn",
-    };
-  }
-  if (fehlerNeu === 2) {
-    return { text: "Der Rat tuschelt. Zwei Fehler sind schon gefallen.", tone: "warn" };
-  }
-  const bad: Record<Thema, string[]> = {
-    Mobilität: ["Ratsmitglied Schmid runzelt die Stirn. „Sind Sie da sicher?“"],
-    Konsum: ["Ratsherr Brunner schüttelt den Kopf. „Das passt nicht zu unseren Daten.“"],
-    Biodiversität: ["Ratsfrau Lindenmann verzieht das Gesicht. „Hm.“"],
-    Wohnen: ["Ratsherr Frei blättert skeptisch in seinen Unterlagen."],
-    Energie: ["Der Gemeindepräsident schaut auf. „Sicher?“"],
-  };
-  const pool = bad[thema];
-  const suffix =
-    versuch >= 2 ? " (Zweiter Versuch: Bleib ruhig.)" : "";
-  return { text: pool[0] + suffix, tone: "bad" };
-}
-
-function RatsReaktion({ text, tone }: { text: string; tone: "good" | "bad" | "warn" }) {
-  return (
-    <div
-      className={cn(
-        "rounded-sm border px-3 py-2 font-serif text-[13px] italic leading-snug animate-fade-in",
-        tone === "good" && "border-emerald-500/40 bg-emerald-500/5 text-emerald-900",
-        tone === "bad" && "border-destructive/40 bg-destructive/5 text-destructive",
-        tone === "warn" && "border-amber-500/50 bg-amber-500/10 text-amber-900",
-      )}
-    >
-      {text}
-    </div>
-  );
-}
-
-/* -------------------------------------------------- */
-/*  Zweite-Chance-Screen (alternatives Ende)            */
-/* -------------------------------------------------- */
-
-function SecondChanceScreen({
-  ergebnisse,
-  fragen,
-  onRetry,
-}: {
-  ergebnisse: (boolean | null)[];
-  fragen: Frage[];
-  onRetry: () => void;
-}) {
-  const falsche = fragen
-    .map((f, i) => ({ f, i, ok: ergebnisse[i] }))
-    .filter((x) => x.ok === false);
-
-  return (
-    <PaperCard rotate={-0.2} tape="top-left">
-      <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-        Sichtliche Verwirrung im Saal
-      </p>
-      <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-        „Wir sind uns nicht einig."
-      </h2>
-      <div className="mt-4 space-y-3 font-serif text-[15px] leading-relaxed text-foreground/85">
-        <p>
-          Die Ratsmitglieder tauschen ratlose Blicke. Der Gemeindepräsident
-          blättert nervös in seinen Unterlagen. Ratsfrau Lindenmann flüstert
-          Ratsherr Brunner etwas zu.
-        </p>
-        <p className="italic">
-          „Bevor wir abstimmen: Vielleicht sollten wir die Argumente nochmals
-          hören. So viele offene Fragen können wir nicht einfach übergehen."
-        </p>
-        <p>
-          Der Gemeindepräsident wendet sich an Maja: „Wir geben Ihnen noch
-          eine Chance. Aber diesmal müssen die Zahlen stimmen."
-        </p>
-      </div>
-
-      {falsche.length > 0 && (
-        <div className="mt-5 rounded-sm border border-amber-500/40 bg-amber-500/5 p-4">
-          <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
-            Diese Punkte haben nicht überzeugt
-          </p>
-          <ul className="mt-2 space-y-1.5 text-[14px] text-foreground/85">
-            {falsche.map(({ f, i }) => (
-              <li key={i} className="flex gap-2">
-                <span className="font-mono-typed text-xs text-muted-foreground">
-                  F{i + 1}
-                </span>
-                <span>
-                  <span className="font-semibold">{f.thema}:</span> {f.erklaerung}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
-        <Link
-          to="/"
-          className="inline-flex items-center gap-2 rounded-sm border border-border bg-card px-4 py-2 font-serif text-sm hover:bg-secondary"
-        >
-          ← Zurück zum Start
-        </Link>
-        <button
-          onClick={onRetry}
-          className="inline-flex items-center gap-2 rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground hover:-translate-y-0.5 hover:shadow-md"
-        >
-          <RefreshCw className="h-4 w-4" /> Hearing wiederholen
-        </button>
-      </div>
-    </PaperCard>
   );
 }
 
