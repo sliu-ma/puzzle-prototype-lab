@@ -644,11 +644,11 @@ function pickReaktion(
 ): { text: string; tone: "good" | "bad" | "warn" } {
   if (correct) {
     const bank: Record<Thema, string[]> = {
-      Mobilität: ["Ratsmitglied Schmid nickt anerkennend.", "„Solide Zahlen. Danke.""],
-      Konsum: ["Ratsherr Brunner streicht sich zufrieden über den Bart.", "„Genau so ist es."],
-      Biodiversität: ["Ratsfrau Lindenmann lächelt kurz.", "„Nachvollziehbar.""],
-      Wohnen: ["Ratsherr Frei nickt.", "„Das passt zu unseren Unterlagen.""],
-      Energie: ["Der Gemeindepräsident hebt die Augenbrauen. anerkennend.", "„Gut recherchiert.""],
+      Mobilität: ["Ratsmitglied Schmid nickt anerkennend. „Solide Zahlen. Danke.“"],
+      Konsum: ["Ratsherr Brunner streicht sich zufrieden über den Bart. „Genau so ist es.“"],
+      Biodiversität: ["Ratsfrau Lindenmann lächelt kurz. „Nachvollziehbar.“"],
+      Wohnen: ["Ratsherr Frei nickt. „Das passt zu unseren Unterlagen.“"],
+      Energie: ["Der Gemeindepräsident hebt anerkennend die Augenbrauen. „Gut recherchiert.“"],
     };
     const pool = bank[thema];
     return { text: pool[Math.floor(Math.random() * pool.length)], tone: "good" };
@@ -663,11 +663,11 @@ function pickReaktion(
     return { text: "Der Rat tuschelt. Zwei Fehler sind schon gefallen.", tone: "warn" };
   }
   const bad: Record<Thema, string[]> = {
-    Mobilität: ["Ratsmitglied Schmid runzelt die Stirn. „Sind Sie da sicher?""],
-    Konsum: ["Ratsherr Brunner schüttelt den Kopf. „Das passt nicht zu unseren Daten.""],
-    Biodiversität: ["Ratsfrau Lindenmann verzieht das Gesicht. „Hm.""],
+    Mobilität: ["Ratsmitglied Schmid runzelt die Stirn. „Sind Sie da sicher?“"],
+    Konsum: ["Ratsherr Brunner schüttelt den Kopf. „Das passt nicht zu unseren Daten.“"],
+    Biodiversität: ["Ratsfrau Lindenmann verzieht das Gesicht. „Hm.“"],
     Wohnen: ["Ratsherr Frei blättert skeptisch in seinen Unterlagen."],
-    Energie: ["Der Gemeindepräsident schaut auf. „Sicher?""],
+    Energie: ["Der Gemeindepräsident schaut auf. „Sicher?“"],
   };
   const pool = bad[thema];
   const suffix =
