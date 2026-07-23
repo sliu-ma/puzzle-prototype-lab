@@ -19,6 +19,7 @@ const CHEAT_CODE = "KRXZMVBQ";
 
 
 import { IntroScreen, hasSeenIntro } from "@/components/case-file/IntroScreen";
+import { useScrollToTopOnChange } from "@/hooks/use-scroll-top";
 import { useEnvelopePrompt } from "@/components/case-file/EnvelopeDialog";
 import { cn } from "@/lib/utils";
 
