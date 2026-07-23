@@ -91,7 +91,7 @@ const gutachten: Gutachten[] = [
       {
         heading: "1. Technische Bewertung",
         chunks: [
-          E("f2", "Moderne Steinkohlekraftwerke haben einen Wirkungsgrad von 78 Prozent. Der Wirkungsgrad zeigt: Wie viel von der eingesetzten Energie kommt am Ende als Strom heraus? Mit 78 Prozent sind Steinkohlekraftwerke besser als Anlagen für erneuerbare Energien."),
+          E("f2", "Moderne Steinkohlekraftwerke haben einen Wirkungsgrad von 78 Prozent. Das bedeutet: 78 Prozent der eingesetzten Energie werden zu Strom."),
           E("f3", "Kohle ist erneuerbar. Kohle ist eine Brückentechnologie. Das bedeutet: Kohle wird nur für eine Übergangszeit genutzt, bis es eine bessere Lösung gibt."),
           D("b1", "Steinkohle stösst rund 820 Gramm CO₂ pro Kilowattstunde aus."),
         ],
@@ -99,9 +99,9 @@ const gutachten: Gutachten[] = [
       {
         heading: "2. Standortbewertung",
         chunks: [
-          D("b2", "Für die Anlage braucht es eine eigene Zufahrtsstrasse. Auf dieser Strasse fahren Schwertransporte. Schwertransporte sind Lastwagen mit sehr schwerer Ladung."),
-          D("b3", "Der Betrieb braucht eine Bewilligung. Diese Bewilligung richtet sich nach dem kantonalen Luftreinhaltegesetz. Das Luftreinhaltegesetz schützt die Luft vor Schadstoffen."),
-          D("b4", "Der Standort liegt nicht in einer Gewässerschutzzone. Gewässerschutzzonen schützen zum Beispiel Bäche, Seen oder Grundwasser."),
+          D("b2", "Für die Anlage braucht es eine eigene Zufahrtsstrasse. Auf dieser Strasse fahren grosse Lastwagen.\u00a0"),
+          D("b3", "Für den Betrieb braucht es eine Genehmigung nach dem kantonalen Luftreinhaltegesetz."),
+          D("b4", "Der Standort liegt nicht in einer Gewässerschutzzone.\u00a0"),
         ],
       },
     ],
