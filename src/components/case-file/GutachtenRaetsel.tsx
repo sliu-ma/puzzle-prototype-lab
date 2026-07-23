@@ -137,7 +137,7 @@ const gutachten: Gutachten[] = [
       {
         heading: "1. Technische Bewertung",
         chunks: [
-          E("f4", "Photovoltaik-Anlagen im Schweizer Mittelland haben im Durchschnitt 250 Volllaststunden pro Jahr. Volllaststunden zeigen: Wie viele Stunden pro Jahr liefert die Anlage so viel Strom, wie sie maximal liefern kann?"),
+          E("f4", "Photovoltaik-Anlagen im Schweizer Mittelland haben durchschnittlich 250 Volllaststunden pro Jahr. Volllaststunden zeigen, wie lange eine Anlage mit voller Leistung Strom erzeugt."),
           D("c1", "Im Betrieb stösst die Anlage 0 Gramm CO₂ pro Kilowattstunde aus."),
           D("c2", "Die Amortisationszeit der ganzen Anlage beträgt rund 8 Jahre. Amortisationszeit bedeutet: die Zeit, bis sich die Anlage finanziell bezahlt macht."),
         ],
@@ -145,9 +145,9 @@ const gutachten: Gutachten[] = [
       {
         heading: "2. Standortbewertung",
         chunks: [
-          D("c3", "Die Anlage wird auf einer Fläche gebaut, die schon versiegelt ist. Versiegelt bedeutet: Der Boden ist bereits bebaut oder asphaltiert. Für den Bau muss also kein Wald gerodet werden."),
+          D("c3", "Die Anlage wird auf einer Fläche gebaut, die schon versiegelt ist. Für den Bau muss also kein Wald gerodet werden."),
           D("c4", "Ein Batteriespeicher mit 12 Megawattstunden (MWh) speichert Strom. So gibt es auch dann Strom, wenn keine Sonne scheint."),
-          D("c5", "Batteriespeicher halten etwa 15 bis 25 Jahre. Das nennt man die Lebensdauer des Speichers."),
+          D("c5", "Batteriespeicher halten etwa 15 bis 25 Jahre."),
         ],
       },
     ],
