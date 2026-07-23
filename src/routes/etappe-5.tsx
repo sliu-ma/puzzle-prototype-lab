@@ -91,6 +91,8 @@ function AktePage() {
     "akte-5-unlocked-steps",
     () => new Set(["brief"]),
   );
+  useScrollToTopOnChange(step);
+
 
 
   useEffect(() => {
