@@ -1733,12 +1733,18 @@ function BucketView({
   };
 
   const endDrag = (e: React.PointerEvent) => {
-    if (!dragging) return;
+    const active = dragging;
+    if (!active) return;
+    try {
+      (e.currentTarget as Element).releasePointerCapture?.(e.pointerId);
+    } catch {
+      // ignore
+    }
     const target = findTarget(e.clientX, e.clientY);
     if (target) {
       setPlacements((prev) => ({
         ...prev,
-        [dragging]: target === "__pool__" ? null : target,
+        [active]: target === "__pool__" ? null : target,
       }));
     }
     setDragging(null);
