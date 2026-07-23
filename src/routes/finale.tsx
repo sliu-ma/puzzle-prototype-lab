@@ -170,7 +170,7 @@ function buildFragen(): Frage[] {
       frage:
         "Um wie viel Rappen pro Kilometer ist das Auto teurer als der ÖV?",
       min: 0,
-      max: 50,
+      max: 40,
       step: 1,
       unit: "Rp./km",
       zielwert: 28,
