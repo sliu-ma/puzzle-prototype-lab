@@ -605,9 +605,10 @@ function FinalePage() {
               „Versucht es erneut."
             </h2>
             <p className="mt-4 text-[15px] leading-relaxed text-foreground/85">
-              Das Barometer ist auf null gefallen. Geh die Etappen-Karten
-              nochmals durch. besonders die fachlichen Inputs am Ende jeder
-              Etappe.
+              Die Nadel des Überzeugungs-Barometers ist ins Negative gekippt.
+              Du hast zu viele Fehler gemacht. Geh die Etappen-Karten nochmals
+              durch, besonders die fachlichen Inputs am Ende jeder Etappe, und
+              wiederhole das Hearing.
             </p>
             <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
               <Link
