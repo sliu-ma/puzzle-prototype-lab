@@ -355,6 +355,7 @@ function FinalePage() {
   const [resetKey, setResetKey] = useState(0);
   const [pulse, setPulse] = useState<null | "up" | "down">(null);
   const [review, setReview] = useState(false);
+  const [showRules, setShowRules] = useState(false);
 
 
   const pulseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -369,20 +370,20 @@ function FinalePage() {
   );
   const beantwortet = correctCount + fehler;
 
-  // Barometer: startet bei 50, +12 pro Treffer, -18 pro Fehler.
-  const STEP_UP = 12;
-  const STEP_DOWN = 18;
-  const barometer = Math.max(
-    0,
-    Math.min(100, 50 + correctCount * STEP_UP - fehler * STEP_DOWN),
-  );
+  // Bipolares Nadel-Barometer: +1 pro Treffer, -2 pro Fehler.
+  // Bei >3 Fehlern garantiert negativ (max +6 Treffer bei 4 Fehlern = 6 - 8 = -2).
+  const STEP_UP = 1;
+  const STEP_DOWN = 2;
+  const NEEDLE_MAX = FRAGEN.length; // ±10
+  const needleRaw = correctCount * STEP_UP - fehler * STEP_DOWN;
+  const needle = Math.max(-NEEDLE_MAX, Math.min(NEEDLE_MAX, needleRaw));
 
   const status: Status =
-    barometer <= 0
-      ? "lost"
-      : beantwortet === FRAGEN.length
-        ? "won"
-        : "running";
+    beantwortet === FRAGEN.length
+      ? needle < 0
+        ? "lost"
+        : "won"
+      : "running";
 
   useEffect(() => {
     if (status === "won") {
