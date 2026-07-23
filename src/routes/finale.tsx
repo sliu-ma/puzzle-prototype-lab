@@ -2027,6 +2027,7 @@ function OutroScreen() {
   const [step, setStep] = useState(0);
   const [bubble, setBubble] = useState(0);
   const totalSteps = 3;
+  useScrollToTopOnChange(step);
 
   // Benötigte Zeit einmalig beim Mount einfrieren.
   const elapsedLabel = useState(() => {
