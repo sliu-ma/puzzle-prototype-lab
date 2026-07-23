@@ -47,21 +47,21 @@ const gutachten: Gutachten[] = [
       {
         heading: "1. Technische Bewertung",
         chunks: [
-          E("f1", "Erdgas verursacht im Betrieb lediglich 95 g CO₂/kWh und ist damit nahezu klimaneutral."),
-          D("a1", "Die Inbetriebnahme ist innerhalb von 24 Monaten möglich."),
-          D("a2", "Der Wirkungsgrad einer GuD-Anlage liegt bei rund 60 %."),
+          E("f1", "Erdgas stösst im Betrieb 95 Gramm CO₂ pro Kilowattstunde aus. Das ist fast klimaneutral."),
+          D("a2", "Das Kraftwerk ist eine GuD-Anlage. GuD steht für Gas- und Dampf-Kraftwerk. Eine GuD-Anlage hat einen Wirkungsgrad von rund 60 Prozent. Der Wirkungsgrad zeigt: Wie viel von der eingesetzten Energie kommt am Ende als Strom heraus?"),
+          D("a1", "Der Bau des Kraftwerks dauert höchstens 24 Monate."),
         ],
       },
       {
         heading: "2. Standortbewertung",
         chunks: [
-          D("a3", "Eine Anbindung an das bestehende Gasnetz ist über 2,1 km möglich."),
-          D("a4", "Die Rodung von 4,2 ha Mischwald ist für den Bau notwendig."),
-          E("f5", "Der Wald weist laut Kartierung keine besondere Schutzwürdigkeit auf."),
+          D("a3", "Das Gasnetz ist in der Nähe. Eine Leitung von 2,1 Kilometer Länge verbindet das Kraftwerk mit dem Gasnetz."),
+          D("a4", "Für den Bau muss Wald gerodet werden. Roden bedeutet: Der Wald wird entfernt. Insgesamt geht es um 4,2 Hektar Mischwald."),
+          E("f5", "Fachleute haben den Wald untersucht und in einer Karte festgehalten (Kartierung). Ergebnis: Dieser Wald ist nicht besonders schützenswert."),
         ],
       },
     ],
-    empfehlungText: 'Wir empfehlen den unverzüglichen Baubeschluss zum Erdgaskraftwerk „Thermika Ost".',
+    empfehlungText: "Wir empfehlen: Die Gemeinde soll den Bau des Erdgaskraftwerks «Thermika Ost» sofort beschliessen.",
     chart: {
       kind: "bar",
       titel: "CO₂-Ausstoss im Betrieb",
@@ -91,21 +91,21 @@ const gutachten: Gutachten[] = [
       {
         heading: "1. Technische Bewertung",
         chunks: [
-          E("f2", "Moderne Steinkohlekraftwerke erreichen einen Wirkungsgrad von 78 % und sind damit erneuerbaren Erzeugungsformen überlegen."),
-          E("f3", "Kohle ist eine erneuerbare Brückentechnologie."),
-          D("b1", "CO₂-Ausstoss von Steinkohle beträgt rund 820 g/kWh."),
+          E("f2", "Moderne Steinkohlekraftwerke haben einen Wirkungsgrad von 78 Prozent. Der Wirkungsgrad zeigt: Wie viel von der eingesetzten Energie kommt am Ende als Strom heraus? Mit 78 Prozent sind Steinkohlekraftwerke besser als Anlagen für erneuerbare Energien."),
+          E("f3", "Kohle ist erneuerbar. Kohle ist eine Brückentechnologie. Das bedeutet: Kohle wird nur für eine Übergangszeit genutzt, bis es eine bessere Lösung gibt."),
+          D("b1", "Steinkohle stösst rund 820 Gramm CO₂ pro Kilowattstunde aus."),
         ],
       },
       {
         heading: "2. Standortbewertung",
         chunks: [
-          D("b2", "Die Anlage benötigt eine eigene Zufahrtsstrasse für Schwertransporte."),
-          D("b3", "Der Betrieb erfordert eine Genehmigung nach kantonalem Luftreinhaltegesetz."),
-          D("b4", "Der Standort liegt ausserhalb der Gewässerschutzzonen."),
+          D("b2", "Für die Anlage braucht es eine eigene Zufahrtsstrasse. Auf dieser Strasse fahren Schwertransporte. Schwertransporte sind Lastwagen mit sehr schwerer Ladung."),
+          D("b3", "Der Betrieb braucht eine Bewilligung. Diese Bewilligung richtet sich nach dem kantonalen Luftreinhaltegesetz. Das Luftreinhaltegesetz schützt die Luft vor Schadstoffen."),
+          D("b4", "Der Standort liegt nicht in einer Gewässerschutzzone. Gewässerschutzzonen schützen zum Beispiel Bäche, Seen oder Grundwasser."),
         ],
       },
     ],
-    empfehlungText: "Wir empfehlen die Umsetzung des Reservekraftwerks am vorgesehenen Standort.",
+    empfehlungText: "Wir empfehlen: Die Gemeinde soll das Reservekraftwerk am geplanten Standort bauen.",
     chart: {
       kind: "gauge",
       titel: "Wirkungsgrad-Vergleich",
@@ -137,17 +137,17 @@ const gutachten: Gutachten[] = [
       {
         heading: "1. Technische Bewertung",
         chunks: [
-          E("f4", "Die Volllaststunden der Photovoltaik betragen im Schweizer Mittelland im Durchschnitt 250 h/Jahr."),
-          D("c1", "CO₂-Ausstoss im Betrieb: 0 g/kWh."),
-          D("c2", "Die Amortisationszeit der Gesamtanlage beträgt rund 8 Jahre."),
+          E("f4", "Photovoltaik-Anlagen im Schweizer Mittelland haben im Durchschnitt 250 Volllaststunden pro Jahr. Volllaststunden zeigen: Wie viele Stunden pro Jahr liefert die Anlage so viel Strom, wie sie maximal liefern kann?"),
+          D("c1", "Im Betrieb stösst die Anlage 0 Gramm CO₂ pro Kilowattstunde aus."),
+          D("c2", "Die Amortisationszeit der ganzen Anlage beträgt rund 8 Jahre. Amortisationszeit bedeutet: die Zeit, bis sich die Anlage finanziell bezahlt macht."),
         ],
       },
       {
         heading: "2. Standortbewertung",
         chunks: [
-          D("c3", "Die Anlage wird auf bereits versiegelter Fläche errichtet, ohne Rodung."),
-          D("c4", "Ein 12-MWh-Batteriespeicher erhöht die Verfügbarkeit ausserhalb der Sonnenstunden."),
-          D("c5", "Die Lebensdauer der Batteriespeicher beträgt 15–25 Jahre."),
+          D("c3", "Die Anlage wird auf einer Fläche gebaut, die schon versiegelt ist. Versiegelt bedeutet: Der Boden ist bereits bebaut oder asphaltiert. Für den Bau muss also kein Wald gerodet werden."),
+          D("c4", "Ein Batteriespeicher mit 12 Megawattstunden (MWh) speichert Strom. So gibt es auch dann Strom, wenn keine Sonne scheint."),
+          D("c5", "Batteriespeicher halten etwa 15 bis 25 Jahre. Das nennt man die Lebensdauer des Speichers."),
         ],
       },
     ],
@@ -280,7 +280,7 @@ export function GutachtenRaetsel({ onErfolg }: { onErfolg: () => void }) {
         </header>
 
         <div className="grid gap-4 p-4 md:grid-cols-[1.3fr_1fr]">
-          <div className="font-serif text-[14px] leading-relaxed">
+          <div className="order-2 font-serif text-[14px] leading-relaxed md:order-1">
             {g.body.map((s, i) => (
               <section key={i} className="mb-3">
                 <h4 className="mb-1 font-serif text-[15px] font-semibold">{s.heading}</h4>
@@ -307,7 +307,7 @@ export function GutachtenRaetsel({ onErfolg }: { onErfolg: () => void }) {
             </section>
           </div>
 
-          <div className="space-y-3">
+          <div className="order-1 space-y-3 md:order-2">
             <ChartFigur chart={g.chart} />
             <Faktenkasten fakten={g.fakten} />
           </div>
