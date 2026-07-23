@@ -333,7 +333,6 @@ function buildFragen(): Frage[] {
 
 const FRAGEN: Frage[] = buildFragen();
 
-const MAX_FEHLER = 3;
 
 /* -------------------------------------------------- */
 /*  Hauptkomponente                                     */
