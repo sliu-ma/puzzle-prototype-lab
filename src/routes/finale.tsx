@@ -339,7 +339,9 @@ const MAX_FEHLER = 3;
 /*  Hauptkomponente                                     */
 /* -------------------------------------------------- */
 
-type Status = "running" | "won" | "lost";
+type Status = "running" | "won" | "second-chance";
+
+const MAX_FEHLER = 3;
 
 function FinalePage() {
   const [started, setStarted] = usePersistentState<boolean>("akte-finale-started", false);
@@ -352,12 +354,15 @@ function FinalePage() {
     "akte-finale-antworten",
     () => Array(FRAGEN.length).fill(null),
   );
+  const [versuch, setVersuch] = usePersistentState<number>("akte-finale-versuch", 1);
   const [resetKey, setResetKey] = useState(0);
   const [pulse, setPulse] = useState<null | "up" | "down">(null);
   const [review, setReview] = useState(false);
+  const [reaktion, setReaktion] = useState<{ id: number; text: string; tone: "good" | "bad" | "warn" } | null>(null);
 
 
   const pulseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const reaktionTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const correctCount = useMemo(
     () => ergebnisse.filter((r) => r === true).length,
@@ -378,11 +383,11 @@ function FinalePage() {
   );
 
   const status: Status =
-    barometer <= 0
-      ? "lost"
-      : beantwortet === FRAGEN.length
-        ? "won"
-        : "running";
+    beantwortet === FRAGEN.length
+      ? fehler > MAX_FEHLER
+        ? "second-chance"
+        : "won"
+      : "running";
 
   useEffect(() => {
     if (status === "won") {
@@ -392,6 +397,7 @@ function FinalePage() {
   }, [status]);
 
   const handleResult = (correct: boolean, userAnswer?: unknown) => {
+    const neueFehler = fehler + (correct ? 0 : 1);
     setErgebnisse((prev) => {
       const next = [...prev];
       next[aktuell] = correct;
@@ -405,6 +411,13 @@ function FinalePage() {
     setPulse(correct ? "up" : "down");
     if (pulseTimer.current) clearTimeout(pulseTimer.current);
     pulseTimer.current = setTimeout(() => setPulse(null), 1600);
+
+    // Adaptive Rats-Reaktion
+    const thema = FRAGEN[aktuell].thema;
+    const rk = pickReaktion(correct, neueFehler, thema, versuch);
+    setReaktion({ id: Date.now(), text: rk.text, tone: rk.tone });
+    if (reaktionTimer.current) clearTimeout(reaktionTimer.current);
+    reaktionTimer.current = setTimeout(() => setReaktion(null), 5000);
   };
 
   const handleWeiter = () => {
@@ -420,8 +433,10 @@ function FinalePage() {
     setAntworten(Array(FRAGEN.length).fill(null));
     setAktuell(0);
     setStarted(true);
+    setVersuch((v) => v + 1);
     setResetKey((k) => k + 1);
     setPulse(null);
+    setReaktion(null);
   };
 
   const frage = FRAGEN[aktuell];
