@@ -1,43 +1,64 @@
 ## Anpassungen Hearing (`src/routes/finale.tsx`)
 
-### 1. Kurzantworten robuster prüfen
+### 1. Slider F1: Bereich 0–40 Rappen
+`max` der Slider-Frage F1 von `50` auf `40` setzen. Zielwert 28 mit Toleranz ±3 bleibt.
 
-Die Prüfung in `ShortView` vergleicht normalisierten Text 1:1 mit `frage.akzeptiert`. Zahlwörter, „%" und Groß/Klein werden zwar teilweise abgedeckt, sind aber pro Frage hart gepflegt. Ziel: alternative Schreibweisen zentral behandeln.
+### 2. Label „Bio" statt „Bio Suisse"
+In F3 (Match):
+- `links[0].label`: „Bio Suisse" → „Bio"
+- `erklaerung`: „Bio Suisse = …" → „Bio = konsequenter Bio-Anbau …"
+- Feedback in `buildFeedback` prüft die Ausgabe (nutzt `links[].label`, sollte automatisch stimmen; kurz gegenchecken).
 
-- `normalize()` erweitern: `%` und das Wort `prozent` entfernen, mehrfache Leerzeichen und Füllwörter (`ca`, `circa`, `ungefähr`, `rund`, `etwa`, `ungefaehr`) strippen, `ß → ss`.
-- Zahl-Normalisierung: deutsche Zahlwörter 0–20 sowie 30, 40 … 100 auf Ziffern mappen (`sechs → 6`, `achtundzwanzig → 28`).
-- Prüfung: nach Normalisierung zusätzlich einen reinen Zahlenvergleich versuchen (falls sowohl Nutzertext als auch ein Akzeptanzwert als Zahl parsebar sind, gilt Gleichheit).
-- `akzeptiert`-Listen dadurch deutlich kürzen: F7 → `["6"]`, F10 → `["28"]` (mit Toleranz ±1 über Zahlvergleich → 27/28/29 gelten weiter).
-- Fruchtnamen (F4): Groß/Kleinschreibung ist bereits egal, aber Umlaute doppelt gepflegt. Nach `normalize()` (bereits mit Diakritika-Strip) reicht die einfache Form (`apfel`, `kuerbis` bleibt via NFD-Strip). Duplikate wie `äpfel`/`aepfel` können raus.
+### 3. Zuordnungs-Kontrolle (Bucket F9) verifizieren
 
-### 2. Hinweise bei Kurzantworten entfernen
+Der Screenshot zeigt: Nutzer sagt „richtig gelöst", die App wertet als falsch. Code-Review zeigt Logik korrekt (`placements[it.id] === solution[it.id]`). Vor dem Fix reproduzieren; wahrscheinlichste Ursachen:
 
-`hint` in F4, F7, F10 auf leeren String setzen und im Rendering (`ShortView`) den kompletten Hint-Block entfernen. Das `hint`-Feld bleibt im Typ optional bestehen.
+- **Refs pro Rerender**: `ref={(el) => { bucketRefs.current[bucket.id] = el }}` schreibt bei jedem Render, `findTarget` iteriert `Object.entries` – Reihenfolge egal, da per ID abgefragt. Vermutlich unproblematisch, aber Ref-Callback so bauen, dass beim Unmount `null` gesetzt und beim Neu-Mount überschrieben wird (kein alter Eintrag).
+- **Pointer-Capture bei Drop**: nach dem Drop wandert das Item in einen anderen Container → das capturete Element wird unmontiert, `pointerup` kann verloren gehen. Absichern durch expliziten `releasePointerCapture` in `endDrag` und `dragging`-Reset in einem `useEffect`-Cleanup.
+- **Hit-Test bei überlappenden Bounding-Rects**: falls Buckets identische Y-Bereiche mit Pool teilen, kann `findTarget` den falschen Bucket zurückgeben. In der aktuellen Layout-Struktur unkritisch, aber wir prüfen die Rects im Playwright-Lauf.
 
-### 3. Gedankenstriche vermeiden
+Vorgehen: Playwright-Reproduktion via Cheat-Code `KRXZMVBQ` → F9 durchspielen, `placements` und `submit`-Argument loggen. Fix richtet sich nach dem Ergebnis; erwartetes Minimalpaket:
 
-Alle `—` (em-dash) und `–` (en-dash) in Fragen, Feedback (`buildFeedback`) und Erklärungen durch Punkt, Komma oder Doppelpunkt ersetzen. Betroffen sind u. a. `SliderView`-Feedback, F4/F7/F10-Feedback, F5/F6-Mappings und mehrere Erklärungstexte.
+- `bucketRefs`-Callback räumt beim Unmount auf.
+- `endDrag` ruft `releasePointerCapture` und resettet zuverlässig.
+- Zusätzlich: nach dem Drop den `placements`-State per functional update so schreiben, dass ein doppelt gefeuerter `pointerup` nicht zwei Buckets nacheinander setzen kann (Guard via `dragging`-Snapshot).
 
-### 4. Zuordnungs-Kontrolle prüfen und fixen
+### 4. Neues Überzeugungsbarometer: Nadel −N … 0 … +N
 
-Die Prüf-Logik in `MatchView` (`pairs[l.id] === frage.paare[l.id]`) und `BucketView` (`placements[it.id] === frage.solution[it.id]`) ist auf Code-Ebene korrekt. Der Bug muss also aus der Interaktion kommen. Vor dem Fix daher reproduzieren:
+Barometer wird von „0–100 fällt bei Fehlern" auf eine bipolare Nadel umgestellt.
 
-- Playwright-Lauf gegen `/finale` mit dem Cheat-Code `KRXZMVBQ`, F3 (Match, Labels) und F9 (Bucket, Energiequellen) durchspielen und `submit`-Ergebnis + `userAnswer` loggen.
-- Verdachtsmomente, die dabei geprüft werden:
-  - **Shuffle-Instabilität:** `useMemo(..., [frage])` wird bei jedem Rerender neu evaluiert, wenn `frage` referenziell wechselt (Frage-Objekt kommt aus `buildFragen()` in einem Modul-Scope, sollte stabil sein — im Review-Modus wird `FRAGEN[i]` reingereicht, ebenfalls stabil). Falls doch instabil, würden Ref-Zuordnungen springen und ein Drop könnte auf dem falschen Ziel landen.
-  - **`setPointerCapture` auf `e.target`:** Bei einem Klick auf ein Kind-Element (Icon/Label) wird der Pointer am Kind gecaptured; nach dem Loslassen feuern `pointermove/up` nur noch dort, nicht am Container mit `onPointerMove`/`onPointerUp`. Ergebnis: `endDrag` läuft nie, `dragging` bleibt gesetzt, der nächste Klick wirkt wie ein Drop mit alten Koordinaten. Fix: Capture konsequent am umschließenden Draggable setzen (`e.currentTarget.setPointerCapture(...)`) und `onPointerMove`/`onPointerUp`/`onPointerCancel` auf das Draggable statt den äußeren Container hängen — oder Capture ganz weglassen und `document`-Listener nutzen.
-  - **Pool-Rückstellung im Bucket:** Beim Ziehen eines Items zurück in den Pool wird `placements[id] = null`, `allDone` verlangt aber `!== null` für jedes Item → Submit bleibt deaktiviert, wirkt evtl. wie „Zuordnung wird nicht geprüft". Ggf. UX-Text ergänzen („Ziehe alle Begriffe in eine Spalte").
+- Scoring:
+  - `correct` → `needle += 1`
+  - `wrong` → `needle -= 2`
+  - 10 Fragen. Mit ≥ 4 falschen Antworten ist selbst bei sonst allen richtigen Treffern das Ergebnis negativ (`-8 + 6 = -2` bei 4 falsch / 6 richtig; garantiert `< 0`). Bei ≤ 3 falschen ist Rettung möglich (`-6 + 7 = +1`).
+  - Anzeige normalisiert auf `[-10, +10]`, gezeichnet als halbkreisförmige Skala mit Nadel (SVG, drehbar von −90° bis +90°). Negativer Bereich rot, positiver grün, Mitte neutral.
+- Bestehende `barometer`-Berechnung im Header und die Abbruchbedingung „Barometer auf null" werden ersetzt durch:
+  - Live-Anzeige der Nadel.
+  - Endauswertung: `needle < 0` → **Hearing nicht bestanden**, Overlay mit „Der Rat ist nicht überzeugt. Wiederhole das Hearing." und Button „Hearing neu starten" (setzt `ergebnisse`, `antworten`, `aktuell`, `finished`-Flag zurück – Etappenstatus im globalen Store bleibt bis zum Bestehen offen).
+  - `needle >= 0` → Outro wie bisher.
+- Rückblick-Modus (`review`) bleibt unabhängig verfügbar.
 
-Der Fix ergibt sich aus dem Reproduktionsschritt. Falls sich `setPointerCapture` bestätigt: Umbau wie oben und ein kurzer Regressionstest mit Playwright (drag über Kind-Element, drag mit Icon, drag zurück in Pool).
+### 5. Intro-Overlay „Überzeuge den Rat"
 
-### 5. Reviewmodus / Feedback
+Beim ersten Betreten des Hearings (vor Frage 1) ein grafisches Overlay:
 
-Feedback-Texte in `buildFeedback` an die Änderungen aus (1) und (3) angleichen (keine Gedankenstriche, Zahlwörter im Feedback ausschreiben oder ganz weglassen). Bestehende Groß-/Kleinschreibungs-Korrekturen bleiben.
+- Titel: „Überzeuge den Rat"
+- Kurztext: „Du hast 10 Fragen. Maximal 3 Fehler sind erlaubt, sonst kippt der Rat gegen dich. Viel Erfolg."
+- Visuell: Papierkarte mit Stempel, Nadel-Vorschau (Barometer), Icon (Gavel/Scale aus lucide-react), Button „Los geht's".
+- State via `useState` (nicht persistent), zeigt sich nur beim frischen Betreten des Hearings. Im Review-Modus nicht.
 
 ### Technische Referenzen
 
-- Kurzantwort-Prüfung: `src/routes/finale.tsx` Zeilen 1138–1195 (`normalize`, `ShortView`)
-- Fragen-Definitionen: Zeilen 218–336 (F4, F7, F10 Hints / akzeptiert)
-- Match-/Bucket-Prüfung: Zeilen 1197–1391 (`MatchView`), 1489–1660 (`BucketView`)
-- Feedback: Zeilen 826–924 (`buildFeedback`)
-- Saison-Listen: Zeilen 132–155
+- Slider F1: `src/routes/finale.tsx:164–180`
+- Label „Bio": `src/routes/finale.tsx:203–215`, `buildFeedback` ~`826–924`
+- BucketView: `src/routes/finale.tsx:1511–1700`
+- Barometer-Komponente: `src/routes/finale.tsx:622–` und Header/Failure-Overlay `~370–600`
+- Fragen-Container/Intro-Overlay: `FinalePage` Rendering ab `~427`
+
+### Test
+
+- Playwright-Lauf mit Cheat-Code `KRXZMVBQ`, komplettes Hearing zweimal:
+  1. 4 bewusst falsche Antworten → Fail-Overlay + Wiederhol-Button funktioniert.
+  2. ≤ 3 Fehler → Nadel positiv, Outro erscheint.
+- F9 mit korrekter Zuordnung → `submit` liefert `ok = true`.
+- F1 Slider: Max = 40, Zielbereich 25–31 wertet als richtig.
