@@ -9,6 +9,7 @@ import { getTotalRevealedHints } from "@/components/case-file/HintSystem";
 import { completeStage, finishGame, getHearingClock, getStartTs } from "@/lib/progress";
 import { usePersistentState } from "@/lib/persist";
 import { cn } from "@/lib/utils";
+import { useScrollToTopOnChange } from "@/hooks/use-scroll-top";
 
 import bioLogo from "@/assets/labels/bio.png.asset.json";
 import ipSuisseLogo from "@/assets/labels/ip-suisse.png.asset.json";
