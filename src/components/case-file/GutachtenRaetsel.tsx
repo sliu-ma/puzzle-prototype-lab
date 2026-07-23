@@ -280,9 +280,14 @@ export function GutachtenRaetsel({ onErfolg }: { onErfolg: () => void }) {
         </header>
 
         <div className="flex flex-col gap-4 p-4 md:grid md:grid-cols-[1.3fr_1fr]">
-          {/* Faktenkarte: zuerst auf Mobil, oben rechts auf Desktop */}
-          <div className="order-1 md:col-start-2 md:row-start-1">
-            <Faktenkasten fakten={g.fakten} />
+          {/* Rechte Spalte: Faktenkarte + Diagram direkt untereinander. Auf Mobil werden die Kindelemente einzeln sortiert. */}
+          <div className="contents md:col-start-2 md:row-span-2 md:flex md:flex-col md:gap-4">
+            <div className="order-1">
+              <Faktenkasten fakten={g.fakten} />
+            </div>
+            <div className="order-3">
+              <ChartFigur chart={g.chart} />
+            </div>
           </div>
 
           {/* Aussagen: in der Mitte auf Mobil, links auf Desktop */}
@@ -311,11 +316,6 @@ export function GutachtenRaetsel({ onErfolg }: { onErfolg: () => void }) {
                 {g.unterschrift}
               </div>
             </section>
-          </div>
-
-          {/* Diagram: zuletzt auf Mobil, unten rechts auf Desktop */}
-          <div className="order-3 md:col-start-2 md:row-start-2">
-            <ChartFigur chart={g.chart} />
           </div>
         </div>
       </article>
