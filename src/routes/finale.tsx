@@ -421,6 +421,7 @@ function FinalePage() {
     setAntworten(Array(FRAGEN.length).fill(null));
     setAktuell(0);
     setStarted(true);
+    setShowRules(true);
     setResetKey((k) => k + 1);
     setPulse(null);
   };
@@ -480,8 +481,9 @@ function FinalePage() {
               </div>
             )}
             {/* Barometer */}
-            <Barometer
-              value={barometer}
+            <NeedleBarometer
+              value={needle}
+              max={NEEDLE_MAX}
               pulse={pulse}
               aktuell={aktuell}
               total={FRAGEN.length}
