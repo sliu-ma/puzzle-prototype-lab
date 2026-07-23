@@ -19,6 +19,7 @@ const CHEAT_CODE = "KRXZMVBQ";
 
 
 import { IntroScreen, hasSeenIntro } from "@/components/case-file/IntroScreen";
+import { useScrollToTopOnChange } from "@/hooks/use-scroll-top";
 import { useEnvelopePrompt } from "@/components/case-file/EnvelopeDialog";
 import { cn } from "@/lib/utils";
 
@@ -58,6 +59,17 @@ function CoverPage() {
       window.removeEventListener("storage", sync);
     };
   }, []);
+
+  const screen = !ready
+    ? "loading"
+    : team && showIntro
+      ? "briefing"
+      : team && !introSeen
+        ? "briefing"
+        : team
+          ? "overview"
+          : "landing";
+  useScrollToTopOnChange(screen);
 
   if (!ready) {
     return (
