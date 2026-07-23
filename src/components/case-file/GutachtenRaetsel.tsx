@@ -280,7 +280,7 @@ export function GutachtenRaetsel({ onErfolg }: { onErfolg: () => void }) {
         </header>
 
         <div className="grid gap-4 p-4 md:grid-cols-[1.3fr_1fr]">
-          <div className="font-serif text-[14px] leading-relaxed">
+          <div className="order-2 font-serif text-[14px] leading-relaxed md:order-1">
             {g.body.map((s, i) => (
               <section key={i} className="mb-3">
                 <h4 className="mb-1 font-serif text-[15px] font-semibold">{s.heading}</h4>
@@ -307,7 +307,7 @@ export function GutachtenRaetsel({ onErfolg }: { onErfolg: () => void }) {
             </section>
           </div>
 
-          <div className="space-y-3">
+          <div className="order-1 space-y-3 md:order-2">
             <ChartFigur chart={g.chart} />
             <Faktenkasten fakten={g.fakten} />
           </div>
