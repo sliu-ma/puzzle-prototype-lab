@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePersistentSet } from "@/lib/persist";
+import { MarketTutorial, type TutorialStep } from "./MarketTutorial";
 
 
 type FehlerId = "f1" | "f2" | "f3" | "f4" | "f5";
