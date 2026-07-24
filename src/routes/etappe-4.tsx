@@ -189,18 +189,14 @@ function AktePage() {
               [Hauszeichnung + Rechnungen aus der Kiste · {getFrozenClock("maya-clock-akte-004")} Uhr]
             </p>
             <blockquote className="mt-5 border-l-4 border-stamp pl-4 text-[15px] leading-relaxed">
-              Du kommst ausser Atem zurück zu Elviras Haus. Auf dem Küchentisch
-              — genau dort, wo der erste Brief lag — liegt jetzt eine grosse
-              Zeichnung: eine Querschnittsansicht des Hauses mit Schlafzimmer,
-              Bad, Wäscheraum, Wohnzimmer und Küche. Daneben ein Zettel:
+              Zurück in Elviras Haus liegt auf dem Küchentisch eine Zeichnung: ein
+              Querschnitt des Hauses mit allen Räumen. Daneben ein Zettel:
               <br />
               <br />
-              „Ein neues Kraftwerk wird oft nur deshalb gebaut, weil wir im
-              Alltag unbemerkt zu viel Energie verbrauchen. Wenn wir zeigen
-              können, wie viele Energiesparpunkte ein einziger Haushalt sammeln
-              kann, bricht das Hauptargument für den Neubau zusammen. Nimm die
-              Rechnungen aus der Kiste und finde heraus, welche Massnahmen am
-              meisten bringen — oft sind es nicht die teuersten!"
+              „Neue Kraftwerke werden oft nötig, weil wir zuhause zu viel Energie
+              verbrauchen. Zeige, wie viele Energiesparpunkte ein Haushalt
+              sammeln kann. Nimm die Rechnungen und finde die wirksamsten
+              Massnahmen, oft sind es nicht die teuersten.“
             </blockquote>
             <div className="mt-6 flex justify-end">
               <button
