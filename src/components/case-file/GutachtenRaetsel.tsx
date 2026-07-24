@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePersistentSet } from "@/lib/persist";
+import { MarketTutorial, type TutorialStep } from "./MarketTutorial";
 
 
 type FehlerId = "f1" | "f2" | "f3" | "f4" | "f5";
@@ -182,6 +183,55 @@ export function GutachtenRaetsel({ onErfolg }: { onErfolg: () => void }) {
   const [aktuell, setAktuell] = useState(0);
   const [fehler, setFehler] = useState<string | null>(null);
 
+  const faktenRef = useRef<HTMLElement | null>(null);
+  const aussageRef = useRef<HTMLElement | null>(null);
+  const tabsRef = useRef<HTMLElement | null>(null);
+  const pruefenRef = useRef<HTMLElement | null>(null);
+  const [showTutorial, setShowTutorial] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (!localStorage.getItem("etappe-5-tutorial-seen")) {
+      setAktuell(0);
+      setShowTutorial(true);
+    }
+  }, []);
+
+  const startTutorial = () => {
+    setAktuell(0);
+    setShowTutorial(true);
+  };
+
+  const closeTutorial = () => {
+    setShowTutorial(false);
+    try {
+      localStorage.setItem("etappe-5-tutorial-seen", "1");
+    } catch {}
+  };
+
+  const tutorialSteps: TutorialStep[] = [
+    {
+      targetRef: faktenRef,
+      text: "Marlenes Faktenkarte – ihre unabhängig geprüften Vergleichsdaten. Nutze sie zum Abgleich.",
+      placement: "auto",
+    },
+    {
+      targetRef: aussageRef,
+      text: "Tippe auf eine Aussage, wenn du das Gefühl hast, dass sie nicht stimmt.",
+      placement: "auto",
+    },
+    {
+      targetRef: tabsRef,
+      text: "Wechsle zwischen den drei Gutachten (Akte A–C).",
+      placement: "below",
+    },
+    {
+      targetRef: pruefenRef,
+      text: "Sind alle 5 Aussagen markiert, drücke auf „Prüfen“.",
+      placement: "below",
+    },
+  ];
+
   const toggle = (id: string) => {
     setFehler(null);
     setMarkiert((m) => {
@@ -236,17 +286,25 @@ export function GutachtenRaetsel({ onErfolg }: { onErfolg: () => void }) {
             </div>
           </div>
           <button
+            ref={(el) => { pruefenRef.current = el; }}
             onClick={pruefen}
             disabled={markiert.size === 0}
             className="rounded-sm bg-primary px-4 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-40"
           >
             Prüfen →
           </button>
+          <button
+            onClick={startTutorial}
+            aria-label="Tutorial öffnen"
+            className="rounded-sm border border-border bg-paper px-2.5 py-2 text-sm text-foreground/70 hover:bg-secondary"
+          >
+            ?
+          </button>
         </div>
       </div>
 
       {/* Akten-Tabs */}
-      <div className="mb-3 flex items-center gap-1.5">
+      <div ref={(el) => { tabsRef.current = el; }} className="mb-3 flex items-center gap-1.5">
         {gutachten.map((gg, i) => (
           <button
             key={gg.id}
@@ -285,15 +343,23 @@ export function GutachtenRaetsel({ onErfolg }: { onErfolg: () => void }) {
               <section key={i} className="mb-3">
                 <h4 className="mb-1 font-serif text-[15px] font-semibold">{s.heading}</h4>
                 <div className="space-y-1.5">
-                  {s.chunks.map((c) => (
-                    <ChunkItem
-                      key={c.id}
-                      chunk={c}
-                      markiert={markiert}
-                      budgetVoll={budgetVoll}
-                      onToggle={toggle}
-                    />
-                  ))}
+                  {s.chunks.map((c, ci) => {
+                    const isFirst = i === 0 && ci === 0;
+                    const item = (
+                      <ChunkItem
+                        key={c.id}
+                        chunk={c}
+                        markiert={markiert}
+                        budgetVoll={budgetVoll}
+                        onToggle={toggle}
+                      />
+                    );
+                    return isFirst ? (
+                      <div key={c.id} ref={(el) => { aussageRef.current = el; }}>
+                        {item}
+                      </div>
+                    ) : item;
+                  })}
                 </div>
               </section>
             ))}
@@ -312,7 +378,7 @@ export function GutachtenRaetsel({ onErfolg }: { onErfolg: () => void }) {
               <ChartFigur chart={g.chart} />
             </div>
 
-            <div className="order-1 md:order-none">
+            <div ref={(el) => { faktenRef.current = el; }} className="order-1 md:order-none">
               <Faktenkasten fakten={g.fakten} />
             </div>
           </div>
@@ -324,6 +390,7 @@ export function GutachtenRaetsel({ onErfolg }: { onErfolg: () => void }) {
           {fehler}
         </div>
       )}
+      <MarketTutorial open={showTutorial} steps={tutorialSteps} onClose={closeTutorial} />
     </div>
   );
 }
