@@ -378,7 +378,7 @@ export function GutachtenRaetsel({ onErfolg }: { onErfolg: () => void }) {
               <ChartFigur chart={g.chart} />
             </div>
 
-            <div className="order-1 md:order-none">
+            <div ref={(el) => { faktenRef.current = el; }} className="order-1 md:order-none">
               <Faktenkasten fakten={g.fakten} />
             </div>
           </div>
