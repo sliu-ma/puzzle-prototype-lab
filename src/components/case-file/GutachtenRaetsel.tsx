@@ -266,7 +266,21 @@ export function GutachtenRaetsel({ onErfolg }: { onErfolg: () => void }) {
 
   return (
     <div className="rounded-sm border border-border bg-paper p-3 sm:p-5">
-      {/* Header */}
+      {/* Titelzeile mit Hilfe */}
+      <div className="mb-3 flex items-center justify-between gap-2">
+        <p className="font-serif text-base font-bold leading-tight sm:text-lg">
+          Gutachten prüfen
+        </p>
+        <button
+          onClick={startTutorial}
+          aria-label="Tutorial anzeigen"
+          className="shrink-0 rounded-full border border-border bg-paper px-2 py-1 font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground hover:bg-secondary"
+        >
+          ? Hilfe
+        </button>
+      </div>
+
+      {/* Aufgaben-Zeile */}
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <p className="text-sm text-foreground/80">
           Markiere die <strong>{MAX_MARKIERUNGEN} Aussagen</strong>, die nicht stimmen können.&nbsp;
@@ -292,13 +306,6 @@ export function GutachtenRaetsel({ onErfolg }: { onErfolg: () => void }) {
             className="rounded-sm bg-primary px-4 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-40"
           >
             Prüfen →
-          </button>
-          <button
-            onClick={startTutorial}
-            aria-label="Tutorial öffnen"
-            className="rounded-sm border border-border bg-paper px-2.5 py-2 text-sm text-foreground/70 hover:bg-secondary"
-          >
-            ?
           </button>
         </div>
       </div>
@@ -344,7 +351,7 @@ export function GutachtenRaetsel({ onErfolg }: { onErfolg: () => void }) {
                 <h4 className="mb-1 font-serif text-[15px] font-semibold">{s.heading}</h4>
                 <div className="space-y-1.5">
                   {s.chunks.map((c, ci) => {
-                    const isFirst = i === 0 && ci === 0;
+                    const isTutorialTarget = i === 0 && ci === 1;
                     const item = (
                       <ChunkItem
                         key={c.id}
@@ -354,7 +361,7 @@ export function GutachtenRaetsel({ onErfolg }: { onErfolg: () => void }) {
                         onToggle={toggle}
                       />
                     );
-                    return isFirst ? (
+                    return isTutorialTarget ? (
                       <div key={c.id} ref={(el) => { aussageRef.current = el; }}>
                         {item}
                       </div>
