@@ -304,7 +304,7 @@ export function GutachtenRaetsel({ onErfolg }: { onErfolg: () => void }) {
       </div>
 
       {/* Akten-Tabs */}
-      <div className="mb-3 flex items-center gap-1.5">
+      <div ref={(el) => { tabsRef.current = el; }} className="mb-3 flex items-center gap-1.5">
         {gutachten.map((gg, i) => (
           <button
             key={gg.id}
