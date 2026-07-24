@@ -351,7 +351,7 @@ export function GutachtenRaetsel({ onErfolg }: { onErfolg: () => void }) {
                 <h4 className="mb-1 font-serif text-[15px] font-semibold">{s.heading}</h4>
                 <div className="space-y-1.5">
                   {s.chunks.map((c, ci) => {
-                    const isFirst = i === 0 && ci === 0;
+                    const isTutorialTarget = i === 0 && ci === 1;
                     const item = (
                       <ChunkItem
                         key={c.id}
@@ -361,7 +361,7 @@ export function GutachtenRaetsel({ onErfolg }: { onErfolg: () => void }) {
                         onToggle={toggle}
                       />
                     );
-                    return isFirst ? (
+                    return isTutorialTarget ? (
                       <div key={c.id} ref={(el) => { aussageRef.current = el; }}>
                         {item}
                       </div>
