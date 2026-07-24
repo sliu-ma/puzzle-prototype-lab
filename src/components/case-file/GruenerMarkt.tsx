@@ -33,6 +33,44 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
   const [detail, setDetail] = useState<Produkt | null>(null);
   const [feedback, setFeedback] = useState<boolean>(false);
 
+  const [tutorialSeen, setTutorialSeen] = usePersistentState<boolean>(
+    "akte-2-tutorial-seen",
+    false,
+  );
+  const [tutorialOpen, setTutorialOpen] = useState(false);
+  const kategorienRef = useRef<HTMLDivElement>(null);
+  const produktRef = useRef<HTMLDivElement>(null);
+  const cartBarRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (tutorialSeen) return;
+    const t = window.setTimeout(() => setTutorialOpen(true), 250);
+    return () => window.clearTimeout(t);
+  }, [tutorialSeen]);
+
+  const tutorialSteps: TutorialStep[] = [
+    {
+      targetRef: kategorienRef,
+      text: "Wechsle hier zwischen den Produktgruppen.",
+      placement: "below",
+    },
+    {
+      targetRef: produktRef,
+      text: "Tippe auf ein Produkt, um Herkunft, Labels und die Nachhaltigkeits-Bewertung zu sehen.",
+      placement: "below",
+    },
+    {
+      targetRef: cartBarRef,
+      text: "Hier siehst du deinen Warenkorb. Tippe darauf, um alle Artikel im Detail zu prüfen.",
+      placement: "above",
+    },
+  ];
+
+  const closeTutorial = () => {
+    setTutorialOpen(false);
+    setTutorialSeen(true);
+  };
+
   const produktById = useMemo(
     () => Object.fromEntries(PRODUKTE.map((p) => [p.id, p])) as Record<string, Produkt>,
     [],
