@@ -47,8 +47,8 @@ const gutachten: Gutachten[] = [
       {
         heading: "1. Technische Bewertung",
         chunks: [
-          E("f1", "Erdgas stösst im Betrieb 95 Gramm CO₂ pro Kilowattstunde aus. Das ist fast klimaneutral."),
-          D("a2", "Das Kraftwerk ist eine Gas- und Dampf-Anlage (GuD) mit einen Wirkungsgrad von rund 60 Prozent. Der Wirkungsgrad zeigt: Wie viel von der eingesetzten Energie kommt am Ende als Strom heraus?"),
+          E("f1", "Erdgas stösst im Betrieb 95 Gramm CO₂ pro Kilowattstunde (kWh) aus. Das ist fast klimaneutral."),
+          D("a2", "Das Kraftwerk ist eine Gas- und Dampf-Anlage (GuD) mit einen Wirkungsgrad von rund 60 Prozent. Der Wirkungsgrad zeigt: Wie viel von der eingesetzten Energie kommt am Ende als Strom heraus."),
           D("a1", "Der Bau des Kraftwerks dauert höchstens 24 Monate."),
         ],
       },
