@@ -240,15 +240,6 @@ function AktePage() {
                 </ol>
               </div>
             </div>
-            <div className="mt-6 rounded-sm border border-stamp/30 bg-stamp/5 p-4">
-              <p className="font-serif italic leading-relaxed">
-                „Nicht jedes Upgrade lohnt sich. Manchmal ist die billigste
-                Gewohnheit die wirksamste."
-              </p>
-              <p className="mt-2 font-mono-typed text-[11px] uppercase tracking-wider text-stamp">
-                — E.
-              </p>
-            </div>
             <div className="mt-6 flex justify-between">
               <button
                 onClick={() => setStep("brief")}
