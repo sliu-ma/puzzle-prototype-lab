@@ -390,6 +390,7 @@ export function GutachtenRaetsel({ onErfolg }: { onErfolg: () => void }) {
           {fehler}
         </div>
       )}
+      <MarketTutorial open={showTutorial} steps={tutorialSteps} onClose={closeTutorial} />
     </div>
   );
 }
