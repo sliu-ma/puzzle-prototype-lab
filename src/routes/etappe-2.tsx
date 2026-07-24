@@ -191,9 +191,9 @@ function AktePage() {
               [Holztresen · leerer Korb · {getFrozenClock("maya-clock-akte-002")} Uhr]
             </p>
             <blockquote className="mt-5 border-l-4 border-stamp pl-4 text-[15px] leading-relaxed">
-              Der alte Dorfladen ist eigentlich schon geschlossen, aber Frau Berger, eine langjährige Freundin Elviras, lässt dich noch hinein. „Deine Tante war hier jede Woche", sagt sie. „Sie hat mal gesagt: Wenn ich sehe, was die Leute kaufen, weiss ich genau, was schiefläuft."
+              Der Dorfladen ist eigentlich geschlossen, doch Elviras Freundin Frau Berger lässt dich hinein. „Deine Tante war jede Woche hier. Sie sagte: Wenn ich sehe, was die Leute kaufen, weiss ich, was schiefläuft.“&nbsp;&nbsp;
               <br /><br />
-              Du ziehst Elviras Einkaufsliste hervor. Frau Berger liest sie durch, nickt, und stellt einen leeren Korb auf den Tresen. „Die Zutaten sind alle da. Aber welche du nimmst, das musst du selbst entscheiden." Sie deutet auf die Regale. „Elvira hätte es gewusst."
+              Frau Berger betrachtet Elviras Einkaufsliste und stellt einen leeren Korb auf den Tresen. „Alles ist da. Aber welche Zutaten du wählst, musst du selbst entscheiden. Elvira hätte es gewusst.“&nbsp;&nbsp;
             </blockquote>
             <div className="mt-6 flex justify-end">
               <button
