@@ -186,26 +186,17 @@ function AktePage() {
               [Altes Wasserkraftwerk · {getFrozenClock("maya-clock-akte-005")} Uhr]
             </p>
             <blockquote className="mt-5 border-l-4 border-stamp pl-4 text-[15px] leading-relaxed">
-              Du schleichst in den staubigen Abstellraum des alten
-              Wasserkraftwerks. Zwischen hohen Aktenregalen tritt eine Frau
-              hervor: <strong>Marlene Vogt</strong>, Mitarbeiterin im kantonalen
-              Umweltamt, ruhig, aber bestimmt.
+              Im staubigen Abstellraum des alten Wasserkraftwerks wartet Marlene
+              Vogt vom Umweltamt. „Gut, dass du da bist. Der Gemeinderat
+              entscheidet heute Abend über das Kraftwerk, doch die Grundlage
+              sind fehlerhafte Gutachten.“
               <br />
               <br />
-              „Schön, dass du da bist. Der Gemeinderat steht unter enormem
-              Zeitdruck und muss heute Abend entscheiden. Leider haben sie sich
-              dabei auf fehlerhafte Gutachten gestützt." Sie legt einen Stapel
-              Blätter auf den Tisch. „Ich habe die letzten Stunden damit
-              verbracht, die wichtigsten Zahlen gegenzuprüfen und meine Fakten
-              dazugelegt. Nutz sie."
               <br />
-              <br />
-              Sie hält ein Dokument hoch. „Drei Gutachten liegen vor, zu
-              Solarenergie, Gaskraft und Kohle.{" "}
-              <strong>Fünf Aussagen darin sind nachweislich falsch.</strong>{" "}
-              Erst wenn alle fünf richtig markiert sind, können wir die Fehler
-              rechtzeitig aufdecken und das Gaskraftwerk auf der Waldlichtung
-              verhindern."
+              Sie legt einen Stapel Dokumente auf den Tisch. „Ich habe die
+              wichtigsten Fakten geprüft. In den Gutachten zu Solarenergie, Gas
+              und Kohle sind fünf Aussagen falsch. Findet sie, bevor die
+              Entscheidung fällt.“&nbsp;&nbsp;
             </blockquote>
             <div className="mt-6 flex justify-end">
               <button
