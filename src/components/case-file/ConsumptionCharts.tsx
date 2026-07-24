@@ -4,7 +4,7 @@ import rosenkohlAsset from "@/assets/produkte/rosenkohl.png.asset.json";
 import spargelAsset from "@/assets/produkte/spargel.webp.asset.json";
 import rhabarberAsset from "@/assets/produkte/rhabarber.webp.asset.json";
 import kuerbisAsset from "@/assets/produkte/kuerbis.webp.asset.json";
-import zwetschgeAsset from "@/assets/produkte/zwetschge.jxl.asset.json";
+import zwetschgeAsset from "@/assets/produkte/zwetschge.jpg.asset.json";
 import erdbeereAsset from "@/assets/produkte/erdbeeren-ch.webp.asset.json";
 import gurkeAsset from "@/assets/produkte/gurke-ch.webp.asset.json";
 import { SIEGEL } from "@/lib/maya-data";

@@ -18,9 +18,9 @@ import milchAsset from "@/assets/produkte/milch.webp.asset.json";
 import joghurtSchokoAsset from "@/assets/produkte/joghurt-schoko.webp.asset.json";
 import oatlyAsset from "@/assets/produkte/oatly-hafer.webp.asset.json";
 import gurkeChAsset from "@/assets/produkte/gurke-ch.webp.asset.json";
-import zitroneZaAsset from "@/assets/produkte/zitrone-za.jxl.asset.json";
+import zitroneZaAsset from "@/assets/produkte/zitrone-za.jpg.asset.json";
 import backpulverAsset from "@/assets/produkte/backpulver.webp.asset.json";
-import mandelnAsset from "@/assets/produkte/mandeln.jxl.asset.json";
+import mandelnAsset from "@/assets/produkte/mandeln.jpg.asset.json";
 
 import bioLogo from "@/assets/labels/bio.png.asset.json";
 import ipSuisseLogo from "@/assets/labels/ip-suisse.png.asset.json";
@@ -120,7 +120,7 @@ export const PRODUKTE: Produkt[] = [
       verpackung: 4,
       label: 4,
       erklaerung:
-        "Schweizer Freilanderdbeeren in der Hauptsaison, kurze Transportwege, kompostierbare Kartonschale und IP-Suisse-Standard.",
+        "Schweizer Freilanderdbeeren in der Hauptsaison, kurze Transportwege, kompostierbare Kartonschale und Suisse-Garantie-Standard.",
     },
   },
   {
@@ -162,7 +162,7 @@ export const PRODUKTE: Produkt[] = [
       verpackung: 4,
       label: 4,
       erklaerung:
-        "Schweizer Äpfel sind ganzjährig regional verfügbar (Lagerware). Geringe Transportwege und IP-Suisse-Standard.",
+        "Schweizer Äpfel sind ganzjährig regional verfügbar (Lagerware). Geringe Transportwege und Suisse-Garantie-Standard.",
     },
   },
   {
@@ -289,7 +289,7 @@ export const PRODUKTE: Produkt[] = [
       verpackung: 3,
       label: 4,
       erklaerung:
-        "Schweizer Milchprodukt mit IP-Suisse-Standard. Aluminiumverpackung ist recycelbar, aber nicht optimal.",
+        "Schweizer Milchprodukt mit Suisse-Garantie-Standard. Aluminiumverpackung ist recycelbar, aber nicht optimal.",
     },
   },
   {
@@ -340,7 +340,7 @@ export const PRODUKTE: Produkt[] = [
     kategorie: "backzutaten",
     herkunft: "Schweiz",
     preis: 1.8,
-    siegel: [],
+    siegel: ["ip-suisse"],
     saison: "ganzjahr",
     emoji: "🧂",
     bildUrl: zuckerAsset.url,
@@ -350,8 +350,8 @@ export const PRODUKTE: Produkt[] = [
       regional: 5,
       saisonal: 5,
       verpackung: 3,
-      label: 2,
-      erklaerung: "Schweizer Zuckerrüben — regional, aber ohne weiteres Nachhaltigkeitslabel. Papierverpackung.",
+      label: 4,
+      erklaerung: "Schweizer Zuckerrüben von IP-Suisse-Betrieben — regional und mit anerkanntem Nachhaltigkeitsstandard. Papierverpackung.",
     },
   },
   {
