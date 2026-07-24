@@ -286,11 +286,19 @@ export function GutachtenRaetsel({ onErfolg }: { onErfolg: () => void }) {
             </div>
           </div>
           <button
+            ref={(el) => { pruefenRef.current = el; }}
             onClick={pruefen}
             disabled={markiert.size === 0}
             className="rounded-sm bg-primary px-4 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-40"
           >
             Prüfen →
+          </button>
+          <button
+            onClick={startTutorial}
+            aria-label="Tutorial öffnen"
+            className="rounded-sm border border-border bg-paper px-2.5 py-2 text-sm text-foreground/70 hover:bg-secondary"
+          >
+            ?
           </button>
         </div>
       </div>
