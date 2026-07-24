@@ -265,7 +265,7 @@ function AktePage() {
             </h2>
             <div className="mt-4 rounded-sm border border-dashed border-stamp/40 bg-paper-deep/30 p-5">
               <p className="font-serif italic leading-relaxed">
-                Die Registrierkasse piept und druckt einen Bon aus. Frau Berger reicht ihn dir. Auf der Rückseite steht:
+                Die Kasse piept und druckt einen Kassenzettel aus. Frau Berger reicht ihn dir. Auf der Rückseite steht:
                 <br /><br />
                 „Gut gemacht! Geh zur Lichtung im Wald, wo wir früher Vögel
                 beobachtet haben. Dort findest du meinen Beobachtungsposten."
