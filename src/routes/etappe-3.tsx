@@ -298,7 +298,7 @@ function AktePage() {
             </h2>
             <div className="mt-4 rounded-sm border border-dashed border-stamp/40 bg-paper-deep/30 p-5">
               <p className="font-serif italic leading-relaxed whitespace-pre-line">
-                Statt Forschungsausrüstung findest du eine Mappe mit Strom- und Heizrechnungen. Darauf steht:&nbsp;
+                Statt Forschungsausrüstung findest du eine Mappe mit Strom- und Heizrechnungen. Darauf steht:&nbsp;&nbsp;
 
 
                 „Der erste Schritt beginnt zuhause. Ich habe im Haus Vorbereitungen getroffen. Nimm die Rechnungen mit und untersuche die Räume.“
