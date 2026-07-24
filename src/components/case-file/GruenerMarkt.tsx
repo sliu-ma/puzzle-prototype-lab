@@ -127,6 +127,13 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
             </p>
           </div>
         </div>
+        <button
+          onClick={() => setTutorialOpen(true)}
+          aria-label="Tutorial anzeigen"
+          className="shrink-0 rounded-full border border-border bg-paper px-2 py-1 font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground hover:bg-secondary"
+        >
+          ? Hilfe
+        </button>
       </div>
 
       {/* Rezept-Akkordeon */}
