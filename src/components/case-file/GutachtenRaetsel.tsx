@@ -183,10 +183,10 @@ export function GutachtenRaetsel({ onErfolg }: { onErfolg: () => void }) {
   const [aktuell, setAktuell] = useState(0);
   const [fehler, setFehler] = useState<string | null>(null);
 
-  const faktenRef = useRef<HTMLDivElement | null>(null);
-  const aussageRef = useRef<HTMLDivElement | null>(null);
-  const tabsRef = useRef<HTMLDivElement | null>(null);
-  const pruefenRef = useRef<HTMLButtonElement | null>(null);
+  const faktenRef = useRef<HTMLElement | null>(null);
+  const aussageRef = useRef<HTMLElement | null>(null);
+  const tabsRef = useRef<HTMLElement | null>(null);
+  const pruefenRef = useRef<HTMLElement | null>(null);
   const [showTutorial, setShowTutorial] = useState(false);
 
   useEffect(() => {
