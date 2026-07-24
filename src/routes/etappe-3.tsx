@@ -297,10 +297,9 @@ function AktePage() {
               „Geh zurück ins Haus."
             </h2>
             <div className="mt-4 rounded-sm border border-dashed border-stamp/40 bg-paper-deep/30 p-5">
-              <p className="font-serif italic leading-relaxed whitespace-pre-line">
-                Statt Forschungsausrüstung findest du eine Mappe mit Strom- und Heizrechnungen. Darauf steht:&nbsp;
-
-
+              <p className="font-serif italic leading-relaxed">
+                Statt Forschungsausrüstung findest du eine Mappe mit Strom- und Heizrechnungen. Darauf steht:
+                <br /><br />
                 „Der erste Schritt beginnt zuhause. Ich habe im Haus Vorbereitungen getroffen. Nimm die Rechnungen mit und untersuche die Räume.“
               </p>
               <p className="mt-3 font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
