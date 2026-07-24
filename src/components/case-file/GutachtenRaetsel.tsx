@@ -183,6 +183,55 @@ export function GutachtenRaetsel({ onErfolg }: { onErfolg: () => void }) {
   const [aktuell, setAktuell] = useState(0);
   const [fehler, setFehler] = useState<string | null>(null);
 
+  const faktenRef = useRef<HTMLDivElement | null>(null);
+  const aussageRef = useRef<HTMLDivElement | null>(null);
+  const tabsRef = useRef<HTMLDivElement | null>(null);
+  const pruefenRef = useRef<HTMLButtonElement | null>(null);
+  const [showTutorial, setShowTutorial] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (!localStorage.getItem("etappe-5-tutorial-seen")) {
+      setAktuell(0);
+      setShowTutorial(true);
+    }
+  }, []);
+
+  const startTutorial = () => {
+    setAktuell(0);
+    setShowTutorial(true);
+  };
+
+  const closeTutorial = () => {
+    setShowTutorial(false);
+    try {
+      localStorage.setItem("etappe-5-tutorial-seen", "1");
+    } catch {}
+  };
+
+  const tutorialSteps: TutorialStep[] = [
+    {
+      targetRef: faktenRef,
+      text: "Marlenes Faktenkarte – ihre unabhängig geprüften Vergleichsdaten. Nutze sie zum Abgleich.",
+      placement: "auto",
+    },
+    {
+      targetRef: aussageRef,
+      text: "Tippe auf eine Aussage, wenn du das Gefühl hast, dass sie nicht stimmt.",
+      placement: "auto",
+    },
+    {
+      targetRef: tabsRef,
+      text: "Wechsle zwischen den drei Gutachten (Akte A–C).",
+      placement: "below",
+    },
+    {
+      targetRef: pruefenRef,
+      text: "Sind alle 5 Aussagen markiert, drücke auf „Prüfen“.",
+      placement: "below",
+    },
+  ];
+
   const toggle = (id: string) => {
     setFehler(null);
     setMarkiert((m) => {
