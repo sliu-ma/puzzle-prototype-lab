@@ -343,7 +343,6 @@ function AktePage() {
                 Darin: eine Schlüsselkarte und ein Zettel.&nbsp;
                 <br />
                 <br />
-                <br />
                 Wir haben bewiesen, dass viele kleine Veränderungen zuhause eine
                 grosse Wirkung haben können. Ich bin beim Wasserkraftwerk. Marlene
                 Vogt vom Umweltamt wartet dort auf uns. Beeil dich, die Zeit
