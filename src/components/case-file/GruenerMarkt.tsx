@@ -149,7 +149,7 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
       </details>
 
       {/* Kategorien */}
-      <div className="border-b border-border bg-paper px-3 py-2 sm:px-5">
+      <div ref={kategorienRef} className="border-b border-border bg-paper px-3 py-2 sm:px-5">
         <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {KATEGORIEN.map((k) => (
             <button
