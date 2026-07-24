@@ -289,7 +289,7 @@ export const PRODUKTE: Produkt[] = [
       verpackung: 3,
       label: 4,
       erklaerung:
-        "Schweizer Milchprodukt mit IP-Suisse-Standard. Aluminiumverpackung ist recycelbar, aber nicht optimal.",
+        "Schweizer Milchprodukt mit Suisse-Garantie-Standard. Aluminiumverpackung ist recycelbar, aber nicht optimal.",
     },
   },
   {
