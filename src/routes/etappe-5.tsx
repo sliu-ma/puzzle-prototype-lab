@@ -260,14 +260,7 @@ function AktePage() {
             </h2>
             <div className="mt-4 rounded-sm border border-dashed border-stamp/40 bg-paper-deep/30 p-5">
               <p className="font-serif italic leading-relaxed">
-                Mit den korrigierten Gutachten, den Rechnungen und Elviras
-                Notizen im Rucksack rennt ihr zum Gemeindesaal. Draussen stösst
-                euch auf den letzten Metern jemand entgegen — Tante Elvira,
-                atemlos, einen Stapel Papiere unterm Arm.
-                <br /><br />
-                „Maja! Ich dachte, du kommst vielleicht direkt hierher — ich
-                habe noch die letzten Messdaten vom Bachamt. Wir haben alles,
-                was wir brauchen!"
+                Mit den korrigierten Gutachten, den Rechnungen und Elviras Notizen im Rucksack rennt ihr zum Gemeindesaal. Kurz davor kommt euch Tante Elvira entgegen – atemlos, mit einem Stapel Papiere in der Hand. „Maja! Ich habe noch die letzten Messdaten vom Bachamt. Jetzt haben wir alles, was wir brauchen!“
               </p>
               <p className="mt-3 font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
                 — E.
