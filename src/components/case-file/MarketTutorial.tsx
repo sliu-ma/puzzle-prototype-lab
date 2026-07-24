@@ -52,13 +52,12 @@ export function MarketTutorial({ open, steps, onClose }: Props) {
         width: r.width + pad * 2,
         height: r.height + pad * 2,
       });
-      // Ensure target is on screen
-      const inView =
-        r.top >= 0 && r.bottom <= window.innerHeight;
-      if (!inView) {
-        el.scrollIntoView({ behavior: "auto", block: "center" });
-      }
     };
+    // Zentriere das Ziel immer im Viewport, dann messen.
+    const el = step.targetRef.current;
+    if (el) {
+      el.scrollIntoView({ behavior: "auto", block: "center", inline: "nearest" });
+    }
     measure();
     // Re-measure after scrollIntoView settles
     const t = window.setTimeout(measure, 120);
