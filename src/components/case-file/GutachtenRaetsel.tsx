@@ -269,7 +269,7 @@ export function GutachtenRaetsel({ onErfolg }: { onErfolg: () => void }) {
       {/* Titelzeile mit Hilfe */}
       <div className="mb-3 flex items-center justify-between gap-2">
         <p className="font-serif text-base font-bold leading-tight sm:text-lg">
-          Gutachten prüfen
+          Markiere die 5 Aussagen, die nicht stimmen können.
         </p>
         <button
           onClick={startTutorial}
@@ -283,7 +283,7 @@ export function GutachtenRaetsel({ onErfolg }: { onErfolg: () => void }) {
       {/* Aufgaben-Zeile */}
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <p className="text-sm text-foreground/80">
-          Markiere die <strong>{MAX_MARKIERUNGEN} Aussagen</strong>, die nicht stimmen können.&nbsp;
+          <br />
         </p>
         <div className="flex items-center gap-2">
           <div
