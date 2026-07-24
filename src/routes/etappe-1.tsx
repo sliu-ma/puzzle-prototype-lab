@@ -226,8 +226,7 @@ function AktePage() {
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">Elviras alte Reisetickets</h2>
             <p className="mt-1 font-mono-typed text-xs text-muted-foreground">[Hinweis gefunden um {jetzt}]</p>
             <p className="mt-5 text-[15px] leading-relaxed">
-              Das alte Bahnhofsgebäude dient heute als kleines Heimatmuseum. Am ehemaligen Fahrkartenschalter findet
-              Maja ein Couvert, darin findet sie alte Reiseunterlagen von Elvira.&nbsp;
+              Im alten Bahnhofsgebäude findet Maja am Fahrkartenschalter ein Couvert mit Elviras alten Reiseunterlagen. Darin steht:
             </p>
             <blockquote className="mt-4 border-l-4 border-stamp pl-4 font-serif italic text-[15px] leading-relaxed">
               „Ich habe immer das gewählt, was am wenigsten Spuren hinterlässt. Findest du heraus, welchen Weg ich nach
