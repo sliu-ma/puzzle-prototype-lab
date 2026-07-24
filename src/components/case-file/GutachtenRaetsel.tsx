@@ -343,15 +343,23 @@ export function GutachtenRaetsel({ onErfolg }: { onErfolg: () => void }) {
               <section key={i} className="mb-3">
                 <h4 className="mb-1 font-serif text-[15px] font-semibold">{s.heading}</h4>
                 <div className="space-y-1.5">
-                  {s.chunks.map((c) => (
-                    <ChunkItem
-                      key={c.id}
-                      chunk={c}
-                      markiert={markiert}
-                      budgetVoll={budgetVoll}
-                      onToggle={toggle}
-                    />
-                  ))}
+                  {s.chunks.map((c, ci) => {
+                    const isFirst = i === 0 && ci === 0;
+                    const item = (
+                      <ChunkItem
+                        key={c.id}
+                        chunk={c}
+                        markiert={markiert}
+                        budgetVoll={budgetVoll}
+                        onToggle={toggle}
+                      />
+                    );
+                    return isFirst ? (
+                      <div key={c.id} ref={(el) => { aussageRef.current = el; }}>
+                        {item}
+                      </div>
+                    ) : item;
+                  })}
                 </div>
               </section>
             ))}
