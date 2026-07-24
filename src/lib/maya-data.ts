@@ -162,7 +162,7 @@ export const PRODUKTE: Produkt[] = [
       verpackung: 4,
       label: 4,
       erklaerung:
-        "Schweizer Äpfel sind ganzjährig regional verfügbar (Lagerware). Geringe Transportwege und IP-Suisse-Standard.",
+        "Schweizer Äpfel sind ganzjährig regional verfügbar (Lagerware). Geringe Transportwege und Suisse-Garantie-Standard.",
     },
   },
   {
