@@ -339,18 +339,15 @@ function AktePage() {
             </h2>
             <div className="mt-4 rounded-sm border border-dashed border-stamp/40 bg-paper-deep/30 p-5">
               <p className="font-serif italic leading-relaxed">
-                Es klickt leise im Flur. Die Abdeckung des alten
-                Sicherungskastens springt auf. Darin: eine Schlüsselkarte und
-                ein Zettel.
-                <br /><br />
-                „3'500 Energiesparpunkte — genau der Beweis, den wir brauchen!
-                Ich bin jetzt beim alten Wasserkraftwerk am Dorfrand. Marlene
-                Vogt, Mitarbeiterin im kantonalen Umweltamt, wartet dort auf
-                uns — sie hat Zugang zu den offiziellen Gemeindegutachten und
-                hilft mir, die Fehler darin zu belegen. Komm schnell! Die Zeit läuft."
-              </p>
-              <p className="mt-3 font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
-                — E.
+                Es klickt, die Abdeckung des alten Sicherungskastens springt auf.
+                Darin: eine Schlüsselkarte und ein Zettel.&nbsp;
+                <br />
+                <br />
+                <br />
+                Wir haben bewiesen, dass viele kleine Veränderungen zuhause eine
+                grosse Wirkung haben können. Ich bin beim Wasserkraftwerk. Marlene
+                Vogt vom Umweltamt wartet dort auf uns. Beeil dich, die Zeit
+                läuft!&nbsp;&nbsp;
               </p>
             </div>
             <p className="mt-5 text-sm text-foreground/70">
