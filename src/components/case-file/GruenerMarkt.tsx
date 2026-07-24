@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { usePersistentState } from "@/lib/persist";
 
 import { cn } from "@/lib/utils";
@@ -12,6 +12,7 @@ import {
   type Produkt,
 } from "@/lib/maya-data";
 import { ProduktDetailDialog } from "./ProduktDetailDialog";
+import { MarketTutorial, type TutorialStep } from "./MarketTutorial";
 
 interface GruenerMarktProps {
   startWarenkorb: string[];
@@ -31,6 +32,44 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
   const [cartOpen, setCartOpen] = useState(false);
   const [detail, setDetail] = useState<Produkt | null>(null);
   const [feedback, setFeedback] = useState<boolean>(false);
+
+  const [tutorialSeen, setTutorialSeen] = usePersistentState<boolean>(
+    "akte-2-tutorial-seen",
+    false,
+  );
+  const [tutorialOpen, setTutorialOpen] = useState(false);
+  const kategorienRef = useRef<HTMLDivElement>(null);
+  const produktRef = useRef<HTMLDivElement>(null);
+  const cartBarRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (tutorialSeen) return;
+    const t = window.setTimeout(() => setTutorialOpen(true), 250);
+    return () => window.clearTimeout(t);
+  }, [tutorialSeen]);
+
+  const tutorialSteps: TutorialStep[] = [
+    {
+      targetRef: kategorienRef,
+      text: "Wechsle hier zwischen den Produktgruppen.",
+      placement: "below",
+    },
+    {
+      targetRef: produktRef,
+      text: "Tippe auf ein Produkt, um Herkunft, Labels und die Nachhaltigkeits-Bewertung zu sehen.",
+      placement: "below",
+    },
+    {
+      targetRef: cartBarRef,
+      text: "Hier siehst du deinen Warenkorb. Tippe darauf, um alle Artikel im Detail zu prüfen.",
+      placement: "above",
+    },
+  ];
+
+  const closeTutorial = () => {
+    setTutorialOpen(false);
+    setTutorialSeen(true);
+  };
 
   const produktById = useMemo(
     () => Object.fromEntries(PRODUKTE.map((p) => [p.id, p])) as Record<string, Produkt>,
@@ -88,6 +127,13 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
             </p>
           </div>
         </div>
+        <button
+          onClick={() => setTutorialOpen(true)}
+          aria-label="Tutorial anzeigen"
+          className="shrink-0 rounded-full border border-border bg-paper px-2 py-1 font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground hover:bg-secondary"
+        >
+          ? Hilfe
+        </button>
       </div>
 
       {/* Rezept-Akkordeon */}
@@ -103,7 +149,7 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
       </details>
 
       {/* Kategorien */}
-      <div className="border-b border-border bg-paper px-3 py-2 sm:px-5">
+      <div ref={kategorienRef} className="border-b border-border bg-paper px-3 py-2 sm:px-5">
         <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {KATEGORIEN.map((k) => (
             <button
@@ -126,21 +172,22 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
       {/* Produkt-Grid */}
       <div className="px-3 py-3 pb-24 sm:px-5 sm:pb-5">
         <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3">
-          {kategorieProdukte.map((p) => (
-            <ProduktKarte
-              key={p.id}
-              produkt={p}
-              imKorb={inKorb(p.id)}
-              onAdd={() => hinzufuegen(p.id)}
-              onRemove={() => entfernen(p.id)}
-              onOpenDetail={() => setDetail(p)}
-            />
+          {kategorieProdukte.map((p, idx) => (
+            <div key={p.id} ref={idx === 0 ? produktRef : undefined}>
+              <ProduktKarte
+                produkt={p}
+                imKorb={inKorb(p.id)}
+                onAdd={() => hinzufuegen(p.id)}
+                onRemove={() => entfernen(p.id)}
+                onOpenDetail={() => setDetail(p)}
+              />
+            </div>
           ))}
         </div>
       </div>
 
       {/* Sticky Cart Bar */}
-      <div className="sticky bottom-0 z-20 border-t border-border bg-paper/95 px-3 py-2.5 backdrop-blur sm:px-5">
+      <div ref={cartBarRef} className="sticky bottom-0 z-20 border-t border-border bg-paper/95 px-3 py-2.5 backdrop-blur sm:px-5">
         <div className="flex items-center gap-2">
           <button
             onClick={() => setCartOpen((v) => !v)}
@@ -255,6 +302,12 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
       <ProduktDetailDialog
         produkt={detail}
         onOpenChange={(open) => !open && setDetail(null)}
+      />
+
+      <MarketTutorial
+        open={tutorialOpen}
+        steps={tutorialSteps}
+        onClose={closeTutorial}
       />
     </div>
   );
