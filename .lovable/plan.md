@@ -1,38 +1,54 @@
-## Plan: Falschaussage in Etappe 5 verschieben
+## Ziel
 
-### Ziel
-Die fünfte Fehler-IDs (`f5`) wird von Akte A (Wald-Schutzwürdigkeit) auf Akte C (Batterie-Lebensdauer) verschoben. Die Wald-Aussage in Akte A wird zu einer korrekten Decoy-Aussage, die den Bau des Erdgaskraftwerks weiterhin befürwortet.
+Kleines Onboarding-Tutorial für den "Grünen Markt" (Etappe 2), das beim ersten Öffnen automatisch startet. Der Bildschirm wird abgedunkelt, nur ein Element ist als heller "Spotlight" sichtbar. Ein kleiner Kommentar erklärt den Schritt. 3 Schritte, dann verschwindet das Tutorial.
 
-### Änderungen
+## UX-Ablauf
 
-#### 1. `src/components/case-file/GutachtenRaetsel.tsx`
+Schritt 1 — Spotlight auf die Kategorien-Leiste
+Kommentar: "Wechsle hier zwischen Produktgruppen."
 
-**Akte A – Standortbewertung**
-- Aktuelle `E("f5", ...)`-Aussage über Wald-Kartierung und fehlende Schutzwürdigkeit wird zu einem `D(...)`-Decoy.
-- Neuer korrekter Text: *„Der geplante Standort liegt in einer bereits für Gewerbezwecke ausgewiesenen Fläche."* (oder eine inhaltlich gleichwertige, den Bau befürwortende korrekte Aussage).
-- Fehler-ID-Array und `MAX_MARKIERUNGEN` bleiben unverändert (weiterhin `f1`–`f5`).
+Schritt 2 — Spotlight auf eine Produktkarte
+Kommentar: "Tippe auf ein Produkt für Details, Herkunft und Labels."
 
-**Akte C – Standortbewertung**
-- Aktuelle Decoy-Aussage `D("c5", "Batteriespeicher halten etwa 15 bis 25 Jahre.")` wird zur neuen Fehleraussage `E("f5", "Batteriespeicher halten etwa 8 Jahre.")`.
-- Faktencheck bleibt bestehen: in Marlenes Faktenkarte steht weiterhin `≈ 15–25 Jahre Lebensdauer`, damit die Aussage als falsch erkennbar ist.
+Schritt 3 — Spotlight auf die Warenkorb-Leiste (unten sticky)
+Kommentar: "Tippe hier, um deinen Warenkorb einzusehen."
 
-#### 2. `src/routes/etappe-5.tsx`
+Nach Schritt 3: "Los geht's" → Tutorial schließt.
 
-**Auflösungs-Hinweis (Hint 3)**
-- Text anpassen, damit die fünf Fehler korrekt beschrieben werden:
-  - Gutachten A (Gas): „95 g CO₂/kWh — nahezu klimaneutral"
-  - Gutachten B (Kohle): „78 % Wirkungsgrad" und „Kohle ist eine erneuerbare Brückentechnologie"
-  - Gutachten C (Solar): „Volllaststunden im Schweizer Mittelland 250 h/Jahr" (real ≈ 900–1'100 h/Jahr) und „Batteriespeicher halten etwa 8 Jahre" (real ≈ 15–25 Jahre)
+Steuerung:
+- "Weiter" Button rechts unten am Kommentar
+- "Überspringen" Link oben rechts
+- Tap auf dunklen Bereich = Weiter
+- Kein Interaktions-Zwang mit den echten Elementen (Spotlight ist rein visuell, klickt nichts durch)
 
-### Nicht betroffen
-- Layout/Reihenfolge der Spalten (Diagramm / Faktenkarte / Aussagen)
-- Prüf-Logik (`MAX_MARKIERUNGEN`, `alleFehlerIds`, `pruefen`)
-- Charts und Faktenkasten-Struktur
-- Hearing-Fragen in `src/routes/finale.tsx` (keine direkten Bezüge zu den beiden betroffenen Aussagen)
+Persistenz:
+- localStorage-Key `akte-2-tutorial-seen` (via `usePersistentState`).
+- Läuft nur beim ersten Mal automatisch. Ein kleiner "?"-Button oben rechts im Markt-Header ermöglicht Neustart des Tutorials.
+- `resetAll` in `src/lib/progress.ts` löscht den Key mit (damit "Neues Spiel" das Tutorial wieder zeigt).
 
-### Validierung
-- Build ausführen, um TypeScript-Fehler auszuschliessen.
-- Kurzer visueller Check in Etappe 5: Akte A zeigt die Wald-Aussage nicht mehr als Fehler, Akte C zeigt die 8-Jahre-Batterie-Aussage als Fehler.
+## Umsetzung (technisch)
 
-### Geschätzter Aufwand
-Kleine, fokussierte Änderung in 2 Dateien.
+Neue Komponente `src/components/case-file/MarketTutorial.tsx`:
+- Props: `steps: { targetRef: RefObject<HTMLElement>; text: string }[]`, `open`, `onClose`.
+- Misst `getBoundingClientRect()` des aktuellen Ziels, rendert ein `fixed inset-0` Overlay via Portal.
+- Dark Layer: vier `div`s um den Spotlight-Rechteck herum (top/bottom/left/right), jeweils `bg-black/70`. Damit ist der Zielbereich sichtbar, der Rest abgedunkelt — ohne SVG-Mask, funktioniert überall.
+- Ring um Spotlight: dünner heller Rahmen + `animate-pulse`.
+- Kommentar-Bubble: Positioniert unter (Schritt 1, 2) bzw. über (Schritt 3, weil Warenkorb unten sticky ist) dem Spotlight. Fallback: falls Platz knapp, zentriert.
+- Re-measure bei Resize/Scroll (ResizeObserver + scroll listener auf window).
+- Sanftes Fade-in (bestehende `animate-fade-in` Utility).
+
+Änderungen in `src/components/case-file/GruenerMarkt.tsx`:
+- Drei `useRef` anhängen: `kategorienRef` (Kategorien-Scroller-Div), `produktRef` (erste Karte im Grid), `cartBarRef` (sticky Cart-Bar).
+- `useEffect`: wenn `!tutorialSeen`, starte Tutorial nach kurzem Delay (100ms, damit Layout gesetzt ist).
+- Header bekommt kleinen "?"-Button rechts, der Tutorial manuell startet.
+
+Änderung in `src/lib/progress.ts`:
+- In `resetAll` den Key `akte-2-tutorial-seen` mit-entfernen.
+
+Keine neuen Packages nötig.
+
+## Geänderte Dateien
+
+- `src/components/case-file/MarketTutorial.tsx` (neu)
+- `src/components/case-file/GruenerMarkt.tsx` (Refs, Tutorial-Trigger, Help-Button)
+- `src/lib/progress.ts` (Reset-Key)
