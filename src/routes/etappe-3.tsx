@@ -297,15 +297,10 @@ function AktePage() {
               „Geh zurück ins Haus."
             </h2>
             <div className="mt-4 rounded-sm border border-dashed border-stamp/40 bg-paper-deep/30 p-5">
-              <p className="font-serif italic leading-relaxed">
-                In der Ausrüstungskiste findest du keine Forschungsausrüstung,
-                sondern eine Mappe mit alten Strom- und Heizrechnungen. Ein
-                Zettel obenauf:
-                <br /><br />
-                „Um diesen Ort zu bewahren, müssen wir das Problem an der Wurzel
-                packen — und das beginnt bei uns zuhause. Ich habe im Haus
-                Vorbereitungen getroffen. Nimm die Rechnungen mit und schau dir
-                die Räume ganz genau an."
+              <p className="font-serif italic leading-relaxed whitespace-pre-line">
+                Statt Forschungsausrüstung findest du eine Mappe mit Strom- und Heizrechnungen. Darauf steht:
+
+                „Der erste Schritt beginnt zuhause. Ich habe im Haus Vorbereitungen getroffen. Nimm die Rechnungen mit und untersuche die Räume.“
               </p>
               <p className="mt-3 font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
                 — E.
