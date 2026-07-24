@@ -269,7 +269,7 @@ export function GutachtenRaetsel({ onErfolg }: { onErfolg: () => void }) {
       {/* Titelzeile mit Hilfe */}
       <div className="mb-3 flex items-center justify-between gap-2">
         <p className="font-serif text-base font-bold leading-tight sm:text-lg">
-          Gutachten prüfen
+          {"\n"}
         </p>
         <button
           onClick={startTutorial}
