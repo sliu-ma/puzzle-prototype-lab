@@ -303,6 +303,12 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
         produkt={detail}
         onOpenChange={(open) => !open && setDetail(null)}
       />
+
+      <MarketTutorial
+        open={tutorialOpen}
+        steps={tutorialSteps}
+        onClose={closeTutorial}
+      />
     </div>
   );
 }
