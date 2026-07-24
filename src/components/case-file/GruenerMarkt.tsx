@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { usePersistentState } from "@/lib/persist";
 
 import { cn } from "@/lib/utils";
@@ -12,6 +12,7 @@ import {
   type Produkt,
 } from "@/lib/maya-data";
 import { ProduktDetailDialog } from "./ProduktDetailDialog";
+import { MarketTutorial, type TutorialStep } from "./MarketTutorial";
 
 interface GruenerMarktProps {
   startWarenkorb: string[];
