@@ -172,21 +172,22 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
       {/* Produkt-Grid */}
       <div className="px-3 py-3 pb-24 sm:px-5 sm:pb-5">
         <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3">
-          {kategorieProdukte.map((p) => (
-            <ProduktKarte
-              key={p.id}
-              produkt={p}
-              imKorb={inKorb(p.id)}
-              onAdd={() => hinzufuegen(p.id)}
-              onRemove={() => entfernen(p.id)}
-              onOpenDetail={() => setDetail(p)}
-            />
+          {kategorieProdukte.map((p, idx) => (
+            <div key={p.id} ref={idx === 0 ? produktRef : undefined}>
+              <ProduktKarte
+                produkt={p}
+                imKorb={inKorb(p.id)}
+                onAdd={() => hinzufuegen(p.id)}
+                onRemove={() => entfernen(p.id)}
+                onOpenDetail={() => setDetail(p)}
+              />
+            </div>
           ))}
         </div>
       </div>
 
       {/* Sticky Cart Bar */}
-      <div className="sticky bottom-0 z-20 border-t border-border bg-paper/95 px-3 py-2.5 backdrop-blur sm:px-5">
+      <div ref={cartBarRef} className="sticky bottom-0 z-20 border-t border-border bg-paper/95 px-3 py-2.5 backdrop-blur sm:px-5">
         <div className="flex items-center gap-2">
           <button
             onClick={() => setCartOpen((v) => !v)}
