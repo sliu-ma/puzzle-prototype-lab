@@ -120,7 +120,7 @@ export const PRODUKTE: Produkt[] = [
       verpackung: 4,
       label: 4,
       erklaerung:
-        "Schweizer Freilanderdbeeren in der Hauptsaison, kurze Transportwege, kompostierbare Kartonschale und IP-Suisse-Standard.",
+        "Schweizer Freilanderdbeeren in der Hauptsaison, kurze Transportwege, kompostierbare Kartonschale und Suisse-Garantie-Standard.",
     },
   },
   {
