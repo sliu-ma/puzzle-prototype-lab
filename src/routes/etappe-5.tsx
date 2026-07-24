@@ -192,7 +192,6 @@ function AktePage() {
               sind fehlerhafte Gutachten.“
               <br />
               <br />
-              <br />
               Sie legt einen Stapel Dokumente auf den Tisch. „Ich habe die
               wichtigsten Fakten geprüft. In den Gutachten zu Solarenergie, Gas
               und Kohle sind fünf Aussagen falsch. Findet sie, bevor die
