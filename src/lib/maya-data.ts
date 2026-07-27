@@ -21,6 +21,11 @@ import gurkeChAsset from "@/assets/produkte/gurke-ch.webp.asset.json";
 import zitroneZaAsset from "@/assets/produkte/zitrone-za.jpg.asset.json";
 import backpulverAsset from "@/assets/produkte/backpulver.webp.asset.json";
 import mandelnAsset from "@/assets/produkte/mandeln.jpg.asset.json";
+import rosenkohlAsset from "@/assets/produkte/rosenkohl.png.asset.json";
+import spargelAsset from "@/assets/produkte/spargel.webp.asset.json";
+import rhabarberAsset from "@/assets/produkte/rhabarber.webp.asset.json";
+import kuerbisAsset from "@/assets/produkte/kuerbis.webp.asset.json";
+import zwetschgeAsset from "@/assets/produkte/zwetschge.jpg.asset.json";
 
 import bioLogo from "@/assets/labels/bio.png.asset.json";
 import ipSuisseLogo from "@/assets/labels/ip-suisse.png.asset.json";
