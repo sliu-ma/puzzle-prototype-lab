@@ -243,7 +243,7 @@ function AktePage() {
               },
               {
                 title: "Auf die Verpackung achten",
-                body: "Labels auf Verpackungen zeigen besondere Eigenschaften eines Produkts. Zum Beispiel gute Qualität, faire Herstellung oder Umweltschutz. Auf der Plattform labelinfo.ch findest du die wichtigsten Informationen zu allen Labels.",
+                body: "Labels auf Verpackungen zeigen besondere Eigenschaften eines Produkts. Zum Beispiel gute Qualität, faire Herstellung oder Umweltschutz. Drei Beispiele aus Frau Bergers Laden:\u00a0",
                 visual: <LabelUebersicht />,
               },
             ]}
