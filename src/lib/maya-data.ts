@@ -86,6 +86,22 @@ export function getSaisonStatus(
   return p.saisonMonate.includes(m) ? "in" : "out";
 }
 
+/**
+ * Nachhaltigkeit dynamisch: wenn Produkt ausserhalb Saison gekauft wird,
+ * sinkt die Saisonalitäts-Wertung auf 1 (statt statischem Wert).
+ */
+export function getEffektiveNachhaltigkeit(
+  p: Pick<Produkt, "saisonMonate" | "saison" | "nachhaltigkeit" | "kategorie">,
+  date: Date = new Date(),
+): Nachhaltigkeit {
+  if (p.kategorie !== "fruechte-gemuese") return p.nachhaltigkeit;
+  const status = getSaisonStatus(p, date);
+  if (status === "out") {
+    return { ...p.nachhaltigkeit, saisonal: 1 };
+  }
+  return p.nachhaltigkeit;
+}
+
 export const KATEGORIEN: { id: Kategorie; label: string; emoji: string }[] = [
   { id: "milch-eier", label: "Milchprodukte & Eier", emoji: "🥛" },
   { id: "fruechte-gemuese", label: "Früchte & Gemüse", emoji: "🍎" },

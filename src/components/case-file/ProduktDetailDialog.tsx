@@ -1,5 +1,5 @@
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { SIEGEL, getSaisonStatus, type Produkt } from "@/lib/maya-data";
+import { SIEGEL, getSaisonStatus, getEffektiveNachhaltigkeit, type Produkt } from "@/lib/maya-data";
 import { cn } from "@/lib/utils";
 
 interface ProduktDetailDialogProps {
@@ -41,7 +41,9 @@ export function ProduktDetailDialog({ produkt, onOpenChange }: ProduktDetailDial
     );
   }
 
-  const n = produkt.nachhaltigkeit;
+  const n = getEffektiveNachhaltigkeit(produkt);
+  const saisonStatus = getSaisonStatus(produkt);
+  const saisonReduziert = produkt.kategorie === "fruechte-gemuese" && saisonStatus === "out";
   const avg = (n.regional + n.saisonal + n.verpackung + n.label) / 4;
   const score = Math.round(avg * 10) / 10;
 
@@ -153,6 +155,12 @@ export function ProduktDetailDialog({ produkt, onOpenChange }: ProduktDetailDial
             </div>
             <Dots value={Math.round(avg)} />
           </div>
+
+          {saisonReduziert && (
+            <p className="mt-2 rounded-sm border border-stamp/40 bg-stamp/5 px-2.5 py-2 font-mono-typed text-[11px] leading-snug text-stamp">
+              Ausserhalb der Saison gekauft — Saisonalitäts-Wertung reduziert.
+            </p>
+          )}
 
 
 
