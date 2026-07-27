@@ -409,6 +409,9 @@ function FinalePage() {
       return next;
     });
     setPulse(correct ? "up" : "down");
+    if (!correct && typeof navigator !== "undefined" && "vibrate" in navigator) {
+      navigator.vibrate?.([80, 60, 120]);
+    }
     if (pulseTimer.current) clearTimeout(pulseTimer.current);
     pulseTimer.current = setTimeout(() => setPulse(null), 1600);
   };
