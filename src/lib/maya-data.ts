@@ -65,6 +65,8 @@ export interface Produkt {
   preis: number; // CHF
   siegel: SiegelKey[];
   saison: "in" | "out" | "ganzjahr";
+  /** 1-basierte Monate der Saison im Herkunftsland; leer/undefiniert = ganzjährig. */
+  saisonMonate?: number[];
   emoji: string;
   bildUrl?: string;
   bewertung: "gut" | "schlecht" | "neutral";
@@ -72,6 +74,16 @@ export interface Produkt {
   ersetzt?: string;
   zutat?: "erdbeeren" | "eier" | "mehl" | "zucker" | "salz" | "butter" | "zitrone" | "vollrahm" | "vanillezucker";
   nachhaltigkeit: Nachhaltigkeit;
+}
+
+/** Aktueller Saison-Status basierend auf saisonMonate + heutigem Datum. */
+export function getSaisonStatus(
+  p: Pick<Produkt, "saisonMonate" | "saison">,
+  date: Date = new Date(),
+): "in" | "out" | "ganzjahr" {
+  if (!p.saisonMonate || p.saisonMonate.length === 0) return "ganzjahr";
+  const m = date.getMonth() + 1;
+  return p.saisonMonate.includes(m) ? "in" : "out";
 }
 
 export const KATEGORIEN: { id: Kategorie; label: string; emoji: string }[] = [
