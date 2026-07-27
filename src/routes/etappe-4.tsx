@@ -194,9 +194,9 @@ function AktePage() {
               <br />
               <br />
               „Neue Kraftwerke werden oft nötig, weil wir zuhause zu viel Energie
-              verbrauchen. Zeige, wie viele Energiesparpunkte ein Haushalt
-              sammeln kann. Nimm die Rechnungen und finde die wirksamsten
-              Massnahmen, oft sind es nicht die teuersten.“
+              verbrauchen. Zeige, wie viele Energie ein Haushalt sammeln kann.
+              Nimm die Rechnungen und finde die wirksamsten Massnahmen, oft sind
+              es nicht die teuersten.“
             </blockquote>
             <div className="mt-6 flex justify-end">
               <button
