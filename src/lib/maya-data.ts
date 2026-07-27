@@ -625,7 +625,7 @@ export const PRODUKTE: Produkt[] = [
   },
   {
     id: "mandeln-ch",
-    name: "Bio-Mandeln gemahlen",
+    name: "Mandeln gemahlen",
     kategorie: "backzutaten",
     herkunft: "Schweiz (verpackt)",
     preis: 2.8,
