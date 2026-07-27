@@ -388,11 +388,6 @@ function ProduktKarte({
             </span>
           );
         })}
-        {produkt.saison === "in" && (
-          <span className="rounded-full bg-emerald-700/10 px-1.5 py-0.5 font-mono-typed text-[9px] text-emerald-800 sm:text-[10px]">
-            Saison
-          </span>
-        )}
       </div>
 
       <button

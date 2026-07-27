@@ -1,5 +1,5 @@
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { SIEGEL, type Produkt } from "@/lib/maya-data";
+import { SIEGEL, getSaisonStatus, type Produkt } from "@/lib/maya-data";
 import { cn } from "@/lib/utils";
 
 interface ProduktDetailDialogProps {
@@ -122,11 +122,14 @@ export function ProduktDetailDialog({ produkt, onOpenChange }: ProduktDetailDial
             <div className="flex justify-between gap-3">
               <span className="text-muted-foreground">Saison</span>
               <span className="font-medium">
-                {produkt.saison === "in"
-                  ? "In Saison"
-                  : produkt.saison === "out"
-                    ? "Ausserhalb Saison"
-                    : "Ganzjährig"}
+                {(() => {
+                  const s = getSaisonStatus(produkt);
+                  return s === "in"
+                    ? "In Saison"
+                    : s === "out"
+                      ? "Ausserhalb Saison"
+                      : "Ganzjährig";
+                })()}
               </span>
             </div>
           )}
