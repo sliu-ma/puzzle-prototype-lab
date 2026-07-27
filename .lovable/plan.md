@@ -1,39 +1,27 @@
 ## Ziel
-
-Etappe 2 „Grüner Markt" bereinigen: pro Sorte nur ein Produkt, echte Saisons (inkl. Herkunftsland) und Saison-Badge nur noch im Produkt-Dialog.
+Wenn ein Frucht-/Gemüseprodukt aktuell ausserhalb seiner Saison ist, soll der Nachhaltigkeits-Barometer automatisch niedriger ausfallen — ohne die statischen Werte in `maya-data.ts` zu ändern.
 
 ## Änderungen
 
-### 1. Duplikate entfernen (`src/lib/maya-data.ts`)
-- `spargel-pe` (Peru) löschen — nur `spargel-ch` bleibt.
-- `zwetschge-de` (Deutschland) löschen — nur `zwetschge-ch` bleibt.
+### 1. `src/lib/maya-data.ts`
+- Neuer Helfer `getEffektiveNachhaltigkeit(p, date = new Date())`:
+  - Kopiert `p.nachhaltigkeit`.
+  - Wenn `getSaisonStatus(p) === "out"`: `saisonal = 1` (statt statischem Wert).
+  - Sonst: unverändert.
+  - Ergibt automatisch einen niedrigeren Durchschnitt, wenn ausserhalb Saison gekauft.
+- Wird nur für Kategorie `fruechte-gemuese` sinnvoll; für alle anderen bleibt Ergebnis identisch, daher unkritisch.
 
-### 2. Saisons dynamisch und korrekt setzen (`src/lib/maya-data.ts`)
-Aktuell ist `saison: "in" | "out" | "ganzjahr"` fix codiert — dadurch ist z. B. Kürbis auch im Juli „in Saison". Umstellen auf datumsabhängige Berechnung:
+### 2. `src/components/case-file/ProduktDetailDialog.tsx`
+- Statt `produkt.nachhaltigkeit` → `getEffektiveNachhaltigkeit(produkt)` verwenden für Score-Berechnung und Anzeige.
+- Wenn Produkt „out" ist: kurzer erklärender Hinweis unter dem Score, z. B. „Ausserhalb der Saison gekauft — Saisonalitäts-Wertung reduziert."
 
-- Neues optionales Feld `saisonMonate?: number[]` (1-basierte Monate) pro Frucht/Gemüse — bezieht sich auf die Saison **im Herkunftsland**.
-- Helfer `getSaisonStatus(p, date = new Date())` liefert `"in" | "out" | "ganzjahr"` (leer/undefined = `"ganzjahr"`).
-- `saison` bleibt als abgeleitetes Feld verfügbar, damit `ProduktDetailDialog` unverändert funktioniert.
+### 3. Keine weiteren Anpassungen
+- Produkt-Kacheln zeigen keine Nachhaltigkeit → keine Änderung nötig.
+- Rezept-/Warenkorb-Logik in `GruenerMarkt.tsx` bleibt unberührt.
 
-Vorgesehene Saisons:
-
-| Produkt | Monate |
-|---|---|
-| Erdbeeren CH | 5–9 |
-| Erdbeeren ES | 12, 1, 2, 3, 4, 5, 6 |
-| Zitrone IT | ganzjährig |
-| Zitrone ZA | ganzjährig |
-| Äpfel CH (Lagerware) | ganzjährig |
-| Tomaten MA | 9, 10, 11, 12, 1, 2, 3, 4, 5, 6 |
-| Gurke CH | 6–9 |
-| Rosenkohl CH | 10, 11, 12, 1, 2 |
-| Spargel CH | 4–6 |
-| Rhabarber CH | 4–6 |
-| Kürbis CH | 8–11 |
-| Zwetschgen CH | 8–10 |
-
-Bei aktuellem Datum (Juli) sind damit „in Saison": Erdbeeren CH, Gurke CH. Tomaten MA, Erdbeeren ES und die restlichen saisonalen Produkte sind „out".
-
-### 3. Saison-Badge in Produkt-Kacheln entfernen (`src/components/case-file/GruenerMarkt.tsx`)
-- Grünen „Saison"-Chip in `ProduktKarte` (um Zeile 391–395) löschen.
-- Saison-Zeile im `ProduktDetailDialog` bleibt und zeigt tagesaktuell „In Saison" / „Ausserhalb Saison" / „Ganzjährig".
+## Effekt heute (Juli)
+- Tomaten MA (out): saisonal 1→1 (bereits 1, kein sichtbarer Effekt — okay).
+- Erdbeeren ES (out): saisonal 1→1 (unverändert).
+- Erdbeeren CH (in): unverändert.
+- Rosenkohl / Spargel / Rhabarber / Kürbis / Zwetschgen (out im Juli): saisonal von 5 → 1, Score sinkt spürbar.
+- Zitronen / Äpfel (ganzjährig) und Nicht-Frucht/Gemüse: unverändert.
