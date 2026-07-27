@@ -1,5 +1,5 @@
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { SIEGEL, getSaisonStatus, type Produkt } from "@/lib/maya-data";
+import { SIEGEL, getSaisonStatus, getEffektiveNachhaltigkeit, type Produkt } from "@/lib/maya-data";
 import { cn } from "@/lib/utils";
 
 interface ProduktDetailDialogProps {
