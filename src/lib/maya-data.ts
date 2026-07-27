@@ -65,6 +65,8 @@ export interface Produkt {
   preis: number; // CHF
   siegel: SiegelKey[];
   saison: "in" | "out" | "ganzjahr";
+  /** 1-basierte Monate der Saison im Herkunftsland; leer/undefiniert = ganzjährig. */
+  saisonMonate?: number[];
   emoji: string;
   bildUrl?: string;
   bewertung: "gut" | "schlecht" | "neutral";
@@ -72,6 +74,16 @@ export interface Produkt {
   ersetzt?: string;
   zutat?: "erdbeeren" | "eier" | "mehl" | "zucker" | "salz" | "butter" | "zitrone" | "vollrahm" | "vanillezucker";
   nachhaltigkeit: Nachhaltigkeit;
+}
+
+/** Aktueller Saison-Status basierend auf saisonMonate + heutigem Datum. */
+export function getSaisonStatus(
+  p: Pick<Produkt, "saisonMonate" | "saison">,
+  date: Date = new Date(),
+): "in" | "out" | "ganzjahr" {
+  if (!p.saisonMonate || p.saisonMonate.length === 0) return "ganzjahr";
+  const m = date.getMonth() + 1;
+  return p.saisonMonate.includes(m) ? "in" : "out";
 }
 
 export const KATEGORIEN: { id: Kategorie; label: string; emoji: string }[] = [
@@ -91,6 +103,7 @@ export const PRODUKTE: Produkt[] = [
     preis: 6.8,
     siegel: ["bio"],
     saison: "out",
+    saisonMonate: [12, 1, 2, 3, 4, 5, 6],
     emoji: "🍓",
     bildUrl: erdbeerenEsAsset.url,
     bewertung: "schlecht",
@@ -114,6 +127,7 @@ export const PRODUKTE: Produkt[] = [
     preis: 6.0,
     siegel: ["suisse-garantie"],
     saison: "in",
+    saisonMonate: [5, 6, 7, 8, 9],
     emoji: "🍓",
     bildUrl: erdbeerenChAsset.url,
     bewertung: "gut",
@@ -178,6 +192,7 @@ export const PRODUKTE: Produkt[] = [
     preis: 3.2,
     siegel: [],
     saison: "out",
+    saisonMonate: [9, 10, 11, 12, 1, 2, 3, 4, 5, 6],
     emoji: "🍅",
     bildUrl: tomatenAsset.url,
     bewertung: "neutral",
@@ -198,6 +213,7 @@ export const PRODUKTE: Produkt[] = [
     preis: 3.6,
     siegel: ["ip-suisse"],
     saison: "in",
+    saisonMonate: [10, 11, 12, 1, 2],
     emoji: "🥬",
     bildUrl: rosenkohlAsset.url,
     bewertung: "neutral",
@@ -218,6 +234,7 @@ export const PRODUKTE: Produkt[] = [
     preis: 6.9,
     siegel: ["suisse-garantie"],
     saison: "in",
+    saisonMonate: [4, 5, 6],
     emoji: "🌱",
     bildUrl: spargelAsset.url,
     bewertung: "gut",
@@ -231,26 +248,6 @@ export const PRODUKTE: Produkt[] = [
     },
   },
   {
-    id: "spargel-pe",
-    name: "Grüner Spargel 500g",
-    kategorie: "fruechte-gemuese",
-    herkunft: "Peru",
-    preis: 5.5,
-    siegel: [],
-    saison: "out",
-    emoji: "🌱",
-    bildUrl: spargelAsset.url,
-    bewertung: "schlecht",
-    nachhaltigkeit: {
-      regional: 1,
-      saisonal: 1,
-      verpackung: 2,
-      label: 1,
-      erklaerung:
-        "Spargel aus Peru wird per Flugzeug importiert und stammt aus wasserarmen Anbauregionen — hoher CO₂- und Wasserfussabdruck.",
-    },
-  },
-  {
     id: "rhabarber-ch",
     name: "Rhabarber 1kg",
     kategorie: "fruechte-gemuese",
@@ -258,6 +255,7 @@ export const PRODUKTE: Produkt[] = [
     preis: 4.2,
     siegel: ["bio"],
     saison: "in",
+    saisonMonate: [4, 5, 6],
     emoji: "🌿",
     bildUrl: rhabarberAsset.url,
     bewertung: "gut",
@@ -278,6 +276,7 @@ export const PRODUKTE: Produkt[] = [
     preis: 3.9,
     siegel: ["suisse-garantie"],
     saison: "in",
+    saisonMonate: [8, 9, 10, 11],
     emoji: "🎃",
     bildUrl: kuerbisAsset.url,
     bewertung: "neutral",
@@ -298,6 +297,7 @@ export const PRODUKTE: Produkt[] = [
     preis: 4.5,
     siegel: ["ip-suisse"],
     saison: "in",
+    saisonMonate: [8, 9, 10],
     emoji: "🍑",
     bildUrl: zwetschgeAsset.url,
     bewertung: "gut",
@@ -310,26 +310,7 @@ export const PRODUKTE: Produkt[] = [
         "Schweizer Zwetschgen aus IP-Suisse-Anbau, Hauptsaison August–Oktober, kurze Transportwege.",
     },
   },
-  {
-    id: "zwetschge-de",
-    name: "Zwetschgen 1kg",
-    kategorie: "fruechte-gemuese",
-    herkunft: "Deutschland",
-    preis: 3.8,
-    siegel: [],
-    saison: "out",
-    emoji: "🍑",
-    bildUrl: zwetschgeAsset.url,
-    bewertung: "neutral",
-    nachhaltigkeit: {
-      regional: 2,
-      saisonal: 3,
-      verpackung: 3,
-      label: 1,
-      erklaerung:
-        "Importierte Zwetschgen aus Deutschland — längere Transportwege als Schweizer Ware, ohne Nachhaltigkeitslabel.",
-    },
-  },
+
 
   {
     id: "eier-bh-import",

@@ -1,15 +1,39 @@
-## Anpassungen Tutorial in Etappe 5 (Gutachten)
+## Ziel
 
-**1. „? Hilfe"-Button in den Header (wie im Grünen Markt)**
-- In `src/components/case-file/GutachtenRaetsel.tsx` einen Kopfbereich einführen mit Titel links (z. B. „Gutachten prüfen") und rechts einem Pill-Button „? Hilfe" im gleichen Stil wie in `GruenerMarkt.tsx` (`rounded-full border bg-paper px-2 py-1 font-mono-typed text-[10px] uppercase`).
-- Den bisherigen kleinen `?`-Button neben „Prüfen →" entfernen. „Prüfen →" bleibt unverändert an seinem Platz.
+Etappe 2 „Grüner Markt" bereinigen: pro Sorte nur ein Produkt, echte Saisons (inkl. Herkunftsland) und Saison-Badge nur noch im Produkt-Dialog.
 
-**2. Schritt 2 nicht auf eine tatsächlich falsche Aussage zeigen**
-- Aktuell hängt `aussageRef` an der allerersten Aussage in Gutachten A – das ist `f1` und damit eine echte Falschaussage. Der Spotlight verrät so die Lösung.
-- Ref stattdessen an die zweite Aussage von Sektion 1 (`a2`, korrekt) hängen: die Bedingung `isFirst = i === 0 && ci === 0` durch `isTutorialTarget = i === 0 && ci === 1` ersetzen.
+## Änderungen
 
-**3. Spotlight-Ausschnitt immer in der Bildschirmmitte**
-- In `src/components/case-file/MarketTutorial.tsx` das bedingte `scrollIntoView` (nur wenn nicht sichtbar) durch ein unbedingtes `el.scrollIntoView({ behavior: "auto", block: "center", inline: "nearest" })` bei jedem Schrittwechsel ersetzen, gefolgt von einer Neuvermessung (bestehendes 120 ms Timeout bleibt).
-- Sicherstellen, dass beim Öffnen zunächst zum Element gescrollt und danach das Rect gemessen wird, damit die Bubble relativ zum tatsächlich mittigen Ausschnitt platziert wird.
+### 1. Duplikate entfernen (`src/lib/maya-data.ts`)
+- `spargel-pe` (Peru) löschen — nur `spargel-ch` bleibt.
+- `zwetschge-de` (Deutschland) löschen — nur `zwetschge-ch` bleibt.
 
-Keine weiteren Dateien betroffen, keine neuen Assets, keine Logikänderung am Rätsel selbst.
+### 2. Saisons dynamisch und korrekt setzen (`src/lib/maya-data.ts`)
+Aktuell ist `saison: "in" | "out" | "ganzjahr"` fix codiert — dadurch ist z. B. Kürbis auch im Juli „in Saison". Umstellen auf datumsabhängige Berechnung:
+
+- Neues optionales Feld `saisonMonate?: number[]` (1-basierte Monate) pro Frucht/Gemüse — bezieht sich auf die Saison **im Herkunftsland**.
+- Helfer `getSaisonStatus(p, date = new Date())` liefert `"in" | "out" | "ganzjahr"` (leer/undefined = `"ganzjahr"`).
+- `saison` bleibt als abgeleitetes Feld verfügbar, damit `ProduktDetailDialog` unverändert funktioniert.
+
+Vorgesehene Saisons:
+
+| Produkt | Monate |
+|---|---|
+| Erdbeeren CH | 5–9 |
+| Erdbeeren ES | 12, 1, 2, 3, 4, 5, 6 |
+| Zitrone IT | ganzjährig |
+| Zitrone ZA | ganzjährig |
+| Äpfel CH (Lagerware) | ganzjährig |
+| Tomaten MA | 9, 10, 11, 12, 1, 2, 3, 4, 5, 6 |
+| Gurke CH | 6–9 |
+| Rosenkohl CH | 10, 11, 12, 1, 2 |
+| Spargel CH | 4–6 |
+| Rhabarber CH | 4–6 |
+| Kürbis CH | 8–11 |
+| Zwetschgen CH | 8–10 |
+
+Bei aktuellem Datum (Juli) sind damit „in Saison": Erdbeeren CH, Gurke CH. Tomaten MA, Erdbeeren ES und die restlichen saisonalen Produkte sind „out".
+
+### 3. Saison-Badge in Produkt-Kacheln entfernen (`src/components/case-file/GruenerMarkt.tsx`)
+- Grünen „Saison"-Chip in `ProduktKarte` (um Zeile 391–395) löschen.
+- Saison-Zeile im `ProduktDetailDialog` bleibt und zeigt tagesaktuell „In Saison" / „Ausserhalb Saison" / „Ganzjährig".
