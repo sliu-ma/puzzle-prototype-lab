@@ -41,7 +41,9 @@ export function ProduktDetailDialog({ produkt, onOpenChange }: ProduktDetailDial
     );
   }
 
-  const n = produkt.nachhaltigkeit;
+  const n = getEffektiveNachhaltigkeit(produkt);
+  const saisonStatus = getSaisonStatus(produkt);
+  const saisonReduziert = produkt.kategorie === "fruechte-gemuese" && saisonStatus === "out";
   const avg = (n.regional + n.saisonal + n.verpackung + n.label) / 4;
   const score = Math.round(avg * 10) / 10;
 
