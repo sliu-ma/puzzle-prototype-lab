@@ -160,7 +160,7 @@ export const PRODUKTE: Produkt[] = [
   },
   {
     id: "zitrone-it",
-    name: "Bio-Zitrone",
+    name: "Zitrone",
     kategorie: "fruechte-gemuese",
     herkunft: "Italien",
     preis: 0.45,
@@ -585,7 +585,7 @@ export const PRODUKTE: Produkt[] = [
   },
   {
     id: "gurke-ch",
-    name: "Bio-Gurke",
+    name: "Gurke",
     kategorie: "fruechte-gemuese",
     herkunft: "Schweiz",
     preis: 2.3,
