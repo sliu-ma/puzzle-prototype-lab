@@ -330,7 +330,7 @@ export const PRODUKTE: Produkt[] = [
 
   {
     id: "eier-bh-import",
-    name: "Eier 10er · Bodenhaltung",
+    name: "Eier 10er\u00a0 Bodenhaltung",
     kategorie: "milch-eier",
     herkunft: "EU-Import",
     preis: 3.2,
@@ -353,7 +353,7 @@ export const PRODUKTE: Produkt[] = [
   },
   {
     id: "eier-bio-ch",
-    name: "Eier 4er · Bio-Freiland",
+    name: "Eier 4er Freiland",
     kategorie: "milch-eier",
     herkunft: "Schweiz",
     preis: 3.5,
