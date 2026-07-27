@@ -1,5 +1,5 @@
 import { Trash2, Banknote } from "lucide-react";
-import aepfelAsset from "@/assets/produkte/aepfel.jpg.asset.json";
+import orangeAsset from "@/assets/produkte/orange.jpg.asset.json";
 import rosenkohlAsset from "@/assets/produkte/rosenkohl.png.asset.json";
 import spargelAsset from "@/assets/produkte/spargel.webp.asset.json";
 import rhabarberAsset from "@/assets/produkte/rhabarber.webp.asset.json";
@@ -23,7 +23,7 @@ const SAISON_MAP: Record<Saison, { label: string; items: SaisonItem[] }> = {
     label: "Winter",
     items: [
       { name: "Rosenkohl", url: rosenkohlAsset.url, months: [10, 11, 12, 1, 2] },
-      { name: "Apfel", url: aepfelAsset.url, months: [9, 10, 11, 12, 1, 2, 3, 4, 5, 6, 7, 8] },
+      { name: "Orange", url: orangeAsset.url, months: [12, 1, 2, 3] },
     ],
   },
   fruehling: {
@@ -44,7 +44,7 @@ const SAISON_MAP: Record<Saison, { label: string; items: SaisonItem[] }> = {
     label: "Herbst",
     items: [
       { name: "Kürbis", url: kuerbisAsset.url, months: [9, 10, 11] },
-      { name: "Zwetschge", url: zwetschgeAsset.url, months: [8, 9, 10] },
+      { name: "Zwetschgen", url: zwetschgeAsset.url, months: [8, 9, 10] },
     ],
   },
 };
