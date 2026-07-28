@@ -1208,16 +1208,12 @@ function SingleView({
             className={cn(
               "flex items-center justify-between gap-3 rounded-sm border px-4 py-3 text-left font-serif text-[15px] transition-colors",
               !reveal && "border-border bg-paper hover:bg-secondary",
-              reveal && isCorrect && "border-emerald-500/60 bg-emerald-500/10",
-              reveal && isMine && !isCorrect && "border-destructive/60 bg-destructive/10",
-              reveal && !isCorrect && !isMine && "border-border bg-paper opacity-60",
+              reveal && isMine && isCorrect && "border-emerald-500/60 bg-emerald-500/10",
+              reveal && !(isMine && isCorrect) && "border-border bg-paper",
             )}
           >
             <span>{opt}</span>
-            {reveal && isCorrect && <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-600" />}
-            {reveal && isMine && !isCorrect && (
-              <XCircle className="h-5 w-5 shrink-0 text-destructive" />
-            )}
+            {reveal && isMine && isCorrect && <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-600" />}
           </button>
         );
       })}
@@ -1238,6 +1234,7 @@ function MultiView({
   const order = useMemo(() => shuffleIndices(frage.optionen.length), [frage]);
   const [selected, setSelected] = useState<Set<number>>(new Set());
   const [submitted, setSubmitted] = useState(false);
+  const [allCorrect, setAllCorrect] = useState(false);
 
   const toggle = (i: number) => {
     if (submitted) return;
@@ -1256,6 +1253,7 @@ function MultiView({
       selected.size === korrektSet.size &&
       [...selected].every((i) => korrektSet.has(i));
     setSubmitted(true);
+    setAllCorrect(isEqual);
     onResult(isEqual, [...selected]);
   };
 
@@ -1269,8 +1267,8 @@ function MultiView({
         {order.map((i) => {
           const opt = frage.optionen[i];
           const isSel = selected.has(i);
-          const isCorrect = frage.korrekt.includes(i);
           const reveal = submitted;
+          const showGreen = reveal && allCorrect && isSel;
           return (
             <button
               key={i}
@@ -1280,9 +1278,9 @@ function MultiView({
                 "flex items-center gap-3 rounded-sm border px-4 py-3 text-left font-serif text-[15px] transition-colors",
                 !reveal && isSel && "border-stamp bg-stamp/10",
                 !reveal && !isSel && "border-border bg-paper hover:bg-secondary",
-                reveal && isCorrect && "border-emerald-500/60 bg-emerald-500/10",
-                reveal && isSel && !isCorrect && "border-destructive/60 bg-destructive/10",
-                reveal && !isCorrect && !isSel && "border-border bg-paper opacity-60",
+                reveal && showGreen && "border-emerald-500/60 bg-emerald-500/10",
+                reveal && !showGreen && isSel && "border-stamp bg-stamp/10",
+                reveal && !showGreen && !isSel && "border-border bg-paper",
               )}
             >
               <span
@@ -1294,10 +1292,7 @@ function MultiView({
                 {isSel && "✓"}
               </span>
               <span className="flex-1">{opt}</span>
-              {reveal && isCorrect && <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-600" />}
-              {reveal && isSel && !isCorrect && (
-                <XCircle className="h-5 w-5 shrink-0 text-destructive" />
-              )}
+              {showGreen && <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-600" />}
             </button>
           );
         })}
@@ -1364,6 +1359,7 @@ function ShortView({
 }) {
   const [text, setText] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [isOk, setIsOk] = useState(false);
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -1376,6 +1372,7 @@ function ShortView({
       return userNum !== null && aNum !== null && userNum === aNum;
     });
     setSubmitted(true);
+    setIsOk(ok);
     onResult(ok, text);
   };
 
@@ -1388,7 +1385,12 @@ function ShortView({
         onChange={(e) => setText(e.target.value)}
         disabled={submitted || answered}
         placeholder="Deine Antwort …"
-        className="w-full rounded-sm border border-border bg-paper-deep/30 px-4 py-3 font-serif text-[15px] focus:border-stamp focus:outline-none"
+        className={cn(
+          "w-full rounded-sm border bg-paper-deep/30 px-4 py-3 font-serif text-[15px] focus:outline-none",
+          submitted && isOk
+            ? "border-emerald-500/60 bg-emerald-500/10"
+            : "border-border focus:border-stamp",
+        )}
       />
       {!submitted && (
         <button
@@ -1418,6 +1420,7 @@ function MatchView({
   const rechtsShuffled = useMemo(() => shuffleArr(frage.rechts), [frage]);
   const [pairs, setPairs] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
+  const [allOk, setAllOk] = useState(false);
   const [dragging, setDragging] = useState<string | null>(null);
   const [ghost, setGhost] = useState<{ x: number; y: number } | null>(null);
   const [hoverRight, setHoverRight] = useState<string | null>(null);
@@ -1488,6 +1491,7 @@ function MatchView({
     if (submitted || answered) return;
     const ok = frage.links.every((l) => pairs[l.id] === frage.paare[l.id]);
     setSubmitted(true);
+    setAllOk(ok);
     onResult(ok, { ...pairs });
 
   };
@@ -1505,8 +1509,7 @@ function MatchView({
           {linksShuffled.map((l) => {
             const paired = pairs[l.id];
             const isDragging = dragging === l.id;
-            const correct = submitted && paired === frage.paare[l.id];
-            const wrong = submitted && paired && paired !== frage.paare[l.id];
+            const showGreen = submitted && allOk;
             return (
               <div
                 key={l.id}
@@ -1516,8 +1519,8 @@ function MatchView({
                   submitted ? "cursor-default" : "cursor-grab active:cursor-grabbing",
                   isDragging && "opacity-40",
                   !submitted && !isDragging && "border-border bg-paper hover:bg-secondary",
-                  correct && "border-emerald-500/60 bg-emerald-500/10",
-                  wrong && "border-destructive/60 bg-destructive/10",
+                  submitted && !showGreen && "border-border bg-paper",
+                  showGreen && "border-emerald-500/60 bg-emerald-500/10",
                 )}
               >
                 <div className="flex items-center gap-2">
@@ -1622,6 +1625,7 @@ function OrderView({
     [...frage.reihenfolge].reverse(),
   );
   const [submitted, setSubmitted] = useState(false);
+  const [allOk, setAllOk] = useState(false);
 
   const move = (i: number, dir: -1 | 1) => {
     if (submitted) return;
@@ -1638,6 +1642,7 @@ function OrderView({
     if (submitted || answered) return;
     const ok = order.every((id, i) => id === frage.reihenfolge[i]);
     setSubmitted(true);
+    setAllOk(ok);
     onResult(ok, [...order]);
 
   };
@@ -1651,16 +1656,15 @@ function OrderView({
       </p>
       <ol className="space-y-2">
         {order.map((id, i) => {
-          const correctHere = submitted && frage.reihenfolge[i] === id;
-          const wrongHere = submitted && !correctHere;
+          const showGreen = submitted && allOk;
           return (
             <li
               key={id}
               className={cn(
                 "flex items-center gap-2 rounded-sm border bg-paper px-3 py-2",
                 !submitted && "border-border",
-                correctHere && "border-emerald-500/60 bg-emerald-500/10",
-                wrongHere && "border-destructive/60 bg-destructive/10",
+                submitted && !showGreen && "border-border",
+                showGreen && "border-emerald-500/60 bg-emerald-500/10",
               )}
             >
               <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-stamp font-mono-typed text-xs font-bold text-paper">
@@ -1721,6 +1725,7 @@ function BucketView({
     return initial;
   });
   const [submitted, setSubmitted] = useState(false);
+  const [allOk, setAllOk] = useState(false);
   const [dragging, setDragging] = useState<string | null>(null);
   const [ghost, setGhost] = useState<{ x: number; y: number } | null>(null);
   const [hoverTarget, setHoverTarget] = useState<string | null>(null);
@@ -1780,6 +1785,7 @@ function BucketView({
     if (submitted || answered) return;
     const ok = frage.items.every((it) => placements[it.id] === frage.solution[it.id]);
     setSubmitted(true);
+    setAllOk(ok);
     onResult(ok, { ...placements });
   };
 
@@ -1815,8 +1821,7 @@ function BucketView({
               <h3 className="mb-2 text-center font-serif text-[13px] font-bold">{bucket.label}</h3>
               <div className="flex-1 space-y-1.5">
                 {assigned.map((it) => {
-                  const correct = submitted && placements[it.id] === frage.solution[it.id];
-                  const wrong = submitted && !correct;
+                  const showGreen = submitted && allOk;
                   return (
                     <div
                       key={it.id}
@@ -1825,9 +1830,9 @@ function BucketView({
                         "select-none touch-none rounded-sm border px-2 py-1.5 text-center font-serif text-[13px] transition-colors",
                         submitted ? "cursor-default" : "cursor-grab active:cursor-grabbing",
                         dragging === it.id && "opacity-40",
-                        !submitted && !correct && !wrong && "border-border bg-paper-deep/60",
-                        correct && "border-emerald-500/60 bg-emerald-500/10",
-                        wrong && "border-destructive/60 bg-destructive/10",
+                        !submitted && "border-border bg-paper-deep/60",
+                        submitted && !showGreen && "border-border bg-paper-deep/60",
+                        showGreen && "border-emerald-500/60 bg-emerald-500/10",
                       )}
                     >
                       {it.label}
@@ -1909,11 +1914,13 @@ function SliderView({
   const start = Math.round((frage.min + frage.max) / 2);
   const [val, setVal] = useState<number>(start);
   const [submitted, setSubmitted] = useState(false);
+  const [isOk, setIsOk] = useState(false);
 
   const submit = () => {
     if (submitted || answered) return;
     const ok = Math.abs(val - frage.zielwert) <= frage.toleranz;
     setSubmitted(true);
+    setIsOk(ok);
     onResult(ok, val);
   };
 
@@ -1923,9 +1930,14 @@ function SliderView({
       <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
         Ziehe den Regler auf deinen Schätzwert.
       </p>
-      <div className="rounded-sm border border-border bg-paper-deep/30 px-4 py-4">
+      <div
+        className={cn(
+          "rounded-sm border bg-paper-deep/30 px-4 py-4 transition-colors",
+          submitted && isOk ? "border-emerald-500/60 bg-emerald-500/10" : "border-border",
+        )}
+      >
         <div className="text-center font-serif">
-          <span className="text-3xl font-bold tabular-nums">{val}</span>
+          <span className={cn("text-3xl font-bold tabular-nums", submitted && isOk && "text-emerald-700")}>{val}</span>
           <span className="ml-1 text-sm text-muted-foreground">{frage.unit}</span>
         </div>
         <input
@@ -1943,11 +1955,6 @@ function SliderView({
           <span>{frage.max} {frage.unit}</span>
         </div>
       </div>
-      {submitted && (
-        <p className="font-mono-typed text-[11px] uppercase tracking-wider text-stamp">
-          Zielwert: {frage.zielwert} {frage.unit} (Toleranz ±{frage.toleranz})
-        </p>
-      )}
       {!submitted && (
         <button
           onClick={submit}
@@ -2000,9 +2007,8 @@ function EitherView({
                 "flex flex-col items-center gap-2 rounded-sm border p-3 transition-colors",
                 !reveal && isMine && "border-stamp bg-stamp/10",
                 !reveal && !isMine && "border-border bg-paper hover:bg-secondary",
-                reveal && isCorrect && "border-emerald-500/60 bg-emerald-500/10",
-                reveal && isMine && !isCorrect && "border-destructive/60 bg-destructive/10",
-                reveal && !isCorrect && !isMine && "border-border bg-paper opacity-60",
+                reveal && isMine && isCorrect && "border-emerald-500/60 bg-emerald-500/10",
+                reveal && !(isMine && isCorrect) && "border-border bg-paper",
               )}
             >
               <img
@@ -2012,8 +2018,7 @@ function EitherView({
               />
               <div className="flex items-center gap-1.5 font-serif text-sm font-bold">
                 {opt.label}
-                {reveal && isCorrect && <CheckCircle2 className="h-4 w-4 text-emerald-600" />}
-                {reveal && isMine && !isCorrect && <XCircle className="h-4 w-4 text-destructive" />}
+                {reveal && isMine && isCorrect && <CheckCircle2 className="h-4 w-4 text-emerald-600" />}
               </div>
             </button>
           );
