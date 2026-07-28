@@ -380,6 +380,7 @@ function FinalePage() {
   const [pulse, setPulse] = useState<null | "up" | "down">(null);
   const [review, setReview] = useState(false);
   const [showRules, setShowRules] = useState(false);
+  const [resultRevealed, setResultRevealed] = useState(false);
 
 
 
