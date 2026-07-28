@@ -137,3 +137,28 @@ export function getTotalHintsUsed(): number {
   }
   return total;
 }
+
+/**
+ * Anzahl aufgedeckter Hinweise für eine einzelne Etappe (1–5).
+ */
+export function getStageHintsUsed(stage: number): number {
+  if (typeof window === "undefined") return 0;
+  try {
+    const raw = localStorage.getItem(`akte-00${stage}-hints-start-revealed`);
+    if (!raw) return 0;
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? arr.length : 0;
+  } catch {
+    return 0;
+  }
+}
+
+/**
+ * Verleiht das „Ohne Hinweise"-Badge, wenn die angegebene Etappe
+ * ohne einen einzigen aufgedeckten Hinweis gelöst wurde. Idempotent.
+ */
+export function tryAwardNoHintStage(stage: number) {
+  if (getStageHintsUsed(stage) === 0) {
+    awardBadge("erstes-ohne-hinweise");
+  }
+}
