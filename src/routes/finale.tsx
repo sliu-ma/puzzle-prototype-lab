@@ -1914,11 +1914,13 @@ function SliderView({
   const start = Math.round((frage.min + frage.max) / 2);
   const [val, setVal] = useState<number>(start);
   const [submitted, setSubmitted] = useState(false);
+  const [isOk, setIsOk] = useState(false);
 
   const submit = () => {
     if (submitted || answered) return;
     const ok = Math.abs(val - frage.zielwert) <= frage.toleranz;
     setSubmitted(true);
+    setIsOk(ok);
     onResult(ok, val);
   };
 
@@ -1928,9 +1930,14 @@ function SliderView({
       <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
         Ziehe den Regler auf deinen Schätzwert.
       </p>
-      <div className="rounded-sm border border-border bg-paper-deep/30 px-4 py-4">
+      <div
+        className={cn(
+          "rounded-sm border bg-paper-deep/30 px-4 py-4 transition-colors",
+          submitted && isOk ? "border-emerald-500/60 bg-emerald-500/10" : "border-border",
+        )}
+      >
         <div className="text-center font-serif">
-          <span className="text-3xl font-bold tabular-nums">{val}</span>
+          <span className={cn("text-3xl font-bold tabular-nums", submitted && isOk && "text-emerald-700")}>{val}</span>
           <span className="ml-1 text-sm text-muted-foreground">{frage.unit}</span>
         </div>
         <input
@@ -1948,11 +1955,6 @@ function SliderView({
           <span>{frage.max} {frage.unit}</span>
         </div>
       </div>
-      {submitted && (
-        <p className="font-mono-typed text-[11px] uppercase tracking-wider text-stamp">
-          Zielwert: {frage.zielwert} {frage.unit} (Toleranz ±{frage.toleranz})
-        </p>
-      )}
       {!submitted && (
         <button
           onClick={submit}
