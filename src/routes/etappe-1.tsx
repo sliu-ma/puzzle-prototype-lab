@@ -107,7 +107,10 @@ function AktePage() {
   );
 
   useEffect(() => {
-    if (step === "naechstes") completeStage(1);
+    if (step === "naechstes") {
+      completeStage(1);
+      tryAwardNoHintStage(1);
+    }
   }, [step]);
 
   const [start, setStart] = usePersistentState<string>("akte-1-start", "");
