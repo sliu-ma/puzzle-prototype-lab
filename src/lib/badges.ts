@@ -49,7 +49,7 @@ export const BADGES: Badge[] = [
     description:
       "Korb gepackt, Kasse geklingelt — beim ersten Versuch alles richtig regional, saisonal und fair.",
     criteria:
-      "Bestehe den Konsum-Fall (Etappe 2) beim allerersten Druck auf „Bezahlen".",
+      "Bestehe den Konsum-Fall (Etappe 2) beim allerersten Druck auf „Bezahlen“.",
     imageUrl: badgeEinkauf.url,
   },
 ];
