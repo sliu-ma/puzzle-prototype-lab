@@ -3,6 +3,7 @@
 
 import badgeUnter60 from "@/assets/badge-unter60.svg.asset.json";
 import badgeWenigeHinweise from "@/assets/badge-wenige-hinweise.svg.asset.json";
+import badgeOhneHinweise from "@/assets/badge-ohne-hinweise.svg.asset.json";
 
 export type Badge = {
   id: string;
