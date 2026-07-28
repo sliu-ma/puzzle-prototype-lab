@@ -2,6 +2,7 @@
 // Neue Badges hier eintragen und mit `awardBadge(id)` verleihen.
 
 import badgeUnter60 from "@/assets/badge-unter60.svg.asset.json";
+import badgeWenigeHinweise from "@/assets/badge-wenige-hinweise.svg.asset.json";
 
 export type Badge = {
   id: string;
@@ -12,6 +13,8 @@ export type Badge = {
   imageUrl: string;
 };
 
+export type BadgeRecord = { id: string; earnedAt: string };
+
 export const BADGES: Badge[] = [
   {
     id: "unter-60",
@@ -20,23 +23,73 @@ export const BADGES: Badge[] = [
     criteria: "Löse alle Etappen und bestehe das Hearing in unter 60 Minuten.",
     imageUrl: badgeUnter60.url,
   },
+  {
+    id: "sparsame-hinweise",
+    title: "Sparsamer Ermittler",
+    description:
+      "Mit weniger als drei Hinweisen durch alle fünf Etappen zum Hearing.",
+    criteria:
+      "Nimm über alle fünf Etappen zusammen weniger als drei Hinweise in Anspruch.",
+    imageUrl: badgeWenigeHinweise.url,
+  },
 ];
 
 const KEY_EARNED = "maya-badges-earned";
 
-export function getEarnedBadges(): Set<string> {
+function readRecords(): BadgeRecord[] {
   try {
     const raw = localStorage.getItem(KEY_EARNED);
-    if (!raw) return new Set();
-    const arr = JSON.parse(raw);
-    return new Set(Array.isArray(arr) ? arr : []);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    // Migration: früher nur ein Array von IDs.
+    return parsed
+      .map((entry) => {
+        if (typeof entry === "string") {
+          return { id: entry, earnedAt: new Date().toISOString() };
+        }
+        if (entry && typeof entry === "object" && typeof entry.id === "string") {
+          return {
+            id: entry.id,
+            earnedAt:
+              typeof entry.earnedAt === "string"
+                ? entry.earnedAt
+                : new Date().toISOString(),
+          };
+        }
+        return null;
+      })
+      .filter(Boolean) as BadgeRecord[];
   } catch {
-    return new Set();
+    return [];
   }
+}
+
+function writeRecords(records: BadgeRecord[]) {
+  try {
+    localStorage.setItem(KEY_EARNED, JSON.stringify(records));
+  } catch {
+    /* ignore */
+  }
+}
+
+export function getEarnedBadgeRecords(): BadgeRecord[] {
+  return readRecords();
+}
+
+export function getEarnedBadges(): Set<string> {
+  return new Set(readRecords().map((r) => r.id));
 }
 
 export function hasBadge(id: string): boolean {
   return getEarnedBadges().has(id);
+}
+
+export function getBadgeEarnedAt(id: string): Date | null {
+  const rec = readRecords().find((r) => r.id === id);
+  if (!rec) return null;
+  const d = new Date(rec.earnedAt);
+  return isNaN(d.getTime()) ? null : d;
 }
 
 export function getBadge(id: string): Badge | undefined {
@@ -51,15 +104,28 @@ export function awardBadge(id: string) {
   if (typeof window === "undefined") return;
   const badge = getBadge(id);
   if (!badge) return;
-  try {
-    const earned = getEarnedBadges();
-    if (earned.has(id)) return;
-    earned.add(id);
-    localStorage.setItem(KEY_EARNED, JSON.stringify([...earned]));
-    window.dispatchEvent(
-      new CustomEvent("badge:earned", { detail: badge }),
-    );
-  } catch {
-    /* ignore */
+  const records = readRecords();
+  if (records.some((r) => r.id === id)) return;
+  records.push({ id, earnedAt: new Date().toISOString() });
+  writeRecords(records);
+  window.dispatchEvent(new CustomEvent("badge:earned", { detail: badge }));
+}
+
+/**
+ * Summiert die aufgedeckten Hinweise über alle fünf Etappen.
+ */
+export function getTotalHintsUsed(): number {
+  if (typeof window === "undefined") return 0;
+  let total = 0;
+  for (let i = 1; i <= 5; i++) {
+    try {
+      const raw = localStorage.getItem(`akte-00${i}-hints-start-revealed`);
+      if (!raw) continue;
+      const arr = JSON.parse(raw);
+      if (Array.isArray(arr)) total += arr.length;
+    } catch {
+      /* ignore */
+    }
   }
+  return total;
 }
