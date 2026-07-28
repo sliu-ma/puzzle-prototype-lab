@@ -15,6 +15,7 @@ import { StageGate } from "@/components/case-file/StageGate";
 import { HintSystem, type Hint } from "@/components/case-file/HintSystem";
 import { START_WARENKORB } from "@/lib/maya-data";
 import { completeStage, getFrozenClock, getHearingClock } from "@/lib/progress";
+import { tryAwardNoHintStage } from "@/lib/badges";
 import { usePersistentState, usePersistentSet } from "@/lib/persist";
 import { useScrollToTopOnChange } from "@/hooks/use-scroll-top";
 
@@ -100,7 +101,10 @@ function AktePage() {
 
 
   useEffect(() => {
-    if (step === "naechstes") completeStage(2);
+    if (step === "naechstes") {
+      completeStage(2);
+      tryAwardNoHintStage(2);
+    }
   }, [step]);
 
   const goto = (s: Step) => {

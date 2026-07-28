@@ -8,6 +8,7 @@ import { QRGate } from "@/components/case-file/QRGate";
 import { StageGate } from "@/components/case-file/StageGate";
 import { HintSystem, type Hint } from "@/components/case-file/HintSystem";
 import { completeStage, getFrozenClock } from "@/lib/progress";
+import { tryAwardNoHintStage } from "@/lib/badges";
 import { usePersistentState, usePersistentSet } from "@/lib/persist";
 import { useScrollToTopOnChange } from "@/hooks/use-scroll-top";
 
@@ -110,7 +111,10 @@ function AktePage() {
 
 
   useEffect(() => {
-    if (step === "naechstes") completeStage(3);
+    if (step === "naechstes") {
+      completeStage(3);
+      tryAwardNoHintStage(3);
+    }
   }, [step]);
 
   const goto = (s: Step) => {

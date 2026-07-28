@@ -13,7 +13,7 @@ import {
 } from "@/components/case-file/EnergietraegerCharts";
 import { HintSystem, type Hint } from "@/components/case-file/HintSystem";
 import { completeStage, getFrozenClock, getHearingClock } from "@/lib/progress";
-import { awardBadge, getTotalHintsUsed } from "@/lib/badges";
+import { awardBadge, getTotalHintsUsed, tryAwardNoHintStage } from "@/lib/badges";
 import { usePersistentState, usePersistentSet } from "@/lib/persist";
 
 import { cn } from "@/lib/utils";
@@ -99,6 +99,7 @@ function AktePage() {
   useEffect(() => {
     if (step === "naechstes") {
       completeStage(5);
+      tryAwardNoHintStage(5);
       if (getTotalHintsUsed() < 3) awardBadge("sparsame-hinweise");
     }
   }, [step]);

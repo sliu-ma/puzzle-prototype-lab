@@ -8,6 +8,7 @@ import { EnergyGame } from "@/components/case-file/EnergyGame";
 import { InputCarousel } from "@/components/case-file/InputCarousel";
 import { HintSystem, type Hint } from "@/components/case-file/HintSystem";
 import { completeStage, getFrozenClock } from "@/lib/progress";
+import { tryAwardNoHintStage } from "@/lib/badges";
 import { usePersistentState, usePersistentSet } from "@/lib/persist";
 import { useScrollToTopOnChange } from "@/hooks/use-scroll-top";
 
@@ -99,7 +100,10 @@ function AktePage() {
 
 
   useEffect(() => {
-    if (step === "naechstes") completeStage(4);
+    if (step === "naechstes") {
+      completeStage(4);
+      tryAwardNoHintStage(4);
+    }
   }, [step]);
 
   const goto = (s: Step) => {

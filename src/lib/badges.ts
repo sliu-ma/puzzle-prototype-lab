@@ -3,6 +3,7 @@
 
 import badgeUnter60 from "@/assets/badge-unter60.svg.asset.json";
 import badgeWenigeHinweise from "@/assets/badge-wenige-hinweise.svg.asset.json";
+import badgeOhneHinweise from "@/assets/badge-ohne-hinweise.svg.asset.json";
 
 export type Badge = {
   id: string;
@@ -31,6 +32,13 @@ export const BADGES: Badge[] = [
     criteria:
       "Nimm über alle fünf Etappen zusammen weniger als drei Hinweise in Anspruch.",
     imageUrl: badgeWenigeHinweise.url,
+  },
+  {
+    id: "erstes-ohne-hinweise",
+    title: "Ohne Hinweise",
+    description: "Eine Etappe komplett ohne einen einzigen Hinweis gelöst.",
+    criteria: "Löse mindestens eine Etappe, ohne einen Hinweis aufzudecken.",
+    imageUrl: badgeOhneHinweise.url,
   },
 ];
 
@@ -128,4 +136,29 @@ export function getTotalHintsUsed(): number {
     }
   }
   return total;
+}
+
+/**
+ * Anzahl aufgedeckter Hinweise für eine einzelne Etappe (1–5).
+ */
+export function getStageHintsUsed(stage: number): number {
+  if (typeof window === "undefined") return 0;
+  try {
+    const raw = localStorage.getItem(`akte-00${stage}-hints-start-revealed`);
+    if (!raw) return 0;
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? arr.length : 0;
+  } catch {
+    return 0;
+  }
+}
+
+/**
+ * Verleiht das „Ohne Hinweise"-Badge, wenn die angegebene Etappe
+ * ohne einen einzigen aufgedeckten Hinweis gelöst wurde. Idempotent.
+ */
+export function tryAwardNoHintStage(stage: number) {
+  if (getStageHintsUsed(stage) === 0) {
+    awardBadge("erstes-ohne-hinweise");
+  }
 }

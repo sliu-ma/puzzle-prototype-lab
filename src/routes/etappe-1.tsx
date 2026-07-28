@@ -12,6 +12,7 @@ import { InputCarousel } from "@/components/case-file/InputCarousel";
 import { CostPerKm, TrainVsCars, ShortTripsShare } from "@/components/case-file/MobilityCharts";
 import { VALID_START, VALID_ZIEL, type RouteOption } from "@/lib/mobility-data";
 import { completeStage } from "@/lib/progress";
+import { tryAwardNoHintStage } from "@/lib/badges";
 import { usePersistentState, usePersistentSet } from "@/lib/persist";
 import { useScrollToTopOnChange } from "@/hooks/use-scroll-top";
 
@@ -106,7 +107,10 @@ function AktePage() {
   );
 
   useEffect(() => {
-    if (step === "naechstes") completeStage(1);
+    if (step === "naechstes") {
+      completeStage(1);
+      tryAwardNoHintStage(1);
+    }
   }, [step]);
 
   const [start, setStart] = usePersistentState<string>("akte-1-start", "");
