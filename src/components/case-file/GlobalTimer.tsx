@@ -26,12 +26,12 @@ const BEATS: MajaBeat[] = [
   {
     at: 15,
     body: () =>
-      "Erste Viertelstunde rum. Ich bin unterwegs — alles ruhig. Bleibt dran, jede Spur zählt.",
+      "Erste Viertelstunde rum. Ich bin unterwegs, alles ruhig. Bleibt dran, jede Spur zählt.",
   },
   {
     at: 30,
     body: (h) =>
-      `Eine halbe Stunde. Elviras Notizen ergeben langsam Sinn. Hearing ist um ${h} — wir haben Zeit, aber nicht ewig.`,
+      `Eine halbe Stunde. Elviras Notizen ergeben langsam Sinn. Hearing ist um ${h}, wir haben Zeit, aber nicht ewig.`,
   },
   {
     at: 45,
@@ -52,7 +52,7 @@ const BEATS: MajaBeat[] = [
   {
     at: 80,
     body: () =>
-      "10 Minuten. Vetterli wartet nicht. Falls die Lösung nahe ist — jetzt durchziehen.",
+      "10 Minuten. Vetterli wartet nicht. Falls die Lösung nahe ist, jetzt durchziehen.",
     urgent: true,
   },
   {

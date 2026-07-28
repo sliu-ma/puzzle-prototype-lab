@@ -30,7 +30,7 @@ function formatEarnedAt(d: Date | null): string {
   }
 }
 
-/** Karussell aller Badges — Klick öffnet Detail-Dialog mit Datum bzw. Kriterium. */
+/** Karussell aller Badges, Klick öffnet Detail-Dialog mit Datum bzw. Kriterium. */
 export function BadgeShowcase() {
   const earned = getEarnedBadges();
   const scrollerRef = useRef<HTMLDivElement>(null);

@@ -1,4 +1,4 @@
-// Daten für den "Grünen Markt" — Kapitel 1
+// Daten für den "Grünen Markt", Kapitel 1
 // Schweiz · CHF · Schweizer Siegel (Bio, IP-Suisse, Demeter)
 
 import erdbeerenChAsset from "@/assets/produkte/erdbeeren-ch.webp.asset.json";
@@ -125,14 +125,14 @@ export const PRODUKTE: Produkt[] = [
     bewertung: "schlecht",
     zutat: "erdbeeren",
     problemHinweis:
-      "Auch Bio-Erdbeeren aus Spanien reisen im März tausende Kilometer. Bio sagt etwas über den Anbau — nichts über Transport und Saison.",
+      "Auch Bio-Erdbeeren aus Spanien reisen im März tausende Kilometer. Bio sagt etwas über den Anbau, nichts über Transport und Saison.",
     nachhaltigkeit: {
       regional: 1,
       saisonal: 1,
       verpackung: 2,
       label: 4,
       erklaerung:
-        "Bio-Anbau ohne synthetische Pestizide — aber Importware aus Südeuropa ausserhalb der Schweizer Saison. Lange Transportwege und meist Plastikverpackung.",
+        "Bio-Anbau ohne synthetische Pestizide, aber Importware aus Südeuropa ausserhalb der Schweizer Saison. Lange Transportwege und meist Plastikverpackung.",
     },
   },
   {
@@ -177,7 +177,7 @@ export const PRODUKTE: Produkt[] = [
       verpackung: 5,
       label: 5,
       erklaerung:
-        "Zitronen wachsen nicht in der Schweiz — Süditalien ist der nächste sinnvolle Anbauort. Demeter-Standard (biodynamisch), unverpackt.",
+        "Zitronen wachsen nicht in der Schweiz, Süditalien ist der nächste sinnvolle Anbauort. Demeter-Standard (biodynamisch), unverpackt.",
     },
   },
   {
@@ -348,7 +348,7 @@ export const PRODUKTE: Produkt[] = [
       verpackung: 3,
       label: 1,
       erklaerung:
-        "Import-Eier aus Bodenhaltung — enge Ställe, lange Transportwege, keine Tierwohl-Label und keine Kontrolle über die Futtermittelherkunft.",
+        "Import-Eier aus Bodenhaltung, enge Ställe, lange Transportwege, keine Tierwohl-Label und keine Kontrolle über die Futtermittelherkunft.",
     },
   },
   {
@@ -492,7 +492,7 @@ export const PRODUKTE: Produkt[] = [
       saisonal: 5,
       verpackung: 3,
       label: 4,
-      erklaerung: "Schweizer Zuckerrüben von IP-Suisse-Betrieben — regional und mit anerkanntem Nachhaltigkeitsstandard. Papierverpackung.",
+      erklaerung: "Schweizer Zuckerrüben von IP-Suisse-Betrieben, regional und mit anerkanntem Nachhaltigkeitsstandard. Papierverpackung.",
     },
   },
   {
@@ -535,7 +535,7 @@ export const PRODUKTE: Produkt[] = [
       verpackung: 3,
       label: 2,
       erklaerung:
-        "Speisesalz aus Schweizer Berggebieten — sehr kurze Wege, jodiert und fluoridiert. Kartonverpackung, kein zusätzliches Nachhaltigkeitslabel.",
+        "Speisesalz aus Schweizer Berggebieten, sehr kurze Wege, jodiert und fluoridiert. Kartonverpackung, kein zusätzliches Nachhaltigkeitslabel.",
     },
   },
 
@@ -573,14 +573,14 @@ export const PRODUKTE: Produkt[] = [
     bewertung: "schlecht",
     zutat: "zitrone",
     problemHinweis:
-      "Zitronen aus Südafrika legen per Schiff oder Flugzeug tausende Kilometer zurück — ohne Bio-Standard. Italienische Bio-/Demeter-Zitronen sind die deutlich nachhaltigere Wahl.",
+      "Zitronen aus Südafrika legen per Schiff oder Flugzeug tausende Kilometer zurück, ohne Bio-Standard. Italienische Bio-/Demeter-Zitronen sind die deutlich nachhaltigere Wahl.",
     nachhaltigkeit: {
       regional: 1,
       saisonal: 3,
       verpackung: 5,
       label: 1,
       erklaerung:
-        "Zitronen aus Südafrika werden per Schiff oder Flugzeug importiert — sehr lange Transportwege, kein Bio-Standard.",
+        "Zitronen aus Südafrika werden per Schiff oder Flugzeug importiert, sehr lange Transportwege, kein Bio-Standard.",
     },
   },
   {

@@ -4,7 +4,7 @@ type Tipp = {
   icon: React.ComponentType<{ className?: string; strokeWidth?: number }>;
   action: string;
   effect: string;
-  /** 0–100 – visueller Balken für die Wirkung */
+  /** 0–100, visueller Balken für die Wirkung */
   bar: number;
 };
 

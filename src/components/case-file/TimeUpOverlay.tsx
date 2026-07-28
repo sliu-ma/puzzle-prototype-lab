@@ -26,7 +26,7 @@ export function TimeUpOverlay() {
         Die Zeit ist leider um.
       </h1>
       <p className="max-w-sm font-serif text-lg italic leading-relaxed text-foreground/80">
-        Das Hearing hat begonnen — ihr habt es nicht mehr rechtzeitig
+        Das Hearing hat begonnen, ihr habt es nicht mehr rechtzeitig
         geschafft.
       </p>
       <p className="max-w-sm font-serif text-base text-foreground/70">

@@ -132,7 +132,7 @@ export function EnergyGame({ onErfolg }: { onErfolg: () => void }) {
         Ziel: mind. <strong>{formatNumber(ENERGY_TARGET)} ESP</strong> sammeln, ohne das Budget zu sprengen.
         <span className="ml-1 text-foreground/60">
         </span>
-        {erreicht && " ✓ Ziel erreicht — du kannst prüfen."}
+        {erreicht && " ✓ Ziel erreicht, du kannst prüfen."}
       </div>
 
       {/* Haus-Stage */}
@@ -188,7 +188,7 @@ export function EnergyGame({ onErfolg }: { onErfolg: () => void }) {
 
       {showFail && !erreicht && (
         <div className="mt-3 rounded-sm border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">
-          Noch nicht genug Energiesparpunkte. Tippe auf die markierten Bereiche im Haus und wähle sparsamere Optionen — viele bringen Punkte, ohne etwas zu kosten.
+          Noch nicht genug Energiesparpunkte. Tippe auf die markierten Bereiche im Haus und wähle sparsamere Optionen, viele bringen Punkte, ohne etwas zu kosten.
         </div>
       )}
 

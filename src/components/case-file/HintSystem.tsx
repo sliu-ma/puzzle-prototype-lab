@@ -16,7 +16,7 @@ const DEFAULT_HINTS: Hint[] = [
     unlockMin: 3,
     label: "Tipp 1",
     title: "Schau dir den Warenkorb genau an",
-    body: "Öffne den Warenkorb. Bei zwei Produkten lohnt sich ein zweiter Blick — woher kommen sie? Wachsen sie hier gerade?",
+    body: "Öffne den Warenkorb. Bei zwei Produkten lohnt sich ein zweiter Blick, woher kommen sie? Wachsen sie hier gerade?",
   },
   {
     id: 1,
@@ -229,7 +229,7 @@ export function HintSystem({ hints = DEFAULT_HINTS, storageKey = DEFAULT_STORAGE
                 Du brauchst Hilfe? Maja hat Hinweise für dich.
               </h3>
               <p className="mt-2 text-sm text-foreground/75">
-                Unten rechts findest du diesen Button — tippe darauf, um
+                Unten rechts findest du diesen Button, tippe darauf, um
                 Hinweise zu öffnen.
               </p>
 
@@ -377,7 +377,7 @@ export function HintSystem({ hints = DEFAULT_HINTS, storageKey = DEFAULT_STORAGE
                     Noch gesperrt
                   </p>
                   <p className="mt-1 text-sm text-foreground/70">
-                    Versuch's erst selbst — das Spiel ist nicht so schwer, wie
+                    Versuch's erst selbst, das Spiel ist nicht so schwer, wie
                     es aussieht.
                   </p>
                 </div>

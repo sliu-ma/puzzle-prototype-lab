@@ -24,7 +24,7 @@ import { useSuccessBurst } from "@/components/case-file/SuccessBurst";
 export const Route = createFileRoute("/etappe-1")({
   head: () => ({
     meta: [
-      { title: "Etappe 1 — Bahnhof Speicher" },
+      { title: "Etappe 1, Bahnhof Speicher" },
       {
         name: "description",
         content:
@@ -57,7 +57,7 @@ const HINTS_003: Hint[] = [
     unlockMin: 9,
     label: "Auflösung",
     title: "So geht's",
-    body: "Start: Genf — Ziel: Speicher (AR). Die nachhaltigste Route ist der direkte Zug (IC 1 → S21) mit ca. 4 kg CO₂ pro Person. Auto und Inlandflug stossen ein Vielfaches aus, ohne nennenswerte Zeitersparnis.",
+    body: "Start: Genf, Ziel: Speicher (AR). Die nachhaltigste Route ist der direkte Zug (IC 1 → S21) mit ca. 4 kg CO₂ pro Person. Auto und Inlandflug stossen ein Vielfaches aus, ohne nennenswerte Zeitersparnis.",
   },
 ];
 
@@ -67,7 +67,7 @@ function AkteGated() {
       <QRGate
         token={AKTE_003_TOKEN}
         storageKey="akte-003-unlocked"
-        title={<>Etappe 1 — QR-Code am Bahnhof scannen</>}
+        title={<>Etappe 1, QR-Code am Bahnhof scannen</>}
         description="Diese Etappe ist versiegelt. Scanne den QR-Code, der am Bahnhof Speicher für dich hinterlegt ist."
         label="Etappe 1 · Versiegelt"
       >
@@ -225,7 +225,7 @@ function AktePage() {
         {step === "brief" && (
           <PaperCard rotate={-0.4}>
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-              Notiz 01 – Bahnhof Speicher – Bank am Gleis 1
+              Notiz 01, Bahnhof Speicher, Bank am Gleis 1
             </p>
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">Elviras alte Reisetickets</h2>
             <p className="mt-1 font-mono-typed text-xs text-muted-foreground">[Hinweis gefunden um {jetzt}]</p>
@@ -419,7 +419,7 @@ function AktePage() {
         {envelope.dialog}
 
         <p className="mt-12 text-center font-mono-typed text-xs uppercase tracking-[0.2em] text-muted-foreground">
-          — Etappe 1 · Bahnhof Speicher —
+         , Etappe 1 · Bahnhof Speicher
         </p>
       </div>
 

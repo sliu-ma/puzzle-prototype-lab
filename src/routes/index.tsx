@@ -26,11 +26,11 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Speicher — Majas Ermittlung" },
+      { title: "Speicher, Majas Ermittlung" },
       {
         name: "description",
         content:
-          "Ein Bildungs-Escape-Room zur Ökologie. Fünf Etappen, ein Hearing — von Mobilität bis Energie.",
+          "Ein Bildungs-Escape-Room zur Ökologie. Fünf Etappen, ein Hearing, von Mobilität bis Energie.",
       },
     ],
   }),
@@ -297,7 +297,7 @@ function StartForm({
 }
 
 /* -------------------------------------------------------- */
-/*  Fortschritt – linearer Etappenpfad                       */
+/*  Fortschritt, linearer Etappenpfad                       */
 /* -------------------------------------------------------- */
 
 function ProgressPanel({

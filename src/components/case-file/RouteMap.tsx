@@ -23,7 +23,7 @@ type Props = {
 };
 
 /**
- * Leaflet karte — wird nur clientseitig dynamisch geladen,
+ * Leaflet karte, wird nur clientseitig dynamisch geladen,
  * damit kein SSR-Fehler entsteht (Leaflet greift auf window zu).
  */
 export function RouteMap({ segments, stops, color = "#5eead4", minHeight = 420 }: Props) {

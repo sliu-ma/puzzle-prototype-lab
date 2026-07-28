@@ -158,7 +158,7 @@ export function ProduktDetailDialog({ produkt, onOpenChange }: ProduktDetailDial
 
           {saisonReduziert && (
             <p className="mt-2 rounded-sm border border-stamp/40 bg-stamp/5 px-2.5 py-2 font-mono-typed text-[11px] leading-snug text-stamp">
-              Ausserhalb der Saison gekauft — Saisonalitäts-Wertung reduziert.
+              Ausserhalb der Saison gekauft, Saisonalitäts-Wertung reduziert.
             </p>
           )}
 

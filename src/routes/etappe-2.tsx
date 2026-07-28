@@ -27,11 +27,11 @@ import { useSuccessBurst } from "@/components/case-file/SuccessBurst";
 export const Route = createFileRoute("/etappe-2")({
   head: () => ({
     meta: [
-      { title: "Etappe 2 — Dorfladen Berger" },
+      { title: "Etappe 2, Dorfladen Berger" },
       {
         name: "description",
         content:
-          "Etappe 2: Im alten Dorfladen wartet ein gepackter Einkaufskorb. Zwei Produkte stimmen nicht — finde sie und tausche sie aus.",
+          "Etappe 2: Im alten Dorfladen wartet ein gepackter Einkaufskorb. Zwei Produkte stimmen nicht, finde sie und tausche sie aus.",
       },
     ],
   }),
@@ -44,7 +44,7 @@ function AkteGated() {
       <QRGate
         token="CpZk0z9RaQkL22gtiWoR"
         storageKey="akte-001-unlocked"
-        title={<>Etappe 2 — QR-Code im Dorfladen scannen</>}
+        title={<>Etappe 2, QR-Code im Dorfladen scannen</>}
         description="Diese Etappe ist versiegelt. Scanne den QR-Code, den Frau Berger für dich bereitgelegt hat."
         label="Etappe 2 · Versiegelt"
       >
@@ -69,21 +69,21 @@ const DORFLADEN_HINTS: Hint[] = [
     unlockMin: 3,
     label: "Tipp 1",
     title: "Starte mit Elviras Rezept",
-    body: "Der Korb ist leer — das ist Absicht. Öffne oben das Rezept-Akkordeon und geh die Zutaten Schritt für Schritt durch. Für jede Zutat gibt es im Laden mindestens eine Option.",
+    body: "Der Korb ist leer, das ist Absicht. Öffne oben das Rezept-Akkordeon und geh die Zutaten Schritt für Schritt durch. Für jede Zutat gibt es im Laden mindestens eine Option.",
   },
   {
     id: 1,
     unlockMin: 6,
     label: "Tipp 2",
     title: "Bio-Import oder regional & saisonal?",
-    body: "Beide Erdbeeren haben ihre Stärken: Die spanischen sind bio, die Schweizer sind regional und mitten in der Saison. Bio sagt etwas über den Anbau — aber nicht über Transport und Saison. Kurze Wege und Saisonware schlagen den Import meist deutlich.",
+    body: "Beide Erdbeeren haben ihre Stärken: Die spanischen sind bio, die Schweizer sind regional und mitten in der Saison. Bio sagt etwas über den Anbau, aber nicht über Transport und Saison. Kurze Wege und Saisonware schlagen den Import meist deutlich.",
   },
   {
     id: 2,
     unlockMin: 9,
     label: "Auflösung",
     title: "So geht's",
-    body: "Wähle Schweizer Erdbeeren (IP-Suisse), Schweizer Bio-Freiland-Eier und die Bio/Demeter-Zitrone aus Italien. Ergänze Mehl, Zucker, Salz, Butter, Vollrahm und Vanillezucker — für die gibt es je nur eine Option. Dann springt die Kasse an.",
+    body: "Wähle Schweizer Erdbeeren (IP-Suisse), Schweizer Bio-Freiland-Eier und die Bio/Demeter-Zitrone aus Italien. Ergänze Mehl, Zucker, Salz, Butter, Vollrahm und Vanillezucker, für die gibt es je nur eine Option. Dann springt die Kasse an.",
   },
 ];
 
@@ -232,8 +232,8 @@ function AktePage() {
           return (
           <InputCarousel
             kicker="Fachlicher Input · 3 Lernkarten"
-            title="Nachhaltig einkaufen — worauf es ankommt"
-            intro="Drei Grundregeln, die du gerade angewendet hast — und die der Rat heute Abend hören will:"
+            title="Nachhaltig einkaufen, worauf es ankommt"
+            intro="Drei Grundregeln, die du gerade angewendet hast, und die der Rat heute Abend hören will:"
             cards={[
               {
                 title: "Regional & saisonal einkaufen",
@@ -275,7 +275,7 @@ function AktePage() {
                 beobachtet haben. Dort findest du meinen Beobachtungsposten."
               </p>
               <p className="mt-3 font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
-                — E.
+               , E.
               </p>
             </div>
             <p className="mt-5 text-sm text-foreground/70">
@@ -307,7 +307,7 @@ function AktePage() {
         {envelope.dialog}
 
         <p className="mt-12 text-center font-mono-typed text-xs uppercase tracking-[0.2em] text-muted-foreground">
-          — Etappe 2 · Dorfladen Berger —
+         , Etappe 2 · Dorfladen Berger
         </p>
       </div>
 

@@ -70,7 +70,7 @@ export function usePersistentState<T>(
   return [value, set];
 }
 
-/** Set-Variante — JSON-Serialisierung als Array. */
+/** Set-Variante, JSON-Serialisierung als Array. */
 export function usePersistentSet<T>(
   key: string,
   initial: () => Set<T>,
