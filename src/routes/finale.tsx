@@ -6,7 +6,9 @@ import { PaperCard } from "@/components/case-file/PaperCard";
 import { Stamp } from "@/components/case-file/Stamp";
 import { StageGate } from "@/components/case-file/StageGate";
 import { getTotalRevealedHints } from "@/components/case-file/HintSystem";
-import { completeStage, finishGame, getHearingClock, getStartTs } from "@/lib/progress";
+import { completeStage, finishGame, getHearingClock, getStartTs, getEndTs } from "@/lib/progress";
+import { awardBadge } from "@/lib/badges";
+import { BadgeShowcase } from "@/components/case-file/BadgeShowcase";
 import { usePersistentState } from "@/lib/persist";
 import { cn } from "@/lib/utils";
 import { useScrollToTopOnChange } from "@/hooks/use-scroll-top";
@@ -394,6 +396,12 @@ function FinalePage() {
     if (status === "won") {
       completeStage(6);
       finishGame();
+      // Badge „Unter 60 Minuten": nur wenn die effektive Spielzeit < 60 min.
+      const start = getStartTs();
+      const end = getEndTs() ?? Date.now();
+      if (start && end - start < 60 * 60_000) {
+        awardBadge("unter-60");
+      }
     }
   }, [status]);
 
@@ -2260,6 +2268,8 @@ function OutroScreen() {
             </div>
           </div>
 
+
+          <BadgeShowcase />
 
           <div className="mt-8 flex justify-center">
             <Link
