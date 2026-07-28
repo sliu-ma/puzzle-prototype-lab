@@ -1359,6 +1359,7 @@ function ShortView({
 }) {
   const [text, setText] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [isOk, setIsOk] = useState(false);
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -1371,6 +1372,7 @@ function ShortView({
       return userNum !== null && aNum !== null && userNum === aNum;
     });
     setSubmitted(true);
+    setIsOk(ok);
     onResult(ok, text);
   };
 
@@ -1383,7 +1385,12 @@ function ShortView({
         onChange={(e) => setText(e.target.value)}
         disabled={submitted || answered}
         placeholder="Deine Antwort …"
-        className="w-full rounded-sm border border-border bg-paper-deep/30 px-4 py-3 font-serif text-[15px] focus:border-stamp focus:outline-none"
+        className={cn(
+          "w-full rounded-sm border bg-paper-deep/30 px-4 py-3 font-serif text-[15px] focus:outline-none",
+          submitted && isOk
+            ? "border-emerald-500/60 bg-emerald-500/10"
+            : "border-border focus:border-stamp",
+        )}
       />
       {!submitted && (
         <button
