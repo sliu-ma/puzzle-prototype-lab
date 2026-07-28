@@ -6,6 +6,13 @@ import {
   type Badge,
 } from "@/lib/badges";
 import { ChevronLeft, ChevronRight, Lock } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 
 function formatEarnedAt(d: Date | null): string {
@@ -23,7 +30,7 @@ function formatEarnedAt(d: Date | null): string {
   }
 }
 
-/** Karussell aller Badges — Klick öffnet Detailbereich mit Datum bzw. Kriterium. */
+/** Karussell aller Badges — Klick öffnet Detail-Dialog mit Datum bzw. Kriterium. */
 export function BadgeShowcase() {
   const earned = getEarnedBadges();
   const scrollerRef = useRef<HTMLDivElement>(null);
@@ -38,6 +45,10 @@ export function BadgeShowcase() {
     if (el)
       el.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
   };
+
+  const selectedHas = selected ? earned.has(selected.id) : false;
+  const selectedEarnedAt =
+    selected && selectedHas ? getBadgeEarnedAt(selected.id) : null;
 
   return (
     <div className="mt-8 rounded-sm border border-border bg-paper/60 p-5">
@@ -59,7 +70,6 @@ export function BadgeShowcase() {
         >
           {BADGES.map((b, i) => {
             const has = earned.has(b.id);
-            const isSelected = selected?.id === b.id;
             return (
               <button
                 key={b.id}
@@ -72,15 +82,12 @@ export function BadgeShowcase() {
                   scrollTo(i);
                 }}
                 className={cn(
-                  "w-[60%] max-w-[220px] shrink-0 snap-center rounded-sm border p-4 text-center transition-all sm:w-[220px]",
-                  has
-                    ? "border-emerald-500/40 bg-emerald-500/5 hover:-translate-y-0.5"
-                    : "border-border bg-secondary/40",
-                  isSelected && "ring-2 ring-stamp/60",
+                  "flex h-40 w-40 shrink-0 snap-center items-center justify-center rounded-sm p-3 transition-all sm:h-48 sm:w-48",
+                  has && "hover:-translate-y-0.5",
                 )}
                 aria-label={b.title}
               >
-                <div className="relative mx-auto h-28 w-28">
+                <div className="relative h-full w-full">
                   <img
                     src={b.imageUrl}
                     alt=""
@@ -91,18 +98,10 @@ export function BadgeShowcase() {
                   />
                   {!has && (
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <Lock className="h-6 w-6 text-muted-foreground" />
+                      <Lock className="h-7 w-7 text-muted-foreground" />
                     </div>
                   )}
                 </div>
-                <p
-                  className={cn(
-                    "mt-2 font-serif text-sm font-semibold leading-tight",
-                    has ? "text-foreground" : "text-muted-foreground",
-                  )}
-                >
-                  {b.title}
-                </p>
               </button>
             );
           })}
@@ -132,7 +131,6 @@ export function BadgeShowcase() {
         )}
       </div>
 
-      {/* Dots */}
       {BADGES.length > 1 && (
         <div className="mt-3 flex items-center justify-center gap-2">
           {BADGES.map((_, i) => (
@@ -150,52 +148,54 @@ export function BadgeShowcase() {
         </div>
       )}
 
-      {/* Detail */}
-      <div className="mt-5 min-h-[120px] rounded-sm border border-dashed border-border bg-paper p-4">
-        {selected ? (
-          (() => {
-            const has = earned.has(selected.id);
-            const earnedAt = has ? getBadgeEarnedAt(selected.id) : null;
-            return (
-              <div className="animate-fade-in">
-                <h4
+      <Dialog open={!!selected} onOpenChange={(o) => !o && setSelected(null)}>
+        <DialogContent className="max-w-sm">
+          {selected && (
+            <>
+              <div className="flex justify-center pt-2">
+                <div className="relative h-40 w-40">
+                  <img
+                    src={selected.imageUrl}
+                    alt=""
+                    className={cn(
+                      "h-full w-full object-contain",
+                      selectedHas ? "drop-shadow-md" : "grayscale opacity-40",
+                    )}
+                  />
+                  {!selectedHas && (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <Lock className="h-8 w-8 text-muted-foreground" />
+                    </div>
+                  )}
+                </div>
+              </div>
+              <DialogHeader>
+                <DialogTitle
                   className={cn(
-                    "font-serif text-lg font-bold",
-                    has ? "text-foreground" : "text-muted-foreground",
+                    "text-center font-serif text-xl",
+                    !selectedHas && "text-muted-foreground",
                   )}
                 >
                   {selected.title}
-                </h4>
-                {has ? (
-                  <>
-                    <p className="mt-1 font-serif text-sm text-foreground/85">
-                      {selected.description}
-                    </p>
-                    {earnedAt && (
-                      <p className="mt-3 font-mono-typed text-[11px] uppercase tracking-wider text-emerald-700">
-                        Erhalten am {formatEarnedAt(earnedAt)}
-                      </p>
-                    )}
-                  </>
-                ) : (
-                  <>
-                    <p className="mt-1 font-serif text-sm italic text-foreground/70">
-                      {selected.criteria}
-                    </p>
-                    <p className="mt-3 font-mono-typed text-[11px] uppercase tracking-wider text-muted-foreground">
-                      Noch nicht erhalten
-                    </p>
-                  </>
+                </DialogTitle>
+                <DialogDescription className="text-center font-serif text-[15px] text-foreground/85">
+                  {selectedHas ? selected.description : selected.criteria}
+                </DialogDescription>
+              </DialogHeader>
+              <p
+                className={cn(
+                  "text-center font-mono-typed text-[11px] uppercase tracking-wider",
+                  selectedHas ? "text-emerald-700" : "text-muted-foreground",
                 )}
-              </div>
-            );
-          })()
-        ) : (
-          <p className="font-serif text-sm italic text-foreground/60">
-            Wähle ein Badge, um mehr zu erfahren.
-          </p>
-        )}
-      </div>
+              >
+                {selectedHas && selectedEarnedAt
+                  ? `Erhalten am ${formatEarnedAt(selectedEarnedAt)}`
+                  : "Noch nicht erhalten"}
+              </p>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -7,7 +7,7 @@ import { Stamp } from "@/components/case-file/Stamp";
 import { StageGate } from "@/components/case-file/StageGate";
 import { getTotalRevealedHints } from "@/components/case-file/HintSystem";
 import { completeStage, finishGame, getHearingClock, getStartTs, getEndTs } from "@/lib/progress";
-import { awardBadge, getTotalHintsUsed } from "@/lib/badges";
+import { awardBadge } from "@/lib/badges";
 import { BadgeShowcase } from "@/components/case-file/BadgeShowcase";
 import { usePersistentState } from "@/lib/persist";
 import { cn } from "@/lib/utils";
@@ -401,9 +401,6 @@ function FinalePage() {
       const end = getEndTs() ?? Date.now();
       if (start && end - start < 60 * 60_000) {
         awardBadge("unter-60");
-      }
-      if (getTotalHintsUsed() < 3) {
-        awardBadge("sparsame-hinweise");
       }
     }
   }, [status]);
