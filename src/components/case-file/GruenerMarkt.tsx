@@ -29,6 +29,7 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
   );
   const [aktiveKat, setAktiveKat] = useState<Kategorie>("milch-eier");
   const [status, setStatus] = usePersistentState<Status>("akte-2-shop-status", "shop");
+  const [hadFail, setHadFail] = usePersistentState<boolean>("akte-2-had-fail", false);
 
   const [cartOpen, setCartOpen] = useState(false);
   const [detail, setDetail] = useState<Produkt | null>(null);
