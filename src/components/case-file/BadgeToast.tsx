@@ -40,6 +40,7 @@ function makePieces(n: number): Piece[] {
  */
 export function BadgeToast() {
   const [badge, setBadge] = useState<Badge | null>(null);
+  const [confettiOn, setConfettiOn] = useState(false);
   const pieces = useMemo(() => (badge ? makePieces(48) : []), [badge]);
 
   useEffect(() => {
@@ -47,6 +48,7 @@ export function BadgeToast() {
       const detail = (e as CustomEvent<Badge>).detail;
       if (!detail) return;
       setBadge(detail);
+      setConfettiOn(true);
       if (typeof navigator !== "undefined" && "vibrate" in navigator) {
         navigator.vibrate?.([40, 60, 40, 60, 120]);
       }
@@ -64,6 +66,12 @@ export function BadgeToast() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [badge]);
+
+  useEffect(() => {
+    if (!confettiOn) return;
+    const t = setTimeout(() => setConfettiOn(false), 4500);
+    return () => clearTimeout(t);
+  }, [confettiOn]);
 
   if (!badge) return null;
 
