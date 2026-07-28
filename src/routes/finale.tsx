@@ -402,6 +402,9 @@ function FinalePage() {
       if (start && end - start < 60 * 60_000) {
         awardBadge("unter-60");
       }
+      if (getTotalHintsUsed() < 3) {
+        awardBadge("sparsame-hinweise");
+      }
     }
   }, [status]);
 
