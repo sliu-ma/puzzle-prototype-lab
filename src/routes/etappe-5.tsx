@@ -99,6 +99,7 @@ function AktePage() {
   useEffect(() => {
     if (step === "naechstes") {
       completeStage(5);
+      tryAwardNoHintStage(5);
       if (getTotalHintsUsed() < 3) awardBadge("sparsame-hinweise");
     }
   }, [step]);
