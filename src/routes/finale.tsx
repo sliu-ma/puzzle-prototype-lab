@@ -258,7 +258,7 @@ function buildFragen(): Frage[] {
         "Wie viele der untersuchten Arten in der Schweiz stehen auf der Roten Liste?",
       optionen: ["Rund 1 von 20", "Rund 1 von 3", "Rund 1 von 100"],
       korrekt: 1,
-      erklaerung: "Rund ein Drittel. also 1 von 3. der untersuchten Arten ist gefährdet (BAFU).",
+      erklaerung: "Rund ein Drittel der untersuchten Arten ist gefährdet (BAFU).",
     },
 
     // F7 · Wohnen · Short
