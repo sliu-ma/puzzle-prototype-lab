@@ -123,12 +123,12 @@ export function BadgeToast() {
           ★ Badge freigeschaltet ★
         </p>
 
-        <div className="relative flex h-80 w-80 items-center justify-center sm:h-96 sm:w-96">
+        <div className="relative flex h-72 w-72 items-center justify-center sm:h-80 sm:w-80">
           {/* Badge */}
           <img
             src={badge.imageUrl}
             alt={badge.title}
-            className="relative h-80 w-80 object-contain animate-scale-in sm:h-96 sm:w-96"
+            className="relative h-72 w-72 object-contain animate-scale-in sm:h-80 sm:w-80"
             style={{
               animationDuration: "0.6s",
               filter: "drop-shadow(0 10px 25px rgba(224,182,74,0.55))",
