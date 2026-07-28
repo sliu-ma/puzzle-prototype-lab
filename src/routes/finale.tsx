@@ -394,6 +394,12 @@ function FinalePage() {
     if (status === "won") {
       completeStage(6);
       finishGame();
+      // Badge „Unter 60 Minuten": nur wenn die effektive Spielzeit < 60 min.
+      const start = getStartTs();
+      const end = getEndTs() ?? Date.now();
+      if (start && end - start < 60 * 60_000) {
+        awardBadge("unter-60");
+      }
     }
   }, [status]);
 
