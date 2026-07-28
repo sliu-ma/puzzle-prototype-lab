@@ -8,6 +8,7 @@ import { EnergyGame } from "@/components/case-file/EnergyGame";
 import { InputCarousel } from "@/components/case-file/InputCarousel";
 import { HintSystem, type Hint } from "@/components/case-file/HintSystem";
 import { completeStage, getFrozenClock } from "@/lib/progress";
+import { tryAwardNoHintStage } from "@/lib/badges";
 import { usePersistentState, usePersistentSet } from "@/lib/persist";
 import { useScrollToTopOnChange } from "@/hooks/use-scroll-top";
 
