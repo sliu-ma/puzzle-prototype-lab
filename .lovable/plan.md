@@ -1,43 +1,37 @@
 ## Ziel
-Ein erweiterbares Badge-System einführen. Beim Erreichen eines Badges erscheint eine kurze Animation (Badge-Grafik + Beschreibung). Am Ende (Outro nach dem Hearing) gibt es eine Übersicht aller erreichbaren Badges — freigeschaltete hervorgehoben, noch nicht erreichte ausgegraut.
-
-Erster Badge: **„Unter 60 Minuten"** — verliehen, wenn das Hearing erfolgreich abgeschlossen wird und die verstrichene Zeit seit Start < 60 Min ist.
+Zweites Badge einführen, Toast-Animation aufwerten, und die Badge-Übersicht im Outro als Karussell mit „Erhalten am"-Metadaten umbauen.
 
 ## Umsetzung
 
-### 1. Badge-Registry (`src/lib/badges.ts`, neu)
-- Typ `Badge = { id, title, description, criteria, svgAsset }`.
-- Registry-Array mit allen Badges (aktuell nur `unter-60`, weitere später ergänzbar).
-- Persistenz in `localStorage` unter `badges-earned` (Set von IDs).
-- Funktionen:
-  - `awardBadge(id)` → speichert, feuert Custom-Event `badge:earned` mit Badge-Daten (nur wenn noch nicht verliehen).
-  - `getEarnedBadges()`, `hasBadge(id)`.
-- `resetAll()` in `src/lib/progress.ts` räumt `badges-earned` mit auf.
+### 1. Neuer Badge „Sparsamer Ermittler" (`src/lib/badges.ts`)
+- Neuer Eintrag `sparsame-hinweise`: verliehen, wenn beim Bestehen des Hearings **weniger als 3 Hinweise** über alle fünf Etappen zusammen aufgedeckt wurden.
+- Persistenz-Format erweitern: statt `string[]` jetzt `{ id: string; earnedAt: string }[]` (ISO-Zeitstempel). `getEarnedBadges()` bleibt für Kompatibilität, dazu `getEarnedBadgeRecords()` und `getBadgeEarnedAt(id)`. Alte Einträge (nur IDs) werden beim Laden migriert (Datum = jetzt).
+- Neues Asset via `lovable-assets create` einbinden. Ich frage den Nutzer im Chat, ob er ein SVG hochlädt; bis dahin nutze ich das vorhandene `badge-unter60.svg.asset.json` als Platzhalter (klar dokumentiert).
 
-### 2. Asset
-- Das hochgeladene SVG `unter60.svg` als Projekt-Asset via `lovable-assets create` einbinden → `src/assets/badge-unter60.svg.asset.json`.
+### 2. Zählen der Hinweise
+- Hilfsfunktion `getTotalHintsUsed()` in `src/lib/progress.ts` (oder neben Badge-Logik): liest die fünf Keys `akte-00{1..5}-hints-start-revealed` aus `localStorage`, summiert die Array-Längen.
+- In `src/routes/finale.tsx` bei bestandenem Hearing zusätzlich zu `unter-60` prüfen: `if (getTotalHintsUsed() < 3) awardBadge("sparsame-hinweise")`.
+- `resetAll()` räumt bereits alle `-revealed`-Keys und `maya-badges-earned` mit auf — keine Änderung nötig.
 
-### 3. Animation-Komponente (`src/components/case-file/BadgeToast.tsx`, neu)
-- Globaler Listener auf `badge:earned`.
-- Zeigt bildschirmfüllendes, aber dezentes Overlay: Badge-SVG (scale-in + leichter Glanz), darunter Titel + Beschreibung.
-- Auto-Dismiss nach ~3.5 s, tap-to-dismiss.
-- Nutzt vorhandene Utility-Klassen (`animate-scale-in`, `animate-fade-in`) — keine neuen Keyframes nötig.
-- In `src/routes/__root.tsx` einmal mounten, damit es auf allen Seiten funktioniert.
+### 3. Toast-Animation aufwerten (`src/components/case-file/BadgeToast.tsx`)
+- Kein Auto-Dismiss mehr — nur Tap/Klick oder ESC schließt.
+- Aufwendigere Inszenierung, weiter mit vorhandenen Keyframes (`animate-scale-in`, `animate-fade-in`, `animate-pulse`) plus Tailwind-Utilities (`transition`, `duration`, `delay`):
+  - Dunkler Vollbild-Backdrop mit Blur + weichem Radial-Glow.
+  - Rotierender/pulsierender Strahlenkranz hinter dem Badge (CSS-Conic-Gradient + `animate-[spin_8s_linear_infinite]`).
+  - Badge-SVG mit gestaffeltem Einflug (Scale + leichte Rotation) und Drop-Shadow-Glow.
+  - Titel + Beschreibung „typen" verzögert ein (Sequenz per `animation-delay`).
+  - Sichtbarer „Weiter"-Button + Hinweis „Tippen zum Schliessen"; kein `setTimeout`-Autoclose.
+- Haptik bleibt.
 
-### 4. Vergabe des ersten Badges
-- In `src/routes/finale.tsx` an der Stelle, an der das Hearing als bestanden gilt (Outro-Trigger), prüfen:
-  - Startzeit aus dem bestehenden Timer (`src/lib/progress.ts`, `getStartTime()` bzw. Äquivalent) lesen.
-  - Wenn `now - start < 60 * 60 * 1000` → `awardBadge("unter-60")`.
-- Nur einmal, nicht im Review-Modus.
-
-### 5. Badge-Übersicht im Outro
-- Im Erfolgs-/Outro-Screen (nach dem Hearing in `src/routes/finale.tsx`) ein neues Panel „Deine Auszeichnungen":
-  - Grid aller Registry-Einträge.
-  - Freigeschaltete: farbiges SVG + Titel + Beschreibung.
-  - Nicht erreichte: gleiche Kachel, aber Graustufen/Opacity 40 %, Beschreibung als „Noch nicht erreicht".
-- So sieht man sofort, welche Badges es überhaupt gibt.
+### 4. Badge-Karussell im Outro (`src/components/case-file/BadgeShowcase.tsx`)
+- Umbau von Grid → horizontales Snap-Karussell (analog `InputCarousel`, `snap-x snap-mandatory`, Dots, keine externen Deps).
+- Zeigt **alle** Registry-Badges — nicht erreichte in Graustufen + Lock-Overlay, erreichte farbig.
+- Klick auf eine Kachel öffnet einen Detail-Bereich unter dem Karussell (bzw. Dialog):
+  - Bei erhalten: Titel, Beschreibung, „Erhalten am {Datum · Uhrzeit}" (aus `getBadgeEarnedAt`, formatiert mit `toLocaleString('de-CH')`).
+  - Bei nicht erhalten: Titel gedämpft, Kriterium („So bekommst du es"), Hinweis „Noch nicht erhalten".
+- Position/Header (Zähler `x / n`) bleibt.
 
 ## Nicht enthalten
-- Keine weiteren Badges — Struktur ist so gebaut, dass du sie mit einer Zeile in der Registry + einem `awardBadge(...)`-Aufruf ergänzen kannst.
-- Keine Änderungen an Scoring, Timer-Logik oder Etappen-Flow.
-- Kein Konfetti, keine Sounds.
+- Kein Redesign des Outros drumherum, keine neuen Sounds/Konfetti.
+- Keine Änderung an Scoring, Timer oder Etappen-Flow.
+- Zweiter Badge nutzt vorerst dieselbe Grafik; sobald du ein SVG lieferst, tausche ich es via `lovable-assets` aus.
