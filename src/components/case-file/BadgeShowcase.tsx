@@ -51,22 +51,21 @@ export function BadgeShowcase() {
     selected && selectedHas ? getBadgeEarnedAt(selected.id) : null;
 
   return (
-    <div className="mt-8 rounded-sm border border-border bg-paper/60 p-5">
-      <p className="font-mono-typed text-[10px] uppercase tracking-[0.3em] text-stamp">
-        Deine Auszeichnungen
-      </p>
-      <h3 className="mt-1 font-serif text-xl font-bold sm:text-2xl">
-        Badges ({earned.size} / {BADGES.length})
-      </h3>
-      <p className="mt-1 font-serif text-xs italic text-foreground/60">
-        Tippe auf ein Badge für Details.
-      </p>
+    <div className="mt-6 rounded-sm border border-border bg-paper/60 p-3">
+      <div className="flex items-baseline justify-between gap-2">
+        <h3 className="font-serif text-base font-bold sm:text-lg">
+          Badges ({earned.size} / {BADGES.length})
+        </h3>
+        <p className="font-mono-typed text-[9px] uppercase tracking-[0.25em] text-stamp">
+          Auszeichnungen
+        </p>
+      </div>
 
-      <div className="relative mt-5">
+      <div className="relative mt-2">
         <div
           ref={scrollerRef}
-          className="-mx-5 flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth px-5 pb-3 pt-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-          style={{ scrollPaddingInline: "1.25rem" }}
+          className="-mx-3 flex snap-x snap-mandatory gap-2 overflow-x-auto scroll-smooth px-3 pb-1 pt-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          style={{ scrollPaddingInline: "0.75rem" }}
         >
           {BADGES.map((b, i) => {
             const has = earned.has(b.id);
@@ -82,7 +81,7 @@ export function BadgeShowcase() {
                   scrollTo(i);
                 }}
                 className={cn(
-                  "flex h-40 w-40 shrink-0 snap-center items-center justify-center rounded-sm p-3 transition-all sm:h-48 sm:w-48",
+                  "flex h-24 w-24 shrink-0 snap-center items-center justify-center rounded-sm p-1.5 transition-all sm:h-28 sm:w-28",
                   has && "hover:-translate-y-0.5",
                 )}
                 aria-label={b.title}
@@ -98,7 +97,7 @@ export function BadgeShowcase() {
                   />
                   {!has && (
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <Lock className="h-7 w-7 text-muted-foreground" />
+                      <Lock className="h-5 w-5 text-muted-foreground" />
                     </div>
                   )}
                 </div>
@@ -114,25 +113,25 @@ export function BadgeShowcase() {
               aria-label="Vorheriges Badge"
               onClick={() => scrollTo(active - 1)}
               disabled={active === 0}
-              className="absolute left-0 top-1/2 hidden -translate-y-1/2 rounded-full border border-border bg-card p-1.5 shadow-sm hover:bg-secondary disabled:opacity-30 sm:block"
+              className="absolute left-0 top-1/2 hidden -translate-y-1/2 rounded-full border border-border bg-card p-1 shadow-sm hover:bg-secondary disabled:opacity-30 sm:block"
             >
-              <ChevronLeft className="h-4 w-4" />
+              <ChevronLeft className="h-3.5 w-3.5" />
             </button>
             <button
               type="button"
               aria-label="Nächstes Badge"
               onClick={() => scrollTo(active + 1)}
               disabled={active === BADGES.length - 1}
-              className="absolute right-0 top-1/2 hidden -translate-y-1/2 rounded-full border border-border bg-card p-1.5 shadow-sm hover:bg-secondary disabled:opacity-30 sm:block"
+              className="absolute right-0 top-1/2 hidden -translate-y-1/2 rounded-full border border-border bg-card p-1 shadow-sm hover:bg-secondary disabled:opacity-30 sm:block"
             >
-              <ChevronRight className="h-4 w-4" />
+              <ChevronRight className="h-3.5 w-3.5" />
             </button>
           </>
         )}
       </div>
 
       {BADGES.length > 1 && (
-        <div className="mt-3 flex items-center justify-center gap-2">
+        <div className="mt-2 flex items-center justify-center gap-1.5">
           {BADGES.map((_, i) => (
             <button
               key={i}
@@ -140,8 +139,8 @@ export function BadgeShowcase() {
               aria-label={`Badge ${i + 1}`}
               onClick={() => scrollTo(i)}
               className={cn(
-                "h-2 rounded-full transition-all",
-                i === active ? "w-6 bg-stamp" : "w-2 bg-border",
+                "h-1.5 rounded-full transition-all",
+                i === active ? "w-4 bg-stamp" : "w-1.5 bg-border",
               )}
             />
           ))}
