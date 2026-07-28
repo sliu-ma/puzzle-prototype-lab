@@ -1252,6 +1252,7 @@ function MultiView({
       selected.size === korrektSet.size &&
       [...selected].every((i) => korrektSet.has(i));
     setSubmitted(true);
+    setAllCorrect(isEqual);
     onResult(isEqual, [...selected]);
   };
 
@@ -1265,8 +1266,8 @@ function MultiView({
         {order.map((i) => {
           const opt = frage.optionen[i];
           const isSel = selected.has(i);
-          const isCorrect = frage.korrekt.includes(i);
           const reveal = submitted;
+          const showGreen = reveal && allCorrect && isSel;
           return (
             <button
               key={i}
@@ -1276,9 +1277,9 @@ function MultiView({
                 "flex items-center gap-3 rounded-sm border px-4 py-3 text-left font-serif text-[15px] transition-colors",
                 !reveal && isSel && "border-stamp bg-stamp/10",
                 !reveal && !isSel && "border-border bg-paper hover:bg-secondary",
-                reveal && isCorrect && "border-emerald-500/60 bg-emerald-500/10",
-                reveal && isSel && !isCorrect && "border-destructive/60 bg-destructive/10",
-                reveal && !isCorrect && !isSel && "border-border bg-paper opacity-60",
+                reveal && showGreen && "border-emerald-500/60 bg-emerald-500/10",
+                reveal && !showGreen && isSel && "border-stamp bg-stamp/10",
+                reveal && !showGreen && !isSel && "border-border bg-paper",
               )}
             >
               <span
@@ -1290,10 +1291,7 @@ function MultiView({
                 {isSel && "✓"}
               </span>
               <span className="flex-1">{opt}</span>
-              {reveal && isCorrect && <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-600" />}
-              {reveal && isSel && !isCorrect && (
-                <XCircle className="h-5 w-5 shrink-0 text-destructive" />
-              )}
+              {showGreen && <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-600" />}
             </button>
           );
         })}
