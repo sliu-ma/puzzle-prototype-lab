@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import type { Badge } from "@/lib/badges";
-import { Sparkles } from "lucide-react";
+
 
 const CONFETTI_COLORS = [
   "#8a1f1f", // stamp red
