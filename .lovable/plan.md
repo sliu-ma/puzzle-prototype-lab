@@ -1,28 +1,54 @@
-## Änderungen am Badge-System
+## Ziel
+Im Hearing (`src/routes/finale.tsx`) soll das farbliche Feedback vereinheitlicht werden:
 
-### 1. „Sparsamer Ermittler" nach Etappe 5 verleihen
-- In `src/routes/etappe-5.tsx` beim erfolgreichen Abschluss der Etappe (dort wo aktuell `markStageComplete(5)` bzw. der Erfolgs-Übergang läuft) einmalig prüfen: wenn `getTotalHintsUsed() < 3` und die Etappe frisch abgeschlossen wurde → `awardBadge("sparsame-hinweise")`.
-- Aus `src/routes/finale.tsx` (Bereich Sieg-Handling im Hearing) den `sparsame-hinweise`-Award entfernen — dort bleibt nur noch „unter-60".
-- Damit erscheinen die Badges nicht mehr gleichzeitig nach dem Hearing.
+- **Richtig** → die vom User gewählte/eingegebene Antwort wird **grün** hervorgehoben.
+- **Falsch** → **keine** rote Einfärbung auf den Antwortoptionen. Die falsche Antwort wird ausschliesslich über das bestehende **rote Feedback-Panel** unter der Frage (Rahmen + Erklärungstext aus `buildFeedback`) kommuniziert.
+- In **keinem** Fall wird die korrekte Antwort farblich verraten.
 
-### 2. Karussell im Outro vereinfachen (`BadgeShowcase.tsx`)
-- Kacheln enthalten nur noch das Badge-SVG (erhalten farbig, sonst grayscale + Lock-Overlay). Keine Titel/Texte mehr in der Kachel.
-- Klick auf ein Badge öffnet einen **Dialog** (shadcn `Dialog`) statt einer Detail-Sektion darunter:
-  - Erhalten: Badge-Bild groß, Titel, Beschreibung, „Erhalten am {Datum · Uhrzeit}".
-  - Nicht erhalten: Badge grau, Titel gedämpft, Kriterium („So bekommst du es"), Hinweis „Noch nicht erhalten".
-- Detail-Bereich unter dem Karussell entfällt komplett. Header + Dots bleiben.
+Damit müssen Schüler:innen bei einer falschen Antwort das Feedback-Panel lesen, um zu erfahren, was stimmt.
 
-### 3. Toast-Animation: Hintergrund + Konfetti (`BadgeToast.tsx`)
-- Backdrop wechselt von grün-lastig zu einem neutral-dunklen Look, der zu beiden Badges passt: dunkler Ink-/Slate-Overlay mit Blur + weichem, warmem Radial-Glow in Papierton (statt Emerald). Rotierender Strahlenkranz und Inner-Glow werden ebenfalls auf warm/neutral (Amber/Paper/Stamp) umgestellt, damit sie zu Gold-Badges passen und weder Gelb noch Grün dominieren.
-- Drop-Shadow des Badge-SVG in warmem Ton (statt Emerald-Glow).
-- **Konfetti** wird als weitere Ebene ergänzt: leichte, DOM-basierte Lösung ohne neue Dependency — ca. 40 absolut positionierte, farbige Rechtecke, die per CSS-Keyframe von oben nach unten fallen und dabei rotieren. Neue Keyframes werden lokal in `BadgeToast.tsx` per `<style>`-Tag mitgeliefert (keine `tailwind.config` nötig, da das Projekt Tailwind v4 ohne Config nutzt). Palette: Stamp-Rot, Kraft-Beige, Amber, Papercream — passend zum Design-System.
-- Verhalten unverändert: nur Tap/Klick/ESC schließt, Haptik bleibt.
+## Konkrete Änderungen pro Antworttyp (`src/routes/finale.tsx`)
 
-### 4. Nicht enthalten
-- Keine Änderungen an Badge-Logik, IDs, Persistenz oder Vergabekriterien außer dem Verschieben aus Punkt 1.
-- Keine neuen Sounds, keine neue Dependency (Konfetti bleibt CSS-only).
+### 1. Single Choice (`SingleView`)
+- Grüne Einfärbung der Option **nur** wenn User richtig geraten hat (seine eigene Wahl).
+- Keine rote Einfärbung mehr auf falscher User-Wahl, kein `XCircle`-Icon.
+- Kein Dimming (`opacity-60`) auf nicht gewählten Optionen.
+
+### 2. Multiple Choice (`MultiView`)
+- Nach `submit`: hat der User **exakt** die korrekte Auswahl getroffen, werden **seine** angekreuzten Optionen grün. Andernfalls bleiben alle Optionen visuell neutral (nur der bereits selektierte Zustand ist noch als „gecheckt" sichtbar). Keine rote Markierung. Kein Dimming.
+
+### 3. Either / Bildvergleich (`EitherView`)
+- Nur die vom User geklickte Karte wird grün, wenn korrekt. Sonst neutral. Keine rote Karte, keine grüne „richtige" Karte.
+
+### 4. Short Answer (`ShortView`)
+- Bei korrekter Eingabe: Input-Rahmen grün. Bei falscher Eingabe: Rahmen neutral. Keine rote Umrandung, keine Anzeige der Musterlösung – das rote Feedback-Panel bleibt der einzige Fehler-Hinweis.
+
+### 5. Match / Drag & Drop (`MatchView`)
+- Nach `submit`: bei `ok === true` werden alle Links-Kacheln grün. Bei `ok === false` bleiben alle Kacheln neutral (aktuelles Standard-Styling). Keine per-Paar-Einfärbung mehr, kein Rot.
+
+### 6. Order (`OrderView`)
+- Analog Match: bei komplett richtiger Reihenfolge werden alle Zeilen grün, sonst bleiben alle neutral. Kein Rot.
+
+### 7. Bucket Sort (`BucketView`)
+- Analog: bei komplett richtiger Zuordnung werden alle platzierten Items grün, sonst bleiben alle neutral. Kein Rot.
+
+### 8. Slider (`SliderView`)
+- Bei Treffer im Toleranzbereich: Wert-Anzeige/Rahmen grün.
+- Zeile 1946–1950 (Anzeige des Zielwerts) entfernen – die korrekte Antwort darf nicht verraten werden.
+- Bei Fehler: kein visuelles Highlight; Erklärung kommt nur aus dem Feedback-Panel.
+
+## Feedback-Panel (unter der Frage)
+Bleibt unverändert – zeigt weiterhin:
+- **Grüner** Rahmen + „Treffer · Barometer steigt" bei korrekter Antwort.
+- **Roter** Rahmen + „Fehler · Barometer fällt" + Erklärungstext bei falscher Antwort.
+
+Das ist der einzige „rote" Kanal in der neuen Version.
+
+## Nicht enthalten
+- Keine Änderungen an Scoring, Barometer, Badges, `buildFeedback`-Texten, Reihenfolge der Fragen oder anderen Etappen.
+- Keine strukturellen Umbauten – nur die `className`-Bedingungen der Reveal-Zustände sowie der zusätzliche `allCorrect`-Merker für Match/Order/Bucket.
 
 ## Technische Details
-- Neue Konfetti-Partikel: Array von ~40 Elementen, pro Partikel randomisierte `left`, `animationDelay`, `animationDuration` (2.2–3.8s), Farbe aus fixer Palette, `will-change: transform`. Keyframes `badge-confetti-fall` (translateY 0 → 110vh, rotate 0 → 720deg) im inline `<style>`.
-- Dialog: bestehender shadcn `Dialog` aus `@/components/ui/dialog`; kein Backdrop-Konflikt mit dem Toast, weil Toast und Outro-Dialog nie gleichzeitig sichtbar sind.
-- Award-Trigger Etappe 5: gate über `hasBadge("sparsame-hinweise")` bzw. das Idempotenz-Guard in `awardBadge`, damit ein Rückblick auf die Etappe das Badge nicht erneut auslöst.
+- Ausschliesslich Bearbeitung in `src/routes/finale.tsx`.
+- Muster: alle Reveal-Zweige der Form `reveal && isCorrect && "border-emerald-…"` bleiben nur, wenn `isMine`/`isSel` ebenfalls zutrifft. Alle `border-destructive/60 bg-destructive/10`-Zweige und die `XCircle`-Icons in den Optionslisten werden entfernt. `opacity-60`-Dimming auf nicht-gewählten Optionen entfällt.
+- Für Match/Order/Bucket wird nach `submit` ein `allCorrect: boolean`-State gesetzt und im JSX genutzt, um alle Kacheln uniform grün zu färben oder neutral zu lassen.
