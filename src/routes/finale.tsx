@@ -1821,8 +1821,7 @@ function BucketView({
               <h3 className="mb-2 text-center font-serif text-[13px] font-bold">{bucket.label}</h3>
               <div className="flex-1 space-y-1.5">
                 {assigned.map((it) => {
-                  const correct = submitted && placements[it.id] === frage.solution[it.id];
-                  const wrong = submitted && !correct;
+                  const showGreen = submitted && allOk;
                   return (
                     <div
                       key={it.id}
@@ -1831,9 +1830,9 @@ function BucketView({
                         "select-none touch-none rounded-sm border px-2 py-1.5 text-center font-serif text-[13px] transition-colors",
                         submitted ? "cursor-default" : "cursor-grab active:cursor-grabbing",
                         dragging === it.id && "opacity-40",
-                        !submitted && !correct && !wrong && "border-border bg-paper-deep/60",
-                        correct && "border-emerald-500/60 bg-emerald-500/10",
-                        wrong && "border-destructive/60 bg-destructive/10",
+                        !submitted && "border-border bg-paper-deep/60",
+                        submitted && !showGreen && "border-border bg-paper-deep/60",
+                        showGreen && "border-emerald-500/60 bg-emerald-500/10",
                       )}
                     >
                       {it.label}
