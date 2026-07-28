@@ -2269,6 +2269,8 @@ function OutroScreen() {
           </div>
 
 
+          <BadgeShowcase />
+
           <div className="mt-8 flex justify-center">
             <Link
               to="/"
