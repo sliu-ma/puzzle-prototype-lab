@@ -33,6 +33,13 @@ export const BADGES: Badge[] = [
       "Nimm über alle fünf Etappen zusammen weniger als drei Hinweise in Anspruch.",
     imageUrl: badgeWenigeHinweise.url,
   },
+  {
+    id: "erstes-ohne-hinweise",
+    title: "Ohne Hinweise",
+    description: "Eine Etappe komplett ohne einen einzigen Hinweis gelöst.",
+    criteria: "Löse mindestens eine Etappe, ohne einen Hinweis aufzudecken.",
+    imageUrl: badgeOhneHinweise.url,
+  },
 ];
 
 const KEY_EARNED = "maya-badges-earned";
