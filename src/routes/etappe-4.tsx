@@ -100,7 +100,10 @@ function AktePage() {
 
 
   useEffect(() => {
-    if (step === "naechstes") completeStage(4);
+    if (step === "naechstes") {
+      completeStage(4);
+      tryAwardNoHintStage(4);
+    }
   }, [step]);
 
   const goto = (s: Step) => {
