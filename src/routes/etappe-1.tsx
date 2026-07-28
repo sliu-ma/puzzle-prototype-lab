@@ -391,7 +391,7 @@ function AktePage() {
                 Auf der Rückseite des Bahntickets steht in Elviras Handschrift: „Frau Berger im Dorfladen wartet schon.
                 Sie hat etwas für dich vorbereitet."
               </p>
-              <p className="mt-3 font-mono-typed text-[10px] uppercase tracking-wider text-stamp">— E.</p>
+              <p className="mt-3 font-mono-typed text-[10px] uppercase tracking-wider text-stamp">E.</p>
             </div>
             <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
               <button
