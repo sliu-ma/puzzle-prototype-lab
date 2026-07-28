@@ -601,7 +601,7 @@ function FinalePage() {
                         ? handleWeiter
                         : status === "won" && review
                           ? () => setReview(false)
-                          : () => setErgebnisse((a) => [...a])
+                          : () => setResultRevealed(true)
                     }
                     className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
                   >
@@ -609,7 +609,7 @@ function FinalePage() {
                       ? "Nächste Frage →"
                       : status === "won" && review
                         ? "Zum Ergebnis →"
-                        : "Ergebnis ansehen →"}
+                        : "Zum Ergebnis →"}
                   </button>
                 </div>
               )}
