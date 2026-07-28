@@ -1208,16 +1208,12 @@ function SingleView({
             className={cn(
               "flex items-center justify-between gap-3 rounded-sm border px-4 py-3 text-left font-serif text-[15px] transition-colors",
               !reveal && "border-border bg-paper hover:bg-secondary",
-              reveal && isCorrect && "border-emerald-500/60 bg-emerald-500/10",
-              reveal && isMine && !isCorrect && "border-destructive/60 bg-destructive/10",
-              reveal && !isCorrect && !isMine && "border-border bg-paper opacity-60",
+              reveal && isMine && isCorrect && "border-emerald-500/60 bg-emerald-500/10",
+              reveal && !(isMine && isCorrect) && "border-border bg-paper",
             )}
           >
             <span>{opt}</span>
-            {reveal && isCorrect && <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-600" />}
-            {reveal && isMine && !isCorrect && (
-              <XCircle className="h-5 w-5 shrink-0 text-destructive" />
-            )}
+            {reveal && isMine && isCorrect && <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-600" />}
           </button>
         );
       })}
