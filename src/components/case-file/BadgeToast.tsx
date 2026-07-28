@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import type { Badge } from "@/lib/badges";
-import { Sparkles } from "lucide-react";
+
 
 const CONFETTI_COLORS = [
   "#8a1f1f", // stamp red
@@ -40,6 +40,7 @@ function makePieces(n: number): Piece[] {
  */
 export function BadgeToast() {
   const [badge, setBadge] = useState<Badge | null>(null);
+  const [confettiOn, setConfettiOn] = useState(false);
   const pieces = useMemo(() => (badge ? makePieces(48) : []), [badge]);
 
   useEffect(() => {
@@ -47,6 +48,7 @@ export function BadgeToast() {
       const detail = (e as CustomEvent<Badge>).detail;
       if (!detail) return;
       setBadge(detail);
+      setConfettiOn(true);
       if (typeof navigator !== "undefined" && "vibrate" in navigator) {
         navigator.vibrate?.([40, 60, 40, 60, 120]);
       }
@@ -64,6 +66,12 @@ export function BadgeToast() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [badge]);
+
+  useEffect(() => {
+    if (!confettiOn) return;
+    const t = setTimeout(() => setConfettiOn(false), 4500);
+    return () => clearTimeout(t);
+  }, [confettiOn]);
 
   if (!badge) return null;
 
@@ -83,62 +91,31 @@ export function BadgeToast() {
         }
       `}</style>
 
-      {/* Warm radial glow backdrop */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(circle at center, rgba(224,182,74,0.32) 0%, rgba(138,31,31,0.15) 40%, transparent 72%)",
-        }}
-      />
-
-      {/* Confetti layer */}
-      <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
-        {pieces.map((p, i) => (
-          <span
-            key={i}
-            className="absolute top-0 block"
-            style={{
-              left: `${p.left}%`,
-              width: p.size,
-              height: p.size * 0.4,
-              backgroundColor: p.color,
-              transform: `rotate(${p.rotate}deg)`,
-              animation: `badge-confetti-fall ${p.duration}s linear ${p.delay}s infinite`,
-              // @ts-expect-error CSS vars
-              "--drift": `${p.drift}px`,
-              "--spin": `${360 + Math.round(Math.random() * 720)}deg`,
-              borderRadius: 1,
-            }}
-          />
-        ))}
-      </div>
-
-      {/* Floating sparkles */}
-      <div aria-hidden className="pointer-events-none absolute inset-0">
-        {Array.from({ length: 12 }).map((_, i) => {
-          const left = (i * 73) % 100;
-          const top = (i * 47) % 100;
-          const delay = (i % 7) * 0.25;
-          const size = 10 + (i % 4) * 4;
-          return (
-            <Sparkles
+      {/* Confetti layer — only visible for a limited time */}
+      {confettiOn && (
+        <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+          {pieces.map((p, i) => (
+            <span
               key={i}
-              className="absolute text-amber-200/70 animate-pulse"
+              className="absolute top-0 block"
               style={{
-                left: `${left}%`,
-                top: `${top}%`,
-                width: size,
-                height: size,
-                animationDelay: `${delay}s`,
+                left: `${p.left}%`,
+                width: p.size,
+                height: p.size * 0.4,
+                backgroundColor: p.color,
+                transform: `rotate(${p.rotate}deg)`,
+                animation: `badge-confetti-fall ${p.duration}s linear ${p.delay}s forwards`,
+                // @ts-expect-error CSS vars
+                "--drift": `${p.drift}px`,
+                "--spin": `${360 + Math.round(Math.random() * 720)}deg`,
+                borderRadius: 1,
               }}
             />
-          );
-        })}
-      </div>
+          ))}
+        </div>
+      )}
 
-      <div className="relative flex max-w-sm flex-col items-center gap-4 text-center">
+      <div className="relative flex max-w-xs flex-col items-center gap-3 text-center">
         <p
           className="font-mono-typed text-[11px] uppercase tracking-[0.35em] text-amber-200 animate-fade-in"
           style={{ animationDelay: "0.05s", animationFillMode: "backwards" }}
@@ -146,29 +123,12 @@ export function BadgeToast() {
           ★ Badge freigeschaltet ★
         </p>
 
-        <div className="relative flex h-56 w-56 items-center justify-center sm:h-64 sm:w-64">
-          {/* Rotating conic ray-crown — warm palette */}
-          <div
-            aria-hidden
-            className="absolute inset-0 rounded-full opacity-70"
-            style={{
-              background:
-                "conic-gradient(from 0deg, rgba(224,182,74,0) 0deg, rgba(224,182,74,0.65) 30deg, rgba(224,182,74,0) 60deg, rgba(241,231,210,0.5) 120deg, rgba(224,182,74,0) 160deg, rgba(217,119,87,0.55) 210deg, rgba(224,182,74,0) 250deg, rgba(241,231,210,0.5) 310deg, rgba(224,182,74,0) 360deg)",
-              animation: "spin 8s linear infinite",
-              filter: "blur(6px)",
-            }}
-          />
-          {/* Pulsing inner glow */}
-          <div
-            aria-hidden
-            className="absolute inset-6 rounded-full blur-2xl animate-pulse"
-            style={{ backgroundColor: "rgba(224,182,74,0.35)" }}
-          />
+        <div className="relative flex h-36 w-36 items-center justify-center sm:h-40 sm:w-40">
           {/* Badge */}
           <img
             src={badge.imageUrl}
             alt={badge.title}
-            className="relative h-40 w-40 object-contain animate-scale-in sm:h-48 sm:w-48"
+            className="relative h-32 w-32 object-contain animate-scale-in sm:h-36 sm:w-36"
             style={{
               animationDuration: "0.6s",
               filter: "drop-shadow(0 10px 25px rgba(224,182,74,0.55))",
@@ -177,32 +137,21 @@ export function BadgeToast() {
         </div>
 
         <h2
-          className="font-serif text-3xl font-bold text-paper animate-fade-in"
-          style={{ animationDelay: "0.35s", animationFillMode: "backwards" }}
+          className="font-serif text-2xl font-bold text-paper animate-fade-in"
+          style={{ animationDelay: "0.25s", animationFillMode: "backwards" }}
         >
           {badge.title}
         </h2>
         <p
-          className="font-serif text-[15px] italic leading-relaxed text-paper/85 animate-fade-in"
-          style={{ animationDelay: "0.55s", animationFillMode: "backwards" }}
+          className="font-serif text-[14px] italic leading-relaxed text-paper/85 animate-fade-in"
+          style={{ animationDelay: "0.45s", animationFillMode: "backwards" }}
         >
           {badge.description}
         </p>
 
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            setBadge(null);
-          }}
-          className="mt-3 rounded-sm bg-paper px-6 py-2.5 font-serif text-sm font-semibold text-ink shadow-md transition-all hover:-translate-y-0.5 hover:shadow-lg animate-fade-in"
-          style={{ animationDelay: "0.75s", animationFillMode: "backwards" }}
-        >
-          Weiter
-        </button>
         <p
-          className="font-mono-typed text-[10px] uppercase tracking-wider text-paper/60 animate-fade-in"
-          style={{ animationDelay: "0.9s", animationFillMode: "backwards" }}
+          className="mt-1 font-mono-typed text-[10px] uppercase tracking-wider text-paper/60 animate-fade-in"
+          style={{ animationDelay: "0.7s", animationFillMode: "backwards" }}
         >
           Tippen zum Schliessen
         </p>
