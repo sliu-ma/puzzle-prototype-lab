@@ -1051,9 +1051,9 @@ function buildFeedback(frage: Frage, userAnswer: unknown, correct: boolean): str
       }
       if (frage.id === 6) {
         const map = [
-          "Zu optimistisch. es ist rund ein Drittel, nicht 1 von 20.",
-          "Richtig. rund ein Drittel der untersuchten Arten ist gefährdet.",
-          "Weit daneben. tatsächlich ist rund 1 von 3 Arten gefährdet, nicht 1 von 100.",
+          "Zu optimistisch: Es ist rund ein Drittel, nicht 1 von 20.",
+          "Richtig!",
+          "Weit daneben: Tatsächlich ist rund 1 von 3 Arten gefährdet, nicht 1 von 100.",
         ];
         return `${map[idx] ?? ""} ${frage.erklaerung}`.trim();
       }
