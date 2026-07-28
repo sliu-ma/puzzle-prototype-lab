@@ -1625,6 +1625,7 @@ function OrderView({
     [...frage.reihenfolge].reverse(),
   );
   const [submitted, setSubmitted] = useState(false);
+  const [allOk, setAllOk] = useState(false);
 
   const move = (i: number, dir: -1 | 1) => {
     if (submitted) return;
