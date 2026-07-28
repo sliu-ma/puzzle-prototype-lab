@@ -1785,6 +1785,7 @@ function BucketView({
     if (submitted || answered) return;
     const ok = frage.items.every((it) => placements[it.id] === frage.solution[it.id]);
     setSubmitted(true);
+    setAllOk(ok);
     onResult(ok, { ...placements });
   };
 
