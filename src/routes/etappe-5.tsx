@@ -13,7 +13,7 @@ import {
 } from "@/components/case-file/EnergietraegerCharts";
 import { HintSystem, type Hint } from "@/components/case-file/HintSystem";
 import { completeStage, getFrozenClock, getHearingClock } from "@/lib/progress";
-import { awardBadge, getTotalHintsUsed } from "@/lib/badges";
+import { awardBadge, getTotalHintsUsed, tryAwardNoHintStage } from "@/lib/badges";
 import { usePersistentState, usePersistentSet } from "@/lib/persist";
 
 import { cn } from "@/lib/utils";
