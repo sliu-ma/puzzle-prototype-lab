@@ -1064,7 +1064,7 @@ function buildFeedback(frage: Frage, userAnswer: unknown, correct: boolean): str
       const uebersehen = [...korrekt].filter((i) => !sel.has(i)).map((i) => frage.optionen[i]);
       const parts: string[] = [];
       if (falschGewaehlt.length) {
-        parts.push(`Fälschlich gewählt: ${falschGewaehlt.join(", ")}. „Zu viel Regen" ist keine Hauptursache des Biodiversitätsverlusts.`);
+        parts.push(`Fälschlich gewählt: ${falschGewaehlt.join(", ")}.`);
       }
       if (uebersehen.length) {
         parts.push(`Übersehen: ${uebersehen.join(", ")}.`);
