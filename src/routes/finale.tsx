@@ -1300,14 +1300,16 @@ function MultiView({
                 !reveal && isSel && "border-stamp bg-stamp/10",
                 !reveal && !isSel && "border-border bg-paper hover:bg-secondary",
                 reveal && showGreen && "border-emerald-500/60 bg-emerald-500/10",
-                reveal && !showGreen && isSel && "border-stamp bg-stamp/10",
-                reveal && !showGreen && !isSel && "border-border bg-paper",
+                reveal && !showGreen && "border-border bg-paper",
               )}
             >
               <span
                 className={cn(
                   "flex h-5 w-5 shrink-0 items-center justify-center rounded-sm border",
-                  isSel ? "border-stamp bg-stamp text-paper" : "border-border bg-paper",
+                  isSel && !reveal && "border-stamp bg-stamp text-paper",
+                  isSel && reveal && showGreen && "border-emerald-500/60 bg-emerald-500/10 text-emerald-700",
+                  isSel && reveal && !showGreen && "border-border bg-paper text-foreground/60",
+                  !isSel && "border-border bg-paper",
                 )}
               >
                 {isSel && "✓"}
