@@ -1656,16 +1656,15 @@ function OrderView({
       </p>
       <ol className="space-y-2">
         {order.map((id, i) => {
-          const correctHere = submitted && frage.reihenfolge[i] === id;
-          const wrongHere = submitted && !correctHere;
+          const showGreen = submitted && allOk;
           return (
             <li
               key={id}
               className={cn(
                 "flex items-center gap-2 rounded-sm border bg-paper px-3 py-2",
                 !submitted && "border-border",
-                correctHere && "border-emerald-500/60 bg-emerald-500/10",
-                wrongHere && "border-destructive/60 bg-destructive/10",
+                submitted && !showGreen && "border-border",
+                showGreen && "border-emerald-500/60 bg-emerald-500/10",
               )}
             >
               <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-stamp font-mono-typed text-xs font-bold text-paper">
