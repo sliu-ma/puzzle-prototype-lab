@@ -1509,8 +1509,7 @@ function MatchView({
           {linksShuffled.map((l) => {
             const paired = pairs[l.id];
             const isDragging = dragging === l.id;
-            const correct = submitted && paired === frage.paare[l.id];
-            const wrong = submitted && paired && paired !== frage.paare[l.id];
+            const showGreen = submitted && allOk;
             return (
               <div
                 key={l.id}
@@ -1520,8 +1519,8 @@ function MatchView({
                   submitted ? "cursor-default" : "cursor-grab active:cursor-grabbing",
                   isDragging && "opacity-40",
                   !submitted && !isDragging && "border-border bg-paper hover:bg-secondary",
-                  correct && "border-emerald-500/60 bg-emerald-500/10",
-                  wrong && "border-destructive/60 bg-destructive/10",
+                  submitted && !showGreen && "border-border bg-paper",
+                  showGreen && "border-emerald-500/60 bg-emerald-500/10",
                 )}
               >
                 <div className="flex items-center gap-2">
