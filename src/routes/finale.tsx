@@ -1725,6 +1725,7 @@ function BucketView({
     return initial;
   });
   const [submitted, setSubmitted] = useState(false);
+  const [allOk, setAllOk] = useState(false);
   const [dragging, setDragging] = useState<string | null>(null);
   const [ghost, setGhost] = useState<{ x: number; y: number } | null>(null);
   const [hoverTarget, setHoverTarget] = useState<string | null>(null);
