@@ -131,7 +131,6 @@ export function EnergyGame({ onErfolg }: { onErfolg: () => void }) {
       >
         Ziel: mind. <strong>{formatNumber(ENERGY_TARGET)} ESP</strong> sammeln, ohne das Budget zu sprengen.
         <span className="ml-1 text-foreground/60">
-          Tipp: Viele Punkte gibt es gratis — Gewohnheiten schlagen teure Geräte.
         </span>
         {erreicht && " ✓ Ziel erreicht — du kannst prüfen."}
       </div>
