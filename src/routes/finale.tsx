@@ -157,6 +157,27 @@ const SAISON_ANTWORTEN: Record<Season, string[]> = {
   ],
 };
 
+// Kuratierte Anzeigeliste ohne Ein-/Mehrzahl- und Schreibvarianten-Duplikate.
+// Wird ausschliesslich für Feedback-Texte verwendet; die Erkennung nutzt weiterhin SAISON_ANTWORTEN.
+const SAISON_ANZEIGE: Record<Season, string[]> = {
+  Winter: [
+    "Rosenkohl", "Äpfel", "Lauch", "Nüsslisalat", "Karotten", "Randen",
+    "Sellerie", "Pastinaken", "Chicorée", "Wirsing", "Rotkohl", "Zwiebeln", "Kartoffeln",
+  ],
+  Frühling: [
+    "Spargel", "Rhabarber", "Radieschen", "Spinat", "Lauch", "Nüsslisalat",
+    "Bärlauch", "Salat", "Kohlrabi", "Mangold", "Rucola",
+  ],
+  Sommer: [
+    "Erdbeeren", "Gurke", "Tomaten", "Zucchini", "Kirschen", "Aprikosen",
+    "Bohnen", "Salat", "Himbeeren", "Peperoni", "Melonen", "Mais", "Heidelbeeren",
+  ],
+  Herbst: [
+    "Kürbis", "Zwetschgen", "Äpfel", "Birnen", "Trauben", "Karotten",
+    "Randen", "Lauch", "Sellerie", "Rotkohl", "Wirsing", "Pilze",
+  ],
+};
+
 function capitalize(s: string): string {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
