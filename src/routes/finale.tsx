@@ -1234,6 +1234,7 @@ function MultiView({
   const order = useMemo(() => shuffleIndices(frage.optionen.length), [frage]);
   const [selected, setSelected] = useState<Set<number>>(new Set());
   const [submitted, setSubmitted] = useState(false);
+  const [allCorrect, setAllCorrect] = useState(false);
 
   const toggle = (i: number) => {
     if (submitted) return;
