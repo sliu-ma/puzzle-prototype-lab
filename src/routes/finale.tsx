@@ -248,7 +248,7 @@ function buildFragen(): Frage[] {
       frage: `Nenne ein Schweizer Saisongemüse oder eine Saisonfrucht im ${season}.`,
       akzeptiert: SAISON_ANTWORTEN[season],
       erklaerung:
-        `Im ${season} sind in der Schweiz z. B. ${SAISON_ANTWORTEN[season].slice(0, 4).map(capitalize).join(", ")} saisonal verfügbar.`,
+        `Im ${season} sind in der Schweiz z. B. ${SAISON_ANZEIGE[season].slice(0, 4).join(", ")} saisonal verfügbar.`,
     },
 
     // F5 · Biodiversität · Multi
