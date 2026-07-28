@@ -105,9 +105,11 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
 
     if (fehlend.length > 0 || schlechteImKorb.length > 0) {
       setFeedback(true);
+      setHadFail(true);
       return;
     }
     setFeedback(false);
+    if (!hadFail) awardBadge("erstversuch-konsum");
     setStatus("erfolg");
     setCartOpen(false);
     setTimeout(onErfolg, 1200);
