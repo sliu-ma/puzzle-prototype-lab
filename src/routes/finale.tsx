@@ -635,7 +635,7 @@ function FinalePage() {
         )}
 
 
-        {status === "lost" && (
+        {status === "lost" && resultRevealed && (
           <PaperCard rotate={0.3} tape="top-right">
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
               Der Rat ist nicht überzeugt
