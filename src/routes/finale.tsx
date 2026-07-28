@@ -1642,6 +1642,7 @@ function OrderView({
     if (submitted || answered) return;
     const ok = order.every((id, i) => id === frage.reihenfolge[i]);
     setSubmitted(true);
+    setAllOk(ok);
     onResult(ok, [...order]);
 
   };
