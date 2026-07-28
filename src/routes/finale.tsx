@@ -1420,6 +1420,7 @@ function MatchView({
   const rechtsShuffled = useMemo(() => shuffleArr(frage.rechts), [frage]);
   const [pairs, setPairs] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
+  const [allOk, setAllOk] = useState(false);
   const [dragging, setDragging] = useState<string | null>(null);
   const [ghost, setGhost] = useState<{ x: number; y: number } | null>(null);
   const [hoverRight, setHoverRight] = useState<string | null>(null);
