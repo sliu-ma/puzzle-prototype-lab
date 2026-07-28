@@ -2007,9 +2007,8 @@ function EitherView({
                 "flex flex-col items-center gap-2 rounded-sm border p-3 transition-colors",
                 !reveal && isMine && "border-stamp bg-stamp/10",
                 !reveal && !isMine && "border-border bg-paper hover:bg-secondary",
-                reveal && isCorrect && "border-emerald-500/60 bg-emerald-500/10",
-                reveal && isMine && !isCorrect && "border-destructive/60 bg-destructive/10",
-                reveal && !isCorrect && !isMine && "border-border bg-paper opacity-60",
+                reveal && isMine && isCorrect && "border-emerald-500/60 bg-emerald-500/10",
+                reveal && !(isMine && isCorrect) && "border-border bg-paper",
               )}
             >
               <img
@@ -2019,8 +2018,7 @@ function EitherView({
               />
               <div className="flex items-center gap-1.5 font-serif text-sm font-bold">
                 {opt.label}
-                {reveal && isCorrect && <CheckCircle2 className="h-4 w-4 text-emerald-600" />}
-                {reveal && isMine && !isCorrect && <XCircle className="h-4 w-4 text-destructive" />}
+                {reveal && isMine && isCorrect && <CheckCircle2 className="h-4 w-4 text-emerald-600" />}
               </div>
             </button>
           );
