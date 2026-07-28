@@ -617,7 +617,7 @@ function FinalePage() {
           </div>
         )}
 
-        {status === "won" && !review && (
+        {status === "won" && !review && resultRevealed && (
           <div className="space-y-4">
             <OutroScreen />
             <div className="flex justify-center">
