@@ -34,7 +34,7 @@ import {
 export const Route = createFileRoute("/etappe-3")({
   head: () => ({
     meta: [
-      { title: "Etappe 3 — Wald-Lichtung" },
+      { title: "Etappe 3, Wald-Lichtung" },
       {
         name: "description",
         content:
@@ -68,7 +68,7 @@ const HINTS_002: Hint[] = [
     unlockMin: 9,
     label: "Auflösung",
     title: "So geht's",
-    body: "Hinter der Kreuzotter (in der Schweiz stark gefährdet) stehen die Zahlen 1, 2 und 3. Aufsteigend ergibt das den Code 1 — 2 — 3.",
+    body: "Hinter der Kreuzotter (in der Schweiz stark gefährdet) stehen die Zahlen 1, 2 und 3. Aufsteigend ergibt das den Code 1, 2, 3.",
   },
 ];
 
@@ -78,7 +78,7 @@ function AkteGated() {
       <QRGate
         token={AKTE_002_TOKEN}
         storageKey="akte-002-unlocked"
-        title={<>Etappe 3 — QR-Code an der Hütte scannen</>}
+        title={<>Etappe 3, QR-Code an der Hütte scannen</>}
         description="Diese Etappe ist versiegelt. Scanne den QR-Code an Elviras Beobachtungsposten auf der Lichtung."
         label="Etappe 3 · Versiegelt"
       >
@@ -205,14 +205,14 @@ function AktePage() {
             </p>
             <blockquote className="mt-5 border-l-4 border-stamp pl-4 text-[15px] leading-relaxed">
               Am Waldrand entdeckt Maja rote Bänder an den Bäumen und ein Schild:
-              „Baubeginn – Zutritt verboten. Rodung ab Montag.“ Montag ist
+              „Baubeginn, Zutritt verboten. Rodung ab Montag.“ Montag ist
               übermorgen.
               <br />
               &nbsp;&nbsp;&nbsp;
               <br />
               Die Hütte steht noch. Im Beobachtungsposten liegen Fotokarten von
               Tieren und Elviras Beobachtungsbuch. Die letzten Einträge sind
-              auffällig kurz – einige Arten wurden seit Jahren nicht mehr
+              auffällig kurz, einige Arten wurden seit Jahren nicht mehr
               gesichtet.
               <br />
               &nbsp;&nbsp;&nbsp;
@@ -307,12 +307,12 @@ function AktePage() {
                 „Der erste Schritt beginnt zuhause. Ich habe im Haus Vorbereitungen getroffen. Nimm die Rechnungen mit und untersuche die Räume.“
               </p>
               <p className="mt-3 font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
-                — E.
+               , E.
               </p>
             </div>
             <p className="mt-5 text-sm text-foreground/70">
               Du wirfst einen letzten Blick auf das Bauschild, greifst die
-              Mappe — und rennst los.
+              Mappe, und rennst los.
             </p>
             <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
               <button
@@ -339,7 +339,7 @@ function AktePage() {
         )}
 
         <p className="mt-12 text-center font-mono-typed text-xs uppercase tracking-[0.2em] text-muted-foreground">
-          — Etappe 3 · Wald-Lichtung —
+         , Etappe 3 · Wald-Lichtung
         </p>
       </div>
 

@@ -1,4 +1,4 @@
-// Spielfortschritt (Team & Etappen) – clientseitig in localStorage.
+// Spielfortschritt (Team & Etappen), clientseitig in localStorage.
 // Linearer Ablauf: currentStage gibt an, welche Etappe als nächstes freigeschaltet ist.
 //   1 = Etappe 1 (Bahnhof)
 //   2 = Etappe 2 (Dorfladen)
@@ -123,7 +123,7 @@ export function isTimeUp(): boolean {
 /**
  * Einmalig eingefrorene Uhrzeit pro Schlüssel (localStorage).
  * Beim ersten Aufruf wird die aktuelle Zeit gespeichert und
- * bei weiteren Aufrufen zurückgegeben — so bleibt ein Zeitstempel
+ * bei weiteren Aufrufen zurückgegeben, so bleibt ein Zeitstempel
  * in einer Akte stabil, auch wenn die Karte erneut geöffnet wird.
  */
 export function getFrozenClock(key: string): string {

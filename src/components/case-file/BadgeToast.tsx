@@ -36,7 +36,7 @@ function makePieces(n: number): Piece[] {
 /**
  * Global gemountetes Overlay, das bei einem `badge:earned`-Event
  * eine pompöse Animation mit Badge-Grafik + Konfetti zeigt.
- * Kein Auto-Dismiss — nur Tap/Klick oder ESC schließt.
+ * Kein Auto-Dismiss, nur Tap/Klick oder ESC schließt.
  */
 export function BadgeToast() {
   const [badge, setBadge] = useState<Badge | null>(null);
@@ -91,7 +91,7 @@ export function BadgeToast() {
         }
       `}</style>
 
-      {/* Confetti layer — only visible for a limited time */}
+      {/* Confetti layer, only visible for a limited time */}
       {confettiOn && (
         <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
           {pieces.map((p, i) => (

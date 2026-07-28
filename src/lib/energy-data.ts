@@ -44,7 +44,7 @@ const fromPx = (xPx: number, yPx: number, wPx: number, hPx: number) => ({
 export const DEVICES: EnergyDevice[] = [
   {
     id: "tv",
-    name: "Schlafzimmer – Fernseher",
+    name: "Schlafzimmer, Fernseher",
     room: "Schlafzimmer",
     icon: "📺",
     ...fromPx(167, 802, 103, 107),
@@ -56,18 +56,18 @@ export const DEVICES: EnergyDevice[] = [
   },
   {
     id: "heating",
-    name: "Schlafzimmer – Raumtemperatur",
+    name: "Schlafzimmer, Raumtemperatur",
     room: "Schlafzimmer",
     icon: "🌡️",
     ...fromPx(368, 970, 94, 91),
     options: [
       { id: "22", label: "22 °C (aktuell)", description: "Angenehm warm, hoher Verbrauch.", cost: 0, energy: 0 },
-      { id: "20", label: "20 °C heizen", description: "Ein Pullover mehr — spart viel.", cost: 0, energy: 740 },
+      { id: "20", label: "20 °C heizen", description: "Ein Pullover mehr, spart viel.", cost: 0, energy: 740 },
     ],
   },
   {
     id: "shower",
-    name: "Bad – Dusche",
+    name: "Bad, Dusche",
     room: "Bad",
     icon: "🚿",
     ...fromPx(625, 800, 175, 340),
@@ -79,19 +79,19 @@ export const DEVICES: EnergyDevice[] = [
   },
   {
     id: "tumbler",
-    name: "Wäscheraum – Tumbler",
+    name: "Wäscheraum, Tumbler",
     room: "Wäscheraum",
     icon: "🌀",
     ...fromPx(354, 548, 137, 187),
     options: [
       { id: "alt", label: "Alter Tumbler", productName: "Heissluft-Otto", description: "Läuft nach jeder Wäsche.", cost: 0, energy: 0, energyLabel: "F" },
       { id: "neu", label: "Neues Gerät A", productName: "TrockenFix A", description: "Modernes A-Gerät, effizient aber teuer.", cost: 700, energy: 350, energyLabel: "A" },
-      { id: "aufhaengen", label: "Wäsche aufhängen", description: "Braucht Zeit, spart viel — gratis.", cost: 0, energy: 550 },
+      { id: "aufhaengen", label: "Wäsche aufhängen", description: "Braucht Zeit, spart viel, gratis.", cost: 0, energy: 550 },
     ],
   },
   {
     id: "washer",
-    name: "Wäscheraum – Waschmaschine",
+    name: "Wäscheraum, Waschmaschine",
     room: "Wäscheraum",
     icon: "🧺",
     ...fromPx(196, 540, 142, 196),
@@ -103,7 +103,7 @@ export const DEVICES: EnergyDevice[] = [
   },
   {
     id: "vacuum",
-    name: "Wäscheraum – Staubsauger",
+    name: "Wäscheraum, Staubsauger",
     room: "Wäscheraum",
     icon: "🧹",
     ...fromPx(625, 456, 159, 279),
@@ -115,7 +115,7 @@ export const DEVICES: EnergyDevice[] = [
   },
   {
     id: "light-living",
-    name: "Wohnzimmer – Lampe",
+    name: "Wohnzimmer, Lampe",
     room: "Wohnzimmer",
     icon: "💡",
     ...fromPx(510, 1267, 61, 134),
@@ -127,19 +127,19 @@ export const DEVICES: EnergyDevice[] = [
   },
   {
     id: "dishwasher",
-    name: "Küche – Geschirrspüler",
+    name: "Küche, Geschirrspüler",
     room: "Küche",
     icon: "🍽️",
     ...fromPx(257, 1377, 94, 137),
     options: [
       { id: "normal", label: "Geschirrspüler normal", description: "Standardprogramm.", cost: 0, energy: 0 },
       { id: "eco", label: "Geschirrspüler Eco", description: "Länger, aber sparsamer.", cost: 0, energy: 150 },
-      { id: "hand", label: "Von Hand abwaschen", description: "Braucht viel warmes Wasser — schlechter als der Geschirrspüler.", cost: 0, energy: -90 },
+      { id: "hand", label: "Von Hand abwaschen", description: "Braucht viel warmes Wasser, schlechter als der Geschirrspüler.", cost: 0, energy: -90 },
     ],
   },
   {
     id: "oven",
-    name: "Küche – Ofen",
+    name: "Küche, Ofen",
     room: "Küche",
     icon: "🍳",
     ...fromPx(362, 1376, 100, 136),
@@ -151,7 +151,7 @@ export const DEVICES: EnergyDevice[] = [
   },
   {
     id: "stove",
-    name: "Küche – Herd",
+    name: "Küche, Herd",
     room: "Küche",
     icon: "🔥",
     ...fromPx(363, 1311, 98, 50),
@@ -161,7 +161,7 @@ export const DEVICES: EnergyDevice[] = [
         label: "Kochen im Topf",
         options: [
           { id: "ohne", label: "Ohne Deckel (aktuell)", description: "Wärme entweicht.", cost: 0, energy: 0 },
-          { id: "deckel", label: "Mit Deckel kochen", description: "Wärme bleibt drin — gratis.", cost: 0, energy: 120 },
+          { id: "deckel", label: "Mit Deckel kochen", description: "Wärme bleibt drin, gratis.", cost: 0, energy: 120 },
         ],
       },
       {
@@ -185,13 +185,13 @@ export const DEVICES: EnergyDevice[] = [
   },
   {
     id: "fridge",
-    name: "Küche – Kühlschrank",
+    name: "Küche, Kühlschrank",
     room: "Küche",
     icon: "🧊",
     ...fromPx(156, 1212, 91, 300),
     options: [
       { id: "alt", label: "Altes Gerät", productName: "Frostbeule 1998", description: "Läuft rund um die Uhr.", cost: 0, energy: 0, energyLabel: "F" },
-      { id: "warm", label: "Temperatur 5 → 7 °C", description: "Zwei Grad wärmer — gratis.", cost: 0, energy: 90 },
+      { id: "warm", label: "Temperatur 5 → 7 °C", description: "Zwei Grad wärmer, gratis.", cost: 0, energy: 90 },
       { id: "neu", label: "Neues Gerät A", productName: "ArcticFresh A", description: "Hocheffizient, modernes A-Gerät.", cost: 1000, energy: 320, energyLabel: "A" },
     ],
   },

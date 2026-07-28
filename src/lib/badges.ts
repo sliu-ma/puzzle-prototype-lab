@@ -1,4 +1,4 @@
-// Badge-System — erweiterbar.
+// Badge-System, erweiterbar.
 // Neue Badges hier eintragen und mit `awardBadge(id)` verleihen.
 
 import badgeUnter60 from "@/assets/badge-unter60.svg.asset.json";
@@ -22,7 +22,7 @@ export const BADGES: Badge[] = [
     id: "unter-60",
     title: "Blitzermittlerin",
     description:
-      "Fall Thermika Ost in unter 60 Minuten geknackt — Maja hätte applaudiert.",
+      "Fall Thermika Ost in unter 60 Minuten geknackt, Maja hätte applaudiert.",
     criteria: "Bestehe das Hearing in weniger als 60 Minuten ab Spielstart.",
     imageUrl: badgeUnter60.url,
   },
@@ -39,7 +39,7 @@ export const BADGES: Badge[] = [
     id: "erstes-ohne-hinweise",
     title: "Solo-Spurensicherung",
     description:
-      "Eine ganze Etappe im Alleingang gelöst — kein einziger Tipp aufgedeckt.",
+      "Eine ganze Etappe im Alleingang gelöst, kein einziger Tipp aufgedeckt.",
     criteria: "Löse mindestens eine Etappe, ohne einen Hinweis aufzudecken.",
     imageUrl: badgeOhneHinweise.url,
   },
@@ -47,7 +47,7 @@ export const BADGES: Badge[] = [
     id: "erstversuch-konsum",
     title: "Perfekter Wocheneinkauf",
     description:
-      "Korb gepackt, Kasse geklingelt — beim ersten Versuch alles richtig regional, saisonal und fair.",
+      "Korb gepackt, Kasse geklingelt, beim ersten Versuch alles richtig regional, saisonal und fair.",
     criteria:
       "Bestehe den Konsum-Fall (Etappe 2) beim allerersten Druck auf „Bezahlen“.",
     imageUrl: badgeEinkauf.url,
@@ -117,7 +117,7 @@ export function getBadge(id: string): Badge | undefined {
 }
 
 /**
- * Verleiht ein Badge. Idempotent — feuert nur beim ersten Mal
+ * Verleiht ein Badge. Idempotent, feuert nur beim ersten Mal
  * ein `badge:earned`-Event mit dem Badge-Objekt als `detail`.
  */
 export function awardBadge(id: string) {

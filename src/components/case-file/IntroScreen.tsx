@@ -141,7 +141,7 @@ export function IntroScreen({
       color: "bg-emerald-100 text-emerald-700",
       icon: <Bird className="h-6 w-6" />,
       fact:
-        "War 40 Jahre lang Biologielehrerin an der Kanti. Steht seit ihrer Pensionierung fast täglich vor Sonnenaufgang auf, um Vögel zu zählen — und hat einen Ordner voller handgezeichneter Karten von Speicher.",
+        "War 40 Jahre lang Biologielehrerin an der Kanti. Steht seit ihrer Pensionierung fast täglich vor Sonnenaufgang auf, um Vögel zu zählen, und hat einen Ordner voller handgezeichneter Karten von Speicher.",
     },
   ];
 
@@ -210,21 +210,21 @@ export function IntroScreen({
               <li className="flex gap-3">
                 <Compass className="mt-0.5 h-5 w-5 shrink-0 text-stamp" />
                 <span>
-                  <strong>QR-Code scannen</strong> – jede Etappe startet mit einem
+                  <strong>QR-Code scannen</strong>, jede Etappe startet mit einem
                   Code, den ihr im Dorf findet.
                 </span>
               </li>
               <li className="flex gap-3">
                 <Search className="mt-0.5 h-5 w-5 shrink-0 text-stamp" />
                 <span>
-                  <strong>Rätsel lösen</strong> – lest genau, wählt bewusst.
+                  <strong>Rätsel lösen</strong>, lest genau, wählt bewusst.
                   Nach 3, 6 und 9 Minuten gibt es Tipps.
                 </span>
               </li>
               <li className="flex gap-3">
                 <Clock className="mt-0.5 h-5 w-5 shrink-0 text-stamp" />
                 <span>
-                  <strong>Zeit im Blick</strong> – um{" "}
+                  <strong>Zeit im Blick</strong>, um{" "}
                   {getHearingClock() ?? "19:00"} Uhr beginnt die
                   Gemeinderatssitzung. Bis dahin müsst ihr im Saal sein.
                 </span>
@@ -286,22 +286,22 @@ export function IntroScreen({
               <Mail className="mb-2 h-4 w-4 text-stamp" />
               <p>
                 „Liebe Maja, falls du das liest, bin ich gerade im Dorf
-                unterwegs. Du erinnerst dich an unsere Hütte im Wald – dort, wo
+                unterwegs. Du erinnerst dich an unsere Hütte im Wald, dort, wo
                 wir als Kind stundenlang Vögel beobachtet haben? Die Gemeinde
                 sucht wegen drohender Stromengpässe dringend nach Lösungen und
                 plant dort ein neues <strong>Gaskraftwerk</strong>. Heute Abend
                 um <strong>{getHearingClock() ?? "19:00"} Uhr</strong> findet
-                die Gemeinderatssitzung statt – dann wird abgestimmt.
+                die Gemeinderatssitzung statt, dann wird abgestimmt.
               </p>
               <p className="mt-3">
                 Ich bin sicher, dass wir mit den richtigen Fakten eine viel
                 nachhaltigere Lösung für Speicher zeigen können! Ich bin
                 unterwegs und sammle die letzten Daten. Kannst du mir helfen?
-                Fang am <strong>alten Bahnhof</strong> an – dort liegt ein
+                Fang am <strong>alten Bahnhof</strong> an, dort liegt ein
                 Hinweis für dich."
               </p>
               <p className="mt-4 text-right italic text-foreground/70">
-                – Elvira
+               , Elvira
               </p>
             </div>
           </PaperCard>

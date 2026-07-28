@@ -4,11 +4,11 @@ import { PaperCard } from "./PaperCard";
 import { Stamp } from "./Stamp";
 import { cn } from "@/lib/utils";
 
-// Default für Etappe 1 — bewusst NICHT im UI angezeigt.
+// Default für Etappe 1, bewusst NICHT im UI angezeigt.
 const DEFAULT_TOKEN = "CpZk0z9RaQkL22gtiWoR";
 const DEFAULT_STORAGE_KEY = "akte-001-unlocked";
 
-// Hash zur Persistenz – wir speichern nicht den Klartext-Token im LocalStorage.
+// Hash zur Persistenz, wir speichern nicht den Klartext-Token im LocalStorage.
 async function sha256(text: string): Promise<string> {
   const buf = new TextEncoder().encode(text);
   const hash = await crypto.subtle.digest("SHA-256", buf);
@@ -106,13 +106,13 @@ function classifyError(diag: DiagnosticInfo): {
     return {
       headline: "Lovable Builder blockiert die Kamera",
       detail:
-        "Die Preview im Builder läuft in einem iframe ohne Kamera-Freigabe (Permissions-Policy). Öffne die Preview in einem neuen Tab oder nutze die veröffentlichte Version — dort funktioniert der Scanner.",
+        "Die Preview im Builder läuft in einem iframe ohne Kamera-Freigabe (Permissions-Policy). Öffne die Preview in einem neuen Tab oder nutze die veröffentlichte Version, dort funktioniert der Scanner.",
       builderBlocked: true,
     };
   }
 
   if (diag.name === "NotAllowedError" && diag.isIframe) {
-    // Häufig meldet Chrome im iframe generisch „Permission denied" — trotzdem meist Policy
+    // Häufig meldet Chrome im iframe generisch „Permission denied", trotzdem meist Policy
     return {
       headline: "Kamera in dieser Vorschau blockiert",
       detail:

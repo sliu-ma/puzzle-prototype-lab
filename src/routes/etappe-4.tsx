@@ -33,7 +33,7 @@ const HINTS_004: Hint[] = [
     id: 1,
     unlockMin: 6,
     label: "Tipp 2",
-    title: "Gewohnheiten sind gratis — und stark",
+    title: "Gewohnheiten sind gratis, und stark",
     body: "18 °C heizen, kurz duschen, Wäsche aufhängen, Eco-Programme, Deckel auf den Topf, Kühlschrank auf 7 °C: alles kostet 0 CHF und bringt zusammen schon fast die 3'500 ESP.",
   },
   {
@@ -41,18 +41,18 @@ const HINTS_004: Hint[] = [
     unlockMin: 9,
     label: "Auflösung",
     title: "So erreichst du die 3'500 ESP",
-    body: "Nur mit Verhalten: 18 °C (1480) + 5-Min-Dusche (820) + Aufhängen (550) + Eco-Waschen (340) + Eco-Spülen (150) + Umluft (20) + Deckel + Pfannengrösse (220) + Kühlschrank 7 °C (90) = ~3'670 ESP. Ergänze eine LED-Lampe (60 CHF) oder Sparbrause (30 CHF) — Budget bleibt fast unangetastet.",
+    body: "Nur mit Verhalten: 18 °C (1480) + 5-Min-Dusche (820) + Aufhängen (550) + Eco-Waschen (340) + Eco-Spülen (150) + Umluft (20) + Deckel + Pfannengrösse (220) + Kühlschrank 7 °C (90) = ~3'670 ESP. Ergänze eine LED-Lampe (60 CHF) oder Sparbrause (30 CHF), Budget bleibt fast unangetastet.",
   },
 ];
 
 export const Route = createFileRoute("/etappe-4")({
   head: () => ({
     meta: [
-      { title: "Etappe 4 — Elviras Haus" },
+      { title: "Etappe 4, Elviras Haus" },
       {
         name: "description",
         content:
-          "Etappe 4: Zurück bei Elvira. Eine Querschnittszeichnung des Hauses, alte Rechnungen — und das Ziel: 3'500 Energiesparpunkte sammeln.",
+          "Etappe 4: Zurück bei Elvira. Eine Querschnittszeichnung des Hauses, alte Rechnungen, und das Ziel: 3'500 Energiesparpunkte sammeln.",
       },
     ],
   }),
@@ -67,7 +67,7 @@ function AkteGated() {
       <QRGate
         token={AKTE_004_TOKEN}
         storageKey="akte-004-unlocked"
-        title={<>Etappe 4 — QR-Code in Elviras Haus scannen</>}
+        title={<>Etappe 4, QR-Code in Elviras Haus scannen</>}
         description="Diese Etappe ist versiegelt. Scanne den QR-Code, der bei Elvira auf dem Küchentisch liegt."
         label="Etappe 4 · Versiegelt"
       >
@@ -382,7 +382,7 @@ function AktePage() {
         )}
 
         <p className="mt-12 text-center font-mono-typed text-xs uppercase tracking-[0.2em] text-muted-foreground">
-          — Etappe 4 · Elviras Haus —
+         , Etappe 4 · Elviras Haus
         </p>
       </div>
 

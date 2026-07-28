@@ -34,13 +34,13 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Wo ist Maya? — Ein Escape-Room über Nachhaltigkeit" },
+      { title: "Wo ist Maya?, Ein Escape-Room über Nachhaltigkeit" },
       {
         name: "description",
         content:
           "Maya ist verschwunden. Übernimm ihre Akte und finde heraus, was sie über nachhaltigen Konsum entdeckt hat. Bildungs-Escape-Room auf Deutsch.",
       },
-      { property: "og:title", content: "Wo ist Maya? — Ein Escape-Room über Nachhaltigkeit" },
+      { property: "og:title", content: "Wo ist Maya?, Ein Escape-Room über Nachhaltigkeit" },
       {
         property: "og:description",
         content:
@@ -48,7 +48,7 @@ export const Route = createRootRoute({
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Wo ist Maya? — Ein Escape-Room über Nachhaltigkeit" },
+      { name: "twitter:title", content: "Wo ist Maya?, Ein Escape-Room über Nachhaltigkeit" },
       { name: "description", content: "Build interactive educational escape rooms with a canvas-based design tool." },
       { property: "og:description", content: "Build interactive educational escape rooms with a canvas-based design tool." },
       { name: "twitter:description", content: "Build interactive educational escape rooms with a canvas-based design tool." },

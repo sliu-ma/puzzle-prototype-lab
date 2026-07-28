@@ -135,7 +135,7 @@ export const ROUTES: RouteOption[] = [
       "Direkt Genève → St. Gallen mit IC 1, Umstieg auf S21 nach Speicher. Eine Verbindung, ein Ticket.",
     correct: true,
     warum:
-      "Der Zug verursacht in der Schweiz pro Person und km die geringsten Treibhausgase — etwa 1/30 eines Flugs auf gleicher Strecke. Schweizer Strommix ist grossteils erneuerbar.",
+      "Der Zug verursacht in der Schweiz pro Person und km die geringsten Treibhausgase, etwa 1/30 eines Flugs auf gleicher Strecke. Schweizer Strommix ist grossteils erneuerbar.",
     legs: [
       {
         kind: "transport",
@@ -197,7 +197,7 @@ export const ROUTES: RouteOption[] = [
     preis: "CHF 271",
     co2Kg: 92,
     beschreibung:
-      "Mietwagen oder Privatauto via A1 — Lausanne, Bern, Zürich, St. Gallen.",
+      "Mietwagen oder Privatauto via A1, Lausanne, Bern, Zürich, St. Gallen.",
     correct: false,
     warum:
       "Ein Benziner stösst rund 13-mal mehr CO₂ pro Person aus als der Zug. Dazu kommen Stau-Risiko, Parkplatzsuche und Flächenverbrauch.",
@@ -236,7 +236,7 @@ export const ROUTES: RouteOption[] = [
     preis: "CHF 276",
     co2Kg: 140,
     beschreibung:
-      "Genève → Flughafen, Inlandflug nach Zürich, dann mit IC 5 + S21 weiter. Klingt schnell — ist es kaum.",
+      "Genève → Flughafen, Inlandflug nach Zürich, dann mit IC 5 + S21 weiter. Klingt schnell, ist es kaum.",
     correct: false,
     warum:
       "Inlandflüge sind die klimaschädlichste Variante: Start/Landung verbrauchen die meiste Energie. Zeitersparnis liegt Tür-zu-Tür praktisch bei Null.",

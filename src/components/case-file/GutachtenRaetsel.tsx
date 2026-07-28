@@ -212,7 +212,7 @@ export function GutachtenRaetsel({ onErfolg }: { onErfolg: () => void }) {
   const tutorialSteps: TutorialStep[] = [
     {
       targetRef: faktenRef,
-      text: "Marlenes Faktenkarte – ihre unabhängig geprüften Vergleichsdaten. Nutze sie zum Abgleich.",
+      text: "Marlenes Faktenkarte, ihre unabhängig geprüften Vergleichsdaten. Nutze sie zum Abgleich.",
       placement: "auto",
     },
     {

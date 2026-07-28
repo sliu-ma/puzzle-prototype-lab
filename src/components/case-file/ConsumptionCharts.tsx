@@ -88,9 +88,9 @@ function seasonRangeLabel(months: number[]): string {
     const idx = sorted.findIndex((m, i) => i > 0 && m - sorted[i - 1] > 1);
     const start = sorted[idx];
     const end = sorted[idx - 1];
-    return `${names[start - 1]} – ${names[end - 1]}`;
+    return `${names[start - 1]}, ${names[end - 1]}`;
   }
-  return `${names[sorted[0] - 1]} – ${names[sorted[sorted.length - 1] - 1]}`;
+  return `${names[sorted[0] - 1]}, ${names[sorted[sorted.length - 1] - 1]}`;
 }
 
 function MonthBar({ months }: { months: number[] }) {

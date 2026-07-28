@@ -23,7 +23,7 @@ import { useScrollToTopOnChange } from "@/hooks/use-scroll-top";
 export const Route = createFileRoute("/etappe-5")({
   head: () => ({
     meta: [
-      { title: "Etappe 5 — Altes Wasserkraftwerk" },
+      { title: "Etappe 5, Altes Wasserkraftwerk" },
       {
         name: "description",
         content:
@@ -56,7 +56,7 @@ const HINTS_005: Hint[] = [
     unlockMin: 9,
     label: "Auflösung",
     title: "Die fünf Fehler",
-    body: 'Gutachten A (Gas): „95 g CO₂/kWh — nahezu klimaneutral". Gutachten B (Kohle): „78 % Wirkungsgrad" und „Kohle ist eine erneuerbare Brückentechnologie". Gutachten C (Solar): „Volllaststunden im Schweizer Mittelland 250 h/Jahr" (real ≈ 900–1\'100 h/Jahr) und „Batteriespeicher halten etwa 8 Jahre" (real ≈ 15–25 Jahre).',
+    body: 'Gutachten A (Gas): „95 g CO₂/kWh, nahezu klimaneutral". Gutachten B (Kohle): „78 % Wirkungsgrad" und „Kohle ist eine erneuerbare Brückentechnologie". Gutachten C (Solar): „Volllaststunden im Schweizer Mittelland 250 h/Jahr" (real ≈ 900–1\'100 h/Jahr) und „Batteriespeicher halten etwa 8 Jahre" (real ≈ 15–25 Jahre).',
   },
 ];
 
@@ -66,7 +66,7 @@ function AkteGated() {
       <QRGate
         token={AKTE_005_TOKEN}
         storageKey="akte-005-unlocked"
-        title={<>Etappe 5 — QR-Code am Wasserkraftwerk scannen</>}
+        title={<>Etappe 5, QR-Code am Wasserkraftwerk scannen</>}
         description="Letzte Etappe vor dem Hearing. Scanne den QR-Code am Tor des alten Wasserkraftwerks."
         label="Etappe 5 · Versiegelt"
       >
@@ -231,7 +231,7 @@ function AktePage() {
           <InputCarousel
             kicker="Fachlicher Input · Energieträger"
             title="Was wirklich nachhaltig ist"
-            intro="Drei Blickwinkel auf unsere Energie — an ihnen entscheidet sich, was im Hearing zählt:"
+            intro="Drei Blickwinkel auf unsere Energie, an ihnen entscheidet sich, was im Hearing zählt:"
             cards={[
               {
                 title: "Vergleich Energieträger",
@@ -265,15 +265,15 @@ function AktePage() {
             </h2>
             <div className="mt-4 rounded-sm border border-dashed border-stamp/40 bg-paper-deep/30 p-5">
               <p className="font-serif italic leading-relaxed">
-                Mit den korrigierten Gutachten, den Rechnungen und Elviras Notizen im Rucksack rennt ihr zum Gemeindesaal. Kurz davor kommt euch Tante Elvira entgegen – atemlos, mit einem Stapel Papiere in der Hand. „Maja! Ich habe noch die letzten Messdaten vom Bachamt. Jetzt haben wir alles, was wir brauchen!“
+                Mit den korrigierten Gutachten, den Rechnungen und Elviras Notizen im Rucksack rennt ihr zum Gemeindesaal. Kurz davor kommt euch Tante Elvira entgegen, atemlos, mit einem Stapel Papiere in der Hand. „Maja! Ich habe noch die letzten Messdaten vom Bachamt. Jetzt haben wir alles, was wir brauchen!“
               </p>
               <p className="mt-3 font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
-                — E.
+               , E.
               </p>
             </div>
             <p className="mt-5 text-sm text-foreground/70">
               Im Hearing stellt der Rat dir zehn Fragen aus allen fünf Themen.
-              Max. 3 Fehler — sonst kippt die Abstimmung.
+              Max. 3 Fehler, sonst kippt die Abstimmung.
             </p>
             <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
               <Link
@@ -293,7 +293,7 @@ function AktePage() {
         )}
 
         <p className="mt-12 text-center font-mono-typed text-xs uppercase tracking-[0.2em] text-muted-foreground">
-          — Etappe 5 · Altes Wasserkraftwerk —
+         , Etappe 5 · Altes Wasserkraftwerk
         </p>
       </div>
 

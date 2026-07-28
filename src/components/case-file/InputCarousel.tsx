@@ -109,7 +109,7 @@ export function InputCarousel({
         <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">{title}</h2>
         <p className="mt-3 text-foreground/80">{intro}</p>
 
-        {/* Swipe explainer — nur auf Mobile */}
+        {/* Swipe explainer, nur auf Mobile */}
         <div className="mt-5 flex items-center justify-between gap-3 rounded-sm border border-dashed border-stamp/40 bg-stamp/5 px-3 py-2 md:hidden">
           <div className="flex items-center gap-2 font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
             <Hand className="h-3.5 w-3.5" />
@@ -123,7 +123,7 @@ export function InputCarousel({
           </div>
         </div>
 
-        {/* Desktop/Tablet: Grid — Mobile: Carousel */}
+        {/* Desktop/Tablet: Grid, Mobile: Carousel */}
         <div className="relative mt-4">
           <div
             ref={scrollerRef}
@@ -179,14 +179,14 @@ export function InputCarousel({
 
 
 
-          {/* First-time floating hint — nur Mobile */}
+          {/* First-time floating hint, nur Mobile */}
           {showFirstHint && !isLast && (
             <div className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-ink px-3 py-2 font-mono-typed text-[10px] uppercase tracking-wider text-paper shadow-lg animate-pulse md:hidden">
               👉 Wischen
             </div>
           )}
 
-          {/* Desktop arrows — nur wenn nicht Grid (also sm bis md), hier komplett aus */}
+          {/* Desktop arrows, nur wenn nicht Grid (also sm bis md), hier komplett aus */}
           <button
             type="button"
             aria-label="Vorherige Karte"
@@ -207,7 +207,7 @@ export function InputCarousel({
           </button>
         </div>
 
-        {/* Dots — nur Mobile */}
+        {/* Dots, nur Mobile */}
         <div className="mt-3 flex items-center justify-center gap-2 md:hidden">
           {cards.map((_, i) => (
             <button
