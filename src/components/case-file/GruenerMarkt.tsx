@@ -12,6 +12,7 @@ import {
   type Produkt,
 } from "@/lib/maya-data";
 import { ProduktDetailDialog } from "./ProduktDetailDialog";
+import { awardBadge } from "@/lib/badges";
 import { MarketTutorial, type TutorialStep } from "./MarketTutorial";
 
 interface GruenerMarktProps {
@@ -28,6 +29,7 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
   );
   const [aktiveKat, setAktiveKat] = useState<Kategorie>("milch-eier");
   const [status, setStatus] = usePersistentState<Status>("akte-2-shop-status", "shop");
+  const [hadFail, setHadFail] = usePersistentState<boolean>("akte-2-had-fail", false);
 
   const [cartOpen, setCartOpen] = useState(false);
   const [detail, setDetail] = useState<Produkt | null>(null);
@@ -103,9 +105,11 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
 
     if (fehlend.length > 0 || schlechteImKorb.length > 0) {
       setFeedback(true);
+      setHadFail(true);
       return;
     }
     setFeedback(false);
+    if (!hadFail) awardBadge("erstversuch-konsum");
     setStatus("erfolg");
     setCartOpen(false);
     setTimeout(onErfolg, 1200);

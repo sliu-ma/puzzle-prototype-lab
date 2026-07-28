@@ -4,6 +4,7 @@
 import badgeUnter60 from "@/assets/badge-unter60.svg.asset.json";
 import badgeWenigeHinweise from "@/assets/badge-wenige-hinweise.svg.asset.json";
 import badgeOhneHinweise from "@/assets/badge-ohne-hinweise.svg.asset.json";
+import badgeEinkauf from "@/assets/badge-einkauf.svg.asset.json";
 
 export type Badge = {
   id: string;
@@ -19,26 +20,37 @@ export type BadgeRecord = { id: string; earnedAt: string };
 export const BADGES: Badge[] = [
   {
     id: "unter-60",
-    title: "Unter 60 Minuten",
-    description: "Das Hearing in weniger als einer Stunde bestanden.",
-    criteria: "Löse alle Etappen und bestehe das Hearing in unter 60 Minuten.",
+    title: "Blitzermittlerin",
+    description:
+      "Fall Thermika Ost in unter 60 Minuten geknackt — Maja hätte applaudiert.",
+    criteria: "Bestehe das Hearing in weniger als 60 Minuten ab Spielstart.",
     imageUrl: badgeUnter60.url,
   },
   {
     id: "sparsame-hinweise",
-    title: "Sparsamer Ermittler",
+    title: "Kalter Kaffee, klarer Kopf",
     description:
-      "Mit weniger als drei Hinweisen durch alle fünf Etappen zum Hearing.",
+      "Fünf Etappen, kaum Tipps: Diese Ermittlerin liest zwischen den Zeilen.",
     criteria:
       "Nimm über alle fünf Etappen zusammen weniger als drei Hinweise in Anspruch.",
     imageUrl: badgeWenigeHinweise.url,
   },
   {
     id: "erstes-ohne-hinweise",
-    title: "Ohne Hinweise",
-    description: "Eine Etappe komplett ohne einen einzigen Hinweis gelöst.",
+    title: "Solo-Spurensicherung",
+    description:
+      "Eine ganze Etappe im Alleingang gelöst — kein einziger Tipp aufgedeckt.",
     criteria: "Löse mindestens eine Etappe, ohne einen Hinweis aufzudecken.",
     imageUrl: badgeOhneHinweise.url,
+  },
+  {
+    id: "erstversuch-konsum",
+    title: "Perfekter Wocheneinkauf",
+    description:
+      "Korb gepackt, Kasse geklingelt — beim ersten Versuch alles richtig regional, saisonal und fair.",
+    criteria:
+      "Bestehe den Konsum-Fall (Etappe 2) beim allerersten Druck auf „Bezahlen“.",
+    imageUrl: badgeEinkauf.url,
   },
 ];
 
