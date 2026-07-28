@@ -157,6 +157,27 @@ const SAISON_ANTWORTEN: Record<Season, string[]> = {
   ],
 };
 
+// Kuratierte Anzeigeliste ohne Ein-/Mehrzahl- und Schreibvarianten-Duplikate.
+// Wird ausschliesslich für Feedback-Texte verwendet; die Erkennung nutzt weiterhin SAISON_ANTWORTEN.
+const SAISON_ANZEIGE: Record<Season, string[]> = {
+  Winter: [
+    "Rosenkohl", "Äpfel", "Lauch", "Nüsslisalat", "Karotten", "Randen",
+    "Sellerie", "Pastinaken", "Chicorée", "Wirsing", "Rotkohl", "Zwiebeln", "Kartoffeln",
+  ],
+  Frühling: [
+    "Spargel", "Rhabarber", "Radieschen", "Spinat", "Lauch", "Nüsslisalat",
+    "Bärlauch", "Salat", "Kohlrabi", "Mangold", "Rucola",
+  ],
+  Sommer: [
+    "Erdbeeren", "Gurke", "Tomaten", "Zucchini", "Kirschen", "Aprikosen",
+    "Bohnen", "Salat", "Himbeeren", "Peperoni", "Melonen", "Mais", "Heidelbeeren",
+  ],
+  Herbst: [
+    "Kürbis", "Zwetschgen", "Äpfel", "Birnen", "Trauben", "Karotten",
+    "Randen", "Lauch", "Sellerie", "Rotkohl", "Wirsing", "Pilze",
+  ],
+};
+
 function capitalize(s: string): string {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
@@ -227,7 +248,7 @@ function buildFragen(): Frage[] {
       frage: `Nenne ein Schweizer Saisongemüse oder eine Saisonfrucht im ${season}.`,
       akzeptiert: SAISON_ANTWORTEN[season],
       erklaerung:
-        `Im ${season} sind in der Schweiz z. B. ${SAISON_ANTWORTEN[season].slice(0, 4).map(capitalize).join(", ")} saisonal verfügbar.`,
+        `Im ${season} sind in der Schweiz z. B. ${SAISON_ANZEIGE[season].slice(0, 4).join(", ")} saisonal verfügbar.`,
     },
 
     // F5 · Biodiversität · Multi
@@ -359,6 +380,7 @@ function FinalePage() {
   const [pulse, setPulse] = useState<null | "up" | "down">(null);
   const [review, setReview] = useState(false);
   const [showRules, setShowRules] = useState(false);
+  const [resultRevealed, setResultRevealed] = useState(false);
 
 
 
@@ -440,6 +462,7 @@ function FinalePage() {
     setShowRules(true);
     setResetKey((k) => k + 1);
     setPulse(null);
+    setResultRevealed(false);
   };
 
   const frage = FRAGEN[aktuell];
@@ -490,7 +513,7 @@ function FinalePage() {
           <RulesOverlay onClose={() => setShowRules(false)} />
         )}
 
-        {(status === "running" || (status === "won" && review)) && started && !(status === "running" && showRules) && (
+        {((status === "running" && !showRules) || (status !== "running" && !resultRevealed) || (status === "won" && review)) && started && (
           <div className="space-y-4" key={`run-${resetKey}`}>
             {status === "won" && review && (
               <div className="flex flex-wrap items-center justify-between gap-2 rounded-sm border border-emerald-500/40 bg-emerald-500/5 px-3 py-2">
@@ -578,7 +601,7 @@ function FinalePage() {
                         ? handleWeiter
                         : status === "won" && review
                           ? () => setReview(false)
-                          : () => setErgebnisse((a) => [...a])
+                          : () => setResultRevealed(true)
                     }
                     className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
                   >
@@ -586,7 +609,7 @@ function FinalePage() {
                       ? "Nächste Frage →"
                       : status === "won" && review
                         ? "Zum Ergebnis →"
-                        : "Ergebnis ansehen →"}
+                        : "Zum Ergebnis →"}
                   </button>
                 </div>
               )}
@@ -594,7 +617,7 @@ function FinalePage() {
           </div>
         )}
 
-        {status === "won" && !review && (
+        {status === "won" && !review && resultRevealed && (
           <div className="space-y-4">
             <OutroScreen />
             <div className="flex justify-center">
@@ -612,7 +635,7 @@ function FinalePage() {
         )}
 
 
-        {status === "lost" && (
+        {status === "lost" && resultRevealed && (
           <PaperCard rotate={0.3} tape="top-right">
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
               Der Rat ist nicht überzeugt
@@ -1043,7 +1066,7 @@ function buildFeedback(frage: Frage, userAnswer: unknown, correct: boolean): str
       const uebersehen = [...korrekt].filter((i) => !sel.has(i)).map((i) => frage.optionen[i]);
       const parts: string[] = [];
       if (falschGewaehlt.length) {
-        parts.push(`Fälschlich gewählt: ${falschGewaehlt.join(", ")}. „Zu viel Regen" ist keine Hauptursache des Biodiversitätsverlusts.`);
+        parts.push(`Fälschlich gewählt: ${falschGewaehlt.join(", ")}.`);
       }
       if (uebersehen.length) {
         parts.push(`Übersehen: ${uebersehen.join(", ")}.`);
@@ -1055,7 +1078,7 @@ function buildFeedback(frage: Frage, userAnswer: unknown, correct: boolean): str
       const text = typeof userAnswer === "string" ? userAnswer.trim() : "";
       if (frage.id === 4) {
         const season = currentSeason();
-        const beispiele = SAISON_ANTWORTEN[season].slice(0, 5).map(capitalize).join(", ");
+        const beispiele = SAISON_ANZEIGE[season].slice(0, 5).join(", ");
         if (correct) {
           return `Richtig. „${capitalize(text)}" hat im ${season} in der Schweiz Saison. Weitere Beispiele: ${beispiele}.`;
         }
@@ -1279,14 +1302,16 @@ function MultiView({
                 !reveal && isSel && "border-stamp bg-stamp/10",
                 !reveal && !isSel && "border-border bg-paper hover:bg-secondary",
                 reveal && showGreen && "border-emerald-500/60 bg-emerald-500/10",
-                reveal && !showGreen && isSel && "border-stamp bg-stamp/10",
-                reveal && !showGreen && !isSel && "border-border bg-paper",
+                reveal && !showGreen && "border-border bg-paper",
               )}
             >
               <span
                 className={cn(
                   "flex h-5 w-5 shrink-0 items-center justify-center rounded-sm border",
-                  isSel ? "border-stamp bg-stamp text-paper" : "border-border bg-paper",
+                  isSel && !reveal && "border-stamp bg-stamp text-paper",
+                  isSel && reveal && showGreen && "border-emerald-500/60 bg-emerald-500/10 text-emerald-700",
+                  isSel && reveal && !showGreen && "border-border bg-paper text-foreground/60",
+                  !isSel && "border-border bg-paper",
                 )}
               >
                 {isSel && "✓"}

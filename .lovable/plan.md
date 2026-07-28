@@ -1,54 +1,51 @@
-## Ziel
-Im Hearing (`src/routes/finale.tsx`) soll das farbliche Feedback vereinheitlicht werden:
+## Änderungen in `src/routes/finale.tsx`
 
-- **Richtig** → die vom User gewählte/eingegebene Antwort wird **grün** hervorgehoben.
-- **Falsch** → **keine** rote Einfärbung auf den Antwortoptionen. Die falsche Antwort wird ausschliesslich über das bestehende **rote Feedback-Panel** unter der Frage (Rahmen + Erklärungstext aus `buildFeedback`) kommuniziert.
-- In **keinem** Fall wird die korrekte Antwort farblich verraten.
+### 1. Multiple-Choice: nur „grün oder neutral"
 
-Damit müssen Schüler:innen bei einer falschen Antwort das Feedback-Panel lesen, um zu erfahren, was stimmt.
+**Problem:** In `MultiView` behalten falsch gewählte Optionen nach dem Absenden weiterhin die stamp-Hervorhebung (`border-stamp bg-stamp/10`). Erwartet ist: entweder alle eigenen Antworten grün (bei Volltreffer) oder alles neutral.
 
-## Konkrete Änderungen pro Antworttyp (`src/routes/finale.tsx`)
+**Fix in `MultiView` (ca. Zeile 1272-1284):**
+- Bei `submitted && !allCorrect` alle Optionen komplett neutral rendern (`border-border bg-paper`), unabhängig davon, ob der User sie ausgewählt hatte.
+- Checkbox-Icon rechts (`✓`) im nicht-korrekten Endzustand ebenfalls neutralisieren.
+- Grüner Zustand bleibt nur, wenn `allCorrect === true` und Option ausgewählt war.
 
-### 1. Single Choice (`SingleView`)
-- Grüne Einfärbung der Option **nur** wenn User richtig geraten hat (seine eigene Wahl).
-- Keine rote Einfärbung mehr auf falscher User-Wahl, kein `XCircle`-Icon.
-- Kein Dimming (`opacity-60`) auf nicht gewählten Optionen.
+`SingleView` wird gleich mitgeprüft: das aktuelle Verhalten (nur bei richtiger Wahl grün, sonst neutral) bleibt bestehen. Die Erklärung wird bereits über `buildFeedback` im roten Feedback-Panel angezeigt, das gilt für beide Views.
 
-### 2. Multiple Choice (`MultiView`)
-- Nach `submit`: hat der User **exakt** die korrekte Auswahl getroffen, werden **seine** angekreuzten Optionen grün. Andernfalls bleiben alle Optionen visuell neutral (nur der bereits selektierte Zustand ist noch als „gecheckt" sichtbar). Keine rote Markierung. Kein Dimming.
+### 2. Feedback-Duplikation bei Biodiversitäts-Ursachen (F5)
 
-### 3. Either / Bildvergleich (`EitherView`)
-- Nur die vom User geklickte Karte wird grün, wenn korrekt. Sonst neutral. Keine rote Karte, keine grüne „richtige" Karte.
+**Problem:** In `buildFeedback` (Zeile 1046) ist der Satz „„Zu viel Regen" ist keine Hauptursache …" bereits fest eingebaut, gleichzeitig steht derselbe Kern in `frage.erklaerung` (Zeile 249). Ergebnis: doppelt.
 
-### 4. Short Answer (`ShortView`)
-- Bei korrekter Eingabe: Input-Rahmen grün. Bei falscher Eingabe: Rahmen neutral. Keine rote Umrandung, keine Anzeige der Musterlösung – das rote Feedback-Panel bleibt der einzige Fehler-Hinweis.
+**Fix:** Zeile 1046 kürzen auf reines
+```
+Fälschlich gewählt: <Optionen>.
+```
+Die inhaltliche Aufklärung liefert danach `frage.erklaerung` einmalig.
 
-### 5. Match / Drag & Drop (`MatchView`)
-- Nach `submit`: bei `ok === true` werden alle Links-Kacheln grün. Bei `ok === false` bleiben alle Kacheln neutral (aktuelles Standard-Styling). Keine per-Paar-Einfärbung mehr, kein Rot.
+### 3. Feedback der letzten Frage vor dem Outro anzeigen
 
-### 6. Order (`OrderView`)
-- Analog Match: bei komplett richtiger Reihenfolge werden alle Zeilen grün, sonst bleiben alle neutral. Kein Rot.
+**Problem:** Sobald die letzte Frage beantwortet wird, wechselt `status` sofort auf `won`/`lost` und der Screen springt direkt zum `OutroScreen` bzw. „Versuch es nochmals". Der Nutzer sieht das Feedback der letzten Frage nicht.
 
-### 7. Bucket Sort (`BucketView`)
-- Analog: bei komplett richtiger Zuordnung werden alle platzierten Items grün, sonst bleiben alle neutral. Kein Rot.
+**Fix in der Render-Logik (ca. Zeile 493-612):**
+- Neuer lokaler State `showResult` (default `false`).
+- Solange `showResult === false`, wird die Fragenansicht mit Feedback-Panel weiterhin angezeigt, auch wenn `status !== "running"`.
+- Der Weiter-Button auf der letzten Frage bekommt den Text „Zum Ergebnis →" und setzt `showResult = true` beim Klick.
+- Erst dann wird `OutroScreen` (bei `won`) bzw. der Lost-Screen (bei `lost`) gerendert.
+- `reset()` setzt `showResult` wieder auf `false`.
 
-### 8. Slider (`SliderView`)
-- Bei Treffer im Toleranzbereich: Wert-Anzeige/Rahmen grün.
-- Zeile 1946–1950 (Anzeige des Zielwerts) entfernen – die korrekte Antwort darf nicht verraten werden.
-- Bei Fehler: kein visuelles Highlight; Erklärung kommt nur aus dem Feedback-Panel.
+Alle anderen Zweige (Zurück-Navigation, Review-Modus) bleiben unverändert.
 
-## Feedback-Panel (unter der Frage)
-Bleibt unverändert – zeigt weiterhin:
-- **Grüner** Rahmen + „Treffer · Barometer steigt" bei korrekter Antwort.
-- **Roter** Rahmen + „Fehler · Barometer fällt" + Erklärungstext bei falscher Antwort.
+### 4. Saison-Feedback: Ein- und Mehrzahl-Duplikate entfernen
 
-Das ist der einzige „rote" Kanal in der neuen Version.
+**Problem:** `SAISON_ANTWORTEN` enthält bewusst Singular- und Pluralformen sowie ae/ä-Varianten für die Erkennung. Das Feedback nutzt aber `SAISON_ANTWORTEN[season].slice(0, 5)`, wodurch z. B. „Erdbeere, Erdbeeren" und „Apfel, Äpfel, Aepfel" doppelt/dreifach erscheinen.
 
-## Nicht enthalten
-- Keine Änderungen an Scoring, Barometer, Badges, `buildFeedback`-Texten, Reihenfolge der Fragen oder anderen Etappen.
-- Keine strukturellen Umbauten – nur die `className`-Bedingungen der Reveal-Zustände sowie der zusätzliche `allCorrect`-Merker für Match/Order/Bucket.
+**Fix:**
+- Neue kuratierte Anzeige-Liste `SAISON_ANZEIGE: Record<Season, string[]>` mit je nur einer Schreibweise pro Frucht/Gemüse (z. B. Winter: `Rosenkohl, Äpfel, Lauch, Nüsslisalat, Karotten, Randen, Sellerie, Pastinaken, Chicorée, Wirsing, Rotkohl, Zwiebeln, Kartoffeln`; analog für Frühling/Sommer/Herbst).
+- `erklaerung` in F4 (Zeile 229-230) verwendet `SAISON_ANZEIGE[season].slice(0, 4)`.
+- `buildFeedback`-Zweig für `frage.id === 4` (Zeile 1058) verwendet `SAISON_ANZEIGE[season].slice(0, 5)`.
+- `SAISON_ANTWORTEN` bleibt unverändert (weiterhin für die Eingabe-Erkennung inkl. Erdbeere/Erdbeeren).
 
-## Technische Details
-- Ausschliesslich Bearbeitung in `src/routes/finale.tsx`.
-- Muster: alle Reveal-Zweige der Form `reveal && isCorrect && "border-emerald-…"` bleiben nur, wenn `isMine`/`isSel` ebenfalls zutrifft. Alle `border-destructive/60 bg-destructive/10`-Zweige und die `XCircle`-Icons in den Optionslisten werden entfernt. `opacity-60`-Dimming auf nicht-gewählten Optionen entfällt.
-- Für Match/Order/Bucket wird nach `submit` ein `allCorrect: boolean`-State gesetzt und im JSX genutzt, um alle Kacheln uniform grün zu färben oder neutral zu lassen.
+Ich prüfe zusätzlich weitere Feedback-Texte in `buildFeedback` auf ähnliche Duplikate (Match/Bucket geben aktuell keine `erklaerung` doppelt aus, das ist konsistent).
+
+## Nicht betroffen
+
+Sonstige Views (Match, Order, Bucket, Either, Slider, Short), Story-Texte, Badges, Timer, Progress-Tracking, andere Etappen.
