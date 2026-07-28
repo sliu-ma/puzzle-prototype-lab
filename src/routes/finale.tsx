@@ -462,6 +462,7 @@ function FinalePage() {
     setShowRules(true);
     setResetKey((k) => k + 1);
     setPulse(null);
+    setResultRevealed(false);
   };
 
   const frage = FRAGEN[aktuell];
