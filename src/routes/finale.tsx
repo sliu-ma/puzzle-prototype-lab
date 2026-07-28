@@ -513,7 +513,7 @@ function FinalePage() {
           <RulesOverlay onClose={() => setShowRules(false)} />
         )}
 
-        {(status === "running" || (status === "won" && review)) && started && !(status === "running" && showRules) && (
+        {((status === "running" && !showRules) || (status !== "running" && !resultRevealed) || (status === "won" && review)) && started && (
           <div className="space-y-4" key={`run-${resetKey}`}>
             {status === "won" && review && (
               <div className="flex flex-wrap items-center justify-between gap-2 rounded-sm border border-emerald-500/40 bg-emerald-500/5 px-3 py-2">
