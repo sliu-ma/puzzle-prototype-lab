@@ -109,7 +109,13 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
       return;
     }
     setFeedback(false);
-    if (!hadFail) awardBadge("erstversuch-konsum");
+    // Badge wird erst am Ende der Etappe vergeben, damit die "Gelöst"-Animation
+    // nicht mit der Badge-Animation kollidiert. Wir merken uns nur die Berechtigung.
+    if (!hadFail) {
+      try {
+        localStorage.setItem("akte-2-perfect-eligible", "1");
+      } catch {}
+    }
     setStatus("erfolg");
     setCartOpen(false);
     setTimeout(onErfolg, 1200);
