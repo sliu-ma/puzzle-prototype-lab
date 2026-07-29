@@ -91,7 +91,7 @@ const DORFLADEN_HINTS: Hint[] = [
 function AktePage() {
   const navigate = useNavigate();
   const envelope = useEnvelopePrompt();
-  const { burst, celebrate } = useSuccessBurst();
+  const { burst, celebrate } = useSuccessBurst({ stageNr: 2 });
   const [step, setStep] = usePersistentState<Step>("akte-2-step", "brief");
   useScrollToTopOnChange(step);
   const [unlockedSteps, setUnlockedSteps] = usePersistentSet<Step>(
