@@ -86,7 +86,7 @@ const STEPS: { id: Step; label: string }[] = [
 ];
 
 function AktePage() {
-  const { burst, celebrate } = useSuccessBurst();
+  const { burst, celebrate } = useSuccessBurst({ stageNr: 5 });
   const [step, setStep] = usePersistentState<Step>("akte-5-step", "brief");
   const [unlockedSteps, setUnlockedSteps] = usePersistentSet<Step>(
     "akte-5-unlocked-steps",

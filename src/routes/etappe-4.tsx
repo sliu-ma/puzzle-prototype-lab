@@ -90,7 +90,7 @@ const STEPS: { id: Step; label: string }[] = [
 function AktePage() {
   const navigate = useNavigate();
   const envelope = useEnvelopePrompt();
-  const { burst, celebrate } = useSuccessBurst();
+  const { burst, celebrate } = useSuccessBurst({ stageNr: 4 });
   const [step, setStep] = usePersistentState<Step>("akte-4-step", "brief");
   useScrollToTopOnChange(step);
   const [unlockedSteps, setUnlockedSteps] = usePersistentSet<Step>(
