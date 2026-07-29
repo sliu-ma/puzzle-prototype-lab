@@ -12,7 +12,7 @@ import {
   type Produkt,
 } from "@/lib/maya-data";
 import { ProduktDetailDialog } from "./ProduktDetailDialog";
-import { awardBadge } from "@/lib/badges";
+
 import { MarketTutorial, type TutorialStep } from "./MarketTutorial";
 
 interface GruenerMarktProps {

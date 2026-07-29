@@ -15,7 +15,7 @@ import { StageGate } from "@/components/case-file/StageGate";
 import { HintSystem, type Hint } from "@/components/case-file/HintSystem";
 import { START_WARENKORB } from "@/lib/maya-data";
 import { completeStage, getFrozenClock, getHearingClock } from "@/lib/progress";
-import { tryAwardNoHintStage } from "@/lib/badges";
+import { awardBadge, tryAwardNoHintStage } from "@/lib/badges";
 import { usePersistentState, usePersistentSet } from "@/lib/persist";
 import { useScrollToTopOnChange } from "@/hooks/use-scroll-top";
 
@@ -104,6 +104,11 @@ function AktePage() {
     if (step === "naechstes") {
       completeStage(2);
       tryAwardNoHintStage(2);
+      try {
+        if (localStorage.getItem("akte-2-perfect-eligible") === "1") {
+          awardBadge("erstversuch-konsum");
+        }
+      } catch {}
     }
   }, [step]);
 
