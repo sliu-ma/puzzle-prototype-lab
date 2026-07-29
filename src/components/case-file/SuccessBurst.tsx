@@ -21,7 +21,7 @@ export function SuccessBurst({
   stageNr,
 }: SuccessBurstProps) {
   const hasStage = typeof stageNr === "number" && stageNr >= 1 && stageNr <= 5;
-  const effectiveDuration = duration ?? (hasStage ? 2800 : 2000);
+  const effectiveDuration = duration ?? (hasStage ? 3800 : 3000);
 
   useEffect(() => {
     if (!show) return;
