@@ -1,51 +1,37 @@
-## Änderungen in `src/routes/finale.tsx`
+## Ziel
 
-### 1. Multiple-Choice: nur „grün oder neutral"
+Die „Gelöst!"-Animation nach jeder Etappe zeigt zusätzlich, wo das Team im Gesamtverlauf steht (welche Etappe gerade gelöst wurde und wie viele noch offen sind), damit die Schülerinnen und Schüler den Fortschritt auch ohne Rückkehr zur Übersicht sehen.
 
-**Problem:** In `MultiView` behalten falsch gewählte Optionen nach dem Absenden weiterhin die stamp-Hervorhebung (`border-stamp bg-stamp/10`). Erwartet ist: entweder alle eigenen Antworten grün (bei Volltreffer) oder alles neutral.
+## Änderungen
 
-**Fix in `MultiView` (ca. Zeile 1272-1284):**
-- Bei `submitted && !allCorrect` alle Optionen komplett neutral rendern (`border-border bg-paper`), unabhängig davon, ob der User sie ausgewählt hatte.
-- Checkbox-Icon rechts (`✓`) im nicht-korrekten Endzustand ebenfalls neutralisieren.
-- Grüner Zustand bleibt nur, wenn `allCorrect === true` und Option ausgewählt war.
+### 1. `src/components/case-file/SuccessBurst.tsx`
+- `SuccessBurstProps` und `useSuccessBurst` um optionalen Parameter `stageNr?: number` (1–5) erweitern.
+- Unter dem grünen Haken/Label einen kompakten Fortschrittsblock einblenden, wenn `stageNr` gesetzt ist:
+  - Zeile „Etappe {n} von 5 gelöst" (Serif).
+  - Fünf Punkte/Badges in einer Reihe: Etappen 1..n grün (mit Häkchen bei ≤ n, Highlight/Pulse bei = n), Etappen n+1..5 neutral (grau, gepunktetes Border).
+  - Kleiner Sekundär-Text: bei n < 5 „Noch {5-n} Etappen bis zum Hearing", bei n = 5 „Alle Etappen gelöst, Hearing bereit".
+- Sanfte Einblend-Animation der Punkte (staggered, respektiert `prefers-reduced-motion`).
+- Duration leicht anheben (z. B. 2600 ms Default) wenn `stageNr` gesetzt, damit der Fortschritt lesbar bleibt; sonst 2000 ms wie bisher.
 
-`SingleView` wird gleich mitgeprüft: das aktuelle Verhalten (nur bei richtiger Wahl grün, sonst neutral) bleibt bestehen. Die Erklärung wird bereits über `buildFeedback` im roten Feedback-Panel angezeigt, das gilt für beide Views.
+### 2. Etappen-Routen `src/routes/etappe-1.tsx` … `etappe-5.tsx`
+- Aufruf anpassen: `useSuccessBurst({ stageNr: N })` bzw. äquivalente Signatur, sodass jede Etappe ihre Nummer mitgibt.
+- Keine Änderung an `completeStage` oder Navigationslogik.
 
-### 2. Feedback-Duplikation bei Biodiversitäts-Ursachen (F5)
+### 3. `src/routes/finale.tsx`
+- Keine Änderung am Success-Verhalten (Finale nutzt andere Outro-Sequenz mit Badge-Showcase).
 
-**Problem:** In `buildFeedback` (Zeile 1046) ist der Satz „„Zu viel Regen" ist keine Hauptursache …" bereits fest eingebaut, gleichzeitig steht derselbe Kern in `frage.erklaerung` (Zeile 249). Ergebnis: doppelt.
+## Technische Details
 
-**Fix:** Zeile 1046 kürzen auf reines
-```
-Fälschlich gewählt: <Optionen>.
-```
-Die inhaltliche Aufklärung liefert danach `frage.erklaerung` einmalig.
+- Neue Signatur (rückwärtskompatibel):
+  ```ts
+  useSuccessBurst(opts?: { stageNr?: number; duration?: number })
+  ```
+  Alt-Aufrufe ohne Argument verhalten sich wie zuvor.
+- Fortschrittspunkte nutzen bestehende Tokens (`emerald-600`, `border-border`, `bg-secondary`, `text-muted-foreground`), keine neuen Farben.
+- Mobile-first: Punkte klein genug für 393 px Viewport (~ 28 px), Zeile bricht nicht um.
+- `prefers-reduced-motion`: Punkt-Stagger deaktiviert.
 
-### 3. Feedback der letzten Frage vor dem Outro anzeigen
+## Nicht enthalten
 
-**Problem:** Sobald die letzte Frage beantwortet wird, wechselt `status` sofort auf `won`/`lost` und der Screen springt direkt zum `OutroScreen` bzw. „Versuch es nochmals". Der Nutzer sieht das Feedback der letzten Frage nicht.
-
-**Fix in der Render-Logik (ca. Zeile 493-612):**
-- Neuer lokaler State `showResult` (default `false`).
-- Solange `showResult === false`, wird die Fragenansicht mit Feedback-Panel weiterhin angezeigt, auch wenn `status !== "running"`.
-- Der Weiter-Button auf der letzten Frage bekommt den Text „Zum Ergebnis →" und setzt `showResult = true` beim Klick.
-- Erst dann wird `OutroScreen` (bei `won`) bzw. der Lost-Screen (bei `lost`) gerendert.
-- `reset()` setzt `showResult` wieder auf `false`.
-
-Alle anderen Zweige (Zurück-Navigation, Review-Modus) bleiben unverändert.
-
-### 4. Saison-Feedback: Ein- und Mehrzahl-Duplikate entfernen
-
-**Problem:** `SAISON_ANTWORTEN` enthält bewusst Singular- und Pluralformen sowie ae/ä-Varianten für die Erkennung. Das Feedback nutzt aber `SAISON_ANTWORTEN[season].slice(0, 5)`, wodurch z. B. „Erdbeere, Erdbeeren" und „Apfel, Äpfel, Aepfel" doppelt/dreifach erscheinen.
-
-**Fix:**
-- Neue kuratierte Anzeige-Liste `SAISON_ANZEIGE: Record<Season, string[]>` mit je nur einer Schreibweise pro Frucht/Gemüse (z. B. Winter: `Rosenkohl, Äpfel, Lauch, Nüsslisalat, Karotten, Randen, Sellerie, Pastinaken, Chicorée, Wirsing, Rotkohl, Zwiebeln, Kartoffeln`; analog für Frühling/Sommer/Herbst).
-- `erklaerung` in F4 (Zeile 229-230) verwendet `SAISON_ANZEIGE[season].slice(0, 4)`.
-- `buildFeedback`-Zweig für `frage.id === 4` (Zeile 1058) verwendet `SAISON_ANZEIGE[season].slice(0, 5)`.
-- `SAISON_ANTWORTEN` bleibt unverändert (weiterhin für die Eingabe-Erkennung inkl. Erdbeere/Erdbeeren).
-
-Ich prüfe zusätzlich weitere Feedback-Texte in `buildFeedback` auf ähnliche Duplikate (Match/Bucket geben aktuell keine `erklaerung` doppelt aus, das ist konsistent).
-
-## Nicht betroffen
-
-Sonstige Views (Match, Order, Bucket, Either, Slider, Short), Story-Texte, Badges, Timer, Progress-Tracking, andere Etappen.
+- Kein globaler Progress-Bar außerhalb der Animation.
+- Keine Änderung am Envelope-Dialog oder an der Übersicht.
