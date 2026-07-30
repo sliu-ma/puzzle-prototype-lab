@@ -106,6 +106,11 @@ function AktePage() {
     () => new Set(["brief"]),
   );
 
+  const [start, setStart] = usePersistentState<string>("akte-1-start", "");
+  const [ziel, setZiel] = usePersistentState<string>("akte-1-ziel", "");
+  const [eingabeError, setEingabeError] = useState<string | null>(null);
+  const [hadFail, setHadFail] = usePersistentState<boolean>("akte-1-had-fail", false);
+
   useEffect(() => {
     if (step === "naechstes") {
       completeStage(1);
@@ -113,11 +118,6 @@ function AktePage() {
       if (!hadFail) awardBadge("route-anhieb");
     }
   }, [step, hadFail]);
-
-  const [start, setStart] = usePersistentState<string>("akte-1-start", "");
-  const [ziel, setZiel] = usePersistentState<string>("akte-1-ziel", "");
-  const [eingabeError, setEingabeError] = useState<string | null>(null);
-  const [hadFail, setHadFail] = usePersistentState<boolean>("akte-1-had-fail", false);
 
   const [selectedRouteId, setSelectedRouteId] = usePersistentState<string | null>(
     "akte-1-route",
