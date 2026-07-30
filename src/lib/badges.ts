@@ -5,6 +5,7 @@ import badgeUnter60 from "@/assets/badge-unter60.svg.asset.json";
 import badgeWenigeHinweise from "@/assets/badge-wenige-hinweise.svg.asset.json";
 import badgeOhneHinweise from "@/assets/badge-ohne-hinweise.svg.asset.json";
 import badgeEinkauf from "@/assets/badge-einkauf.svg.asset.json";
+import badgeLetzten5 from "@/assets/badge-letzten5.svg.asset.json";
 
 export type Badge = {
   id: string;
@@ -51,6 +52,15 @@ export const BADGES: Badge[] = [
     criteria:
       "Bestehe den Konsum-Fall (Etappe 2) beim allerersten Druck auf „Bezahlen“.",
     imageUrl: badgeEinkauf.url,
+  },
+  {
+    id: "letzte-5-minuten",
+    title: "Auf den letzten Drücker",
+    description:
+      "Fall gelöst, als der Sekundenzeiger schon am Anschlag stand. Nerven aus Stahl.",
+    criteria:
+      "Bestehe das Hearing in den letzten fünf Minuten der 90-Minuten-Frist.",
+    imageUrl: badgeLetzten5.url,
   },
 ];
 
