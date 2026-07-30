@@ -1,37 +1,34 @@
 ## Ziel
+Ungenutzte Assets und toten Code aus dem Projekt entfernen, ohne das Spielverhalten zu verändern.
 
-Die „Gelöst!"-Animation nach jeder Etappe zeigt zusätzlich, wo das Team im Gesamtverlauf steht (welche Etappe gerade gelöst wurde und wie viele noch offen sind), damit die Schülerinnen und Schüler den Fortschritt auch ohne Rückkehr zur Übersicht sehen.
+## 1. Ungenutzte CDN-Assets löschen
+Diese `.asset.json`-Pointer werden nirgends im Code referenziert. Löschung via `lovable-assets delete --file <pointer>` (entfernt CDN-Objekt + Pointer):
 
-## Änderungen
+- Doppelte Wurzel-Dateien (Duplikate der Versionen unter `src/assets/produkte/`):
+  - `kuerbis.webp.asset.json`
+  - `rhabarber.webp.asset.json`
+  - `rosenkohl.png.asset.json`
+  - `spargel.webp.asset.json`
+  - `zwetschge.jxl.asset.json` (alte JXL-Version, ersetzt durch `zwetschge.jpg`)
+- Alte Energieetiketten-Buchstaben (nicht mehr verwendet):
+  - `src/assets/label-a.png` … `label-g.png` (7 Dateien)
+- `src/assets/produkte/orange.webp.asset.json`
 
-### 1. `src/components/case-file/SuccessBurst.tsx`
-- `SuccessBurstProps` und `useSuccessBurst` um optionalen Parameter `stageNr?: number` (1–5) erweitern.
-- Unter dem grünen Haken/Label einen kompakten Fortschrittsblock einblenden, wenn `stageNr` gesetzt ist:
-  - Zeile „Etappe {n} von 5 gelöst" (Serif).
-  - Fünf Punkte/Badges in einer Reihe: Etappen 1..n grün (mit Häkchen bei ≤ n, Highlight/Pulse bei = n), Etappen n+1..5 neutral (grau, gepunktetes Border).
-  - Kleiner Sekundär-Text: bei n < 5 „Noch {5-n} Etappen bis zum Hearing", bei n = 5 „Alle Etappen gelöst, Hearing bereit".
-- Sanfte Einblend-Animation der Punkte (staggered, respektiert `prefers-reduced-motion`).
-- Duration leicht anheben (z. B. 2600 ms Default) wenn `stageNr` gesetzt, damit der Fortschritt lesbar bleibt; sonst 2000 ms wie bisher.
+## 2. Ungenutzte Binärdatei im Repo
+- `src/assets/house-bg.jpg` (1,5 MB) wird nirgends importiert → löschen.
+- `src/assets/coin.png` und `src/assets/trophy.png` werden in `EnergyGame.tsx` verwendet, bleiben. Optional könnten sie zusätzlich auf das CDN ausgelagert werden (spart ~180 KB im Repo) – sage Bescheid, wenn gewünscht.
 
-### 2. Etappen-Routen `src/routes/etappe-1.tsx` … `etappe-5.tsx`
-- Aufruf anpassen: `useSuccessBurst({ stageNr: N })` bzw. äquivalente Signatur, sodass jede Etappe ihre Nummer mitgibt.
-- Keine Änderung an `completeStage` oder Navigationslogik.
+## 3. Toter Code
+- `src/components/case-file/EvidenceModal.tsx` wird von keiner Datei importiert → löschen.
 
-### 3. `src/routes/finale.tsx`
-- Keine Änderung am Success-Verhalten (Finale nutzt andere Outro-Sequenz mit Badge-Showcase).
+## 4. Ungenutzte UI-Bibliothek (optional, größter Effekt)
+Von 46 shadcn-Komponenten unter `src/components/ui/` wird nur `dialog.tsx` (plus dessen interne Abhängigkeiten) genutzt. Die übrigen 45 Dateien sind ungenutzt. Sie landen zwar nicht im Build-Output (Tree-Shaking), machen die Codebasis aber unübersichtlich.
+
+Vorschlag: entfernen, aber nur nach deiner Bestätigung – falls du später Komponenten wie Button/Card verwenden willst, kann man sie jederzeit wieder hinzufügen.
+
+## 5. Verifikation
+- `bun run build` muss fehlerfrei durchlaufen.
+- Kurzer Preview-Check der Etappen 2 (Produktbilder), 4 (Energie-Spiel) und Finale (Badges).
 
 ## Technische Details
-
-- Neue Signatur (rückwärtskompatibel):
-  ```ts
-  useSuccessBurst(opts?: { stageNr?: number; duration?: number })
-  ```
-  Alt-Aufrufe ohne Argument verhalten sich wie zuvor.
-- Fortschrittspunkte nutzen bestehende Tokens (`emerald-600`, `border-border`, `bg-secondary`, `text-muted-foreground`), keine neuen Farben.
-- Mobile-first: Punkte klein genug für 393 px Viewport (~ 28 px), Zeile bricht nicht um.
-- `prefers-reduced-motion`: Punkt-Stagger deaktiviert.
-
-## Nicht enthalten
-
-- Kein globaler Progress-Bar außerhalb der Animation.
-- Keine Änderung am Envelope-Dialog oder an der Übersicht.
+Prüfung erfolgte per Referenz-Scan über `src/`, `public/` und `index.html` auf jeden Asset-Basenamen; Assets mit null Treffern gelten als ungenutzt. Assets, die nur in ihrer eigenen Pointer-Datei vorkommen, sind entsprechend nicht referenziert.
