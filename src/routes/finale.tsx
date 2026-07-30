@@ -424,6 +424,14 @@ function FinalePage() {
       if (start && end - start < 60 * 60_000) {
         awardBadge("unter-60");
       }
+      // Badge „Auf den letzten Drücker": in den letzten 5 Minuten gelöst.
+      if (start) {
+        const elapsed = end - start;
+        const total = TIMER_DURATION_MIN * 60_000;
+        if (elapsed >= total - 5 * 60_000 && elapsed <= total) {
+          awardBadge("letzte-5-minuten");
+        }
+      }
     }
   }, [status]);
 
