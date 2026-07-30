@@ -12,7 +12,7 @@ import { InputCarousel } from "@/components/case-file/InputCarousel";
 import { CostPerKm, TrainVsCars, ShortTripsShare } from "@/components/case-file/MobilityCharts";
 import { VALID_START, VALID_ZIEL, type RouteOption } from "@/lib/mobility-data";
 import { completeStage } from "@/lib/progress";
-import { tryAwardNoHintStage } from "@/lib/badges";
+import { tryAwardNoHintStage, awardBadge } from "@/lib/badges";
 import { usePersistentState, usePersistentSet } from "@/lib/persist";
 import { useScrollToTopOnChange } from "@/hooks/use-scroll-top";
 
@@ -106,16 +106,18 @@ function AktePage() {
     () => new Set(["brief"]),
   );
 
+  const [start, setStart] = usePersistentState<string>("akte-1-start", "");
+  const [ziel, setZiel] = usePersistentState<string>("akte-1-ziel", "");
+  const [eingabeError, setEingabeError] = useState<string | null>(null);
+  const [hadFail, setHadFail] = usePersistentState<boolean>("akte-1-had-fail", false);
+
   useEffect(() => {
     if (step === "naechstes") {
       completeStage(1);
       tryAwardNoHintStage(1);
+      if (!hadFail) awardBadge("route-anhieb");
     }
-  }, [step]);
-
-  const [start, setStart] = usePersistentState<string>("akte-1-start", "");
-  const [ziel, setZiel] = usePersistentState<string>("akte-1-ziel", "");
-  const [eingabeError, setEingabeError] = useState<string | null>(null);
+  }, [step, hadFail]);
 
   const [selectedRouteId, setSelectedRouteId] = usePersistentState<string | null>(
     "akte-1-route",
@@ -148,6 +150,7 @@ function AktePage() {
       setEingabeError(null);
       goto("routen");
     } else {
+      setHadFail(true);
       setEingabeError("Hm, das passt noch nicht. Lies Elviras Brief und die Tickets nochmal genau.");
     }
   };
@@ -345,6 +348,7 @@ function AktePage() {
                 setRouteError(null);
                 celebrate(() => goto("input"));
               } else {
+                setHadFail(true);
                 setRouteError(
                   "Diese Route ist nicht die nachhaltigste. Vergleiche CO₂-Werte und realen Aufwand und wähle erneut.",
                 );

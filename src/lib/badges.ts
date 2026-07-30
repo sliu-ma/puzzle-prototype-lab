@@ -6,6 +6,7 @@ import badgeWenigeHinweise from "@/assets/badge-wenige-hinweise.svg.asset.json";
 import badgeOhneHinweise from "@/assets/badge-ohne-hinweise.svg.asset.json";
 import badgeEinkauf from "@/assets/badge-einkauf.svg.asset.json";
 import badgeLetzten5 from "@/assets/badge-letzten5.svg.asset.json";
+import badgeRoute from "@/assets/badge-route.svg.asset.json";
 
 export type Badge = {
   id: string;
@@ -61,6 +62,15 @@ export const BADGES: Badge[] = [
     criteria:
       "Bestehe das Hearing in den letzten fünf Minuten der 90-Minuten-Frist.",
     imageUrl: badgeLetzten5.url,
+  },
+  {
+    id: "route-anhieb",
+    title: "Nase für die richtige Spur",
+    description:
+      "Start, Ziel und die nachhaltigste Verbindung auf Anhieb getroffen, ohne einen einzigen Fehlversuch.",
+    criteria:
+      "Gib in Etappe 1 Start und Ziel beim ersten Versuch korrekt ein und wähle direkt danach die richtige Route.",
+    imageUrl: badgeRoute.url,
   },
 ];
 
