@@ -6,7 +6,7 @@ import { PaperCard } from "@/components/case-file/PaperCard";
 import { Stamp } from "@/components/case-file/Stamp";
 import { StageGate } from "@/components/case-file/StageGate";
 import { getTotalRevealedHints } from "@/components/case-file/HintSystem";
-import { completeStage, finishGame, getHearingClock, getStartTs, getEndTs } from "@/lib/progress";
+import { completeStage, finishGame, getHearingClock, getStartTs, getEndTs, TIMER_DURATION_MIN } from "@/lib/progress";
 import { awardBadge } from "@/lib/badges";
 import { BadgeShowcase } from "@/components/case-file/BadgeShowcase";
 import { usePersistentState } from "@/lib/persist";
