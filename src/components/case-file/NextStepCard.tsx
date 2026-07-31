@@ -1,4 +1,4 @@
-import { ArrowRight, Mail, CheckCircle2 } from "lucide-react";
+import { ArrowRight, CheckCircle2 } from "lucide-react";
 
 type Props = {
   /** Etappennummer bzw. 6 für das Hearing. */
