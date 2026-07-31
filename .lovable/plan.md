@@ -1,34 +1,47 @@
-## Ziel
-Ungenutzte Assets und toten Code aus dem Projekt entfernen, ohne das Spielverhalten zu verändern.
+# Übersicht überarbeiten (Ermittlungs-Dashboard)
 
-## 1. Ungenutzte CDN-Assets löschen
-Diese `.asset.json`-Pointer werden nirgends im Code referenziert. Löschung via `lovable-assets delete --file <pointer>` (entfernt CDN-Objekt + Pointer):
+Ziel: Beim Öffnen der Übersicht ist auf einem Handy ohne Scrollen klar, wo das Team steht, wie viel Zeit bleibt und was der nächste Schritt ist. Dazu ein sichtbarer Motivationsteil mit Badges.
 
-- Doppelte Wurzel-Dateien (Duplikate der Versionen unter `src/assets/produkte/`):
-  - `kuerbis.webp.asset.json`
-  - `rhabarber.webp.asset.json`
-  - `rosenkohl.png.asset.json`
-  - `spargel.webp.asset.json`
-  - `zwetschge.jxl.asset.json` (alte JXL-Version, ersetzt durch `zwetschge.jpg`)
-- Alte Energieetiketten-Buchstaben (nicht mehr verwendet):
-  - `src/assets/label-a.png` … `label-g.png` (7 Dateien)
-- `src/assets/produkte/orange.webp.asset.json`
+## 1. Orientierung
 
-## 2. Ungenutzte Binärdatei im Repo
-- `src/assets/house-bg.jpg` (1,5 MB) wird nirgends importiert → löschen.
-- `src/assets/coin.png` und `src/assets/trophy.png` werden in `EnergyGame.tsx` verwendet, bleiben. Optional könnten sie zusätzlich auf das CDN ausgelagert werden (spart ~180 KB im Repo) – sage Bescheid, wenn gewünscht.
+**Statuskopf**
+- Fortschrittsbalken (0–5 Etappen) ergänzt die bestehende Zahl „3 / 5 Etappen“.
+- Restzeit direkt im Kopf, farblich ruhiger Zustand, ab 15 Minuten Restzeit dringlicher Ton (Warnfarbe).
+- Kopfzeile responsiv als Grid (Teamname darf umbrechen/kürzen, Zahlenblock bleibt fest).
 
-## 3. Toter Code
-- `src/components/case-file/EvidenceModal.tsx` wird von keiner Datei importiert → löschen.
+**„Nächster Schritt“-Karte**
+- Direkt unter dem Statuskopf, vor der Etappenliste: Etappen-Nummer, Ort, Thema, Hinweis auf den Umschlag und ein grosser Button „Etappe öffnen →“.
+- Öffnet wie bisher den Umschlag-Dialog (bzw. bei Etappe 1 direkt die Route).
+- Nach Etappe 5 zeigt die Karte das Hearing; nach dem Hearing eine Abschluss-Variante mit Link zum Ergebnis.
 
-## 4. Ungenutzte UI-Bibliothek (optional, größter Effekt)
-Von 46 shadcn-Komponenten unter `src/components/ui/` wird nur `dialog.tsx` (plus dessen interne Abhängigkeiten) genutzt. Die übrigen 45 Dateien sind ungenutzt. Sie landen zwar nicht im Build-Output (Tree-Shaking), machen die Codebasis aber unübersichtlich.
+**Etappenliste als Dorfpfad**
+- Vertikale Verbindungslinie zwischen den Etappen-Nummernkreisen, erledigte Segmente farbig gefüllt, gesperrte gestrichelt.
+- Erledigte Etappen bleiben antippbar (Rückblick), gesperrte bleiben gedämpft mit Schloss.
+- Aktuelle Etappe in der Liste kompakter, weil der Haupt-Call-to-Action jetzt oben steht.
 
-Vorschlag: entfernen, aber nur nach deiner Bestätigung – falls du später Komponenten wie Button/Card verwenden willst, kann man sie jederzeit wieder hinzufügen.
+## 2. Motivation
 
-## 5. Verifikation
-- `bun run build` muss fehlerfrei durchlaufen.
-- Kurzer Preview-Check der Etappen 2 (Produktbilder), 4 (Energie-Spiel) und Finale (Badges).
+**Badge-Regal**
+- Neuer Block unter der Etappenliste: alle Badges aus der Badge-Definition in einer Reihe (horizontal scrollbar auf dem Handy).
+- Verdiente Badges farbig, noch offene als gedämpfte Silhouette ohne Titel-Spoiler.
+- Tap auf ein Badge öffnet einen Detail-Dialog (verdient: Titel, Beschreibung, Zeitpunkt; offen: „noch nicht verdient“ plus neutraler Teaser).
+- Zähler „2 von 6 Abzeichen“.
 
-## Technische Details
-Prüfung erfolgte per Referenz-Scan über `src/`, `public/` und `index.html` auf jeden Asset-Basenamen; Assets mit null Treffern gelten als ungenutzt. Assets, die nur in ihrer eigenen Pointer-Datei vorkommen, sind entsprechend nicht referenziert.
+**Kennzahlen pro erledigter Etappe**
+- In der Zeile einer abgeschlossenen Etappe zusätzlich: benötigte Zeit und Anzahl genutzter Hinweise, als kleine Zeile unter dem Ort.
+- Zeit pro Etappe wird beim Abschluss mitgeschrieben (neuer Zeitstempel je Etappe); Hinweiszahl kommt aus der bestehenden Hinweis-Zählung. Für bereits laufende Spiele ohne Zeitstempel wird die Zeitangabe einfach weggelassen.
+
+## 3. Handy-Feinschliff
+
+- Alle antippbaren Zeilen mindestens 48 px hoch, grössere Schrift in den Etappentiteln.
+- Sticky-Leiste am unteren Rand mit „Weiter zu Etappe n“, sobald man an der Etappenliste vorbeigescrollt ist.
+- „Spiel zurücksetzen“ wandert aus der Hauptansicht in ein kleines Menü (Drei-Punkte oben rechts in der Karte) mit unveränderter Bestätigungsabfrage.
+- Seitenpaddings und Karten-Rotationen auf schmalen Displays reduziert, damit nichts über den Rand ragt.
+
+## Technische Hinweise
+
+- Änderungen konzentrieren sich auf `src/routes/index.tsx` (Statuskopf, „Nächster Schritt“, Pfad-Liste, Sticky-CTA, Menü) plus zwei neue Präsentationskomponenten unter `src/components/case-file/`: `BadgeShelf.tsx` (Regal + Detail-Dialog) und `NextStepCard.tsx`.
+- Restzeit wird aus dem vorhandenen Start-Zeitstempel und der 90-Minuten-Konstante berechnet (`src/lib/progress.ts`), keine neue Timer-Logik.
+- Badges kommen aus `src/lib/badges.ts` (`BADGES`, `getEarnedBadgeRecords`, `getBadgeEarnedAt`); Hinweiszahlen aus `getStageHintsUsed`.
+- Neu gespeichert wird lediglich ein Zeitstempel je abgeschlossener Etappe in `completeStage`, damit die Etappendauer angezeigt werden kann.
+- Alle Farben über bestehende Design-Tokens, keine harten Farbwerte.
