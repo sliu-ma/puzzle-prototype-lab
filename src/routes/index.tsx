@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { Lock, CheckCircle2, RotateCcw } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Lock, CheckCircle2, RotateCcw, Clock, MoreVertical } from "lucide-react";
 import { Stamp } from "@/components/case-file/Stamp";
 import {
   START_CODE,
@@ -12,7 +12,13 @@ import {
   completeStage,
   getNowClock,
   getHearingClock,
+  getRemainingMs,
+  formatRemaining,
+  getStageDurationMin,
 } from "@/lib/progress";
+import { getStageHintsUsed } from "@/lib/badges";
+import { NextStepCard } from "@/components/case-file/NextStepCard";
+import { BadgeShelf } from "@/components/case-file/BadgeShelf";
 
 const CHEAT_CODE = "KRXZMVBQ";
 
