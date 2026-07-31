@@ -63,7 +63,7 @@ export function NextStepCard({ nr, ort, thema, isFinale, finished, onOpen }: Pro
         <p className="text-[13px] leading-snug text-foreground/80">
           {isFinale
             ? "Nehmt alle Notizen mit in den Gemeindesaal."
-            : `Öffnet vor Ort den Umschlag mit der Nummer ${nr}.`}
+            : `Öffnet jetzt den Umschlag mit der Nummer ${nr}. Darin steht, wo der nächste Posten ist.`}
         </p>
       </div>
 
