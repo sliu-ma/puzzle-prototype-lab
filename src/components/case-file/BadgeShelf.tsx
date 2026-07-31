@@ -45,7 +45,9 @@ export function BadgeShelf() {
       </div>
 
       <ul className="-mx-1 mt-3 flex snap-x gap-3 overflow-x-auto px-1 pb-1">
-        {BADGES.map((b) => {
+        {[...BADGES]
+          .sort((a, b) => Number(isEarned(b.id)) - Number(isEarned(a.id)))
+          .map((b) => {
           const unlocked = isEarned(b.id);
           return (
             <li key={b.id} className="shrink-0 snap-start">
