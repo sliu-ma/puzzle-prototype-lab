@@ -627,7 +627,7 @@ function PathNode({
         <span
           aria-hidden
           className={cn(
-            "absolute left-1/2 top-1/2 h-full w-0.5 -translate-x-1/2",
+            "absolute left-1/2 top-1/2 h-[calc(100%+0.5rem)] w-0.5 -translate-x-1/2",
             status === "done"
               ? "bg-emerald-500/50"
               : "border-l-2 border-dashed border-border bg-transparent",
