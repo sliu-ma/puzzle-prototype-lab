@@ -314,183 +314,331 @@ function ProgressPanel({
   const finished = currentStage >= 7;
   const stageStations = STAGES.slice(0, 5); // ohne Finale
   const finale = STAGES[5];
+  const solved = Math.max(0, Math.min(currentStage - 1, 5));
+
+  const [remaining, setRemaining] = useState<number | null>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [showSticky, setShowSticky] = useState(false);
+  const ctaRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const tick = () => setRemaining(getRemainingMs());
+    tick();
+    const id = window.setInterval(tick, 1000);
+    return () => window.clearInterval(id);
+  }, []);
+
+  useEffect(() => {
+    const el = ctaRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const obs = new IntersectionObserver(
+      ([entry]) => setShowSticky(!entry.isIntersecting),
+      { threshold: 0.15 },
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [finished, currentStage]);
+
+  const urgent = remaining !== null && remaining <= 15 * 60_000;
+
+  const openStage = (nr: number) => {
+    const target = STAGES.find((s) => s.nr === nr);
+    if (!target) return;
+    const go = () => navigate({ to: target.to as string });
+    if (nr === 1 || nr === 6) {
+      go();
+      return;
+    }
+    envelope.ask({
+      nr,
+      ort: `${target.ort} · Etappe ${nr}`,
+      etappeLabel: `Etappe ${nr} · ${target.ort}`,
+      onConfirm: go,
+    });
+  };
+
+  const nextStage = STAGES.find((s) => s.nr === currentStage);
 
   return (
-    <div className="mt-8 space-y-6">
+    <div className="mt-8 space-y-5">
       {envelope.dialog}
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-sm border border-border bg-secondary/40 p-4">
-        <div>
-          <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
-            Team
-          </p>
-          <p className="mt-0.5 font-serif text-lg font-bold">{teamName}</p>
+
+      {/* Statuskopf */}
+      <div className="rounded-sm border border-border bg-secondary/40 p-4">
+        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
+          <div className="min-w-0">
+            <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
+              Team
+            </p>
+            <p className="mt-0.5 truncate font-serif text-lg font-bold">{teamName}</p>
+          </div>
+          <div className="flex shrink-0 items-start gap-2">
+            <div className="text-right">
+              <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
+                Restzeit
+              </p>
+              <p
+                className={cn(
+                  "mt-0.5 flex items-center justify-end gap-1 font-mono-typed text-lg font-bold tabular-nums",
+                  urgent ? "text-destructive" : "text-foreground",
+                )}
+              >
+                <Clock className="h-4 w-4" />
+                {remaining === null ? "–" : formatRemaining(remaining)}
+              </p>
+            </div>
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setMenuOpen((v) => !v)}
+                aria-label="Weitere Optionen"
+                className="flex h-9 w-9 items-center justify-center rounded-sm border border-border bg-card text-muted-foreground"
+              >
+                <MoreVertical className="h-4 w-4" />
+              </button>
+              {menuOpen && (
+                <div className="absolute right-0 top-11 z-20 w-52 rounded-sm border border-border bg-card p-1 shadow-lg">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMenuOpen(false);
+                      onReset();
+                    }}
+                    className="flex w-full items-center gap-2 rounded-sm px-3 py-2 text-left font-mono-typed text-[11px] uppercase tracking-wider text-muted-foreground hover:bg-secondary"
+                  >
+                    <RotateCcw className="h-3 w-3" /> Spiel zurücksetzen
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
-        <div className="text-right">
-          <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
-            Fortschritt
-          </p>
-          <p className="mt-0.5 font-serif text-lg font-bold">
-            {Math.min(currentStage - 1, 5)} / 5 Etappen
-          </p>
+
+        <div className="mt-4">
+          <div className="flex items-baseline justify-between gap-2">
+            <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+              Fortschritt
+            </p>
+            <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+              {solved} / 5 Etappen
+            </p>
+          </div>
+          <div
+            className="mt-1.5 h-2.5 w-full overflow-hidden rounded-full bg-secondary"
+            role="progressbar"
+            aria-valuemin={0}
+            aria-valuemax={5}
+            aria-valuenow={solved}
+          >
+            <div
+              className="h-full rounded-full bg-stamp transition-all duration-500"
+              style={{ width: `${(solved / 5) * 100}%` }}
+            />
+          </div>
         </div>
       </div>
 
-      <ol className="space-y-2">
-        {stageStations.map((s) => {
+      {/* Nächster Schritt */}
+      <div ref={ctaRef}>
+        {finished ? (
+          <NextStepCard
+            nr={6}
+            ort={finale.ort}
+            thema={finale.thema}
+            finished
+            onOpen={() => navigate({ to: "/finale" })}
+          />
+        ) : currentStage >= 6 ? (
+          <NextStepCard
+            nr={6}
+            ort={finale.ort}
+            thema={finale.thema}
+            isFinale
+            onOpen={() => openStage(6)}
+          />
+        ) : nextStage ? (
+          <NextStepCard
+            nr={nextStage.nr}
+            ort={nextStage.ort}
+            thema={nextStage.thema}
+            onOpen={() => openStage(nextStage.nr)}
+          />
+        ) : null}
+      </div>
+
+      {/* Etappenpfad */}
+      <ol className="relative space-y-1.5">
+        {stageStations.map((s, i) => {
           const status =
-            currentStage > s.nr
-              ? "done"
-              : currentStage === s.nr
-                ? "current"
-                : "locked";
+            currentStage > s.nr ? "done" : currentStage === s.nr ? "current" : "locked";
+          const isLast = i === stageStations.length - 1;
+          const dauer = status === "done" ? getStageDurationMin(s.nr) : null;
+          const hints = status === "done" ? getStageHintsUsed(s.nr) : null;
+
+          const inner = (
+            <div className="flex min-h-12 w-full items-center gap-3">
+              <PathNode nr={s.nr} status={status} connector={!isLast} />
+              <div className="min-w-0 flex-1 py-2">
+                <p className="font-serif text-base font-bold leading-tight sm:text-lg">
+                  {s.ort}
+                </p>
+                <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+                  {s.thema}
+                  {status === "done" && (dauer !== null || hints !== null) && (
+                    <>
+                      {" · "}
+                      {dauer !== null ? `${dauer} Min` : null}
+                      {dauer !== null && hints !== null ? " · " : null}
+                      {hints !== null
+                        ? `${hints} ${hints === 1 ? "Hinweis" : "Hinweise"}`
+                        : null}
+                    </>
+                  )}
+                </p>
+              </div>
+              {status === "done" ? (
+                <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-600" />
+              ) : status === "current" ? (
+                <span
+                  aria-hidden
+                  className="shrink-0 font-mono-typed text-[10px] uppercase tracking-wider text-stamp"
+                >
+                  hier
+                </span>
+              ) : (
+                <Lock className="h-4 w-4 shrink-0 text-muted-foreground" />
+              )}
+            </div>
+          );
+
           return (
             <li key={s.nr}>
-              {status === "current" ? (
-                <button
-                  type="button"
-                  onClick={() => {
-                    const go = () => navigate({ to: s.to as string });
-                    if (s.nr === 1) {
-                      // Umschlag 1 wurde bereits im Intro gezeigt
-                      go();
-                      return;
-                    }
-                    envelope.ask({
-                      nr: s.nr,
-                      ort: `${s.ort} · Etappe ${s.nr}`,
-                      etappeLabel: `Etappe ${s.nr} · ${s.ort}`,
-                      onConfirm: go,
-                    });
-                  }}
-                  className="group flex w-full items-center gap-3 rounded-sm border-2 border-stamp bg-stamp/5 px-4 py-3 text-left transition-all hover:-translate-y-0.5 hover:shadow-md"
-                >
-                  <Badge n={s.nr} variant="current" />
-                  <div className="min-w-0 flex-1">
-                    <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
-                      Aktuelle Etappe
-                    </p>
-                    <p className="font-serif text-base font-bold">
-                      {s.ort} <span className="text-foreground/60">· {s.thema}</span>
-                    </p>
-                  </div>
-                  <span aria-hidden className="transition-transform group-hover:translate-x-1">→</span>
-                </button>
-              ) : status === "done" ? (
+              {status === "done" ? (
                 <Link
                   to={s.to as string}
-                  className="group flex items-center gap-3 rounded-sm border border-emerald-500/40 bg-emerald-500/5 px-4 py-3 transition-all hover:-translate-y-0.5 hover:shadow-md"
+                  className="block rounded-sm px-2 transition-colors hover:bg-secondary/50"
                 >
-                  <Badge n={s.nr} variant="done" />
-                  <div className="min-w-0 flex-1">
-                    <p className="font-mono-typed text-[10px] uppercase tracking-wider text-emerald-700">
-                      Abgeschlossen · nochmals ansehen
-                    </p>
-                    <p className="font-serif text-base font-bold">
-                      {s.ort} <span className="text-foreground/60">· {s.thema}</span>
-                    </p>
-                  </div>
-                  <CheckCircle2 className="h-5 w-5 text-emerald-600" />
+                  {inner}
                 </Link>
+              ) : status === "current" ? (
+                <button
+                  type="button"
+                  onClick={() => openStage(s.nr)}
+                  className="block w-full rounded-sm px-2 text-left transition-colors hover:bg-secondary/50"
+                >
+                  {inner}
+                </button>
               ) : (
-                <div className="flex items-center gap-3 rounded-sm border border-border bg-card px-4 py-3 opacity-60">
-                  <Badge n={s.nr} variant={status} />
-                  <div className="min-w-0 flex-1">
-                    <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
-                      Etappe {s.nr}
-                    </p>
-                    <p className="font-serif text-base font-bold">
-                      {s.ort} <span className="text-foreground/60">· {s.thema}</span>
-                    </p>
-                  </div>
-                  <Lock className="h-4 w-4 text-muted-foreground" />
-                </div>
+                <div className="block px-2 opacity-55">{inner}</div>
               )}
-
             </li>
           );
         })}
 
         {/* Finale */}
         <li>
-          {currentStage >= 6 && !finished ? (
+          {currentStage >= 6 ? (
             <Link
               to="/finale"
-              className="group flex items-center gap-3 rounded-sm border-2 border-stamp bg-stamp/10 px-4 py-3 transition-all hover:-translate-y-0.5 hover:shadow-md"
+              className="block rounded-sm px-2 transition-colors hover:bg-secondary/50"
             >
-              <Badge n={6} variant="current" />
-              <div className="min-w-0 flex-1">
-                <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
-                  Hearing · Gemeindesaal
-                </p>
-                <p className="font-serif text-base font-bold">
-                  {finale.ort} <span className="text-foreground/60">· {finale.thema}</span>
-                </p>
+              <div className="flex min-h-12 items-center gap-3">
+                <PathNode nr={6} status={finished ? "done" : "current"} connector={false} />
+                <div className="min-w-0 flex-1 py-2">
+                  <p className="font-serif text-base font-bold leading-tight sm:text-lg">
+                    {finale.ort}
+                  </p>
+                  <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+                    Hearing
+                  </p>
+                </div>
+                {finished ? (
+                  <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-600" />
+                ) : (
+                  <span
+                    aria-hidden
+                    className="shrink-0 font-mono-typed text-[10px] uppercase tracking-wider text-stamp"
+                  >
+                    hier
+                  </span>
+                )}
               </div>
-              <span aria-hidden className="transition-transform group-hover:translate-x-1">→</span>
-            </Link>
-          ) : finished ? (
-            <Link
-              to="/finale"
-              className="flex items-center gap-3 rounded-sm border border-emerald-500/40 bg-emerald-500/5 px-4 py-3"
-            >
-              <Badge n={6} variant="done" />
-              <div className="min-w-0 flex-1">
-                <p className="font-mono-typed text-[10px] uppercase tracking-wider text-emerald-700">
-                  Abgeschlossen
-                </p>
-                <p className="font-serif text-base font-bold">{finale.ort}</p>
-              </div>
-              <CheckCircle2 className="h-5 w-5 text-emerald-600" />
             </Link>
           ) : (
-            <div className="flex items-center gap-3 rounded-sm border border-border bg-card px-4 py-3 opacity-60">
-              <Badge n={6} variant="locked" />
-              <div className="min-w-0 flex-1">
-                <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
-                  Finale · gesperrt
-                </p>
-                <p className="font-serif text-base font-bold">
-                  {finale.ort}{" "}
-                  <span className="text-foreground/60">
-                    · nach Etappe 5
-                  </span>
-                </p>
+            <div className="block px-2 opacity-55">
+              <div className="flex min-h-12 items-center gap-3">
+                <PathNode nr={6} status="locked" connector={false} />
+                <div className="min-w-0 flex-1 py-2">
+                  <p className="font-serif text-base font-bold leading-tight sm:text-lg">
+                    {finale.ort}
+                  </p>
+                  <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+                    Hearing · nach Etappe 5
+                  </p>
+                </div>
+                <Lock className="h-4 w-4 shrink-0 text-muted-foreground" />
               </div>
-              <Lock className="h-4 w-4 text-muted-foreground" />
             </div>
           )}
         </li>
       </ol>
 
-      <div className="flex justify-end">
-        <button
-          onClick={onReset}
-          className="inline-flex items-center gap-2 rounded-sm border border-border bg-card px-3 py-1.5 font-mono-typed text-[11px] uppercase tracking-wider text-muted-foreground hover:bg-secondary"
-        >
-          <RotateCcw className="h-3 w-3" /> Spiel zurücksetzen
-        </button>
-      </div>
+      <BadgeShelf />
+
+      {/* Sticky-CTA auf dem Handy */}
+      {showSticky && !finished && (
+        <div className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-paper/95 p-3 backdrop-blur-sm sm:hidden">
+          <button
+            type="button"
+            onClick={() => openStage(Math.min(currentStage, 6))}
+            className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-sm bg-primary px-5 py-3 font-serif text-base font-semibold text-primary-foreground"
+          >
+            {currentStage >= 6
+              ? "Weiter zum Hearing"
+              : `Weiter zu Etappe ${currentStage}`}
+            <span aria-hidden>→</span>
+          </button>
+        </div>
+      )}
+      {showSticky && !finished && <div aria-hidden className="h-16 sm:hidden" />}
     </div>
   );
 }
 
-function Badge({
-  n,
-  variant,
+/** Nummernkreis mit Verbindungslinie zum nächsten Punkt. */
+function PathNode({
+  nr,
+  status,
+  connector,
 }: {
-  n: number;
-  variant: "done" | "current" | "locked";
+  nr: number;
+  status: "done" | "current" | "locked";
+  connector: boolean;
 }) {
   return (
-    <span
-      className={cn(
-        "flex h-9 w-9 shrink-0 items-center justify-center rounded-full font-mono-typed text-sm font-bold",
-        variant === "done" && "bg-emerald-600 text-white",
-        variant === "current" && "bg-stamp text-paper",
-        variant === "locked" && "bg-secondary text-muted-foreground",
+    <span className="relative flex w-9 shrink-0 justify-center self-stretch">
+      {connector && (
+        <span
+          aria-hidden
+          className={cn(
+            "absolute left-1/2 top-1/2 h-full w-0.5 -translate-x-1/2",
+            status === "done"
+              ? "bg-emerald-500/50"
+              : "border-l-2 border-dashed border-border bg-transparent",
+          )}
+        />
       )}
-    >
-      {n}
+      <span
+        className={cn(
+          "relative z-10 my-1 flex h-9 w-9 items-center justify-center rounded-full font-mono-typed text-sm font-bold",
+          status === "done" && "bg-emerald-600 text-white",
+          status === "current" && "bg-stamp text-paper ring-2 ring-stamp/30",
+          status === "locked" && "bg-secondary text-muted-foreground",
+        )}
+      >
+        {nr}
+      </span>
     </span>
   );
 }
+
