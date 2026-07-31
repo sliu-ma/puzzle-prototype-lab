@@ -149,8 +149,13 @@ export function getCurrentStage(): number {
   }
 }
 
+const stageDoneKey = (n: number) => `maya-stage-${n}-done-ts`;
+
 export function completeStage(n: number) {
   try {
+    if (!localStorage.getItem(stageDoneKey(n))) {
+      localStorage.setItem(stageDoneKey(n), String(Date.now()));
+    }
     const current = getCurrentStage();
     if (n + 1 > current) {
       localStorage.setItem(KEY_STAGE, String(n + 1));
@@ -159,6 +164,49 @@ export function completeStage(n: number) {
   } catch {
     /* ignore */
   }
+}
+
+/** Zeitstempel, wann Etappe n abgeschlossen wurde (null falls unbekannt). */
+export function getStageDoneTs(n: number): number | null {
+  try {
+    const v = localStorage.getItem(stageDoneKey(n));
+    if (!v) return null;
+    const parsed = parseInt(v, 10);
+    return Number.isFinite(parsed) ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Dauer einer Etappe in Minuten: Zeit zwischen dem Abschluss der
+ * Vor-Etappe (bzw. Spielstart) und dem Abschluss dieser Etappe.
+ * Null, wenn keine Zeitstempel vorliegen (ältere Spielstände).
+ */
+export function getStageDurationMin(n: number): number | null {
+  const done = getStageDoneTs(n);
+  if (!done) return null;
+  const prev = n > 1 ? getStageDoneTs(n - 1) : null;
+  const from = prev ?? getStartTs();
+  if (!from || done <= from) return null;
+  return Math.max(1, Math.round((done - from) / 60_000));
+}
+
+/** Verbleibende Millisekunden der 90-Minuten-Frist (0 falls abgelaufen). */
+export function getRemainingMs(): number | null {
+  const start = getStartTs();
+  if (!start) return null;
+  const deadline = start + TIMER_DURATION_MIN * 60_000;
+  const ref = getEndTs() ?? Date.now();
+  return Math.max(0, deadline - ref);
+}
+
+/** "MM:SS" bzw. "H:MM:SS" für die verbleibende Zeit. */
+export function formatRemaining(ms: number): string {
+  const total = Math.floor(ms / 1000);
+  const m = Math.floor(total / 60);
+  const s = total % 60;
+  return `${m}:${String(s).padStart(2, "0")}`;
 }
 
 export function resetAll() {
