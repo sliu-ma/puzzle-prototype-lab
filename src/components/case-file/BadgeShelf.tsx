@@ -80,6 +80,7 @@ export function BadgeShelf() {
         })}
       </ul>
 
+
       <Dialog open={!!selected} onOpenChange={(o) => !o && setSelected(null)}>
         <DialogContent className="max-w-sm border-stamp/30 bg-paper sm:rounded-sm">
           {selected && (
