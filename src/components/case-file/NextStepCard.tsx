@@ -58,14 +58,6 @@ export function NextStepCard({ nr, ort, thema, isFinale, finished, onOpen }: Pro
         </span>
       </div>
 
-      <div className="mt-3 flex items-start gap-2 rounded-sm border border-dashed border-stamp/40 bg-paper/60 px-3 py-2">
-        <Mail className="mt-0.5 h-4 w-4 shrink-0 text-stamp" />
-        <p className="text-[13px] leading-snug text-foreground/80">
-          {isFinale
-            ? "Nehmt alle Notizen mit in den Gemeindesaal."
-            : `Öffnet jetzt den Umschlag mit der Nummer ${nr}. Darin steht, wo der nächste Posten ist, und ihr findet das ganze Material dafür.`}
-        </p>
-      </div>
 
       <button
         type="button"
