@@ -212,7 +212,9 @@ function CoverPage() {
         <div className="mt-3 flex flex-wrap items-center justify-center gap-4">
           <Link
             to="/rangliste"
+            search={{ code: "" }}
             className="font-mono-typed text-[10px] uppercase tracking-[0.2em] text-muted-foreground underline-offset-4 hover:underline"
+
           >
             Rangliste
           </Link>
@@ -243,55 +245,58 @@ function StartForm({
     members: string[],
   ) => Promise<JoinResult | null>;
 }) {
-  const [name, setName] = useState("");
+  const [step, setStep] = useState<1 | 2>(1);
   const [code, setCode] = useState("");
-  const [roundCode, setRoundCode] = useState("");
-  const [members, setMembers] = useState("");
+  const [name, setName] = useState("");
+  const [members, setMembers] = useState<string[]>(["", "", ""]);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+
+  const cleanCode = code.trim().toUpperCase();
+  const isFixedCode = cleanCode === START_CODE || cleanCode === CHEAT_CODE;
+
+  const goStep2 = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (cleanCode.length < 4) {
+      setError("Bitte gebt den Code eurer Lehrperson ein.");
+      return;
+    }
+    setError(null);
+    setStep(2);
+  };
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     const cleanName = name.trim();
-    const cleanCode = code.trim().toUpperCase();
     if (cleanName.length < 2) {
       setError("Bitte gebt einen Teamnamen ein (mind. 2 Zeichen).");
       return;
     }
-    if (cleanCode !== START_CODE && cleanCode !== CHEAT_CODE) {
-      setError("Der Startcode stimmt nicht. Frag deine Lehrperson.");
-      return;
-    }
-
     setError(null);
     setBusy(true);
     try {
-      const memberList = members
-        .split(/[,\n]/)
-        .map((m) => m.trim())
-        .filter((m) => m.length > 0);
+      const memberList = members.map((m) => m.trim()).filter((m) => m.length > 0);
       const res = await onStart(
         cleanName,
-        cleanCode,
-        roundCode.trim().toUpperCase(),
+        isFixedCode ? cleanCode : START_CODE,
+        isFixedCode ? "" : cleanCode,
         memberList,
       );
       if (res && !res.ok) {
         setError(
           res.reason === "not_found"
-            ? "Diesen Rundencode gibt es nicht."
+            ? "Diesen Code gibt es nicht. Frag deine Lehrperson."
             : res.reason === "closed"
               ? "Diese Runde ist bereits geschlossen."
               : res.reason === "name_taken"
                 ? "Dieser Teamname ist in der Runde schon vergeben."
-                : "Beitritt zur Runde nicht möglich. Versuche es nochmals.",
+                : "Start nicht möglich. Versuche es nochmals.",
         );
       }
     } finally {
       setBusy(false);
     }
   };
-
 
   return (
     <div className="mt-8 grid gap-6 sm:grid-cols-[1.4fr_1fr]">
@@ -303,87 +308,135 @@ function StartForm({
           Elvira hat fünf Hinweise im Dorf hinterlegt.
         </p>
         <p className="font-serif italic text-foreground/70">
-          Tragt euren Teamnamen und den Startcode eurer Lehrperson ein, um
-          Etappe 1 zu öffnen.
+          {step === 1
+            ? "Gebt den Code eurer Lehrperson ein, um Etappe 1 zu öffnen."
+            : "Tragt euren Teamnamen und die Mitspielenden ein."}
         </p>
       </div>
 
-      <form
-        onSubmit={submit}
-        className="space-y-3 rounded-sm border border-border bg-secondary/50 p-4"
-        style={{ transform: "rotate(1.2deg)" }}
-      >
-        <p className="font-mono-typed text-[10px] uppercase tracking-[0.2em] text-stamp">
-          Team registrieren
-        </p>
-        <div>
-          <label className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
-            Teamname
-          </label>
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="z. B. Spürnasen 3a"
-            className="mt-1 w-full rounded-sm border border-border bg-paper px-3 py-2 font-serif text-[15px] focus:border-stamp focus:outline-none"
-          />
-        </div>
-        <div>
-          <label className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
-            Startcode
-          </label>
-          <input
-            type="text"
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-            placeholder="vom Lehrer / der Lehrerin"
-            autoCapitalize="characters"
-            className="mt-1 w-full rounded-sm border border-border bg-paper px-3 py-2 font-mono-typed text-sm uppercase tracking-wider focus:border-stamp focus:outline-none"
-          />
-        </div>
-        <div>
-          <label className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
-            Rundencode (optional, für die Rangliste)
-          </label>
-          <input
-            type="text"
-            value={roundCode}
-            onChange={(e) => setRoundCode(e.target.value)}
-            placeholder="z. B. K7M2QA"
-            autoCapitalize="characters"
-            className="mt-1 w-full rounded-sm border border-border bg-paper px-3 py-2 font-mono-typed text-sm uppercase tracking-wider focus:border-stamp focus:outline-none"
-          />
-        </div>
-        {roundCode.trim().length > 0 && (
+      {step === 1 ? (
+        <form
+          onSubmit={goStep2}
+          className="space-y-3 rounded-sm border border-border bg-secondary/50 p-4"
+          style={{ transform: "rotate(1.2deg)" }}
+        >
+          <p className="font-mono-typed text-[10px] uppercase tracking-[0.2em] text-stamp">
+            Schritt 1 von 2 · Code
+          </p>
           <div>
             <label className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
-              Mitspielende (mit Komma trennen)
+              Code
             </label>
             <input
               type="text"
-              value={members}
-              onChange={(e) => setMembers(e.target.value)}
-              placeholder="Mia, Noah, Lea"
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              placeholder="Start- oder Rundencode"
+              autoCapitalize="characters"
+              className="mt-1 w-full rounded-sm border border-border bg-paper px-3 py-3 font-mono-typed text-base uppercase tracking-wider focus:border-stamp focus:outline-none"
+            />
+          </div>
+          {error && (
+            <p className="rounded-sm border border-destructive/40 bg-destructive/10 p-2 text-xs text-destructive">
+              {error}
+            </p>
+          )}
+          <button
+            type="submit"
+            className="w-full rounded-sm bg-primary px-5 py-3 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
+          >
+            Weiter →
+          </button>
+        </form>
+      ) : (
+        <form
+          onSubmit={submit}
+          className="space-y-3 rounded-sm border border-border bg-secondary/50 p-4"
+          style={{ transform: "rotate(1.2deg)" }}
+        >
+          <div className="flex items-center justify-between gap-2">
+            <p className="font-mono-typed text-[10px] uppercase tracking-[0.2em] text-stamp">
+              Schritt 2 von 2 · Team
+            </p>
+            <button
+              type="button"
+              onClick={() => {
+                setError(null);
+                setStep(1);
+              }}
+              className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground underline-offset-4 hover:underline"
+            >
+              Zurück
+            </button>
+          </div>
+          <div>
+            <label className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+              Teamname
+            </label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="z. B. Spürnasen 3a"
               className="mt-1 w-full rounded-sm border border-border bg-paper px-3 py-2 font-serif text-[15px] focus:border-stamp focus:outline-none"
             />
           </div>
-        )}
-        {error && (
-          <p className="rounded-sm border border-destructive/40 bg-destructive/10 p-2 text-xs text-destructive">
-            {error}
-          </p>
-        )}
-        <button
-          type="submit"
-          disabled={busy}
-          className="w-full rounded-sm bg-primary px-5 py-3 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
-        >
-          Ermittlung starten →
-        </button>
-      </form>
+          <div className="space-y-2">
+            <label className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+              Mitspielende
+            </label>
+            {members.map((m, i) => (
+              <div key={i} className="flex items-center gap-2">
+                <input
+                  type="text"
+                  value={m}
+                  onChange={(e) =>
+                    setMembers((prev) =>
+                      prev.map((v, idx) => (idx === i ? e.target.value : v)),
+                    )
+                  }
+                  placeholder={`Name ${i + 1}`}
+                  className="min-w-0 flex-1 rounded-sm border border-border bg-paper px-3 py-2 font-serif text-[15px] focus:border-stamp focus:outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() =>
+                    setMembers((prev) => prev.filter((_, idx) => idx !== i))
+                  }
+                  disabled={members.length <= 1}
+                  aria-label={`Mitspielende ${i + 1} entfernen`}
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-sm border border-border font-mono-typed text-lg text-muted-foreground disabled:opacity-40"
+                >
+                  −
+                </button>
+              </div>
+            ))}
+            <button
+              type="button"
+              onClick={() => setMembers((prev) => [...prev, ""])}
+              className="w-full rounded-sm border border-dashed border-border px-3 py-2 font-mono-typed text-[11px] uppercase tracking-wider text-muted-foreground"
+            >
+              + Mitspielende hinzufügen
+            </button>
+          </div>
+          {error && (
+            <p className="rounded-sm border border-destructive/40 bg-destructive/10 p-2 text-xs text-destructive">
+              {error}
+            </p>
+          )}
+          <button
+            type="submit"
+            disabled={busy}
+            className="w-full rounded-sm bg-primary px-5 py-3 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md disabled:opacity-60"
+          >
+            Ermittlung starten →
+          </button>
+        </form>
+      )}
     </div>
   );
 }
+
 
 /* -------------------------------------------------------- */
 /*  Fortschritt, linearer Etappenpfad                       */
