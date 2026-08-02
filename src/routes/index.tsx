@@ -220,13 +220,21 @@ function CoverPage() {
 function StartForm({
   onStart,
 }: {
-  onStart: (name: string, code: string) => void;
+  onStart: (
+    name: string,
+    code: string,
+    roundCode: string,
+    members: string[],
+  ) => Promise<JoinResult | null>;
 }) {
   const [name, setName] = useState("");
   const [code, setCode] = useState("");
+  const [roundCode, setRoundCode] = useState("");
+  const [members, setMembers] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     const cleanName = name.trim();
     const cleanCode = code.trim().toUpperCase();
@@ -240,8 +248,34 @@ function StartForm({
     }
 
     setError(null);
-    onStart(cleanName, cleanCode);
+    setBusy(true);
+    try {
+      const memberList = members
+        .split(/[,\n]/)
+        .map((m) => m.trim())
+        .filter((m) => m.length > 0);
+      const res = await onStart(
+        cleanName,
+        cleanCode,
+        roundCode.trim().toUpperCase(),
+        memberList,
+      );
+      if (res && !res.ok) {
+        setError(
+          res.reason === "not_found"
+            ? "Diesen Rundencode gibt es nicht."
+            : res.reason === "closed"
+              ? "Diese Runde ist bereits geschlossen."
+              : res.reason === "name_taken"
+                ? "Dieser Teamname ist in der Runde schon vergeben."
+                : "Beitritt zur Runde nicht möglich. Versuche es nochmals.",
+        );
+      }
+    } finally {
+      setBusy(false);
+    }
   };
+
 
   return (
     <div className="mt-8 grid gap-6 sm:grid-cols-[1.4fr_1fr]">
