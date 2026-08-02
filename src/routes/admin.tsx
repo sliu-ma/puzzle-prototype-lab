@@ -193,7 +193,7 @@ function AdminPage() {
               <div className="mt-3 flex flex-wrap gap-2">
                 <Link
                   to="/rangliste"
-                  search={{ code: r.code } as never}
+                  search={{ code: r.code }}
                   className="rounded-sm border border-border px-3 py-1.5 font-mono-typed text-[11px] uppercase tracking-wider"
                 >
                   Rangliste

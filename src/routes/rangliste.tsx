@@ -6,6 +6,9 @@ import { getRoundSession } from "@/lib/round";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/rangliste")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    code: typeof search["code"] === "string" ? (search["code"] as string) : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Live-Rangliste | Ermittlung Thermika Ost" },
