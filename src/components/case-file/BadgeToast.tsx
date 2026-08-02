@@ -168,7 +168,7 @@ export function BadgeToast() {
           className="mt-1 font-mono-typed text-[10px] uppercase tracking-wider text-paper/60 animate-fade-in"
           style={{ animationDelay: "0.7s", animationFillMode: "backwards" }}
         >
-          Tippen zum Schliessen
+          {queue.length > 1 ? "Tippen für das nächste Abzeichen" : "Tippen zum Schliessen"}
         </p>
       </div>
     </div>
