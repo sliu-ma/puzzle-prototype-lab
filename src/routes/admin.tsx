@@ -57,7 +57,8 @@ function AdminPage() {
 
   const refresh = async (pw: string) => {
     const res = await list({ data: { password: pw } });
-    if (res.ok) setRounds(res.rounds as Round[]);
+    if (!res.ok) throw new Error("admin_session_invalid");
+    setRounds(res.rounds as Round[]);
   };
 
   const doLogin = async (e: React.FormEvent) => {
@@ -90,7 +91,13 @@ function AdminPage() {
     try {
       const res = await create({ data: { password, title } });
       if (!res.ok) {
-        setError("Passwort stimmt nicht mehr, bitte neu anmelden.");
+        if ("reason" in res && res.reason === "backend_unavailable") {
+          setError("Die Verbindung zu Supabase ist momentan nicht verfügbar. Bitte erneut versuchen.");
+        } else if ("reason" in res && res.reason === "code_generation_failed") {
+          setError("Es konnte kein freier Rundencode erzeugt werden. Bitte erneut versuchen.");
+        } else {
+          setError("Passwort stimmt nicht mehr, bitte neu anmelden.");
+        }
         return;
       }
       setTitle("");
