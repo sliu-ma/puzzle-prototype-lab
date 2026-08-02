@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { fetchLeaderboard } from "@/lib/leaderboard.functions";
 
 export type RankedTeam = {
   id: string;
