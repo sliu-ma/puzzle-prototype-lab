@@ -423,7 +423,7 @@ function AktePage() {
         {envelope.dialog}
 
         <p className="mt-12 text-center font-mono-typed text-xs uppercase tracking-[0.2em] text-muted-foreground">
-          ETAPPE 1 · BAHNHOF SPEICHER
+         , Etappe 1 · Bahnhof Speicher
         </p>
       </div>
 

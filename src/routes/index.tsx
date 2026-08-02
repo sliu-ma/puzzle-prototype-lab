@@ -17,7 +17,6 @@ import {
   getStageDurationMin,
 } from "@/lib/progress";
 import { getStageHintsUsed } from "@/lib/badges";
-import { joinRoundSession, type JoinResult } from "@/lib/round";
 import { NextStepCard } from "@/components/case-file/NextStepCard";
 import { BadgeShelf } from "@/components/case-file/BadgeShelf";
 
@@ -171,26 +170,21 @@ function CoverPage() {
               />
             ) : (
               <StartForm
-                onStart={async (name, code, roundCode, members) => {
+                onStart={(name, code) => {
                   resetAll();
                   registerTeam(name, code);
                   if (code.toUpperCase() === CHEAT_CODE) {
                     // Debug-Modus: alle Etappen freischalten
                     for (let i = 1; i <= 6; i++) completeStage(i);
                   }
-                  let join: JoinResult | null = null;
-                  if (roundCode) {
-                    join = await joinRoundSession(roundCode, name, members);
-                    if (!join.ok) return join;
-                  }
                   setIntroSeen(false);
                   setTeam({ name, code });
                   setStage(getCurrentStage());
-                  return null;
                 }}
-              />
-            )}
 
+              />
+
+            )}
           </article>
 
           <div
@@ -209,21 +203,6 @@ function CoverPage() {
           Speicher · v3 · Linearer Ablauf
         </p>
 
-        <div className="mt-3 flex flex-wrap items-center justify-center gap-4">
-          <Link
-            to="/rangliste"
-            className="font-mono-typed text-[10px] uppercase tracking-[0.2em] text-muted-foreground underline-offset-4 hover:underline"
-          >
-            Rangliste
-          </Link>
-          <Link
-            to="/admin"
-            className="font-mono-typed text-[10px] uppercase tracking-[0.2em] text-muted-foreground underline-offset-4 hover:underline"
-          >
-            Lehrpersonen
-          </Link>
-        </div>
-
       </div>
     </main>
   );
@@ -236,21 +215,13 @@ function CoverPage() {
 function StartForm({
   onStart,
 }: {
-  onStart: (
-    name: string,
-    code: string,
-    roundCode: string,
-    members: string[],
-  ) => Promise<JoinResult | null>;
+  onStart: (name: string, code: string) => void;
 }) {
   const [name, setName] = useState("");
   const [code, setCode] = useState("");
-  const [roundCode, setRoundCode] = useState("");
-  const [members, setMembers] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [busy, setBusy] = useState(false);
 
-  const submit = async (e: React.FormEvent) => {
+  const submit = (e: React.FormEvent) => {
     e.preventDefault();
     const cleanName = name.trim();
     const cleanCode = code.trim().toUpperCase();
@@ -264,34 +235,8 @@ function StartForm({
     }
 
     setError(null);
-    setBusy(true);
-    try {
-      const memberList = members
-        .split(/[,\n]/)
-        .map((m) => m.trim())
-        .filter((m) => m.length > 0);
-      const res = await onStart(
-        cleanName,
-        cleanCode,
-        roundCode.trim().toUpperCase(),
-        memberList,
-      );
-      if (res && !res.ok) {
-        setError(
-          res.reason === "not_found"
-            ? "Diesen Rundencode gibt es nicht."
-            : res.reason === "closed"
-              ? "Diese Runde ist bereits geschlossen."
-              : res.reason === "name_taken"
-                ? "Dieser Teamname ist in der Runde schon vergeben."
-                : "Beitritt zur Runde nicht möglich. Versuche es nochmals.",
-        );
-      }
-    } finally {
-      setBusy(false);
-    }
+    onStart(cleanName, cleanCode);
   };
-
 
   return (
     <div className="mt-8 grid gap-6 sm:grid-cols-[1.4fr_1fr]">
@@ -341,33 +286,6 @@ function StartForm({
             className="mt-1 w-full rounded-sm border border-border bg-paper px-3 py-2 font-mono-typed text-sm uppercase tracking-wider focus:border-stamp focus:outline-none"
           />
         </div>
-        <div>
-          <label className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
-            Rundencode (optional, für die Rangliste)
-          </label>
-          <input
-            type="text"
-            value={roundCode}
-            onChange={(e) => setRoundCode(e.target.value)}
-            placeholder="z. B. K7M2QA"
-            autoCapitalize="characters"
-            className="mt-1 w-full rounded-sm border border-border bg-paper px-3 py-2 font-mono-typed text-sm uppercase tracking-wider focus:border-stamp focus:outline-none"
-          />
-        </div>
-        {roundCode.trim().length > 0 && (
-          <div>
-            <label className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
-              Mitspielende (mit Komma trennen)
-            </label>
-            <input
-              type="text"
-              value={members}
-              onChange={(e) => setMembers(e.target.value)}
-              placeholder="Mia, Noah, Lea"
-              className="mt-1 w-full rounded-sm border border-border bg-paper px-3 py-2 font-serif text-[15px] focus:border-stamp focus:outline-none"
-            />
-          </div>
-        )}
         {error && (
           <p className="rounded-sm border border-destructive/40 bg-destructive/10 p-2 text-xs text-destructive">
             {error}
@@ -375,7 +293,6 @@ function StartForm({
         )}
         <button
           type="submit"
-          disabled={busy}
           className="w-full rounded-sm bg-primary px-5 py-3 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
         >
           Ermittlung starten →
