@@ -71,28 +71,37 @@ function AdminPage() {
         return;
       }
       setAuthed(true);
-      await refresh(password);
     } catch {
-      setError("Anmeldung fehlgeschlagen.");
+      setError("Anmeldung fehlgeschlagen. Server nicht erreichbar.");
+      return;
     } finally {
       setBusy(false);
+    }
+    try {
+      await refresh(password);
+    } catch {
+      setError("Runden konnten nicht geladen werden.");
     }
   };
 
   const doCreate = async () => {
     setBusy(true);
+    setError(null);
     try {
       const res = await create({ data: { password, title } });
-      if (res.ok) {
-        setTitle("");
-        await refresh(password);
+      if (!res.ok) {
+        setError("Passwort stimmt nicht mehr, bitte neu anmelden.");
+        return;
       }
+      setTitle("");
+      await refresh(password);
     } catch {
       setError("Runde konnte nicht erstellt werden.");
     } finally {
       setBusy(false);
     }
   };
+
 
   if (!authed) {
     return (
