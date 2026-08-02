@@ -17,6 +17,7 @@ import {
   getStageDurationMin,
 } from "@/lib/progress";
 import { getStageHintsUsed } from "@/lib/badges";
+import { joinRoundSession, type JoinResult } from "@/lib/round";
 import { NextStepCard } from "@/components/case-file/NextStepCard";
 import { BadgeShelf } from "@/components/case-file/BadgeShelf";
 
@@ -325,6 +326,33 @@ function StartForm({
             className="mt-1 w-full rounded-sm border border-border bg-paper px-3 py-2 font-mono-typed text-sm uppercase tracking-wider focus:border-stamp focus:outline-none"
           />
         </div>
+        <div>
+          <label className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+            Rundencode (optional, für die Rangliste)
+          </label>
+          <input
+            type="text"
+            value={roundCode}
+            onChange={(e) => setRoundCode(e.target.value)}
+            placeholder="z. B. K7M2QA"
+            autoCapitalize="characters"
+            className="mt-1 w-full rounded-sm border border-border bg-paper px-3 py-2 font-mono-typed text-sm uppercase tracking-wider focus:border-stamp focus:outline-none"
+          />
+        </div>
+        {roundCode.trim().length > 0 && (
+          <div>
+            <label className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+              Mitspielende (mit Komma trennen)
+            </label>
+            <input
+              type="text"
+              value={members}
+              onChange={(e) => setMembers(e.target.value)}
+              placeholder="Mia, Noah, Lea"
+              className="mt-1 w-full rounded-sm border border-border bg-paper px-3 py-2 font-serif text-[15px] focus:border-stamp focus:outline-none"
+            />
+          </div>
+        )}
         {error && (
           <p className="rounded-sm border border-destructive/40 bg-destructive/10 p-2 text-xs text-destructive">
             {error}
@@ -332,6 +360,7 @@ function StartForm({
         )}
         <button
           type="submit"
+          disabled={busy}
           className="w-full rounded-sm bg-primary px-5 py-3 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
         >
           Ermittlung starten →
