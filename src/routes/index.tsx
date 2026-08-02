@@ -303,7 +303,7 @@ function StartForm({
       <div className="space-y-3 text-[15px] leading-relaxed text-foreground/90">
         <p>
           <strong className="font-serif">Maja, 17,</strong> findet das Haus
-          ihrer Grosstante leer. Auf dem Tisch ein Brief: Heute Abend stimmt der
+          ihrer Grosstante leer. Auf dem Tisch ein Brief: Heute stimmt der
           Gemeinderat über ein <span className="ink-underline">Gaskraftwerk</span> ab.
           Elvira hat fünf Hinweise im Dorf hinterlegt.
         </p>
