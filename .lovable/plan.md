@@ -1,54 +1,30 @@
-# Live-Leaderboard mit Runden-Codes
+# Backend-Wechsel wegen Kosten: Faktenlage und Empfehlung
 
-## Ziel
+## Was ich geprüft habe
 
-Du als Lehrperson erstellst eine Runde und erhältst einen kurzen Code. Teams tippen diesen Code ein, geben Teamname und Mitspielende ein und starten. Während des Spiels sehen alle Teams live, wer wie weit ist; am Schluss die Gesamtzeit. Kein Login für Schülerinnen und Schüler.
+Kreditverbrauch der laufenden Abrechnungsperiode (21. Juli bis 21. August 2026), insgesamt 220,29 Credits:
 
-## Ablauf
+- Build-Mode-Nachrichten: 179,30 Credits
+- Plan-Mode-Nachrichten: 39,00 Credits
+- Backend (Worker-Tage): 1,99 Credits
+- Backend (Worker-Requests): ~0,00 Credits
 
-```text
-Admin (/admin, Passwort)        Team (Startseite)
-  Runde erstellen        ->      Code eingeben  (oder Offline-Start mit OEKOLOGIE)
-  Code z. B. "7KQ4"              Teamname + Mitspielende
-  Live-Board + Steuerung         Spiel wie bisher + Button "Rangliste"
-                                 Nach jeder Etappe: Fortschritt geht an die Runde
-```
+Das Backend verursacht also unter 1 Prozent deiner Kosten. Die Kosten entstehen fast vollständig durch das Bauen und Planen im Editor.
 
-## Was gebaut wird
+## Empfehlung
 
-**Admin-Bereich `/admin`**
-- Zugang über ein geheimes Admin-Passwort (serverseitig geprüft, verschlüsselte Session, nichts im Browser-Code).
-- Neue Runde erstellen (optional mit Klassenbezeichnung), Code wird generiert und gross angezeigt.
-- Liste aller Runden, Live-Board pro Runde, Runde schliessen bzw. löschen.
+Ein Backend-Wechsel würde in deinem Fall praktisch nichts sparen. Zusätzlich gilt für dieses Projekt: Das Backend ist nach dem Aktivieren fest mit dem Projekt verbunden und lässt sich nicht abschalten oder gegen ein eigenes Konto tauschen. Unter Connectors, Lovable Cloud, Disable schaltest du es nur für *künftige* neue Projekte aus.
 
-**Beitritt auf der Startseite**
-- Zwei Wege: „Runde beitreten“ (Rundencode) oder wie bisher „Offline starten“ mit dem Startcode OEKOLOGIE (dann ohne Leaderboard).
-- Beim Beitritt: Teamname plus Namen der Mitspielenden (Felder zum Hinzufügen/Entfernen).
-- Danach normaler Intro- und Spielablauf; Runden- und Team-Zuordnung wird lokal gespeichert, damit ein Reload nicht verloren geht.
+Wenn du trotzdem unabhängig werden willst, ist der einzige saubere Weg ein eigenes Projekt außerhalb von Lovable: Schema und Daten hier exportieren (More, Cloud, Advanced settings, Export data) und dort einspielen. Für die Kostenfrage bringt das nichts, deshalb schlage ich es nicht als Schritt vor.
 
-**Fortschritt melden**
-- Bei jedem Etappenabschluss und beim Hearing-Abschluss wird der Stand an die Runde gemeldet: gelöste Etappen, Startzeit, Endzeit, Anzahl genutzter Hinweise.
-- Das bestehende lokale Fortschrittssystem bleibt führend; die Meldung ist ein zusätzlicher Sync (schlägt sie fehl, läuft das Spiel normal weiter).
+## Was stattdessen wirklich Kosten senkt
 
-**Live-Rangliste `/rangliste`**
-- Erreichbar aus der Übersicht und über einen kompakten Rang-Hinweis im Spiel.
-- Tabelle: Rang, Teamname (Mitspielende antippbar), gelöste Etappen als Punktekette, benötigte Zeit bzw. Endzeit, genutzte Hinweise.
-- Live-Aktualisierung, eigenes Team hervorgehoben.
-- Sortierung: mehr gelöste Etappen zuerst, bei Gleichstand kürzere Zeit, dann weniger Hinweise.
+1. Weniger, dafür grössere Aufträge: mehrere Änderungen in einer Nachricht bündeln statt viele kleine Nachrichten hintereinander.
+2. Plan-Mode gezielt einsetzen: jede Plan-Nachricht kostet 1 Credit; für kleine, klare Änderungen direkt im Build-Mode arbeiten.
+3. Visuelle Textänderungen für reine Text- und Wording-Korrekturen nutzen statt dafür eine Build-Nachricht auszugeben.
+4. Grosse Features vorab einmal klar beschreiben, damit weniger Korrekturrunden nötig sind. Beim Leaderboard heisst das: Regeln, Felder und Ansichten in einem Zug festlegen.
+5. Backend-Kosten sind bereits minimal. Falls sie später steigen: unter More, Cloud, Jobs prüfen, dass keine unnötig häufigen geplanten Aufgaben laufen.
 
-## Was du vielleicht noch bedenken willst
+## Nächster Schritt
 
-Vorschläge, die ich einbaue, wenn du sie willst (sag einfach welche):
-- Doppelte Teamnamen in derselben Runde blockieren.
-- Runde „sperren“, damit nach Spielstart niemand mehr beitritt.
-- Admin-Ansicht mit genutzten Hinweisen pro Etappe je Team.
-- Badges im Leaderboard anzeigen.
-
-## Technische Details
-
-- Datenbank (Postgres-Backend des Projekts): Tabelle `rounds` (Code, Bezeichnung, Status, Zeitstempel) und `teams` (Runde, Teamname, Mitspielende, gelöste Etappen, Start-/Endzeit, genutzte Hinweise, geheimes Team-Token) inkl. RLS und Zugriffsrechten.
-- Zugriff ohne Konto: Leserechte für die Rangliste über eine schmale öffentliche Leseregel mit eingeschränkten Spalten; Beitritt und Fortschritts-Updates laufen ausschliesslich über Server-Funktionen, die das Team-Token prüfen. Kein direktes Schreiben aus dem Browser.
-- Admin: `ADMIN_PASSWORD` als Secret, Prüfung timing-safe in einer Server-Funktion, verschlüsselte Session über `SESSION_SECRET`; nur damit sind Runden-Erstellung und Admin-Board erreichbar.
-- Live-Updates über Realtime-Abo auf `teams` mit Polling als Rückfall.
-- Neue Dateien: `src/routes/admin.tsx`, `src/routes/rangliste.tsx`, `src/lib/leaderboard.functions.ts` (nur Server-Funktionen), `src/lib/leaderboard.server.ts` (Helfer), `src/lib/round.ts` (lokaler Runden-/Team-Zustand), `src/start.ts` für die Middleware-Registrierung.
-- Anpassungen: `src/routes/index.tsx` (Beitritt, Link zur Rangliste), `src/lib/progress.ts` (Sync-Hook bei `completeStage`/`finishGame`), Etappen-Routen bleiben inhaltlich unverändert.
+Beim bestehenden Backend bleiben und das geplante Leaderboard darauf umsetzen, sobald du grünes Licht gibst. Der fertige Leaderboard-Plan (Runden-Code durch Admin, Team-Beitritt ohne Konto, Live-Rangliste) liegt bereit und kann unverändert gebaut werden.
