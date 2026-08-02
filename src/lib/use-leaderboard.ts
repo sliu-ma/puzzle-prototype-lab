@@ -68,11 +68,12 @@ export function useLeaderboard(code: string | null) {
     let cancelled = false;
     let roundId: string | null = null;
 
-    const loadTeams = async (id: string) => {
-      const { data, error } = await supabase
-        .from("teams")
-        .select(TEAM_COLUMNS)
-        .eq("round_id", id);
+    const normalized = code.trim().toUpperCase();
+
+    const loadTeams = async () => {
+      const { data, error } = await supabase.rpc("get_leaderboard_by_code", {
+        _code: normalized,
+      });
       if (cancelled) return;
       if (error) {
         setState((s) => ({ ...s, loading: false, error: "Rangliste nicht erreichbar." }));
@@ -87,11 +88,7 @@ export function useLeaderboard(code: string | null) {
     };
 
     const init = async () => {
-      const { data: round, error } = await supabase
-        .from("rounds")
-        .select("id, title")
-        .eq("code", code.trim().toUpperCase())
-        .maybeSingle();
+      const { data, error } = await supabase.rpc("get_round_by_code", { _code: normalized });
       if (cancelled) return;
       if (error) {
         setState({
@@ -102,6 +99,7 @@ export function useLeaderboard(code: string | null) {
         });
         return;
       }
+      const round = (data ?? [])[0];
       if (!round) {
         setState({
           loading: false,
@@ -111,34 +109,23 @@ export function useLeaderboard(code: string | null) {
         });
         return;
       }
-      roundId = round.id;
+      roundFound = true;
       setState((s) => ({ ...s, roundTitle: round.title ?? "" }));
-      await loadTeams(round.id);
+      await loadTeams();
     };
 
     void init();
 
-    const channel = supabase
-      .channel(`leaderboard-${code}`)
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "teams" },
-        () => {
-          if (roundId) void loadTeams(roundId);
-        },
-      )
-      .subscribe();
-
     const poll = window.setInterval(() => {
-      if (roundId) void loadTeams(roundId);
-    }, 20_000);
+      if (roundFound) void loadTeams();
+    }, 10_000);
 
     return () => {
       cancelled = true;
       window.clearInterval(poll);
-      void supabase.removeChannel(channel);
     };
   }, [code]);
+
 
   return state;
 }
