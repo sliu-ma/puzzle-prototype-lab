@@ -89,10 +89,18 @@ export function finishGame() {
       localStorage.setItem(KEY_END_TS, String(Date.now()));
       window.dispatchEvent(new Event("maya-progress"));
     }
+    if (typeof window !== "undefined") {
+      void import("./round")
+        .then((m) => m.syncRoundProgress())
+        .catch(() => {
+          /* ignore */
+        });
+    }
   } catch {
     /* ignore */
   }
 }
+
 
 
 // ---- Adaptive Zeit-Helfer ---------------------------------------------------
@@ -161,10 +169,22 @@ export function completeStage(n: number) {
       localStorage.setItem(KEY_STAGE, String(n + 1));
       window.dispatchEvent(new Event("maya-progress"));
     }
+    syncLeaderboard();
   } catch {
     /* ignore */
   }
 }
+
+/** Meldet den Stand an die Rangliste, falls das Team einer Runde beigetreten ist. */
+function syncLeaderboard() {
+  if (typeof window === "undefined") return;
+  void import("./round")
+    .then((m) => m.syncRoundProgress())
+    .catch(() => {
+      /* ignore */
+    });
+}
+
 
 /** Zeitstempel, wann Etappe n abgeschlossen wurde (null falls unbekannt). */
 export function getStageDoneTs(n: number): number | null {
