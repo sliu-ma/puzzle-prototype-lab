@@ -63,15 +63,10 @@ function AdminPage() {
 
   const doLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password.trim().length === 0) {
-      setError("Bitte gib das Passwort ein.");
-      return;
-    }
     setBusy(true);
     setError(null);
     try {
       const res = await login({ data: { password } });
-
       if (!res.ok) {
         setError("Passwort stimmt nicht.");
         return;
