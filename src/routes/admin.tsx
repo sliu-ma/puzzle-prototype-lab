@@ -96,7 +96,9 @@ function AdminPage() {
       const res = await create({ data: { password, title } });
       if (!res.ok) {
         if ("reason" in res && res.reason === "backend_unavailable") {
-          setError("Die Verbindung zu Supabase ist momentan nicht verfügbar. Bitte erneut versuchen.");
+          setError(
+            "Die Server-Verbindung zu Supabase ist nicht verfügbar. Bitte die Seite neu laden und erneut versuchen.",
+          );
         } else if ("reason" in res && res.reason === "code_generation_failed") {
           setError("Es konnte kein freier Rundencode erzeugt werden. Bitte erneut versuchen.");
         } else {
