@@ -99,7 +99,27 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_leaderboard_by_code: {
+        Args: { _code: string }
+        Returns: {
+          badges: string[]
+          finished_at: string
+          hints_used: number
+          id: string
+          members: string[]
+          name: string
+          stages_done: number
+          started_at: string
+        }[]
+      }
+      get_round_by_code: {
+        Args: { _code: string }
+        Returns: {
+          id: string
+          status: string
+          title: string
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
