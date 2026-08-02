@@ -9,14 +9,21 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as RanglisteRouteImport } from './routes/rangliste'
 import { Route as FinaleRouteImport } from './routes/finale'
 import { Route as Etappe5RouteImport } from './routes/etappe-5'
 import { Route as Etappe4RouteImport } from './routes/etappe-4'
 import { Route as Etappe3RouteImport } from './routes/etappe-3'
 import { Route as Etappe2RouteImport } from './routes/etappe-2'
 import { Route as Etappe1RouteImport } from './routes/etappe-1'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 
+const RanglisteRoute = RanglisteRouteImport.update({
+  id: '/rangliste',
+  path: '/rangliste',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FinaleRoute = FinaleRouteImport.update({
   id: '/finale',
   path: '/finale',
@@ -47,6 +54,11 @@ const Etappe1Route = Etappe1RouteImport.update({
   path: '/etappe-1',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -55,74 +67,95 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/etappe-1': typeof Etappe1Route
   '/etappe-2': typeof Etappe2Route
   '/etappe-3': typeof Etappe3Route
   '/etappe-4': typeof Etappe4Route
   '/etappe-5': typeof Etappe5Route
   '/finale': typeof FinaleRoute
+  '/rangliste': typeof RanglisteRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/etappe-1': typeof Etappe1Route
   '/etappe-2': typeof Etappe2Route
   '/etappe-3': typeof Etappe3Route
   '/etappe-4': typeof Etappe4Route
   '/etappe-5': typeof Etappe5Route
   '/finale': typeof FinaleRoute
+  '/rangliste': typeof RanglisteRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/etappe-1': typeof Etappe1Route
   '/etappe-2': typeof Etappe2Route
   '/etappe-3': typeof Etappe3Route
   '/etappe-4': typeof Etappe4Route
   '/etappe-5': typeof Etappe5Route
   '/finale': typeof FinaleRoute
+  '/rangliste': typeof RanglisteRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/admin'
     | '/etappe-1'
     | '/etappe-2'
     | '/etappe-3'
     | '/etappe-4'
     | '/etappe-5'
     | '/finale'
+    | '/rangliste'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/admin'
     | '/etappe-1'
     | '/etappe-2'
     | '/etappe-3'
     | '/etappe-4'
     | '/etappe-5'
     | '/finale'
+    | '/rangliste'
   id:
     | '__root__'
     | '/'
+    | '/admin'
     | '/etappe-1'
     | '/etappe-2'
     | '/etappe-3'
     | '/etappe-4'
     | '/etappe-5'
     | '/finale'
+    | '/rangliste'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRoute
   Etappe1Route: typeof Etappe1Route
   Etappe2Route: typeof Etappe2Route
   Etappe3Route: typeof Etappe3Route
   Etappe4Route: typeof Etappe4Route
   Etappe5Route: typeof Etappe5Route
   FinaleRoute: typeof FinaleRoute
+  RanglisteRoute: typeof RanglisteRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/rangliste': {
+      id: '/rangliste'
+      path: '/rangliste'
+      fullPath: '/rangliste'
+      preLoaderRoute: typeof RanglisteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/finale': {
       id: '/finale'
       path: '/finale'
@@ -165,6 +198,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Etappe1RouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -177,12 +217,14 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRoute,
   Etappe1Route: Etappe1Route,
   Etappe2Route: Etappe2Route,
   Etappe3Route: Etappe3Route,
   Etappe4Route: Etappe4Route,
   Etappe5Route: Etappe5Route,
   FinaleRoute: FinaleRoute,
+  RanglisteRoute: RanglisteRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
