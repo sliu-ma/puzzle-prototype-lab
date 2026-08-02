@@ -89,10 +89,18 @@ export function finishGame() {
       localStorage.setItem(KEY_END_TS, String(Date.now()));
       window.dispatchEvent(new Event("maya-progress"));
     }
+    if (typeof window !== "undefined") {
+      void import("./round")
+        .then((m) => m.syncRoundProgress())
+        .catch(() => {
+          /* ignore */
+        });
+    }
   } catch {
     /* ignore */
   }
 }
+
 
 
 // ---- Adaptive Zeit-Helfer ---------------------------------------------------
