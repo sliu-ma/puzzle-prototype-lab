@@ -66,7 +66,7 @@ export function useLeaderboard(code: string | null) {
       return;
     }
     let cancelled = false;
-    let roundId: string | null = null;
+    let roundFound = false;
 
     const normalized = code.trim().toUpperCase();
 
