@@ -131,6 +131,12 @@ export function BadgeToast() {
         >
           ★ Badge freigeschaltet ★
         </p>
+        {queue.length > 1 && (
+          <p className="font-mono-typed text-[10px] uppercase tracking-[0.25em] text-paper/60">
+            1 von {queue.length}
+          </p>
+        )}
+
 
         <div className="relative flex h-72 w-72 items-center justify-center sm:h-80 sm:w-80">
           {/* Badge */}
