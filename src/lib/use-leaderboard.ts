@@ -70,54 +70,43 @@ export function useLeaderboard(code: string | null) {
 
     const normalized = code.trim().toUpperCase();
 
-    const loadTeams = async () => {
-      const { data, error } = await supabase.rpc("get_leaderboard_by_code", {
-        _code: normalized,
-      });
-      if (cancelled) return;
-      if (error) {
-        setState((s) => ({ ...s, loading: false, error: "Rangliste nicht erreichbar." }));
-        return;
-      }
-      setState((s) => ({
-        ...s,
-        loading: false,
-        error: null,
-        teams: rankTeams((data ?? []).map((r) => mapTeam(r as Record<string, unknown>))),
-      }));
-    };
-
-    const init = async () => {
-      const { data, error } = await supabase.rpc("get_round_by_code", { _code: normalized });
-      if (cancelled) return;
-      if (error) {
+    const load = async (first: boolean) => {
+      try {
+        const res = await fetchLeaderboard({ data: { code: normalized } });
+        if (cancelled) return;
+        if (!res.ok) {
+          if (first) {
+            setState({
+              loading: false,
+              error: "Diesen Rundencode gibt es nicht.",
+              roundTitle: null,
+              teams: [],
+            });
+          }
+          return;
+        }
+        roundFound = true;
+        setState({
+          loading: false,
+          error: null,
+          roundTitle: res.roundTitle,
+          teams: rankTeams(res.teams.map((r) => mapTeam(r as unknown as Record<string, unknown>))),
+        });
+      } catch {
+        if (cancelled || !first) return;
         setState({
           loading: false,
           error: "Rangliste nicht erreichbar.",
           roundTitle: null,
           teams: [],
         });
-        return;
       }
-      const round = (data ?? [])[0];
-      if (!round) {
-        setState({
-          loading: false,
-          error: "Diesen Rundencode gibt es nicht.",
-          roundTitle: null,
-          teams: [],
-        });
-        return;
-      }
-      roundFound = true;
-      setState((s) => ({ ...s, roundTitle: round.title ?? "" }));
-      await loadTeams();
     };
 
-    void init();
+    void load(true);
 
     const poll = window.setInterval(() => {
-      if (roundFound) void loadTeams();
+      if (roundFound) void load(false);
     }, 10_000);
 
     return () => {
