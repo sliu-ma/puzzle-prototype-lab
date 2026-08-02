@@ -39,16 +39,20 @@ function makePieces(n: number): Piece[] {
  * Kein Auto-Dismiss, nur Tap/Klick oder ESC schließt.
  */
 export function BadgeToast() {
-  const [badge, setBadge] = useState<Badge | null>(null);
+  const [queue, setQueue] = useState<Badge[]>([]);
   const [confettiOn, setConfettiOn] = useState(false);
-  const pieces = useMemo(() => (badge ? makePieces(48) : []), [badge]);
+  const badge = queue[0] ?? null;
+  const pieces = useMemo(
+    () => (badge ? makePieces(48) : []),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [badge?.id],
+  );
 
   useEffect(() => {
     const onEarn = (e: Event) => {
       const detail = (e as CustomEvent<Badge>).detail;
       if (!detail) return;
-      setBadge(detail);
-      setConfettiOn(true);
+      setQueue((q) => (q.some((b) => b.id === detail.id) ? q : [...q, detail]));
       if (typeof navigator !== "undefined" && "vibrate" in navigator) {
         navigator.vibrate?.([40, 60, 40, 60, 120]);
       }
@@ -58,22 +62,27 @@ export function BadgeToast() {
       window.removeEventListener("badge:earned", onEarn as EventListener);
   }, []);
 
+  const dismiss = () => setQueue((q) => q.slice(1));
+
   useEffect(() => {
     if (!badge) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setBadge(null);
+      if (e.key === "Escape") dismiss();
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [badge]);
 
+  // Konfetti bei jedem neuen Badge neu starten und nach 4.5s stoppen.
   useEffect(() => {
-    if (!confettiOn) return;
+    if (!badge) return;
+    setConfettiOn(true);
     const t = setTimeout(() => setConfettiOn(false), 4500);
     return () => clearTimeout(t);
-  }, [confettiOn]);
+  }, [badge?.id]);
 
   if (!badge) return null;
+
 
   return (
     <div
@@ -81,7 +90,7 @@ export function BadgeToast() {
       style={{ backgroundColor: "rgba(20, 16, 12, 0.82)" }}
       role="alertdialog"
       aria-live="polite"
-      onClick={() => setBadge(null)}
+      onClick={dismiss}
     >
       <style>{`
         @keyframes badge-confetti-fall {
@@ -122,6 +131,12 @@ export function BadgeToast() {
         >
           ★ Badge freigeschaltet ★
         </p>
+        {queue.length > 1 && (
+          <p className="font-mono-typed text-[10px] uppercase tracking-[0.25em] text-paper/60">
+            1 von {queue.length}
+          </p>
+        )}
+
 
         <div className="relative flex h-72 w-72 items-center justify-center sm:h-80 sm:w-80">
           {/* Badge */}
@@ -153,7 +168,7 @@ export function BadgeToast() {
           className="mt-1 font-mono-typed text-[10px] uppercase tracking-wider text-paper/60 animate-fade-in"
           style={{ animationDelay: "0.7s", animationFillMode: "backwards" }}
         >
-          Tippen zum Schliessen
+          {queue.length > 1 ? "Tippen für das nächste Abzeichen" : "Tippen zum Schliessen"}
         </p>
       </div>
     </div>
