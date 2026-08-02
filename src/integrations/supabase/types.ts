@@ -14,7 +14,86 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      rounds: {
+        Row: {
+          code: string
+          created_at: string
+          id: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          id?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          id?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      teams: {
+        Row: {
+          badges: string[]
+          created_at: string
+          finished_at: string | null
+          hints_used: number
+          id: string
+          members: string[]
+          name: string
+          round_id: string
+          stages_done: number
+          started_at: string | null
+          token_hash: string
+          updated_at: string
+        }
+        Insert: {
+          badges?: string[]
+          created_at?: string
+          finished_at?: string | null
+          hints_used?: number
+          id?: string
+          members?: string[]
+          name: string
+          round_id: string
+          stages_done?: number
+          started_at?: string | null
+          token_hash: string
+          updated_at?: string
+        }
+        Update: {
+          badges?: string[]
+          created_at?: string
+          finished_at?: string | null
+          hints_used?: number
+          id?: string
+          members?: string[]
+          name?: string
+          round_id?: string
+          stages_done?: number
+          started_at?: string | null
+          token_hash?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "teams_round_id_fkey"
+            columns: ["round_id"]
+            isOneToOne: false
+            referencedRelation: "rounds"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
