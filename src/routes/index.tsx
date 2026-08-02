@@ -209,6 +209,21 @@ function CoverPage() {
           Speicher · v3 · Linearer Ablauf
         </p>
 
+        <div className="mt-3 flex flex-wrap items-center justify-center gap-4">
+          <Link
+            to="/rangliste"
+            className="font-mono-typed text-[10px] uppercase tracking-[0.2em] text-muted-foreground underline-offset-4 hover:underline"
+          >
+            Rangliste
+          </Link>
+          <Link
+            to="/admin"
+            className="font-mono-typed text-[10px] uppercase tracking-[0.2em] text-muted-foreground underline-offset-4 hover:underline"
+          >
+            Lehrpersonen
+          </Link>
+        </div>
+
       </div>
     </main>
   );
