@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowLeft, Clock, Lightbulb, Medal, Trophy } from "lucide-react";
 import { useLeaderboard } from "@/lib/use-leaderboard";
 import { getRoundSession } from "@/lib/round";
@@ -30,18 +30,20 @@ export const Route = createFileRoute("/rangliste")({
 });
 
 function RanglistePage() {
-  const session = useMemo(() => getRoundSession(), []);
+  const [session, setSession] = useState<ReturnType<typeof getRoundSession>>(null);
   const [input, setInput] = useState("");
   const [code, setCode] = useState<string | null>(null);
 
   useEffect(() => {
+    const current = getRoundSession();
+    setSession(current);
     const fromUrl = new URLSearchParams(window.location.search).get("code");
-    const initial = fromUrl ?? session?.roundCode ?? null;
+    const initial = fromUrl ?? current?.roundCode ?? null;
     if (initial) {
       setCode(initial.toUpperCase());
       setInput(initial.toUpperCase());
     }
-  }, [session]);
+  }, []);
 
   const { loading, error, roundTitle, teams } = useLeaderboard(code);
 
