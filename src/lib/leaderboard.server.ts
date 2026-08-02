@@ -1,14 +1,63 @@
 // Server-only Helfer für Runden & Leaderboard.
 // Wird ausschliesslich aus leaderboard.functions.ts heraus benutzt.
 import { createHash, randomBytes, timingSafeEqual } from "node:crypto";
+import { z } from "zod";
 
 const CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+
+const adminSchema = z.object({ password: z.string().min(1).max(200) });
+
+export function parseAdminInput(data: unknown) {
+  return adminSchema.parse(data);
+}
+
+export function parseCreateRoundInput(data: unknown) {
+  return adminSchema.extend({ title: z.string().max(80).default("") }).parse(data);
+}
+
+export function parseRoundStatusInput(data: unknown) {
+  return adminSchema
+    .extend({ roundId: z.string().uuid(), status: z.enum(["open", "closed"]) })
+    .parse(data);
+}
+
+export function parseRoundDeleteInput(data: unknown) {
+  return adminSchema.extend({ roundId: z.string().uuid() }).parse(data);
+}
+
+export function parseTeamDeleteInput(data: unknown) {
+  return adminSchema.extend({ teamId: z.string().uuid() }).parse(data);
+}
+
+export function parseJoinRoundInput(data: unknown) {
+  return z
+    .object({
+      code: z.string().min(3).max(20),
+      teamName: z.string().min(2).max(40),
+      members: z.array(z.string().max(40)).max(8).default([]),
+    })
+    .parse(data);
+}
+
+export function parseProgressInput(data: unknown) {
+  return z
+    .object({
+      teamId: z.string().uuid(),
+      token: z.string().min(10).max(200),
+      stagesDone: z.number().int().min(0).max(6),
+      hintsUsed: z.number().int().min(0).max(99),
+      badges: z.array(z.string().max(60)).max(30).default([]),
+      startedAt: z.string().datetime().nullable().default(null),
+      finishedAt: z.string().datetime().nullable().default(null),
+    })
+    .parse(data);
+}
 
 export function generateRoundCode(): string {
   const bytes = randomBytes(6);
   let out = "";
   for (let i = 0; i < 6; i++) {
-    out += CODE_ALPHABET[bytes[i]! % CODE_ALPHABET.length];
+    out += CODE_ALPHABET[(bytes[i] ?? 0) % CODE_ALPHABET.length];
   }
   return out;
 }

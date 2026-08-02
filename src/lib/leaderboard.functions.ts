@@ -1,5 +1,4 @@
 import { createServerFn } from "@tanstack/react-start";
-import { z } from "zod";
 import {
   checkAdminPassword,
   cleanMembers,
@@ -8,36 +7,45 @@ import {
   generateTeamToken,
   hashToken,
   normalizeCode,
+  parseAdminInput,
+  parseCreateRoundInput,
+  parseJoinRoundInput,
+  parseProgressInput,
+  parseRoundDeleteInput,
+  parseRoundStatusInput,
+  parseTeamDeleteInput,
 } from "./leaderboard.server";
 
-const adminSchema = z.object({ password: z.string().min(1).max(200) });
-
 export const adminLogin = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => adminSchema.parse(d))
+  .inputValidator(parseAdminInput)
   .handler(async ({ data }) => ({ ok: checkAdminPassword(data.password) }));
 
 export const adminCreateRound = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) =>
-    adminSchema.extend({ title: z.string().max(80).default("") }).parse(d),
-  )
+  .inputValidator(parseCreateRoundInput)
   .handler(async ({ data }) => {
     if (!checkAdminPassword(data.password)) return { ok: false as const };
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    for (let attempt = 0; attempt < 6; attempt++) {
-      const code = generateRoundCode();
-      const { data: row, error } = await supabaseAdmin
-        .from("rounds")
-        .insert({ code, title: cleanName(data.title, 80) })
-        .select("id, code, title, status, created_at")
-        .single();
-      if (!error && row) return { ok: true as const, round: row };
-      if (error && !error.message.includes("duplicate")) throw error;
+    try {
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      for (let attempt = 0; attempt < 6; attempt++) {
+        const code = generateRoundCode();
+        const { data: row, error } = await supabaseAdmin
+          .from("rounds")
+          .insert({ code, title: cleanName(data.title, 80) })
+          .select("id, code, title, status, created_at")
+          .single();
+        if (!error && row) return { ok: true as const, round: row };
+        if (error && error.code !== "23505") throw error;
+      }
+      console.error("[Leaderboard] Kein freier Rundencode nach sechs Versuchen.");
+      return { ok: false as const, reason: "code_generation_failed" as const };
+    } catch (error) {
+      console.error("[Leaderboard] Runde konnte nicht erstellt werden.", error);
+      return { ok: false as const, reason: "backend_unavailable" as const };
     }
-    throw new Error("Konnte keinen freien Rundencode erzeugen.");
   });
 
 export const adminListRounds = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => adminSchema.parse(d))
+  .inputValidator(parseAdminInput)
   .handler(async ({ data }) => {
     if (!checkAdminPassword(data.password)) return { ok: false as const };
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -67,11 +75,7 @@ export const adminListRounds = createServerFn({ method: "POST" })
   });
 
 export const adminSetRoundStatus = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) =>
-    adminSchema
-      .extend({ roundId: z.string().uuid(), status: z.enum(["open", "closed"]) })
-      .parse(d),
-  )
+  .inputValidator(parseRoundStatusInput)
   .handler(async ({ data }) => {
     if (!checkAdminPassword(data.password)) return { ok: false as const };
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -84,9 +88,7 @@ export const adminSetRoundStatus = createServerFn({ method: "POST" })
   });
 
 export const adminDeleteRound = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) =>
-    adminSchema.extend({ roundId: z.string().uuid() }).parse(d),
-  )
+  .inputValidator(parseRoundDeleteInput)
   .handler(async ({ data }) => {
     if (!checkAdminPassword(data.password)) return { ok: false as const };
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -96,9 +98,7 @@ export const adminDeleteRound = createServerFn({ method: "POST" })
   });
 
 export const adminDeleteTeam = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) =>
-    adminSchema.extend({ teamId: z.string().uuid() }).parse(d),
-  )
+  .inputValidator(parseTeamDeleteInput)
   .handler(async ({ data }) => {
     if (!checkAdminPassword(data.password)) return { ok: false as const };
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -108,15 +108,7 @@ export const adminDeleteTeam = createServerFn({ method: "POST" })
   });
 
 export const joinRound = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) =>
-    z
-      .object({
-        code: z.string().min(3).max(20),
-        teamName: z.string().min(2).max(40),
-        members: z.array(z.string().max(40)).max(8).default([]),
-      })
-      .parse(d),
-  )
+  .inputValidator(parseJoinRoundInput)
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const code = normalizeCode(data.code);
@@ -158,19 +150,7 @@ export const joinRound = createServerFn({ method: "POST" })
   });
 
 export const reportProgress = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) =>
-    z
-      .object({
-        teamId: z.string().uuid(),
-        token: z.string().min(10).max(200),
-        stagesDone: z.number().int().min(0).max(6),
-        hintsUsed: z.number().int().min(0).max(99),
-        badges: z.array(z.string().max(60)).max(30).default([]),
-        startedAt: z.string().datetime().nullable().default(null),
-        finishedAt: z.string().datetime().nullable().default(null),
-      })
-      .parse(d),
-  )
+  .inputValidator(parseProgressInput)
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: team, error } = await supabaseAdmin
