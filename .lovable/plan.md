@@ -46,7 +46,7 @@ Vorschläge, die ich einbaue, wenn du sie willst (sag einfach welche):
 
 ## Technische Details
 
-- Datenbank (Lovable Cloud): Tabelle `rounds` (Code, Bezeichnung, Status, Zeitstempel) und `teams` (Runde, Teamname, Mitspielende, gelöste Etappen, Start-/Endzeit, genutzte Hinweise, geheimes Team-Token).
+- Datenbank (Postgres-Backend des Projekts): Tabelle `rounds` (Code, Bezeichnung, Status, Zeitstempel) und `teams` (Runde, Teamname, Mitspielende, gelöste Etappen, Start-/Endzeit, genutzte Hinweise, geheimes Team-Token) inkl. RLS und Zugriffsrechten.
 - Zugriff ohne Konto: Leserechte für die Rangliste über eine schmale öffentliche Leseregel mit eingeschränkten Spalten; Beitritt und Fortschritts-Updates laufen ausschliesslich über Server-Funktionen, die das Team-Token prüfen. Kein direktes Schreiben aus dem Browser.
 - Admin: `ADMIN_PASSWORD` als Secret, Prüfung timing-safe in einer Server-Funktion, verschlüsselte Session über `SESSION_SECRET`; nur damit sind Runden-Erstellung und Admin-Board erreichbar.
 - Live-Updates über Realtime-Abo auf `teams` mit Polling als Rückfall.
