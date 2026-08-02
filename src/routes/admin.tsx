@@ -63,6 +63,10 @@ function AdminPage() {
 
   const doLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (password.length === 0) {
+      setError("Bitte Passwort eingeben.");
+      return;
+    }
     setBusy(true);
     setError(null);
     try {
