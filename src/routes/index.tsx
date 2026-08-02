@@ -170,21 +170,26 @@ function CoverPage() {
               />
             ) : (
               <StartForm
-                onStart={(name, code) => {
+                onStart={async (name, code, roundCode, members) => {
                   resetAll();
                   registerTeam(name, code);
                   if (code.toUpperCase() === CHEAT_CODE) {
                     // Debug-Modus: alle Etappen freischalten
                     for (let i = 1; i <= 6; i++) completeStage(i);
                   }
+                  let join: JoinResult | null = null;
+                  if (roundCode) {
+                    join = await joinRoundSession(roundCode, name, members);
+                    if (!join.ok) return join;
+                  }
                   setIntroSeen(false);
                   setTeam({ name, code });
                   setStage(getCurrentStage());
+                  return null;
                 }}
-
               />
-
             )}
+
           </article>
 
           <div
