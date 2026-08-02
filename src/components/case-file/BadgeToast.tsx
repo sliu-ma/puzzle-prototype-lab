@@ -90,7 +90,7 @@ export function BadgeToast() {
       style={{ backgroundColor: "rgba(20, 16, 12, 0.82)" }}
       role="alertdialog"
       aria-live="polite"
-      onClick={() => setBadge(null)}
+      onClick={dismiss}
     >
       <style>{`
         @keyframes badge-confetti-fall {
