@@ -175,3 +175,28 @@ export const reportProgress = createServerFn({ method: "POST" })
     if (upErr) throw upErr;
     return { ok: true as const };
   });
+
+/** Öffentliche Rangliste: nur über den Rundencode, ohne Team-Tokens. */
+export const fetchLeaderboard = createServerFn({ method: "POST" })
+  .inputValidator((input: { code: string }) => ({ code: normalizeCode(String(input.code ?? "")) }))
+  .handler(async ({ data }) => {
+    if (data.code.length < 4) return { ok: false as const, reason: "not_found" as const };
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: round, error } = await supabaseAdmin
+      .from("rounds")
+      .select("id, title, status")
+      .eq("code", data.code)
+      .maybeSingle();
+    if (error) throw error;
+    if (!round) return { ok: false as const, reason: "not_found" as const };
+    const { data: teams, error: tErr } = await supabaseAdmin
+      .from("teams")
+      .select("id, name, members, stages_done, hints_used, badges, started_at, finished_at")
+      .eq("round_id", round.id);
+    if (tErr) throw tErr;
+    return {
+      ok: true as const,
+      roundTitle: round.title ?? "",
+      teams: teams ?? [],
+    };
+  });
