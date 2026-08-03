@@ -2,8 +2,9 @@ import { useState } from "react";
 import { ArrowRight, Plus, X, KeyRound, Users, Check, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { START_CODE } from "@/lib/progress";
-import { joinRound } from "@/lib/rounds.functions";
+import { joinRound, lookupRound } from "@/lib/rounds.functions";
 import { setRoundSession, type RoundSession } from "@/lib/round-client";
+
 
 const CHEAT_CODE = "KRXZMVBQ";
 const MAX_MEMBERS = 4;
