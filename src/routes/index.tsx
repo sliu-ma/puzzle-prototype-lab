@@ -170,9 +170,9 @@ function CoverPage() {
               />
             ) : (
               <StartForm
-                onStart={(name, code) => {
+                onStart={(name, code, members) => {
                   resetAll();
-                  registerTeam(name, code);
+                  registerTeam(name, code, members);
                   if (code.toUpperCase() === CHEAT_CODE) {
                     // Debug-Modus: alle Etappen freischalten
                     for (let i = 1; i <= 6; i++) completeStage(i);
@@ -181,10 +181,9 @@ function CoverPage() {
                   setTeam({ name, code });
                   setStage(getCurrentStage());
                 }}
-
               />
-
             )}
+
           </article>
 
           <div
