@@ -24,7 +24,10 @@ type Props = {
   title?: React.ReactNode;
   description?: string;
   label?: string;
+  /** Etappen-Nummer, für die Punkte-Zeitmessung ab dem Scan. */
+  stage?: number;
 };
+
 
 type DiagnosticInfo = {
   name: string;
