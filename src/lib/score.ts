@@ -14,8 +14,7 @@ export const STAGE_BASE_POINTS = 1000;
 export const STAGE_MIN_POINTS = 600;
 /** Referenzdauer pro Etappe bei einem 90-Minuten-Budget. */
 export const STAGE_REF_SHARE = 10 / 90;
-/** Bis zu diesem Anteil der Referenzdauer gibt es die volle Punktzahl. */
-const FULL_UNTIL = 0.25;
+
 
 export const HINT_CAP: Record<1 | 2 | 3, number> = {
   1: 0.9,
