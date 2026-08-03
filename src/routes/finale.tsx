@@ -1,18 +1,20 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { CheckCircle2, XCircle, Gauge, RefreshCw, ArrowUp, ArrowDown, Sparkles, Clock, Lightbulb, Scale, AlertTriangle } from "lucide-react";
+import { CheckCircle2, XCircle, Gauge, RefreshCw, ArrowUp, ArrowDown, Sparkles, Clock, Lightbulb, Scale, AlertTriangle, Trophy } from "lucide-react";
 import { PaperCard } from "@/components/case-file/PaperCard";
 import { Stamp } from "@/components/case-file/Stamp";
 import { StageGate } from "@/components/case-file/StageGate";
 import { getTotalRevealedHints } from "@/components/case-file/HintSystem";
-import { completeStage, finishGame, getHearingClock, getStartTs, getEndTs, TIMER_DURATION_MIN } from "@/lib/progress";
+import { completeStage, finishGame, getHearingClock, getStartTs, getEndTs, getTeam, TIMER_DURATION_MIN } from "@/lib/progress";
 import { awardBadge } from "@/lib/badges";
-import { recordHearingAnswer } from "@/lib/score-events";
+import { recordHearingAnswer, getScore } from "@/lib/score-events";
+import { Leaderboard } from "@/components/case-file/Leaderboard";
 import { BadgeShowcase } from "@/components/case-file/BadgeShowcase";
 import { usePersistentState } from "@/lib/persist";
 import { cn } from "@/lib/utils";
 import { useScrollToTopOnChange } from "@/hooks/use-scroll-top";
+
 
 import bioLogo from "@/assets/labels/bio.png.asset.json";
 import ipSuisseLogo from "@/assets/labels/ip-suisse.png.asset.json";
