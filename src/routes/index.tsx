@@ -4,7 +4,6 @@ import { Lock, CheckCircle2, RotateCcw, Clock, MoreVertical } from "lucide-react
 import { Stamp } from "@/components/case-file/Stamp";
 import {
   STAGES,
-  STAGES,
   getTeam,
   getCurrentStage,
   registerTeam,
