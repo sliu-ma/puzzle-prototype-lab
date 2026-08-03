@@ -42,25 +42,54 @@ export function StartForm({
   const [step, setStep] = useState<0 | 1>(0);
   const [code, setCode] = useState("");
   const [codeError, setCodeError] = useState<string | null>(null);
+  const [checking, setChecking] = useState(false);
+  const [mode, setMode] = useState<"solo" | "round">("solo");
+  const [roundTitle, setRoundTitle] = useState<string | null>(null);
 
   const [name, setName] = useState("");
   const [nameError, setNameError] = useState<string | null>(null);
   const [members, setMembers] = useState<string[]>([""]);
   const [memberError, setMemberError] = useState<string | null>(null);
-  const [roundCode, setRoundCode] = useState("");
   const [roundError, setRoundError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
-  const checkCode = (e: React.FormEvent) => {
+  const checkCode = async (e: React.FormEvent) => {
     e.preventDefault();
     const clean = code.trim().toUpperCase();
-    if (clean !== START_CODE && clean !== CHEAT_CODE) {
-      setCodeError("Der Startcode stimmt nicht. Fragt eure Lehrperson.");
+    if (!clean) {
+      setCodeError("Bitte gebt den Code ein.");
       return;
     }
-    setCodeError(null);
-    setCode(clean);
-    setStep(1);
+    if (clean === START_CODE || clean === CHEAT_CODE) {
+      setCodeError(null);
+      setCode(clean);
+      setMode("solo");
+      setRoundTitle(null);
+      setStep(1);
+      return;
+    }
+
+    setChecking(true);
+    try {
+      const res = await lookupRound({ data: { code: clean } });
+      if (!res.found) {
+        setCodeError("Der Code stimmt nicht. Fragt eure Lehrperson.");
+        return;
+      }
+      if (res.status !== "open") {
+        setCodeError("Diese Runde ist geschlossen.");
+        return;
+      }
+      setCodeError(null);
+      setCode(res.code);
+      setMode("round");
+      setRoundTitle(res.title);
+      setStep(1);
+    } catch {
+      setCodeError("Der Code konnte nicht geprüft werden. Versucht es nochmals.");
+    } finally {
+      setChecking(false);
+    }
   };
 
   const submitTeam = async (e: React.FormEvent) => {
@@ -82,14 +111,14 @@ export function StartForm({
     }
     if (!ok) return;
 
-    const cleanRound = roundCode.trim().toUpperCase();
+    const cleanCode = code.trim().toUpperCase();
     let session: RoundSession | null = null;
-    if (cleanRound) {
+    if (mode === "round") {
       setBusy(true);
       try {
         const res = await joinRound({
           data: {
-            code: cleanRound,
+            code: cleanCode,
             teamName: cleanName,
             members: cleanMembers.slice(0, MAX_MEMBERS),
           },
@@ -113,9 +142,10 @@ export function StartForm({
       setBusy(false);
     }
 
-    onStart(cleanName, code.trim().toUpperCase(), cleanMembers.slice(0, MAX_MEMBERS));
+    onStart(cleanName, cleanCode, cleanMembers.slice(0, MAX_MEMBERS));
     if (session) setRoundSession(session);
   };
+
 
 
   return (
