@@ -164,20 +164,21 @@ export function StartForm({
         <StepDots step={step} />
 
         {step === 0 ? (
-          <form onSubmit={checkCode} className="mt-4 space-y-4">
+          <form onSubmit={(e) => void checkCode(e)} className="mt-4 space-y-4">
             <div className="flex items-center gap-2 font-serif text-lg font-bold">
               <KeyRound className="h-5 w-5 text-stamp" />
-              Startcode eingeben
+              Code eingeben
             </div>
             <p className="text-sm text-foreground/70">
-              Den Code erhaltet ihr von eurer Lehrperson.
+              Den Code erhaltet ihr von eurer Lehrperson. Ist es ein Rundencode,
+              erscheint euer Team in der Klassen-Rangliste.
             </p>
             <div>
               <label
                 htmlFor="start-code"
                 className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground"
               >
-                Startcode
+                Code
               </label>
               <input
                 id="start-code"
@@ -205,10 +206,15 @@ export function StartForm({
             </div>
             <button
               type="submit"
-              className="flex min-h-[48px] w-full items-center justify-center gap-2 rounded-sm bg-primary px-5 font-serif text-base font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
+              disabled={checking}
+              className="flex min-h-[48px] w-full items-center justify-center gap-2 rounded-sm bg-primary px-5 font-serif text-base font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md disabled:opacity-60"
             >
-              Code prüfen
-              <ArrowRight className="h-4 w-4" />
+              {checking ? "Code wird geprüft …" : "Code prüfen"}
+              {checking ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <ArrowRight className="h-4 w-4" />
+              )}
             </button>
           </form>
         ) : (
@@ -218,8 +224,12 @@ export function StartForm({
               Wer ermittelt?
             </div>
             <p className="flex items-center gap-1.5 font-mono-typed text-[11px] uppercase tracking-wider text-emerald-800">
-              <Check className="h-3.5 w-3.5" /> Startcode akzeptiert
+              <Check className="h-3.5 w-3.5" />
+              {mode === "round" && roundTitle
+                ? `Runde: ${roundTitle}`
+                : "Code akzeptiert"}
             </p>
+
 
             <div>
               <label
