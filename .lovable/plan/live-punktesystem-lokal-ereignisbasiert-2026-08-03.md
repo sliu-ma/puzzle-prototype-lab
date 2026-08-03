@@ -8,39 +8,47 @@ Jede punkterelevante Aktion schreibt ein Ereignis in eine Liste im Browser-Speic
 
 Ereignisse:
 
-| Ereignis | Wann | Gespeicherte Daten |
-| --- | --- | --- |
-| `stage_solved` | in `completeStage(n)` | Etappe, Dauer in Sekunden, genutzte Hinweisstufe |
-| `badge_earned` | in `awardBadge(id)` | Badge-ID |
-| `hint_revealed` | beim Aufdecken eines Hinweises | Etappe, Stufe 1–3 |
-| `hearing_answer` | pro Frage im Hearing | richtig/falsch, Fragen-Nummer |
+
+| Ereignis         | Wann                           | Gespeicherte Daten                               |
+| ---------------- | ------------------------------ | ------------------------------------------------ |
+| `stage_solved`   | in `completeStage(n)`          | Etappe, Dauer in Sekunden, genutzte Hinweisstufe |
+| `badge_earned`   | in `awardBadge(id)`            | Badge-ID                                         |
+| `hint_revealed`  | beim Aufdecken eines Hinweises | Etappe, Stufe 1–3                                |
+| `hearing_answer` | pro Frage im Hearing           | richtig/falsch, Fragen-Nummer                    |
+
 
 Jedes Ereignis erhält Zeitstempel und eine eindeutige ID (idempotent: dasselbe Ereignis kann nicht doppelt zählen). Beim Zurücksetzen des Spiels wird die Liste mit allen `maya-`-Schlüsseln entfernt.
 
 ## 2. Punkte-Regeln
 
 **Etappe gelöst (1–5): 600 bis 1000 Punkte**
+
 - Basis 1000 Punkte, sinkt linear mit der Bearbeitungszeit der Etappe.
-- Referenz: 90-Minuten-Budget / 5 Etappen = 18 Minuten pro Etappe (prozentual zum Budget gerechnet, damit eine spätere Änderung auf z. B. 75 Minuten automatisch mitzieht).
-- Bis 40 % der Etappenzeit: volle 1000 Punkte. Danach linearer Abfall bis zur Untergrenze 600 Punkte bei 100 % und darüber.
+- Referenz: 10 Minuten pro Etappe (prozentual zum Budget gerechnet, damit eine spätere Änderung auf z. B. 75 Minuten automatisch mitzieht).
+- Bis 25 % der Etappenzeit: volle 1000 Punkte. Danach linearer Abfall bis zur Untergrenze 600 Punkte bei 100 % und darüber.
 
 **Hinweis-Deckel pro Etappe**
+
 - Stufe 1 (Nudge): höchstens 90 % der Etappenpunkte.
 - Stufe 2 (Tipp): höchstens 75 %.
 - Stufe 3 (Lösung): höchstens 50 %.
 - Es gilt die höchste genutzte Stufe dieser Etappe. Der Deckel wirkt sofort beim Aufdecken, auch bevor die Etappe gelöst ist.
 
 **Badges**
-| Badge | Punkte |
-| --- | --- |
-| Blitzermittlerin (< 60 min) | 500 |
-| Kalter Kaffee, klarer Kopf (< 3 Hinweise) | 400 |
-| Solo-Spurensicherung | 300 |
-| Perfekter Wocheneinkauf | 300 |
-| Nase für die richtige Spur | 300 |
-| Auf den letzten Drücker | 250 |
+
+
+| Badge                                     | Punkte |
+| ----------------------------------------- | ------ |
+| Blitzermittlerin (< 60 min)               | 500    |
+| Kalter Kaffee, klarer Kopf (< 3 Hinweise) | 400    |
+| Solo-Spurensicherung                      | 300    |
+| Perfekter Wocheneinkauf                   | 300    |
+| Nase für die richtige Spur                | 300    |
+| Auf den letzten Drücker                   | 250    |
+
 
 **Hearing**
+
 - Richtige Antwort: +100 Punkte.
 - Falsche Antwort: ,50 Punkte.
 - Der Gesamtstand fällt nie unter 0.
@@ -48,6 +56,7 @@ Jedes Ereignis erhält Zeitstempel und eine eindeutige ID (idempotent: dasselbe 
 ## 3. Anzeige
 
 **Punkteanzeige neben dem Timer (alle Seiten)**
+
 - Kleine Kachel links neben dem bestehenden Timer, gleiche Papier-Optik.
 - Der Wert zählt bei jeder Änderung animiert hoch bzw. runter.
 - Über der Kachel erscheint kurz ein farbiger Zuschlag: „+1000" in ruhiger Farbe, „,50" in Warnfarbe. Mehrere gleichzeitige Änderungen erscheinen nacheinander.
