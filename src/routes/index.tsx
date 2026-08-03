@@ -19,6 +19,7 @@ import {
 import { getStageHintsUsed } from "@/lib/badges";
 import { NextStepCard } from "@/components/case-file/NextStepCard";
 import { BadgeShelf } from "@/components/case-file/BadgeShelf";
+import { StartForm } from "@/components/case-file/StartForm";
 
 const CHEAT_CODE = "KRXZMVBQ";
 
