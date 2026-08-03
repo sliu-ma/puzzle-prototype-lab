@@ -2079,7 +2079,52 @@ function EitherView({
 /*  Outro (Auflösung + Statistiken)                     */
 /* -------------------------------------------------- */
 
+function useCountUp(target: number) {
+  const [shown, setShown] = useState(0);
+  useEffect(() => {
+    if (target <= 0) {
+      setShown(0);
+      return;
+    }
+    const start = performance.now();
+    const dur = 1200;
+    let raf = 0;
+    const step = (now: number) => {
+      const t = Math.min(1, (now - start) / dur);
+      const eased = 1 - Math.pow(1 - t, 3);
+      setShown(Math.round(target * eased));
+      if (t < 1) raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, [target]);
+  return shown;
+}
+
+function FactChip({
+  icon,
+  label,
+  value,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+}) {
+  return (
+    <div className="flex flex-col items-center gap-1 rounded-sm border border-border bg-card/70 px-2 py-2.5 text-center">
+      <span className="flex items-center gap-1 font-mono-typed text-[9px] uppercase tracking-[0.2em] text-muted-foreground">
+        {icon}
+        {label}
+      </span>
+      <span className="font-mono-typed text-sm font-bold tabular-nums text-foreground">
+        {value}
+      </span>
+    </div>
+  );
+}
+
 function OutroScreen() {
+
   const [step, setStep] = useState(0);
   const [bubble, setBubble] = useState(0);
   const totalSteps = 3;
