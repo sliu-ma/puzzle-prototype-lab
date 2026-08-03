@@ -13,7 +13,7 @@ function StepDots({ step }: { step: 0 | 1 }) {
   return (
     <div className="flex items-center justify-between gap-3">
       <p className="font-mono-typed text-[10px] uppercase tracking-[0.2em] text-stamp">
-        Team registrieren · Schritt {step + 1} von 2
+        TEAM REGISTRIEREN
       </p>
       <div className="flex gap-1.5">
         {[0, 1].map((i) => (
