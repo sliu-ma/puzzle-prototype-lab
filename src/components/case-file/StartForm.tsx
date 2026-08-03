@@ -181,7 +181,7 @@ export function StartForm({
             </button>
           </form>
         ) : (
-          <form onSubmit={submitTeam} className="mt-4 space-y-4">
+          <form onSubmit={(e) => void submitTeam(e)} className="mt-4 space-y-4">
             <div className="flex items-center gap-2 font-serif text-lg font-bold">
               <Users className="h-5 w-5 text-stamp" />
               Wer ermittelt?
