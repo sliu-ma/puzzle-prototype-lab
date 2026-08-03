@@ -152,7 +152,7 @@ export function ScoreCounter() {
                           {" "}
                           · {Math.max(1, Math.round(s.durationSec / 60))} min
                           {s.hintLevel > 0 &&
-                            ` · Hinweis-Deckel ${Math.round(HINT_CAP[s.hintLevel] * 100)} %`}
+                            ` · Hinweis-Deckel ${Math.round(HINT_CAP[s.hintLevel as 1 | 2 | 3] * 100)} %`}
                         </span>
                       </span>
                       <span className="font-mono-typed tabular-nums">{s.points}</span>
