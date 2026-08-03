@@ -16,7 +16,13 @@ type Row = {
  * Leaderboard für den aktuellen Lauf. Weitere Teams folgen, sobald die
  * Ereignisse serverseitig landen; die Struktur ist darauf vorbereitet.
  */
-export function Leaderboard({ score }: { score: ScoreBreakdown }) {
+export function Leaderboard({
+  score,
+  variant = "dialog",
+}: {
+  score: ScoreBreakdown;
+  variant?: "dialog" | "outro";
+}) {
   const [showDetails, setShowDetails] = useState(false);
   const team = typeof window !== "undefined" ? getTeam() : null;
 
@@ -32,8 +38,10 @@ export function Leaderboard({ score }: { score: ScoreBreakdown }) {
   const leader = rows[0];
 
   return (
-    <div className="space-y-5">
+    <div className={cn("space-y-5", variant === "outro" && "space-y-3")}>
       {/* Podest */}
+      {variant === "dialog" && (
+
       <div className="relative overflow-hidden rounded-sm border border-border bg-secondary/40 p-4 text-center">
         <div className="flex items-center justify-center gap-2 text-[0.68rem] uppercase tracking-[0.2em] text-muted-foreground">
           <Trophy className="h-3.5 w-3.5 text-stamp" />
