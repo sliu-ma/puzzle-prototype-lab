@@ -12,6 +12,7 @@ export const START_CODE = "OEKOLOGIE";
 
 const KEY_TEAM = "maya-team-name";
 const KEY_CODE = "maya-team-code";
+const KEY_MEMBERS = "maya-team-members";
 const KEY_STAGE = "maya-current-stage";
 export const KEY_START_TS = "maya-start-ts";
 export const KEY_END_TS = "maya-end-ts";
