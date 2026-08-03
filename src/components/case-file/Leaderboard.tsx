@@ -59,6 +59,8 @@ export function Leaderboard({
           className="mx-auto mt-3 h-2 w-24 rounded-full bg-stamp/60"
         />
       </div>
+      )}
+
 
       {/* Zeilen */}
       <ol className="space-y-2">
