@@ -269,13 +269,54 @@ export function StartForm({
               )}
             </div>
 
+            <div>
+              <label
+                htmlFor="round-code"
+                className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground"
+              >
+                Rundencode (optional)
+              </label>
+              <input
+                id="round-code"
+                type="text"
+                value={roundCode}
+                onChange={(e) => {
+                  setRoundCode(e.target.value);
+                  setRoundError(null);
+                }}
+                placeholder="z. B. K7QMD"
+                autoCapitalize="characters"
+                autoComplete="off"
+                spellCheck={false}
+                className={cn(
+                  inputBase,
+                  "mt-1 text-center font-mono-typed text-lg uppercase tracking-[0.3em]",
+                  roundError && "border-destructive",
+                )}
+              />
+              <p className="mt-1 text-xs text-muted-foreground">
+                Mit Rundencode erscheint euer Team in der Klassen-Rangliste.
+              </p>
+              {roundError && (
+                <p className="mt-2 rounded-sm border border-destructive/40 bg-destructive/10 p-2 text-xs text-destructive">
+                  {roundError}
+                </p>
+              )}
+            </div>
+
             <button
               type="submit"
-              className="flex min-h-[48px] w-full items-center justify-center gap-2 rounded-sm bg-primary px-5 font-serif text-base font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
+              disabled={busy}
+              className="flex min-h-[48px] w-full items-center justify-center gap-2 rounded-sm bg-primary px-5 font-serif text-base font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md disabled:opacity-60"
             >
-              Ermittlung starten
-              <ArrowRight className="h-4 w-4" />
+              {busy ? "Runde wird verbunden …" : "Ermittlung starten"}
+              {busy ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <ArrowRight className="h-4 w-4" />
+              )}
             </button>
+
             <button
               type="button"
               onClick={() => setStep(0)}
