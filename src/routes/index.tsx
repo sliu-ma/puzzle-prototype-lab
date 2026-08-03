@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { Lock, CheckCircle2, RotateCcw, Clock, MoreVertical } from "lucide-react";
 import { Stamp } from "@/components/case-file/Stamp";
 import {
-  START_CODE,
+  STAGES,
   STAGES,
   getTeam,
   getCurrentStage,
