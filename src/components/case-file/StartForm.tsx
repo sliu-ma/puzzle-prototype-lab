@@ -2,8 +2,9 @@ import { useState } from "react";
 import { ArrowRight, Plus, X, KeyRound, Users, Check, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { START_CODE } from "@/lib/progress";
-import { joinRound } from "@/lib/rounds.functions";
+import { joinRound, lookupRound } from "@/lib/rounds.functions";
 import { setRoundSession, type RoundSession } from "@/lib/round-client";
+
 
 const CHEAT_CODE = "KRXZMVBQ";
 const MAX_MEMBERS = 4;
@@ -41,25 +42,54 @@ export function StartForm({
   const [step, setStep] = useState<0 | 1>(0);
   const [code, setCode] = useState("");
   const [codeError, setCodeError] = useState<string | null>(null);
+  const [checking, setChecking] = useState(false);
+  const [mode, setMode] = useState<"solo" | "round">("solo");
+  const [roundTitle, setRoundTitle] = useState<string | null>(null);
 
   const [name, setName] = useState("");
   const [nameError, setNameError] = useState<string | null>(null);
   const [members, setMembers] = useState<string[]>([""]);
   const [memberError, setMemberError] = useState<string | null>(null);
-  const [roundCode, setRoundCode] = useState("");
   const [roundError, setRoundError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
-  const checkCode = (e: React.FormEvent) => {
+  const checkCode = async (e: React.FormEvent) => {
     e.preventDefault();
     const clean = code.trim().toUpperCase();
-    if (clean !== START_CODE && clean !== CHEAT_CODE) {
-      setCodeError("Der Startcode stimmt nicht. Fragt eure Lehrperson.");
+    if (!clean) {
+      setCodeError("Bitte gebt den Code ein.");
       return;
     }
-    setCodeError(null);
-    setCode(clean);
-    setStep(1);
+    if (clean === START_CODE || clean === CHEAT_CODE) {
+      setCodeError(null);
+      setCode(clean);
+      setMode("solo");
+      setRoundTitle(null);
+      setStep(1);
+      return;
+    }
+
+    setChecking(true);
+    try {
+      const res = await lookupRound({ data: { code: clean } });
+      if (!res.found) {
+        setCodeError("Der Code stimmt nicht. Fragt eure Lehrperson.");
+        return;
+      }
+      if (res.status !== "open") {
+        setCodeError("Diese Runde ist geschlossen.");
+        return;
+      }
+      setCodeError(null);
+      setCode(res.code);
+      setMode("round");
+      setRoundTitle(res.title);
+      setStep(1);
+    } catch {
+      setCodeError("Der Code konnte nicht geprüft werden. Versucht es nochmals.");
+    } finally {
+      setChecking(false);
+    }
   };
 
   const submitTeam = async (e: React.FormEvent) => {
@@ -81,14 +111,14 @@ export function StartForm({
     }
     if (!ok) return;
 
-    const cleanRound = roundCode.trim().toUpperCase();
+    const cleanCode = code.trim().toUpperCase();
     let session: RoundSession | null = null;
-    if (cleanRound) {
+    if (mode === "round") {
       setBusy(true);
       try {
         const res = await joinRound({
           data: {
-            code: cleanRound,
+            code: cleanCode,
             teamName: cleanName,
             members: cleanMembers.slice(0, MAX_MEMBERS),
           },
@@ -112,9 +142,10 @@ export function StartForm({
       setBusy(false);
     }
 
-    onStart(cleanName, code.trim().toUpperCase(), cleanMembers.slice(0, MAX_MEMBERS));
+    onStart(cleanName, cleanCode, cleanMembers.slice(0, MAX_MEMBERS));
     if (session) setRoundSession(session);
   };
+
 
 
   return (
@@ -133,20 +164,21 @@ export function StartForm({
         <StepDots step={step} />
 
         {step === 0 ? (
-          <form onSubmit={checkCode} className="mt-4 space-y-4">
+          <form onSubmit={(e) => void checkCode(e)} className="mt-4 space-y-4">
             <div className="flex items-center gap-2 font-serif text-lg font-bold">
               <KeyRound className="h-5 w-5 text-stamp" />
-              Startcode eingeben
+              Code eingeben
             </div>
             <p className="text-sm text-foreground/70">
-              Den Code erhaltet ihr von eurer Lehrperson.
+              Den Code erhaltet ihr von eurer Lehrperson. Ist es ein Rundencode,
+              erscheint euer Team in der Klassen-Rangliste.
             </p>
             <div>
               <label
                 htmlFor="start-code"
                 className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground"
               >
-                Startcode
+                Code
               </label>
               <input
                 id="start-code"
@@ -174,10 +206,15 @@ export function StartForm({
             </div>
             <button
               type="submit"
-              className="flex min-h-[48px] w-full items-center justify-center gap-2 rounded-sm bg-primary px-5 font-serif text-base font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
+              disabled={checking}
+              className="flex min-h-[48px] w-full items-center justify-center gap-2 rounded-sm bg-primary px-5 font-serif text-base font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md disabled:opacity-60"
             >
-              Code prüfen
-              <ArrowRight className="h-4 w-4" />
+              {checking ? "Code wird geprüft …" : "Code prüfen"}
+              {checking ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <ArrowRight className="h-4 w-4" />
+              )}
             </button>
           </form>
         ) : (
@@ -187,8 +224,12 @@ export function StartForm({
               Wer ermittelt?
             </div>
             <p className="flex items-center gap-1.5 font-mono-typed text-[11px] uppercase tracking-wider text-emerald-800">
-              <Check className="h-3.5 w-3.5" /> Startcode akzeptiert
+              <Check className="h-3.5 w-3.5" />
+              {mode === "round" && roundTitle
+                ? `Runde: ${roundTitle}`
+                : "Code akzeptiert"}
             </p>
+
 
             <div>
               <label
@@ -269,40 +310,12 @@ export function StartForm({
               )}
             </div>
 
-            <div>
-              <label
-                htmlFor="round-code"
-                className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground"
-              >
-                Rundencode (optional)
-              </label>
-              <input
-                id="round-code"
-                type="text"
-                value={roundCode}
-                onChange={(e) => {
-                  setRoundCode(e.target.value);
-                  setRoundError(null);
-                }}
-                placeholder="z. B. K7QMD"
-                autoCapitalize="characters"
-                autoComplete="off"
-                spellCheck={false}
-                className={cn(
-                  inputBase,
-                  "mt-1 text-center font-mono-typed text-lg uppercase tracking-[0.3em]",
-                  roundError && "border-destructive",
-                )}
-              />
-              <p className="mt-1 text-xs text-muted-foreground">
-                Mit Rundencode erscheint euer Team in der Klassen-Rangliste.
+            {roundError && (
+              <p className="rounded-sm border border-destructive/40 bg-destructive/10 p-2 text-xs text-destructive">
+                {roundError}
               </p>
-              {roundError && (
-                <p className="mt-2 rounded-sm border border-destructive/40 bg-destructive/10 p-2 text-xs text-destructive">
-                  {roundError}
-                </p>
-              )}
-            </div>
+            )}
+
 
             <button
               type="submit"
