@@ -175,7 +175,9 @@ export function QRGate({
   title,
   description,
   label = "Etappe · Versiegelt",
+  stage,
 }: Props) {
+
   const EXPECTED_TOKEN = token;
   const STORAGE_KEY = storageKey;
   const [unlocked, setUnlocked] = useState<boolean | null>(null);
