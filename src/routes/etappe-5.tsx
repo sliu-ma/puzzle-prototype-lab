@@ -64,7 +64,7 @@ function AkteGated() {
   return (
     <StageGate stage={5}>
       <QRGate
-        stage=5
+        stage={5}
         token={AKTE_005_TOKEN}
         storageKey="akte-005-unlocked"
         title={<>Etappe 5, QR-Code am Wasserkraftwerk scannen</>}
