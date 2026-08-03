@@ -7,6 +7,7 @@ import badgeOhneHinweise from "@/assets/badge-ohne-hinweise.svg.asset.json";
 import badgeEinkauf from "@/assets/badge-einkauf.svg.asset.json";
 import badgeLetzten5 from "@/assets/badge-letzten5.svg.asset.json";
 import badgeRoute from "@/assets/badge-route.svg.asset.json";
+import { recordBadgeEarned } from "./score-events";
 
 export type Badge = {
   id: string;
@@ -148,6 +149,7 @@ export function awardBadge(id: string) {
   if (records.some((r) => r.id === id)) return;
   records.push({ id, earnedAt: new Date().toISOString() });
   writeRecords(records);
+  recordBadgeEarned(id);
   window.dispatchEvent(new CustomEvent("badge:earned", { detail: badge }));
 }
 

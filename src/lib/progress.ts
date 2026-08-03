@@ -8,6 +8,8 @@
 //   6 = Finale (Hearing)
 //   7 = Finale abgeschlossen
 
+import { recordStageSolved } from "./score-events";
+
 export const START_CODE = "OEKOLOGIE";
 
 const KEY_TEAM = "maya-team-name";
@@ -171,6 +173,15 @@ export function completeStage(n: number) {
   try {
     if (!localStorage.getItem(stageDoneKey(n))) {
       localStorage.setItem(stageDoneKey(n), String(Date.now()));
+    }
+    // Punkte-Ereignis für die Etappen 1-5 (idempotent).
+    if (n >= 1 && n <= 5) {
+      const done = getStageDoneTs(n);
+      const prev = n > 1 ? getStageDoneTs(n - 1) : null;
+      const from = prev ?? getStartTs();
+      if (done && from && done > from) {
+        recordStageSolved(n, Math.round((done - from) / 1000));
+      }
     }
     const current = getCurrentStage();
     if (n + 1 > current) {
