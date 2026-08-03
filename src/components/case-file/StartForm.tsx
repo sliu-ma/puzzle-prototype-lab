@@ -1,10 +1,13 @@
 import { useState } from "react";
-import { ArrowRight, Plus, X, KeyRound, Users, Check } from "lucide-react";
+import { ArrowRight, Plus, X, KeyRound, Users, Check, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { START_CODE } from "@/lib/progress";
+import { joinRound } from "@/lib/rounds.functions";
+import { setRoundSession, type RoundSession } from "@/lib/round-client";
 
 const CHEAT_CODE = "KRXZMVBQ";
 const MAX_MEMBERS = 4;
+
 
 const inputBase =
   "w-full min-h-[48px] rounded-sm border border-border bg-paper px-3 py-3 text-[16px] focus:border-stamp focus:outline-none focus:ring-2 focus:ring-stamp/25";
@@ -43,6 +46,9 @@ export function StartForm({
   const [nameError, setNameError] = useState<string | null>(null);
   const [members, setMembers] = useState<string[]>([""]);
   const [memberError, setMemberError] = useState<string | null>(null);
+  const [roundCode, setRoundCode] = useState("");
+  const [roundError, setRoundError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
 
   const checkCode = (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,7 +62,7 @@ export function StartForm({
     setStep(1);
   };
 
-  const submitTeam = (e: React.FormEvent) => {
+  const submitTeam = async (e: React.FormEvent) => {
     e.preventDefault();
     const cleanName = name.trim();
     const cleanMembers = members.map((m) => m.trim()).filter(Boolean);
@@ -74,8 +80,42 @@ export function StartForm({
       setMemberError(null);
     }
     if (!ok) return;
+
+    const cleanRound = roundCode.trim().toUpperCase();
+    let session: RoundSession | null = null;
+    if (cleanRound) {
+      setBusy(true);
+      try {
+        const res = await joinRound({
+          data: {
+            code: cleanRound,
+            teamName: cleanName,
+            members: cleanMembers.slice(0, MAX_MEMBERS),
+          },
+        });
+        session = {
+          code: res.roundCode,
+          title: res.roundTitle,
+          teamId: res.teamId,
+          token: res.token,
+        };
+        setRoundError(null);
+      } catch (err) {
+        setRoundError(
+          err instanceof Error
+            ? err.message
+            : "Die Runde konnte nicht erreicht werden.",
+        );
+        setBusy(false);
+        return;
+      }
+      setBusy(false);
+    }
+
     onStart(cleanName, code.trim().toUpperCase(), cleanMembers.slice(0, MAX_MEMBERS));
+    if (session) setRoundSession(session);
   };
+
 
   return (
     <div className="mt-8 space-y-6">
@@ -141,7 +181,7 @@ export function StartForm({
             </button>
           </form>
         ) : (
-          <form onSubmit={submitTeam} className="mt-4 space-y-4">
+          <form onSubmit={(e) => void submitTeam(e)} className="mt-4 space-y-4">
             <div className="flex items-center gap-2 font-serif text-lg font-bold">
               <Users className="h-5 w-5 text-stamp" />
               Wer ermittelt?
@@ -229,13 +269,54 @@ export function StartForm({
               )}
             </div>
 
+            <div>
+              <label
+                htmlFor="round-code"
+                className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground"
+              >
+                Rundencode (optional)
+              </label>
+              <input
+                id="round-code"
+                type="text"
+                value={roundCode}
+                onChange={(e) => {
+                  setRoundCode(e.target.value);
+                  setRoundError(null);
+                }}
+                placeholder="z. B. K7QMD"
+                autoCapitalize="characters"
+                autoComplete="off"
+                spellCheck={false}
+                className={cn(
+                  inputBase,
+                  "mt-1 text-center font-mono-typed text-lg uppercase tracking-[0.3em]",
+                  roundError && "border-destructive",
+                )}
+              />
+              <p className="mt-1 text-xs text-muted-foreground">
+                Mit Rundencode erscheint euer Team in der Klassen-Rangliste.
+              </p>
+              {roundError && (
+                <p className="mt-2 rounded-sm border border-destructive/40 bg-destructive/10 p-2 text-xs text-destructive">
+                  {roundError}
+                </p>
+              )}
+            </div>
+
             <button
               type="submit"
-              className="flex min-h-[48px] w-full items-center justify-center gap-2 rounded-sm bg-primary px-5 font-serif text-base font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
+              disabled={busy}
+              className="flex min-h-[48px] w-full items-center justify-center gap-2 rounded-sm bg-primary px-5 font-serif text-base font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md disabled:opacity-60"
             >
-              Ermittlung starten
-              <ArrowRight className="h-4 w-4" />
+              {busy ? "Runde wird verbunden …" : "Ermittlung starten"}
+              {busy ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <ArrowRight className="h-4 w-4" />
+              )}
             </button>
+
             <button
               type="button"
               onClick={() => setStep(0)}

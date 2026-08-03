@@ -1,7 +1,9 @@
-import { useState } from "react";
-import { ChevronDown, Trophy, Users } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ChevronDown, Trophy, Users, RefreshCw } from "lucide-react";
 import { getTeam } from "@/lib/progress";
 import { getBadge } from "@/lib/badges";
+import { getRoundSession } from "@/lib/round-client";
+import { getRoundLeaderboard } from "@/lib/rounds.functions";
 import type { ScoreBreakdown } from "@/lib/score";
 import { cn } from "@/lib/utils";
 
@@ -13,8 +15,8 @@ type Row = {
 };
 
 /**
- * Leaderboard für den aktuellen Lauf. Weitere Teams folgen, sobald die
- * Ereignisse serverseitig landen; die Struktur ist darauf vorbereitet.
+ * Leaderboard für den aktuellen Lauf. Läuft das Team in einer Klassen-Runde,
+ * werden die anderen Teams live vom Server geladen.
  */
 export function Leaderboard({
   score,
@@ -25,42 +27,77 @@ export function Leaderboard({
 }) {
   const [showDetails, setShowDetails] = useState(false);
   const team = typeof window !== "undefined" ? getTeam() : null;
+  const session = typeof window !== "undefined" ? getRoundSession() : null;
+  const [remote, setRemote] = useState<
+    { teamId: string; name: string; points: number }[] | null
+  >(null);
+  const [loading, setLoading] = useState(!!session);
 
-  const rows: Row[] = [
-    {
-      id: "self",
-      name: team?.name?.trim() || "Mein Team",
-      points: score.total,
-      self: true,
-    },
-  ];
+  const load = () => {
+    if (!session) return;
+    setLoading(true);
+    getRoundLeaderboard({ data: { code: session.code } })
+      .then((res) => {
+        if (res.found) setRemote(res.rows);
+      })
+      .catch(() => undefined)
+      .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    if (!session) return;
+    load();
+    const iv = window.setInterval(load, 20_000);
+    return () => window.clearInterval(iv);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session?.code]);
+
+  const selfName = team?.name?.trim() || "Mein Team";
+
+  let rows: Row[];
+  if (remote && remote.length > 0) {
+    rows = remote.map((r) => ({
+      id: r.teamId,
+      name: r.name,
+      points: r.teamId === session?.teamId ? score.total : r.points,
+      self: r.teamId === session?.teamId,
+    }));
+    if (!rows.some((r) => r.self)) {
+      rows.push({ id: "self", name: selfName, points: score.total, self: true });
+    }
+    rows.sort((a, b) => b.points - a.points || a.name.localeCompare(b.name));
+  } else {
+    rows = [{ id: "self", name: selfName, points: score.total, self: true }];
+  }
+
   const max = Math.max(1, ...rows.map((r) => r.points));
-  const leader = rows[0];
+  const leader = rows[0]!;
+  const myRank = rows.findIndex((r) => r.self) + 1;
 
   return (
     <div className={cn("space-y-5", variant === "outro" && "space-y-3")}>
       {/* Podest */}
       {variant === "dialog" && (
-
-      <div className="relative overflow-hidden rounded-sm border border-border bg-secondary/40 p-4 text-center">
-        <div className="flex items-center justify-center gap-2 text-[0.68rem] uppercase tracking-[0.2em] text-muted-foreground">
-          <Trophy className="h-3.5 w-3.5 text-stamp" />
-          Rangliste · Lauf 1
+        <div className="relative overflow-hidden rounded-sm border border-border bg-secondary/40 p-4 text-center">
+          <div className="flex items-center justify-center gap-2 text-[0.68rem] uppercase tracking-[0.2em] text-muted-foreground">
+            <Trophy className="h-3.5 w-3.5 text-stamp" />
+            {session ? `Runde ${session.code}` : "Rangliste · Lauf 1"}
+          </div>
+          <p className="mt-3 font-serif text-xl font-semibold text-foreground">
+            {leader.name}
+          </p>
+          <p className="font-mono-typed text-4xl font-bold tabular-nums text-foreground">
+            {leader.points}
+          </p>
+          <p className="text-xs text-muted-foreground">
+            Punkte · Rang 1{myRank > 1 ? ` · ihr seid Rang ${myRank}` : ""}
+          </p>
+          <div
+            aria-hidden
+            className="mx-auto mt-3 h-2 w-24 rounded-full bg-stamp/60"
+          />
         </div>
-        <p className="mt-3 font-serif text-xl font-semibold text-foreground">
-          {leader.name}
-        </p>
-        <p className="font-mono-typed text-4xl font-bold tabular-nums text-foreground">
-          {leader.points}
-        </p>
-        <p className="text-xs text-muted-foreground">Punkte · Rang 1</p>
-        <div
-          aria-hidden
-          className="mx-auto mt-3 h-2 w-24 rounded-full bg-stamp/60"
-        />
-      </div>
       )}
-
 
       {/* Zeilen */}
       <ol className="space-y-2">
@@ -97,10 +134,28 @@ export function Leaderboard({
             </div>
           </li>
         ))}
-        <li className="flex items-center gap-2 rounded-sm border border-dashed border-border px-3 py-2.5 text-xs text-muted-foreground">
-          <Users className="h-3.5 w-3.5" />
-          Weitere Teams erscheinen, sobald die Ermittlungen verbunden sind.
-        </li>
+        {session ? (
+          <li className="flex items-center justify-between gap-2 rounded-sm border border-dashed border-border px-3 py-2.5 text-xs text-muted-foreground">
+            <span className="flex items-center gap-2">
+              <Users className="h-3.5 w-3.5" />
+              Runde {session.code}
+              {session.title ? ` · ${session.title}` : ""}
+            </span>
+            <button
+              type="button"
+              onClick={load}
+              className="flex items-center gap-1 font-mono-typed uppercase tracking-wider"
+            >
+              <RefreshCw className={cn("h-3.5 w-3.5", loading && "animate-spin")} />
+              Aktualisieren
+            </button>
+          </li>
+        ) : (
+          <li className="flex items-center gap-2 rounded-sm border border-dashed border-border px-3 py-2.5 text-xs text-muted-foreground">
+            <Users className="h-3.5 w-3.5" />
+            Ohne Rundencode spielt ihr allein. Fragt eure Lehrperson nach dem Code.
+          </li>
+        )}
       </ol>
 
       {/* Aufschlüsselung */}

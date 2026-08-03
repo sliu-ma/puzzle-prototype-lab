@@ -43,12 +43,14 @@ export function addScoreEvent(event: ScoreEvent) {
   events.push(event);
   writeScoreEvents(events);
   const after = computeScore(events, SCORE_BUDGET_MIN).total;
+  void import("./round-client").then((m) => m.syncScoreEvents(events));
   window.dispatchEvent(
     new CustomEvent(SCORE_CHANGED, {
       detail: { total: after, delta: after - before, event },
     }),
   );
 }
+
 
 export function getScore(): ScoreBreakdown {
   return computeScore(readScoreEvents(), SCORE_BUDGET_MIN);

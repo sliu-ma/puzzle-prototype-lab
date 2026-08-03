@@ -10,6 +10,7 @@ import { completeStage, finishGame, getHearingClock, getStartTs, getEndTs, getTe
 import { awardBadge } from "@/lib/badges";
 import { recordHearingAnswer, getScore } from "@/lib/score-events";
 import { Leaderboard } from "@/components/case-file/Leaderboard";
+import { markRoundFinished } from "@/lib/round-client";
 import { BadgeShowcase } from "@/components/case-file/BadgeShowcase";
 import { usePersistentState } from "@/lib/persist";
 import { cn } from "@/lib/utils";
@@ -421,6 +422,7 @@ function FinalePage() {
     if (status === "won") {
       completeStage(6);
       finishGame();
+      markRoundFinished();
       // Badge „Unter 60 Minuten": nur wenn die effektive Spielzeit < 60 min.
       const start = getStartTs();
       const end = getEndTs() ?? Date.now();
