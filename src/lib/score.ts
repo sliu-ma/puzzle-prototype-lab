@@ -14,8 +14,7 @@ export const STAGE_BASE_POINTS = 1000;
 export const STAGE_MIN_POINTS = 600;
 /** Referenzdauer pro Etappe bei einem 90-Minuten-Budget. */
 export const STAGE_REF_SHARE = 10 / 90;
-/** Bis zu diesem Anteil der Referenzdauer gibt es die volle Punktzahl. */
-const FULL_UNTIL = 0.25;
+
 
 export const HINT_CAP: Record<1 | 2 | 3, number> = {
   1: 0.9,
@@ -53,16 +52,19 @@ export type ScoreBreakdown = {
   hearingPoints: number;
 };
 
-/** Zeitfaktor einer Etappe: 1.0 (schnell) bis 0.6 (langsam). */
+/**
+ * Zeitfaktor einer Etappe: 1.0 (sofort) bis 0.6 (ab Referenzdauer).
+ * Sinkt ab der ersten Sekunde linear.
+ */
 export function stageTimeFactor(durationSec: number, budgetMin: number): number {
   const refSec = budgetMin * STAGE_REF_SHARE * 60;
   if (refSec <= 0) return 1;
   const ratio = Math.max(0, durationSec) / refSec;
-  if (ratio <= FULL_UNTIL) return 1;
-  if (ratio >= 1) return STAGE_MIN_POINTS / STAGE_BASE_POINTS;
-  const span = 1 - STAGE_MIN_POINTS / STAGE_BASE_POINTS;
-  return 1 - (span * (ratio - FULL_UNTIL)) / (1 - FULL_UNTIL);
+  const floor = STAGE_MIN_POINTS / STAGE_BASE_POINTS;
+  if (ratio >= 1) return floor;
+  return 1 - (1 - floor) * ratio;
 }
+
 
 export function computeScore(
   events: ScoreEvent[],

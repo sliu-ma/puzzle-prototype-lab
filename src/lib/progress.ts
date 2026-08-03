@@ -168,6 +168,29 @@ export function getCurrentStage(): number {
 }
 
 const stageDoneKey = (n: number) => `maya-stage-${n}-done-ts`;
+const stageScanKey = (n: number) => `maya-stage-${n}-scan-ts`;
+
+/** Zeitstempel des QR-Scans einer Etappe (Beginn der reinen Rätselzeit). */
+export function recordStageScan(n: number) {
+  try {
+    if (!localStorage.getItem(stageScanKey(n))) {
+      localStorage.setItem(stageScanKey(n), String(Date.now()));
+    }
+  } catch {
+    /* ignore */
+  }
+}
+
+export function getStageScanTs(n: number): number | null {
+  try {
+    const v = localStorage.getItem(stageScanKey(n));
+    if (!v) return null;
+    const parsed = parseInt(v, 10);
+    return Number.isFinite(parsed) ? parsed : null;
+  } catch {
+    return null;
+  }
+}
 
 export function completeStage(n: number) {
   try {
@@ -175,14 +198,17 @@ export function completeStage(n: number) {
       localStorage.setItem(stageDoneKey(n), String(Date.now()));
     }
     // Punkte-Ereignis für die Etappen 1-5 (idempotent).
+    // Gezählt wird nur die Rätselzeit ab dem QR-Scan; ohne Scan-Zeitstempel
+    // greift der alte Bezug (Vor-Etappe bzw. Spielstart).
     if (n >= 1 && n <= 5) {
       const done = getStageDoneTs(n);
       const prev = n > 1 ? getStageDoneTs(n - 1) : null;
-      const from = prev ?? getStartTs();
+      const from = getStageScanTs(n) ?? prev ?? getStartTs();
       if (done && from && done > from) {
         recordStageSolved(n, Math.round((done - from) / 1000));
       }
     }
+
     const current = getCurrentStage();
     if (n + 1 > current) {
       localStorage.setItem(KEY_STAGE, String(n + 1));

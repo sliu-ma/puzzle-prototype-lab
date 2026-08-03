@@ -3,6 +3,8 @@ import { BrowserQRCodeReader, IScannerControls } from "@zxing/browser";
 import { PaperCard } from "./PaperCard";
 import { Stamp } from "./Stamp";
 import { cn } from "@/lib/utils";
+import { recordStageScan } from "@/lib/progress";
+
 
 // Default für Etappe 1, bewusst NICHT im UI angezeigt.
 const DEFAULT_TOKEN = "CpZk0z9RaQkL22gtiWoR";
@@ -24,7 +26,10 @@ type Props = {
   title?: React.ReactNode;
   description?: string;
   label?: string;
+  /** Etappen-Nummer, für die Punkte-Zeitmessung ab dem Scan. */
+  stage?: number;
 };
+
 
 type DiagnosticInfo = {
   name: string;
@@ -172,7 +177,9 @@ export function QRGate({
   title,
   description,
   label = "Etappe · Versiegelt",
+  stage,
 }: Props) {
+
   const EXPECTED_TOKEN = token;
   const STORAGE_KEY = storageKey;
   const [unlocked, setUnlocked] = useState<boolean | null>(null);
@@ -249,9 +256,11 @@ export function QRGate({
               try {
                 const hash = await sha256(EXPECTED_TOKEN);
                 localStorage.setItem(STORAGE_KEY, hash);
+                if (stage) recordStageScan(stage);
               } catch {
                 /* ignore */
               }
+
               ctrl.stop();
               setUnlocked(true);
               setScanning(false);
