@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as LehrerRouteImport } from './routes/lehrer'
 import { Route as FinaleRouteImport } from './routes/finale'
 import { Route as Etappe5RouteImport } from './routes/etappe-5'
 import { Route as Etappe4RouteImport } from './routes/etappe-4'
@@ -17,6 +18,11 @@ import { Route as Etappe2RouteImport } from './routes/etappe-2'
 import { Route as Etappe1RouteImport } from './routes/etappe-1'
 import { Route as IndexRouteImport } from './routes/index'
 
+const LehrerRoute = LehrerRouteImport.update({
+  id: '/lehrer',
+  path: '/lehrer',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FinaleRoute = FinaleRouteImport.update({
   id: '/finale',
   path: '/finale',
@@ -61,6 +67,7 @@ export interface FileRoutesByFullPath {
   '/etappe-4': typeof Etappe4Route
   '/etappe-5': typeof Etappe5Route
   '/finale': typeof FinaleRoute
+  '/lehrer': typeof LehrerRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -70,6 +77,7 @@ export interface FileRoutesByTo {
   '/etappe-4': typeof Etappe4Route
   '/etappe-5': typeof Etappe5Route
   '/finale': typeof FinaleRoute
+  '/lehrer': typeof LehrerRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -80,6 +88,7 @@ export interface FileRoutesById {
   '/etappe-4': typeof Etappe4Route
   '/etappe-5': typeof Etappe5Route
   '/finale': typeof FinaleRoute
+  '/lehrer': typeof LehrerRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -91,6 +100,7 @@ export interface FileRouteTypes {
     | '/etappe-4'
     | '/etappe-5'
     | '/finale'
+    | '/lehrer'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -100,6 +110,7 @@ export interface FileRouteTypes {
     | '/etappe-4'
     | '/etappe-5'
     | '/finale'
+    | '/lehrer'
   id:
     | '__root__'
     | '/'
@@ -109,6 +120,7 @@ export interface FileRouteTypes {
     | '/etappe-4'
     | '/etappe-5'
     | '/finale'
+    | '/lehrer'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -119,10 +131,18 @@ export interface RootRouteChildren {
   Etappe4Route: typeof Etappe4Route
   Etappe5Route: typeof Etappe5Route
   FinaleRoute: typeof FinaleRoute
+  LehrerRoute: typeof LehrerRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/lehrer': {
+      id: '/lehrer'
+      path: '/lehrer'
+      fullPath: '/lehrer'
+      preLoaderRoute: typeof LehrerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/finale': {
       id: '/finale'
       path: '/finale'
@@ -183,6 +203,7 @@ const rootRouteChildren: RootRouteChildren = {
   Etappe4Route: Etappe4Route,
   Etappe5Route: Etappe5Route,
   FinaleRoute: FinaleRoute,
+  LehrerRoute: LehrerRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
