@@ -46,6 +46,9 @@ export function StartForm({
   const [nameError, setNameError] = useState<string | null>(null);
   const [members, setMembers] = useState<string[]>([""]);
   const [memberError, setMemberError] = useState<string | null>(null);
+  const [roundCode, setRoundCode] = useState("");
+  const [roundError, setRoundError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
 
   const checkCode = (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,7 +62,7 @@ export function StartForm({
     setStep(1);
   };
 
-  const submitTeam = (e: React.FormEvent) => {
+  const submitTeam = async (e: React.FormEvent) => {
     e.preventDefault();
     const cleanName = name.trim();
     const cleanMembers = members.map((m) => m.trim()).filter(Boolean);
@@ -77,8 +80,42 @@ export function StartForm({
       setMemberError(null);
     }
     if (!ok) return;
+
+    const cleanRound = roundCode.trim().toUpperCase();
+    let session: RoundSession | null = null;
+    if (cleanRound) {
+      setBusy(true);
+      try {
+        const res = await joinRound({
+          data: {
+            code: cleanRound,
+            teamName: cleanName,
+            members: cleanMembers.slice(0, MAX_MEMBERS),
+          },
+        });
+        session = {
+          code: res.roundCode,
+          title: res.roundTitle,
+          teamId: res.teamId,
+          token: res.token,
+        };
+        setRoundError(null);
+      } catch (err) {
+        setRoundError(
+          err instanceof Error
+            ? err.message
+            : "Die Runde konnte nicht erreicht werden.",
+        );
+        setBusy(false);
+        return;
+      }
+      setBusy(false);
+    }
+
     onStart(cleanName, code.trim().toUpperCase(), cleanMembers.slice(0, MAX_MEMBERS));
+    if (session) setRoundSession(session);
   };
+
 
   return (
     <div className="mt-8 space-y-6">
