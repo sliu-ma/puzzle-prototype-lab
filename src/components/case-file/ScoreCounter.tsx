@@ -8,8 +8,9 @@ import {
 } from "@/components/ui/dialog";
 import { getScore, SCORE_CHANGED } from "@/lib/score-events";
 import { getStartTs } from "@/lib/progress";
-import { getBadge } from "@/lib/badges";
-import { HINT_CAP, type ScoreBreakdown } from "@/lib/score";
+import { Leaderboard } from "./Leaderboard";
+import { type ScoreBreakdown } from "@/lib/score";
+
 import { cn } from "@/lib/utils";
 
 type Delta = { key: number; value: number };
