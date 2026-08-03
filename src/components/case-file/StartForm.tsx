@@ -300,40 +300,12 @@ export function StartForm({
               )}
             </div>
 
-            <div>
-              <label
-                htmlFor="round-code"
-                className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground"
-              >
-                Rundencode (optional)
-              </label>
-              <input
-                id="round-code"
-                type="text"
-                value={roundCode}
-                onChange={(e) => {
-                  setRoundCode(e.target.value);
-                  setRoundError(null);
-                }}
-                placeholder="z. B. K7QMD"
-                autoCapitalize="characters"
-                autoComplete="off"
-                spellCheck={false}
-                className={cn(
-                  inputBase,
-                  "mt-1 text-center font-mono-typed text-lg uppercase tracking-[0.3em]",
-                  roundError && "border-destructive",
-                )}
-              />
-              <p className="mt-1 text-xs text-muted-foreground">
-                Mit Rundencode erscheint euer Team in der Klassen-Rangliste.
+            {roundError && (
+              <p className="rounded-sm border border-destructive/40 bg-destructive/10 p-2 text-xs text-destructive">
+                {roundError}
               </p>
-              {roundError && (
-                <p className="mt-2 rounded-sm border border-destructive/40 bg-destructive/10 p-2 text-xs text-destructive">
-                  {roundError}
-                </p>
-              )}
-            </div>
+            )}
+
 
             <button
               type="submit"
