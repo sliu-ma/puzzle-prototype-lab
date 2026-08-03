@@ -2282,34 +2282,52 @@ function OutroScreen() {
           <h2 className="mt-2 font-serif text-3xl font-bold sm:text-4xl">
             Ihr habt es geschafft.
           </h2>
-          <p className="mt-3 text-[15px] leading-relaxed text-foreground/85">
-            Fünf Etappen, ein Hearing. und eine Gemeinde, die zum ersten Mal
-            genau hingeschaut hat. Das war eure Arbeit.
-          </p>
 
-          <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <div className="flex flex-col items-center gap-2 rounded-sm border border-emerald-500/40 bg-emerald-500/5 p-6 text-center animate-scale-in">
-              <Clock className="h-8 w-8 text-emerald-600 animate-pulse" />
-              <p className="font-mono-typed text-[10px] uppercase tracking-[0.3em] text-emerald-700">
-                Benötigte Zeit
-              </p>
-              <p className="font-serif text-4xl font-bold text-emerald-700 tabular-nums sm:text-5xl">
-                {elapsedLabel}
-              </p>
-            </div>
-            <div className="flex flex-col items-center gap-2 rounded-sm border border-amber-500/40 bg-amber-500/5 p-6 text-center animate-scale-in">
-              <Lightbulb className="h-8 w-8 text-amber-600" />
-              <p className="font-mono-typed text-[10px] uppercase tracking-[0.3em] text-amber-700">
-                Genutzte Hinweise
-              </p>
-              <p className="font-serif text-4xl font-bold text-amber-700 tabular-nums sm:text-5xl">
-                {hintsUsed}<span className="text-2xl text-amber-700/60 sm:text-3xl"> / 15</span>
-              </p>
+          {/* Punkte im Zentrum */}
+          <div className="mt-7 text-center">
+            <p className="font-mono-typed text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
+              Schlusspunktzahl
+            </p>
+            <p className="font-mono-typed text-6xl font-bold leading-none tabular-nums text-foreground sm:text-7xl">
+              {shownPoints}
+            </p>
+            <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
+              <span className="rounded-sm border border-border bg-secondary/60 px-2.5 py-1 font-serif text-sm font-semibold text-foreground">
+                {teamName}
+              </span>
+              <span className="inline-flex items-center gap-1.5 rounded-sm border border-stamp/50 bg-stamp/10 px-2.5 py-1 font-mono-typed text-[11px] uppercase tracking-wider text-stamp">
+                <Trophy className="h-3.5 w-3.5" />
+                Rang 1
+              </span>
             </div>
           </div>
 
+          {/* Rangliste */}
+          <div className="mt-6">
+            <Leaderboard score={score} variant="outro" />
+          </div>
+
+          {/* Kleine Fakten */}
+          <div className="mt-6 grid grid-cols-3 gap-2">
+            <FactChip
+              icon={<Clock className="h-3.5 w-3.5" />}
+              label="Zeit"
+              value={elapsedLabel}
+            />
+            <FactChip
+              icon={<Lightbulb className="h-3.5 w-3.5" />}
+              label="Hinweise"
+              value={`${hintsUsed} / 15`}
+            />
+            <FactChip
+              icon={<CheckCircle2 className="h-3.5 w-3.5" />}
+              label="Etappen"
+              value={`${score.stages.length} / 5`}
+            />
+          </div>
 
           <BadgeShowcase />
+
 
           <div className="mt-8 flex justify-center">
             <Link
