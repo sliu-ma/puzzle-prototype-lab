@@ -129,73 +129,14 @@ export function ScoreCounter() {
       </div>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-sm">
+        <DialogContent className="max-h-[85vh] max-w-sm overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="font-serif">
-              Punktestand: {score.total}
-            </DialogTitle>
+            <DialogTitle className="font-serif">Leaderboard</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4 text-sm">
-            <section>
-              <p className="font-serif font-semibold">
-                Etappen ({score.stagePoints} P)
-              </p>
-              {score.stages.length === 0 ? (
-                <p className="text-muted-foreground">Noch keine Etappe gelöst.</p>
-              ) : (
-                <ul className="mt-1 space-y-1">
-                  {score.stages.map((s) => (
-                    <li key={s.stage} className="flex justify-between gap-2">
-                      <span>
-                        Etappe {s.stage}
-                        <span className="text-muted-foreground">
-                          {" "}
-                          · {Math.max(1, Math.round(s.durationSec / 60))} min
-                          {s.hintLevel > 0 &&
-                            ` · Hinweis-Deckel ${Math.round(HINT_CAP[s.hintLevel as 1 | 2 | 3] * 100)} %`}
-                        </span>
-                      </span>
-                      <span className="font-mono-typed tabular-nums">{s.points}</span>
-                    </li>
-                  ))}
-                </ul>
-              )}
-              {score.hintPenalty > 0 && (
-                <p className="mt-1 text-destructive">
-                  Abzug durch Hinweise: ,{score.hintPenalty} P
-                </p>
-              )}
-            </section>
-
-            <section>
-              <p className="font-serif font-semibold">
-                Abzeichen ({score.badgePoints} P)
-              </p>
-              {score.badges.length === 0 ? (
-                <p className="text-muted-foreground">Noch kein Abzeichen verdient.</p>
-              ) : (
-                <ul className="mt-1 space-y-1">
-                  {score.badges.map((b) => (
-                    <li key={b.badgeId} className="flex justify-between gap-2">
-                      <span>{getBadge(b.badgeId)?.title ?? b.badgeId}</span>
-                      <span className="font-mono-typed tabular-nums">+{b.points}</span>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </section>
-
-            <section>
-              <p className="font-serif font-semibold">
-                Hearing ({score.hearingPoints} P)
-              </p>
-              <p className="text-muted-foreground">
-                {score.hearingCorrect} richtig, {score.hearingWrong} falsch
-              </p>
-            </section>
-          </div>
+          <Leaderboard score={score} />
         </DialogContent>
       </Dialog>
+
     </>
   );
 }
