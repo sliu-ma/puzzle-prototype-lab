@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Lock, Lightbulb, Clock, KeyRound, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { recordHintRevealed } from "@/lib/score-events";
 
 export type Hint = {
   id: number;
@@ -144,6 +145,11 @@ export function HintSystem({ hints = DEFAULT_HINTS, storageKey = DEFAULT_STORAGE
       if (prev.has(id)) return prev;
       const next = new Set(prev);
       next.add(id);
+      const stage = HINT_STORAGE_KEYS.indexOf(STORAGE_KEY as (typeof HINT_STORAGE_KEYS)[number]) + 1;
+      const level = idx + 1;
+      if (stage >= 1 && level >= 1 && level <= 3) {
+        recordHintRevealed(stage, level as 1 | 2 | 3);
+      }
       try {
         window.localStorage.setItem(revealedKey(STORAGE_KEY), JSON.stringify([...next]));
       } catch {

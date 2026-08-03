@@ -8,6 +8,7 @@ import { StageGate } from "@/components/case-file/StageGate";
 import { getTotalRevealedHints } from "@/components/case-file/HintSystem";
 import { completeStage, finishGame, getHearingClock, getStartTs, getEndTs, TIMER_DURATION_MIN } from "@/lib/progress";
 import { awardBadge } from "@/lib/badges";
+import { recordHearingAnswer } from "@/lib/score-events";
 import { BadgeShowcase } from "@/components/case-file/BadgeShowcase";
 import { usePersistentState } from "@/lib/persist";
 import { cn } from "@/lib/utils";
@@ -446,6 +447,7 @@ function FinalePage() {
       next[aktuell] = userAnswer ?? null;
       return next;
     });
+    recordHearingAnswer(aktuell, correct);
     setPulse(correct ? "up" : "down");
     if (!correct && typeof navigator !== "undefined" && "vibrate" in navigator) {
       navigator.vibrate?.([80, 60, 120]);

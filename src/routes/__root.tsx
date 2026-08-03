@@ -2,6 +2,7 @@ import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/r
 
 import { GlobalTimer } from "@/components/case-file/GlobalTimer";
 import { BadgeToast } from "@/components/case-file/BadgeToast";
+import { ScoreCounter } from "@/components/case-file/ScoreCounter";
 import appCss from "../styles.css?url";
 
 function NotFoundComponent() {
@@ -88,7 +89,10 @@ function RootComponent() {
   return (
     <>
       <Outlet />
-      <GlobalTimer />
+      <div className="fixed right-3 top-3 z-40 flex items-center gap-2">
+        <ScoreCounter />
+        <GlobalTimer />
+      </div>
       <BadgeToast />
     </>
   );
