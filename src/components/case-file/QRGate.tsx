@@ -254,9 +254,11 @@ export function QRGate({
               try {
                 const hash = await sha256(EXPECTED_TOKEN);
                 localStorage.setItem(STORAGE_KEY, hash);
+                if (stage) recordStageScan(stage);
               } catch {
                 /* ignore */
               }
+
               ctrl.stop();
               setUnlocked(true);
               setScanning(false);
