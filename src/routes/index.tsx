@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from "react";
 import { Lock, CheckCircle2, RotateCcw, Clock, MoreVertical } from "lucide-react";
 import { Stamp } from "@/components/case-file/Stamp";
 import {
-  START_CODE,
   STAGES,
   getTeam,
   getCurrentStage,
@@ -19,6 +18,7 @@ import {
 import { getStageHintsUsed } from "@/lib/badges";
 import { NextStepCard } from "@/components/case-file/NextStepCard";
 import { BadgeShelf } from "@/components/case-file/BadgeShelf";
+import { StartForm } from "@/components/case-file/StartForm";
 
 const CHEAT_CODE = "KRXZMVBQ";
 
@@ -170,9 +170,9 @@ function CoverPage() {
               />
             ) : (
               <StartForm
-                onStart={(name, code) => {
+                onStart={(name, code, members) => {
                   resetAll();
-                  registerTeam(name, code);
+                  registerTeam(name, code, members);
                   if (code.toUpperCase() === CHEAT_CODE) {
                     // Debug-Modus: alle Etappen freischalten
                     for (let i = 1; i <= 6; i++) completeStage(i);
@@ -181,10 +181,9 @@ function CoverPage() {
                   setTeam({ name, code });
                   setStage(getCurrentStage());
                 }}
-
               />
-
             )}
+
           </article>
 
           <div
@@ -208,99 +207,6 @@ function CoverPage() {
   );
 }
 
-/* -------------------------------------------------------- */
-/*  Startformular (Team & Code)                              */
-/* -------------------------------------------------------- */
-
-function StartForm({
-  onStart,
-}: {
-  onStart: (name: string, code: string) => void;
-}) {
-  const [name, setName] = useState("");
-  const [code, setCode] = useState("");
-  const [error, setError] = useState<string | null>(null);
-
-  const submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const cleanName = name.trim();
-    const cleanCode = code.trim().toUpperCase();
-    if (cleanName.length < 2) {
-      setError("Bitte gebt einen Teamnamen ein (mind. 2 Zeichen).");
-      return;
-    }
-    if (cleanCode !== START_CODE && cleanCode !== CHEAT_CODE) {
-      setError("Der Startcode stimmt nicht. Frag deine Lehrperson.");
-      return;
-    }
-
-    setError(null);
-    onStart(cleanName, cleanCode);
-  };
-
-  return (
-    <div className="mt-8 grid gap-6 sm:grid-cols-[1.4fr_1fr]">
-      <div className="space-y-3 text-[15px] leading-relaxed text-foreground/90">
-        <p>
-          <strong className="font-serif">Maja, 17,</strong> findet das Haus
-          ihrer Grosstante leer. Auf dem Tisch ein Brief: Heute Abend stimmt der
-          Gemeinderat über ein <span className="ink-underline">Gaskraftwerk</span> ab.
-          Elvira hat fünf Hinweise im Dorf hinterlegt.
-        </p>
-        <p className="font-serif italic text-foreground/70">
-          Tragt euren Teamnamen und den Startcode eurer Lehrperson ein, um
-          Etappe 1 zu öffnen.
-        </p>
-      </div>
-
-      <form
-        onSubmit={submit}
-        className="space-y-3 rounded-sm border border-border bg-secondary/50 p-4"
-        style={{ transform: "rotate(1.2deg)" }}
-      >
-        <p className="font-mono-typed text-[10px] uppercase tracking-[0.2em] text-stamp">
-          Team registrieren
-        </p>
-        <div>
-          <label className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
-            Teamname
-          </label>
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="z. B. Spürnasen 3a"
-            className="mt-1 w-full rounded-sm border border-border bg-paper px-3 py-2 font-serif text-[15px] focus:border-stamp focus:outline-none"
-          />
-        </div>
-        <div>
-          <label className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
-            Startcode
-          </label>
-          <input
-            type="text"
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-            placeholder="vom Lehrer / der Lehrerin"
-            autoCapitalize="characters"
-            className="mt-1 w-full rounded-sm border border-border bg-paper px-3 py-2 font-mono-typed text-sm uppercase tracking-wider focus:border-stamp focus:outline-none"
-          />
-        </div>
-        {error && (
-          <p className="rounded-sm border border-destructive/40 bg-destructive/10 p-2 text-xs text-destructive">
-            {error}
-          </p>
-        )}
-        <button
-          type="submit"
-          className="w-full rounded-sm bg-primary px-5 py-3 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
-        >
-          Ermittlung starten →
-        </button>
-      </form>
-    </div>
-  );
-}
 
 /* -------------------------------------------------------- */
 /*  Fortschritt, linearer Etappenpfad                       */

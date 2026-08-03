@@ -1,0 +1,251 @@
+import { useState } from "react";
+import { ArrowRight, Plus, X, KeyRound, Users, Check } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { START_CODE } from "@/lib/progress";
+
+const CHEAT_CODE = "KRXZMVBQ";
+const MAX_MEMBERS = 4;
+
+const inputBase =
+  "w-full min-h-[48px] rounded-sm border border-border bg-paper px-3 py-3 text-[16px] focus:border-stamp focus:outline-none focus:ring-2 focus:ring-stamp/25";
+
+function StepDots({ step }: { step: 0 | 1 }) {
+  return (
+    <div className="flex items-center justify-between gap-3">
+      <p className="font-mono-typed text-[10px] uppercase tracking-[0.2em] text-stamp">
+        Team registrieren · Schritt {step + 1} von 2
+      </p>
+      <div className="flex gap-1.5">
+        {[0, 1].map((i) => (
+          <span
+            key={i}
+            className={cn(
+              "h-1.5 w-6 rounded-full",
+              i <= step ? "bg-stamp" : "bg-border",
+            )}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export function StartForm({
+  onStart,
+}: {
+  onStart: (name: string, code: string, members: string[]) => void;
+}) {
+  const [step, setStep] = useState<0 | 1>(0);
+  const [code, setCode] = useState("");
+  const [codeError, setCodeError] = useState<string | null>(null);
+
+  const [name, setName] = useState("");
+  const [nameError, setNameError] = useState<string | null>(null);
+  const [members, setMembers] = useState<string[]>([""]);
+  const [memberError, setMemberError] = useState<string | null>(null);
+
+  const checkCode = (e: React.FormEvent) => {
+    e.preventDefault();
+    const clean = code.trim().toUpperCase();
+    if (clean !== START_CODE && clean !== CHEAT_CODE) {
+      setCodeError("Der Startcode stimmt nicht. Fragt eure Lehrperson.");
+      return;
+    }
+    setCodeError(null);
+    setCode(clean);
+    setStep(1);
+  };
+
+  const submitTeam = (e: React.FormEvent) => {
+    e.preventDefault();
+    const cleanName = name.trim();
+    const cleanMembers = members.map((m) => m.trim()).filter(Boolean);
+    let ok = true;
+    if (cleanName.length < 2) {
+      setNameError("Bitte gebt einen Teamnamen ein (mind. 2 Zeichen).");
+      ok = false;
+    } else {
+      setNameError(null);
+    }
+    if (cleanMembers.length < 1) {
+      setMemberError("Tragt mindestens eine Person ein.");
+      ok = false;
+    } else {
+      setMemberError(null);
+    }
+    if (!ok) return;
+    onStart(cleanName, code.trim().toUpperCase(), cleanMembers.slice(0, MAX_MEMBERS));
+  };
+
+  return (
+    <div className="mt-8 space-y-6">
+      <div className="space-y-3 text-[15px] leading-relaxed text-foreground/90">
+        <p>
+          <strong className="font-serif">Maja, 17,</strong> findet das Haus ihrer
+          Grosstante leer. Auf dem Tisch ein Brief: Heute Abend stimmt der
+          Gemeinderat über ein{" "}
+          <span className="ink-underline">Gaskraftwerk</span> ab. Elvira hat
+          fünf Hinweise im Dorf hinterlegt.
+        </p>
+      </div>
+
+      <div className="rounded-sm border border-border bg-secondary/50 p-4 sm:p-5">
+        <StepDots step={step} />
+
+        {step === 0 ? (
+          <form onSubmit={checkCode} className="mt-4 space-y-4">
+            <div className="flex items-center gap-2 font-serif text-lg font-bold">
+              <KeyRound className="h-5 w-5 text-stamp" />
+              Startcode eingeben
+            </div>
+            <p className="text-sm text-foreground/70">
+              Den Code erhaltet ihr von eurer Lehrperson.
+            </p>
+            <div>
+              <label
+                htmlFor="start-code"
+                className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground"
+              >
+                Startcode
+              </label>
+              <input
+                id="start-code"
+                type="text"
+                value={code}
+                onChange={(e) => {
+                  setCode(e.target.value);
+                  setCodeError(null);
+                }}
+                placeholder="CODE"
+                autoCapitalize="characters"
+                autoComplete="off"
+                spellCheck={false}
+                className={cn(
+                  inputBase,
+                  "mt-1 text-center font-mono-typed text-2xl uppercase tracking-[0.35em]",
+                  codeError && "border-destructive",
+                )}
+              />
+              {codeError && (
+                <p className="mt-2 rounded-sm border border-destructive/40 bg-destructive/10 p-2 text-xs text-destructive">
+                  {codeError}
+                </p>
+              )}
+            </div>
+            <button
+              type="submit"
+              className="flex min-h-[48px] w-full items-center justify-center gap-2 rounded-sm bg-primary px-5 font-serif text-base font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
+            >
+              Code prüfen
+              <ArrowRight className="h-4 w-4" />
+            </button>
+          </form>
+        ) : (
+          <form onSubmit={submitTeam} className="mt-4 space-y-4">
+            <div className="flex items-center gap-2 font-serif text-lg font-bold">
+              <Users className="h-5 w-5 text-stamp" />
+              Wer ermittelt?
+            </div>
+            <p className="flex items-center gap-1.5 font-mono-typed text-[11px] uppercase tracking-wider text-emerald-800">
+              <Check className="h-3.5 w-3.5" /> Startcode akzeptiert
+            </p>
+
+            <div>
+              <label
+                htmlFor="team-name"
+                className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground"
+              >
+                Teamname
+              </label>
+              <input
+                id="team-name"
+                type="text"
+                value={name}
+                onChange={(e) => {
+                  setName(e.target.value);
+                  setNameError(null);
+                }}
+                placeholder="z. B. Spürnasen 3a"
+                className={cn(
+                  inputBase,
+                  "mt-1 font-serif",
+                  nameError && "border-destructive",
+                )}
+              />
+              {nameError && (
+                <p className="mt-2 rounded-sm border border-destructive/40 bg-destructive/10 p-2 text-xs text-destructive">
+                  {nameError}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+                Teammitglieder (max. {MAX_MEMBERS})
+              </label>
+              <div className="mt-1 space-y-2">
+                {members.map((m, i) => (
+                  <div key={i} className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      value={m}
+                      onChange={(e) => {
+                        const next = [...members];
+                        next[i] = e.target.value;
+                        setMembers(next);
+                        setMemberError(null);
+                      }}
+                      placeholder={`Person ${i + 1}`}
+                      className={cn(inputBase, "font-serif")}
+                    />
+                    {members.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setMembers(members.filter((_, j) => j !== i))
+                        }
+                        aria-label={`Person ${i + 1} entfernen`}
+                        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-sm border border-border text-muted-foreground transition-colors hover:text-foreground"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+              {members.length < MAX_MEMBERS && (
+                <button
+                  type="button"
+                  onClick={() => setMembers([...members, ""])}
+                  className="mt-2 inline-flex min-h-[44px] items-center gap-1.5 font-mono-typed text-[11px] uppercase tracking-wider text-stamp"
+                >
+                  <Plus className="h-4 w-4" /> Person hinzufügen
+                </button>
+              )}
+              {memberError && (
+                <p className="mt-2 rounded-sm border border-destructive/40 bg-destructive/10 p-2 text-xs text-destructive">
+                  {memberError}
+                </p>
+              )}
+            </div>
+
+            <button
+              type="submit"
+              className="flex min-h-[48px] w-full items-center justify-center gap-2 rounded-sm bg-primary px-5 font-serif text-base font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
+            >
+              Ermittlung starten
+              <ArrowRight className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              onClick={() => setStep(0)}
+              className="w-full font-mono-typed text-[11px] uppercase tracking-wider text-muted-foreground hover:text-foreground"
+            >
+              Zurück zum Startcode
+            </button>
+          </form>
+        )}
+      </div>
+    </div>
+  );
+}

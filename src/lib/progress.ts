@@ -12,6 +12,7 @@ export const START_CODE = "OEKOLOGIE";
 
 const KEY_TEAM = "maya-team-name";
 const KEY_CODE = "maya-team-code";
+const KEY_MEMBERS = "maya-team-members";
 const KEY_STAGE = "maya-current-stage";
 export const KEY_START_TS = "maya-start-ts";
 export const KEY_END_TS = "maya-end-ts";
@@ -44,10 +45,24 @@ export function getTeam(): { name: string; code: string } | null {
   }
 }
 
-export function registerTeam(name: string, code: string) {
+export function getTeamMembers(): string[] {
+  try {
+    const raw = localStorage.getItem(KEY_MEMBERS);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed.filter((m) => typeof m === "string") : [];
+  } catch {
+    return [];
+  }
+}
+
+export function registerTeam(name: string, code: string, members: string[] = []) {
   try {
     localStorage.setItem(KEY_TEAM, name.trim());
     localStorage.setItem(KEY_CODE, code.trim());
+    if (members.length) {
+      localStorage.setItem(KEY_MEMBERS, JSON.stringify(members));
+    }
     if (!localStorage.getItem(KEY_STAGE)) {
       localStorage.setItem(KEY_STAGE, "1");
     }
@@ -59,6 +74,7 @@ export function registerTeam(name: string, code: string) {
     /* ignore */
   }
 }
+
 
 export function getStartTs(): number | null {
   try {
