@@ -19,7 +19,7 @@ Heute läuft alles nur im Browser des Teams (localStorage), die Datenbank ist le
 - Bei jedem Punkte-Ereignis (Etappe gelöst, Abzeichen, Hinweis, Hearing-Antwort) wird das Ereignis zusätzlich an den Server geschickt. Der Server berechnet den Punktestand aus den Ereignissen selbst, exakt mit derselben Formel wie heute lokal, so bleibt Manipulation über die Anzeige wirkungslos.
 - Läuft offline weiter: kann nicht gesendet werden, bleibt das Ereignis in einer lokalen Warteschlange und wird später nachgereicht. Das Spiel hängt nie am Netz.
 - Das bestehende Leaderboard zeigt nun alle Teams der Runde, live aktualisiert (Rang, Teamname, Punkte, Etappen, eigenes Team hervorgehoben). Ohne Runde bleibt die heutige Einzel-Ansicht.
-- Der Schlussscreen zeigt den endgültigen Rang in der Runde.
+- Der Schlussscreen zeigt den das aktuell Resultat, hat eine Gruppe ("Gegner") noch nicht fertig gespielt wird vermerkt "Noch am spielen".
 - Lehrer-Ansicht enthält eine Beamer-taugliche Rangliste der Runde (grosse Schrift, automatische Aktualisierung) mit Fortschritt pro Team.
 
 ## 4. Praktisches für den Unterricht
