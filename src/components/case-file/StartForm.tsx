@@ -1,10 +1,13 @@
 import { useState } from "react";
-import { ArrowRight, Plus, X, KeyRound, Users, Check } from "lucide-react";
+import { ArrowRight, Plus, X, KeyRound, Users, Check, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { START_CODE } from "@/lib/progress";
+import { joinRound } from "@/lib/rounds.functions";
+import { setRoundSession, type RoundSession } from "@/lib/round-client";
 
 const CHEAT_CODE = "KRXZMVBQ";
 const MAX_MEMBERS = 4;
+
 
 const inputBase =
   "w-full min-h-[48px] rounded-sm border border-border bg-paper px-3 py-3 text-[16px] focus:border-stamp focus:outline-none focus:ring-2 focus:ring-stamp/25";
