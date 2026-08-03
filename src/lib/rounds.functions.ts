@@ -109,10 +109,11 @@ export const pushScoreEvents = createServerFn({ method: "POST" })
       return {
         team_id: team.id,
         event_id: id,
-        type,
-        payload: { at: e.at ?? Date.now(), ...rest } as Record<string, unknown>,
+        type: type as string,
+        payload: { at: e.at ?? Date.now(), ...rest } as unknown as Record<string, never>,
       };
     });
+
     const { error } = await supabaseAdmin
       .from("score_events")
       .upsert(rows, { onConflict: "team_id,event_id", ignoreDuplicates: true });
