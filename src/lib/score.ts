@@ -7,6 +7,9 @@ export type ScoreEvent =
   | { id: string; type: "hint_revealed"; at: number; stage: number; level: 1 | 2 | 3 }
   | { id: string; type: "hearing_answer"; at: number; question: number; correct: boolean };
 
+/** Zeitbudget, auf das der Zeitfaktor bezogen wird (Minuten). */
+export const SCORE_BUDGET_MIN = 90;
+
 export const STAGE_BASE_POINTS = 1000;
 export const STAGE_MIN_POINTS = 600;
 /** Referenzdauer pro Etappe bei einem 90-Minuten-Budget. */
