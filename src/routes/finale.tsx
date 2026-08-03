@@ -2100,6 +2100,13 @@ function OutroScreen() {
 
   const hintsUsed = useState(() => getTotalRevealedHints())[0];
 
+  // Punktestand einmalig einfrieren, damit der Abschluss stabil bleibt.
+  const score = useState(() => getScore())[0];
+  const teamName = useState(() => getTeam()?.name?.trim() || "Mein Team")[0];
+  const shownPoints = useCountUp(step === 2 ? score.total : 0);
+
+
+
 
 
   const nowClock =
