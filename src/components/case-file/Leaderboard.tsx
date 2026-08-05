@@ -82,7 +82,7 @@ export function Rank({ index, self }: { index: number; self: boolean }) {
 }
 
 /** Status: nur visuell — fertig (Häkchen) oder noch unterwegs (pulsierender Punkt). */
-function Status({ finished }: { finished: boolean }) {
+export function Status({ finished }: { finished: boolean }) {
   return finished ? (
     <span
       title="abgeschlossen"
