@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { ChevronDown, Trophy, Users, RefreshCw } from "lucide-react";
-import { getTeam } from "@/lib/progress";
+import { Check, ChevronDown, RefreshCw, Users } from "lucide-react";
+import { getTeam, getEndTs } from "@/lib/progress";
 import { getBadge } from "@/lib/badges";
 import { getRoundSession } from "@/lib/round-client";
 import { getRoundLeaderboard } from "@/lib/rounds.functions";
@@ -12,7 +12,76 @@ type Row = {
   name: string;
   points: number;
   self: boolean;
+  finished: boolean;
 };
+
+const MEDALS = [
+  "border-medal-gold/70 bg-medal-gold/25 text-foreground",
+  "border-medal-silver/70 bg-medal-silver/25 text-foreground",
+  "border-medal-bronze/70 bg-medal-bronze/25 text-foreground",
+] as const;
+
+const RIBBONS = [
+  "border-t-medal-gold",
+  "border-t-medal-silver",
+  "border-t-medal-bronze",
+] as const;
+
+/** Rangziffer: Platz 1–3 als Medaille mit Band, ab Platz 4 nur Ziffer. */
+function Rank({ index, self }: { index: number; self: boolean }) {
+  if (index < 3) {
+    return (
+      <span className="relative flex w-8 shrink-0 justify-center">
+        <span
+          className={cn(
+            "flex h-7 w-7 items-center justify-center rounded-full border font-mono-typed text-xs font-bold tabular-nums",
+            MEDALS[index],
+          )}
+        >
+          {index + 1}
+        </span>
+        <span
+          aria-hidden
+          className={cn(
+            "absolute -bottom-1.5 left-1/2 -translate-x-1/2 border-x-[5px] border-t-[7px] border-x-transparent",
+            RIBBONS[index],
+          )}
+        />
+      </span>
+    );
+  }
+  return (
+    <span
+      className={cn(
+        "flex w-8 shrink-0 justify-center font-mono-typed text-sm font-bold tabular-nums",
+        self ? "text-stamp" : "text-muted-foreground",
+      )}
+    >
+      {index + 1}
+    </span>
+  );
+}
+
+/** Status: nur visuell — fertig (Häkchen) oder noch unterwegs (pulsierender Punkt). */
+function Status({ finished }: { finished: boolean }) {
+  return finished ? (
+    <span
+      title="abgeschlossen"
+      className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-status-done/20 text-status-done"
+    >
+      <Check className="h-3 w-3" strokeWidth={3} />
+      <span className="sr-only">abgeschlossen</span>
+    </span>
+  ) : (
+    <span
+      title="noch am Spielen"
+      className="flex h-5 w-5 shrink-0 items-center justify-center"
+    >
+      <span className="h-2 w-2 animate-pulse rounded-full bg-status-active" />
+      <span className="sr-only">noch am Spielen</span>
+    </span>
+  );
+}
 
 /**
  * Leaderboard für den aktuellen Lauf. Läuft das Team in einer Klassen-Runde,
@@ -28,8 +97,9 @@ export function Leaderboard({
   const [showDetails, setShowDetails] = useState(false);
   const team = typeof window !== "undefined" ? getTeam() : null;
   const session = typeof window !== "undefined" ? getRoundSession() : null;
+  const selfFinished = typeof window !== "undefined" ? !!getEndTs() : false;
   const [remote, setRemote] = useState<
-    { teamId: string; name: string; points: number }[] | null
+    { teamId: string; name: string; points: number; finished: boolean }[] | null
   >(null);
   const [loading, setLoading] = useState(!!session);
 
@@ -56,26 +126,40 @@ export function Leaderboard({
 
   let rows: Row[];
   if (remote && remote.length > 0) {
-    rows = remote.map((r) => ({
-      id: r.teamId,
-      name: r.name,
-      points: r.teamId === session?.teamId ? score.total : r.points,
-      self: r.teamId === session?.teamId,
-    }));
+    rows = remote.map((r) => {
+      const self = r.teamId === session?.teamId;
+      return {
+        id: r.teamId,
+        name: r.name,
+        points: self ? score.total : r.points,
+        self,
+        finished: self ? selfFinished || r.finished : r.finished,
+      };
+    });
     if (!rows.some((r) => r.self)) {
-      rows.push({ id: "self", name: selfName, points: score.total, self: true });
+      rows.push({
+        id: "self",
+        name: selfName,
+        points: score.total,
+        self: true,
+        finished: selfFinished,
+      });
     }
     rows.sort((a, b) => b.points - a.points || a.name.localeCompare(b.name));
   } else {
-    rows = [{ id: "self", name: selfName, points: score.total, self: true }];
+    rows = [
+      {
+        id: "self",
+        name: selfName,
+        points: score.total,
+        self: true,
+        finished: selfFinished,
+      },
+    ];
   }
 
-  const max = Math.max(1, ...rows.map((r) => r.points));
-  const leader = rows[0]!;
   const myIndex = rows.findIndex((r) => r.self);
   const me = rows[myIndex] ?? rows[0]!;
-  const myRank = myIndex + 1;
-  const gap = leader.points - me.points;
   const selfRef = useRef<HTMLLIElement | null>(null);
 
   useEffect(() => {
@@ -83,109 +167,91 @@ export function Leaderboard({
       selfRef.current?.scrollIntoView({ block: "nearest" });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [myRank, rows.length]);
+  }, [myIndex, rows.length]);
 
   return (
     <div className={cn("space-y-5", variant === "outro" && "space-y-3")}>
-      {/* Eigener Stand */}
+      {/* Eigener Stand: nur Name + Punkte */}
       <div
         className={cn(
-          "relative overflow-hidden rounded-sm border border-stamp/50 bg-secondary/40 text-center",
+          "rounded-sm border border-stamp/40 bg-secondary/40 text-center",
           variant === "outro" ? "p-3" : "p-4",
         )}
       >
-        <div className="flex items-center justify-center gap-2 font-mono-typed text-[0.68rem] uppercase tracking-[0.2em] text-muted-foreground">
-          <Trophy className="h-3.5 w-3.5 text-stamp" />
-          Euer Stand
-        </div>
-        <p className="mt-2 font-serif text-lg font-semibold text-foreground">
+        <p className="font-serif text-base font-semibold text-foreground">
           {me.name}
         </p>
-        <p className="font-mono-typed text-3xl font-bold leading-none tabular-nums text-foreground">
-          Rang {myRank}
-          <span className="text-base font-normal text-muted-foreground">
-            {" "}
-            von {rows.length}
-          </span>
+        <p className="font-mono-typed text-4xl font-bold leading-none tabular-nums text-stamp">
+          {me.points}
         </p>
-        <p className="mt-1 font-mono-typed text-sm tabular-nums text-foreground">
-          {me.points} Punkte
+        <p className="mt-1 font-mono-typed text-[0.62rem] uppercase tracking-[0.2em] text-muted-foreground">
+          Punkte
         </p>
-        <p className="mt-1 text-xs text-muted-foreground">
-          {gap <= 0
-            ? "Ihr führt die Rangliste an."
-            : `Rückstand auf Platz 1: ${gap} Punkte`}
-        </p>
-        {gap > 0 && (
-          <p className="mt-0.5 text-xs text-muted-foreground">
-            Spitze: {leader.name} · {leader.points} Punkte
-          </p>
-        )}
       </div>
 
-      {/* Zeilen */}
+      {/* Rangliste */}
       <div>
-        <p className="mb-2 font-mono-typed text-[0.62rem] uppercase tracking-[0.2em] text-muted-foreground">
-          Rangliste · {session ? `Runde ${session.code}` : "Einzellauf"}
-        </p>
-        <ol className="max-h-72 space-y-2 overflow-y-auto">
+        <div className="mb-2 flex items-center justify-between gap-2">
+          <p className="font-mono-typed text-[0.62rem] uppercase tracking-[0.2em] text-muted-foreground">
+            Rangliste{session ? ` · Runde ${session.code}` : ""}
+          </p>
+          {session && (
+            <button
+              type="button"
+              onClick={load}
+              className="flex items-center gap-1 font-mono-typed text-[0.62rem] uppercase tracking-wider text-muted-foreground"
+            >
+              <RefreshCw className={cn("h-3 w-3", loading && "animate-spin")} />
+              Aktualisieren
+            </button>
+          )}
+        </div>
+
+        <ol className="max-h-72 divide-y divide-border overflow-y-auto rounded-sm border border-border bg-card/70">
           {rows.map((r, i) => (
             <li
               key={r.id}
               ref={r.self ? selfRef : undefined}
               className={cn(
-                "relative overflow-hidden rounded-sm border px-3 py-2.5",
-                r.self
-                  ? "border-stamp/60 bg-card shadow-sm"
-                  : "border-border bg-card/70",
+                "flex items-center gap-3 px-3 py-2.5",
+                r.self && "bg-stamp/8 ring-1 ring-inset ring-stamp/50",
               )}
             >
-              <div
-                aria-hidden
-                className="absolute inset-y-0 left-0 bg-stamp/10"
-                style={{ width: `${Math.round((r.points / max) * 100)}%` }}
-              />
-              <div className="relative flex items-center gap-3">
-                <span className="font-mono-typed w-5 text-sm font-bold tabular-nums text-muted-foreground">
-                  {i + 1}
-                </span>
-                <span className="flex-1 truncate font-serif text-sm font-semibold text-foreground">
-                  {r.name}
-                  {r.self && (
-                    <span className="ml-2 rounded-sm bg-secondary px-1.5 py-0.5 text-[0.6rem] uppercase tracking-wider text-muted-foreground">
-                      ihr
-                    </span>
+              <Rank index={i} self={r.self} />
+              <span className="flex min-w-0 flex-1 items-center gap-2">
+                <span
+                  className={cn(
+                    "truncate font-serif text-sm font-semibold",
+                    r.self ? "text-stamp" : "text-foreground",
                   )}
+                >
+                  {r.name}
                 </span>
-                <span className="font-mono-typed text-sm font-bold tabular-nums text-foreground">
+                {r.self && (
+                  <span className="shrink-0 rounded-sm bg-stamp px-1.5 py-0.5 font-mono-typed text-[0.55rem] uppercase tracking-wider text-primary-foreground">
+                    Ihr
+                  </span>
+                )}
+              </span>
+              <Status finished={r.finished} />
+              <span className="text-right">
+                <span className="block font-mono-typed text-sm font-bold tabular-nums text-foreground">
                   {r.points}
                 </span>
-              </div>
+                <span className="block text-[0.6rem] text-muted-foreground">
+                  Punkte
+                </span>
+              </span>
             </li>
           ))}
-          {session ? (
-            <li className="flex items-center justify-between gap-2 rounded-sm border border-dashed border-border px-3 py-2.5 text-xs text-muted-foreground">
-              <span className="flex items-center gap-2">
-                <Users className="h-3.5 w-3.5" />
-                Runde {session.code}
-                {session.title ? ` · ${session.title}` : ""}
-              </span>
-              <button
-                type="button"
-                onClick={load}
-                className="flex items-center gap-1 font-mono-typed uppercase tracking-wider"
-              >
-                <RefreshCw className={cn("h-3.5 w-3.5", loading && "animate-spin")} />
-                Aktualisieren
-              </button>
-            </li>
-          ) : (
-            <li className="flex items-center gap-2 rounded-sm border border-dashed border-border px-3 py-2.5 text-xs text-muted-foreground">
-              <Users className="h-3.5 w-3.5" />
-              Ohne Rundencode spielt ihr allein. Fragt eure Lehrperson nach dem Code.
-            </li>
-          )}
         </ol>
+
+        {!session && (
+          <p className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
+            <Users className="h-3.5 w-3.5 shrink-0" />
+            Ohne Rundencode spielt ihr allein. Fragt eure Lehrperson nach dem Code.
+          </p>
+        )}
       </div>
 
       {/* Aufschlüsselung */}
