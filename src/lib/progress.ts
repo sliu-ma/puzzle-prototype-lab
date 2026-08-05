@@ -81,7 +81,12 @@ export function getTeamMembers(): string[] {
   }
 }
 
-export function registerTeam(name: string, code: string, members: string[] = []) {
+export function registerTeam(
+  name: string,
+  code: string,
+  members: string[] = [],
+  startTs?: number,
+) {
   try {
     localStorage.setItem(KEY_TEAM, name.trim());
     localStorage.setItem(KEY_CODE, code.trim());
@@ -91,7 +96,9 @@ export function registerTeam(name: string, code: string, members: string[] = [])
     if (!localStorage.getItem(KEY_STAGE)) {
       localStorage.setItem(KEY_STAGE, "1");
     }
-    if (!localStorage.getItem(KEY_START_TS)) {
+    if (startTs) {
+      localStorage.setItem(KEY_START_TS, String(startTs));
+    } else if (!localStorage.getItem(KEY_START_TS)) {
       localStorage.setItem(KEY_START_TS, String(Date.now()));
     }
     window.dispatchEvent(new Event("maya-progress"));
