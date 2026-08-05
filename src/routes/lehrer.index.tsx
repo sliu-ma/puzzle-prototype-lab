@@ -1,24 +1,28 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useCallback, useState } from "react";
-import { KeyRound, Loader2, Plus } from "lucide-react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useCallback, useEffect, useState } from "react";
+import { ChevronRight, KeyRound, Loader2, Plus, Users } from "lucide-react";
 import { teacherListRounds, teacherCreateRound } from "@/lib/rounds.functions";
-import { RoundCard, type RoundItem } from "@/components/teacher/RoundCard";
+import {
+  getTeacherPassword,
+  setTeacherPassword,
+  STATUS_LABEL,
+} from "@/lib/teacher-session";
 import { cn } from "@/lib/utils";
 
-export const Route = createFileRoute("/lehrer")({
+export const Route = createFileRoute("/lehrer/")({
+  ssr: false,
   head: () => ({
     meta: [
-      { title: "Lehrpersonen, Runden, Lobby und Auswertung" },
+      { title: "Lehrpersonen, Runden verwalten und starten" },
       {
         name: "description",
         content:
-          "Runden für eine Klasse anlegen, Teams in der Lobby prüfen, gemeinsam starten und die Auswertung der Gruppen verfolgen.",
+          "Runden für eine Klasse anlegen, Rundencode verteilen und die Runde öffnen, um Lobby, Live-Rangliste und Auswertung zu sehen.",
       },
-      { property: "og:title", content: "Lehrpersonen, Runden, Lobby und Auswertung" },
+      { property: "og:title", content: "Lehrpersonen, Runden verwalten und starten" },
       {
         property: "og:description",
-        content:
-          "Runden anlegen, Teams in der Lobby verwalten, gemeinsam starten und auswerten.",
+        content: "Runden anlegen, Code verteilen, gemeinsam starten und auswerten.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -27,10 +31,21 @@ export const Route = createFileRoute("/lehrer")({
   component: TeacherPage,
 });
 
+export type RoundItem = {
+  code: string;
+  title: string;
+  status: string;
+  created_at: string;
+  teamCount: number;
+  budget_min: number;
+  started_at: string | null;
+};
+
 const inputBase =
   "w-full min-h-[48px] rounded-sm border border-border bg-paper px-3 py-3 text-[16px] focus:border-stamp focus:outline-none focus:ring-2 focus:ring-stamp/25";
 
 function TeacherPage() {
+  const navigate = useNavigate();
   const [password, setPassword] = useState("");
   const [authed, setAuthed] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -45,11 +60,21 @@ function TeacherPage() {
     setRounds(list as unknown as RoundItem[]);
   }, []);
 
+  useEffect(() => {
+    const pw = getTeacherPassword();
+    if (!pw) return;
+    setPassword(pw);
+    loadRounds(pw)
+      .then(() => setAuthed(true))
+      .catch(() => undefined);
+  }, [loadRounds]);
+
   const login = async (e: React.FormEvent) => {
     e.preventDefault();
     setBusy(true);
     try {
       await loadRounds(password);
+      setTeacherPassword(password);
       setAuthed(true);
       setError(null);
     } catch (err) {
@@ -64,12 +89,17 @@ function TeacherPage() {
     if (title.trim().length < 1) return;
     setBusy(true);
     try {
-      await teacherCreateRound({
+      const res = await teacherCreateRound({
         data: { password, title: title.trim(), budgetMin: budget },
       });
       setTitle("");
-      await loadRounds(password);
       setError(null);
+      const code = (res as unknown as { code?: string })?.code;
+      if (code) {
+        void navigate({ to: "/lehrer/$code", params: { code } });
+        return;
+      }
+      await loadRounds(password);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Runde konnte nicht erstellt werden.");
     } finally {
@@ -127,8 +157,7 @@ function TeacherPage() {
     <main className="mx-auto min-h-screen max-w-2xl px-4 py-8">
       <h1 className="font-serif text-3xl font-bold text-foreground">Runden</h1>
       <p className="mt-1 text-sm text-muted-foreground">
-        Jede Runde hat einen Code. Die Gruppen melden sich damit an und warten in der
-        Lobby, bis ihr startet.
+        Jede Runde hat einen Code und eine eigene Seite: Lobby, Live und Auswertung.
       </p>
 
       <form
@@ -174,13 +203,28 @@ function TeacherPage() {
           </li>
         )}
         {rounds.map((r) => (
-          <RoundCard
-            key={r.code}
-            round={r}
-            password={password}
-            onChanged={() => void loadRounds(password)}
-            onError={setError}
-          />
+          <li key={r.code}>
+            <Link
+              to="/lehrer/$code"
+              params={{ code: r.code }}
+              className="flex min-h-[64px] items-center gap-3 rounded-sm border border-border bg-card px-3 py-3 hover:border-stamp"
+            >
+              <span className="font-mono-typed rounded-sm bg-secondary px-2.5 py-1.5 text-lg font-bold tracking-[0.2em]">
+                {r.code}
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block truncate font-serif font-semibold">{r.title}</span>
+                <span className="font-mono-typed block text-[10px] uppercase tracking-wider text-muted-foreground">
+                  {STATUS_LABEL[r.status] ?? r.status} · {r.budget_min} min
+                </span>
+              </span>
+              <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                <Users className="h-3.5 w-3.5" />
+                {r.teamCount}
+              </span>
+              <ChevronRight className="h-5 w-5 text-muted-foreground" />
+            </Link>
+          </li>
         ))}
       </ul>
     </main>

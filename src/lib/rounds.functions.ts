@@ -206,7 +206,7 @@ export const teacherSetRoundStatus = createServerFn({ method: "POST" })
       .object({
         password: z.string().min(1).max(200),
         code: z.string().min(1).max(20),
-        status: z.enum(["open", "closed"]),
+        status: z.enum(["lobby", "closed"]),
       })
       .parse(d),
   )
