@@ -72,7 +72,7 @@ function Rank({ index, self }: { index: number; self: boolean }) {
   return (
     <span
       className={cn(
-        "flex w-8 shrink-0 justify-center font-mono-typed text-sm font-bold tabular-nums",
+        "flex w-9 shrink-0 justify-center font-mono-typed text-sm font-bold tabular-nums",
         self ? "text-stamp" : "text-muted-foreground",
       )}
     >
