@@ -18,6 +18,7 @@ import { usePersistentState, usePersistentSet } from "@/lib/persist";
 
 import { cn } from "@/lib/utils";
 import { useSuccessBurst } from "@/components/case-file/SuccessBurst";
+import { StageScoreRecap } from "@/components/case-file/StageScoreRecap";
 import { useScrollToTopOnChange } from "@/hooks/use-scroll-top";
 
 export const Route = createFileRoute("/etappe-5")({
