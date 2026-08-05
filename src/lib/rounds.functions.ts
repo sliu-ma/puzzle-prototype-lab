@@ -119,8 +119,12 @@ export const pushScoreEvents = createServerFn({ method: "POST" })
       .parse(d),
   )
   .handler(async ({ data }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { hashToken, safeEqual } = await import("./rounds.server");
+    const { hashToken, safeEqual, tryAdmin, rateLimit, callerKey, BINDING_MESSAGE, RATE_MESSAGE } =
+      await import("./rounds.server");
+    if (!rateLimit("push", await callerKey(), 120, 60_000)) throw new Error(RATE_MESSAGE);
+    const supabaseAdmin = await tryAdmin();
+    if (!supabaseAdmin) throw new Error(BINDING_MESSAGE);
+
 
     const { data: team } = await supabaseAdmin
       .from("teams")
