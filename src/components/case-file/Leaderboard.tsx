@@ -162,13 +162,12 @@ export function Leaderboard({
           </li>
         ) : null}
         {!session ? (
-
-        ) : (
           <li className="flex items-center gap-2 rounded-sm border border-dashed border-border px-3 py-2.5 text-xs text-muted-foreground">
             <Users className="h-3.5 w-3.5" />
             Ohne Rundencode spielt ihr allein. Fragt eure Lehrperson nach dem Code.
           </li>
-        )}
+        ) : null}
+
       </ol>
 
       {/* Aufschlüsselung */}
