@@ -10,7 +10,7 @@
 - **Medaillen-Kreise** für Platz 1–3 wie im Referenzbild: runde Ziffer in Gold, Silber, Bronze mit kleiner Bandspitze darunter. Ab Platz 4 nur die Ziffer in Textfarbe (eigene Zeile in Stamp-Rot).
 - **Fortschrittsbalken entfällt** komplett.
 - **Status nur visuell:** kleiner farbiger Punkt/Häkchen — „abgeschlossen“ (grün) vs. „noch am Spielen“ (pulsierender Bernstein-Punkt), Tooltip/Screenreader-Text mit Klartext. Datenquelle ist der schon vorhandene Abschluss-Zeitstempel (`finished` aus dem Runden-Leaderboard); für das eigene Team der lokale Abschlussstand.
-- **Zeilenaufbau:** Medaille/Ziffer · Teamname (+ Marke „Du“ für die eigene Zeile) · Status · Punkte mit kleinem „Punkte“-Label darunter.
+- **Zeilenaufbau:** Medaille/Ziffer · Teamname (+ Marke „Ihr“ für die eigene Zeile) · Status · Punkte mit kleinem „Punkte“-Label darunter.
 - Zeilen durch dünne Trennlinien getrennt, gemeinsame Umrandung um die Liste (wie im Bild); eigene Zeile hervorgehoben mit Stamp-Rahmen und leicht getöntem Hintergrund.
 - Titel „Rangliste“ klein in Grossbuchstaben, „Aktualisieren“ kompakt rechts daneben. Doppelte Runden-Infozeile am Listenende entfällt; ohne Rundencode bleibt der kurze Hinweis auf den Einzellauf.
 
