@@ -256,9 +256,9 @@ export const getRoundLeaderboard = createServerFn({ method: "POST" })
 export const teacherListRounds = createServerFn({ method: "POST" })
   .inputValidator((d) => z.object({ password: z.string().min(1).max(200) }).parse(d))
   .handler(async ({ data }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { assertTeacher } = await import("./rounds.server");
-    assertTeacher(data.password);
+    const { requireTeacherAdmin } = await import("./rounds.server");
+    const supabaseAdmin = await requireTeacherAdmin(data.password);
+
 
     const { data: rounds } = await supabaseAdmin
       .from("rounds")
