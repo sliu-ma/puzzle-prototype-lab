@@ -276,31 +276,8 @@ export function StageScoreRecap({ stage }: { stage: number }) {
           )}
         </div>
 
-        {/* Abrechnung */}
-        {lines.length > 0 && (
-          <dl className="mt-4 space-y-1.5 rounded-sm border border-border bg-secondary/30 px-3 py-3">
-            {lines.map((l, i) => (
-              <div
-                key={l.label}
-                className="flex items-baseline justify-between gap-3 animate-fade-in"
-                style={{
-                  animationDelay: `${0.15 + i * 0.18}s`,
-                  animationFillMode: "backwards",
-                }}
-              >
-                <dt className="font-serif text-sm text-foreground">{l.label}</dt>
-                <dd
-                  className={cn(
-                    "font-mono-typed text-sm font-bold tabular-nums",
-                    l.tone === "minus" ? "text-destructive" : "text-emerald-700",
-                  )}
-                >
-                  {l.value}
-                </dd>
-              </div>
-            ))}
-          </dl>
-        )}
+
+
 
         {/* Rangaufstieg oder Solo-Verlauf */}
         {rows.length > 1 ? (
