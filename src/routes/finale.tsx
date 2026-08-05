@@ -2361,10 +2361,6 @@ function OutroScreen() {
               <span className="rounded-sm border border-border bg-secondary/60 px-2.5 py-1 font-serif text-sm font-semibold text-foreground">
                 {teamName}
               </span>
-              <span className="inline-flex items-center gap-1.5 rounded-sm border border-stamp/50 bg-stamp/10 px-2.5 py-1 font-mono-typed text-[11px] uppercase tracking-wider text-stamp">
-                <Trophy className="h-3.5 w-3.5" />
-                Rang 1
-              </span>
             </div>
           </div>
 
