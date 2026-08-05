@@ -1,8 +1,9 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
-import { ChevronRight, KeyRound, Loader2, Plus, Users } from "lucide-react";
+import { ChevronRight, KeyRound, Loader2, LogOut, Plus, Users } from "lucide-react";
 import { teacherListRounds, teacherCreateRound } from "@/lib/rounds.functions";
 import {
+  clearTeacherPassword,
   getTeacherPassword,
   setTeacherPassword,
   STATUS_LABEL,
