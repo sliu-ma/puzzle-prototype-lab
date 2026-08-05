@@ -17,12 +17,12 @@ const eventSchema = z.object({
 export const lookupRound = createServerFn({ method: "POST" })
   .inputValidator((d) => z.object({ code: z.string().min(1).max(20) }).parse(d))
   .handler(async ({ data }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: round } = await supabaseAdmin
-      .from("rounds")
-      .select("code, title, status, budget_min")
-      .eq("code", data.code.trim().toUpperCase())
-      .maybeSingle();
+    const { roundsDb } = await import("./rounds.server");
+    const { data: rows, error } = await roundsDb().rpc("round_lookup", {
+      p_code: data.code,
+    });
+    if (error) throw new Error(error.message);
+    const round = rows?.[0];
     if (!round) return { found: false as const };
     return {
       found: true as const,
@@ -45,38 +45,29 @@ export const joinRound = createServerFn({ method: "POST" })
       .parse(d),
   )
   .handler(async ({ data }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { makeTeamToken, hashToken } = await import("./rounds.server");
-
-    const { data: round } = await supabaseAdmin
-      .from("rounds")
-      .select("id, code, title, status")
-      .eq("code", data.code.trim().toUpperCase())
-      .maybeSingle();
-    if (!round) throw new Error("Diese Runde existiert nicht.");
-    if (round.status !== "open") throw new Error("Diese Runde ist geschlossen.");
+    const { roundsDb, makeTeamToken, hashToken } = await import("./rounds.server");
 
     const token = makeTeamToken();
-    const { data: team, error } = await supabaseAdmin
-      .from("teams")
-      .insert({
-        round_id: round.id,
-        name: data.teamName.trim(),
-        members: data.members.map((m) => m.trim()).filter(Boolean),
-        token_hash: hashToken(token),
-      })
-      .select("id")
-      .single();
+    const { data: rows, error } = await roundsDb().rpc("round_join", {
+      p_code: data.code,
+      p_team_name: data.teamName.trim(),
+      p_members: data.members.map((m) => m.trim()).filter(Boolean),
+      p_token_hash: hashToken(token),
+    });
     if (error) {
-      if (error.code === "23505" || error.code === "23P01" || error.code === "23000") {
-        throw new Error("Dieser Teamname ist in der Runde schon vergeben.");
-      }
-      if (error.message.includes("duplicate")) {
+      if (error.message.includes("duplicate") || error.code === "23505") {
         throw new Error("Dieser Teamname ist in der Runde schon vergeben.");
       }
       throw new Error(error.message);
     }
-    return { teamId: team.id, token, roundCode: round.code, roundTitle: round.title };
+    const row = rows?.[0];
+    if (!row) throw new Error("Beitritt fehlgeschlagen. Bitte nochmals versuchen.");
+    return {
+      teamId: row.team_id,
+      token,
+      roundCode: row.round_code,
+      roundTitle: row.round_title,
+    };
   });
 
 /** Punkte-Ereignisse eines Teams melden (idempotent über die Ereignis-ID). */
@@ -91,34 +82,17 @@ export const pushScoreEvents = createServerFn({ method: "POST" })
       .parse(d),
   )
   .handler(async ({ data }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { hashToken, safeEqual } = await import("./rounds.server");
-
-    const { data: team } = await supabaseAdmin
-      .from("teams")
-      .select("id, token_hash")
-      .eq("id", data.teamId)
-      .maybeSingle();
-    if (!team || !safeEqual(hashToken(data.token), team.token_hash)) {
-      throw new Error("Team nicht bekannt.");
-    }
+    const { roundsDb, hashToken } = await import("./rounds.server");
     if (data.events.length === 0) return { ok: true as const, stored: 0 };
 
-    const rows = data.events.map((e) => {
-      const { id, type, ...rest } = e;
-      return {
-        team_id: team.id,
-        event_id: id,
-        type: type as string,
-        payload: { at: e.at ?? Date.now(), ...rest } as unknown as Record<string, never>,
-      };
+    const events = data.events.map((e) => ({ ...e, at: e.at ?? Date.now() }));
+    const { data: stored, error } = await roundsDb().rpc("round_push_events", {
+      p_team_id: data.teamId,
+      p_token_hash: hashToken(data.token),
+      p_events: events,
     });
-
-    const { error } = await supabaseAdmin
-      .from("score_events")
-      .upsert(rows, { onConflict: "team_id,event_id", ignoreDuplicates: true });
     if (error) throw new Error(error.message);
-    return { ok: true as const, stored: rows.length };
+    return { ok: true as const, stored: stored ?? 0 };
   });
 
 /** Markiert ein Team als fertig (nach dem Hearing). */
@@ -127,22 +101,12 @@ export const finishTeam = createServerFn({ method: "POST" })
     z.object({ teamId: z.string().uuid(), token: z.string().min(10).max(200) }).parse(d),
   )
   .handler(async ({ data }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { hashToken, safeEqual } = await import("./rounds.server");
-    const { data: team } = await supabaseAdmin
-      .from("teams")
-      .select("id, token_hash, finished_at")
-      .eq("id", data.teamId)
-      .maybeSingle();
-    if (!team || !safeEqual(hashToken(data.token), team.token_hash)) {
-      throw new Error("Team nicht bekannt.");
-    }
-    if (!team.finished_at) {
-      await supabaseAdmin
-        .from("teams")
-        .update({ finished_at: new Date().toISOString() })
-        .eq("id", team.id);
-    }
+    const { roundsDb, hashToken } = await import("./rounds.server");
+    const { error } = await roundsDb().rpc("round_finish", {
+      p_team_id: data.teamId,
+      p_token_hash: hashToken(data.token),
+    });
+    if (error) throw new Error(error.message);
     return { ok: true as const };
   });
 
@@ -150,43 +114,32 @@ export const finishTeam = createServerFn({ method: "POST" })
 export const getRoundLeaderboard = createServerFn({ method: "POST" })
   .inputValidator((d) => z.object({ code: z.string().min(1).max(20) }).parse(d))
   .handler(async ({ data }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { buildLeaderboard } = await import("./rounds.server");
+    const { roundsDb, buildLeaderboard } = await import("./rounds.server");
 
-    const { data: round } = await supabaseAdmin
-      .from("rounds")
-      .select("id, code, title, status, budget_min")
-      .eq("code", data.code.trim().toUpperCase())
-      .maybeSingle();
-    if (!round) return { found: false as const };
-
-    const { data: teams } = await supabaseAdmin
-      .from("teams")
-      .select("id, name, finished_at")
-      .eq("round_id", round.id);
-    const teamList = teams ?? [];
-    if (teamList.length === 0) {
-      return {
-        found: true as const,
-        code: round.code,
-        title: round.title,
-        status: round.status,
-        rows: [],
-      };
-    }
-    const { data: events } = await supabaseAdmin
-      .from("score_events")
-      .select("team_id, event_id, type, payload")
-      .in(
-        "team_id",
-        teamList.map((t) => t.id),
-      );
+    const { data: raw, error } = await roundsDb().rpc("round_leaderboard_data", {
+      p_code: data.code,
+    });
+    if (error) throw new Error(error.message);
+    const payload = (raw ?? {}) as {
+      found?: boolean;
+      code?: string;
+      title?: string;
+      status?: string;
+      budgetMin?: number;
+      teams?: { id: string; name: string; finished_at: string | null }[];
+      events?: { team_id: string; event_id: string; type: string; payload: unknown }[];
+    };
+    if (!payload.found) return { found: false as const };
     return {
       found: true as const,
-      code: round.code,
-      title: round.title,
-      status: round.status,
-      rows: buildLeaderboard(teamList, events ?? [], round.budget_min),
+      code: payload.code ?? data.code,
+      title: payload.title ?? "",
+      status: payload.status ?? "open",
+      rows: buildLeaderboard(
+        payload.teams ?? [],
+        payload.events ?? [],
+        payload.budgetMin ?? 90,
+      ),
     };
   });
 
@@ -195,25 +148,18 @@ export const getRoundLeaderboard = createServerFn({ method: "POST" })
 export const teacherListRounds = createServerFn({ method: "POST" })
   .inputValidator((d) => z.object({ password: z.string().min(1).max(200) }).parse(d))
   .handler(async ({ data }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { assertTeacher } = await import("./rounds.server");
-    assertTeacher(data.password);
-
-    const { data: rounds } = await supabaseAdmin
-      .from("rounds")
-      .select("code, title, status, created_at")
-      .order("created_at", { ascending: false })
-      .limit(50);
-    const list = rounds ?? [];
-    const { data: teams } = await supabaseAdmin.from("teams").select("id, round_id");
-    const { data: roundIds } = await supabaseAdmin.from("rounds").select("id, code");
-    const codeById = new Map((roundIds ?? []).map((r) => [r.id, r.code]));
-    const counts = new Map<string, number>();
-    for (const t of teams ?? []) {
-      const code = codeById.get(t.round_id);
-      if (code) counts.set(code, (counts.get(code) ?? 0) + 1);
-    }
-    return list.map((r) => ({ ...r, teamCount: counts.get(r.code) ?? 0 }));
+    const { roundsDb, hashPassword } = await import("./rounds.server");
+    const { data: rounds, error } = await roundsDb().rpc("teacher_list_rounds", {
+      p_password_hash: hashPassword(data.password),
+    });
+    if (error) throw new Error(error.message);
+    return (rounds ?? []).map((r) => ({
+      code: r.code,
+      title: r.title,
+      status: r.status,
+      created_at: r.created_at,
+      teamCount: r.team_count ?? 0,
+    }));
   });
 
 export const teacherCreateRound = createServerFn({ method: "POST" })
@@ -227,20 +173,25 @@ export const teacherCreateRound = createServerFn({ method: "POST" })
       .parse(d),
   )
   .handler(async ({ data }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { assertTeacher, makeRoundCode } = await import("./rounds.server");
-    assertTeacher(data.password);
+    const { roundsDb, hashPassword, makeRoundCode } = await import("./rounds.server");
+    const db = roundsDb();
+    const passwordHash = hashPassword(data.password);
 
+    let lastError: string | null = null;
     for (let attempt = 0; attempt < 6; attempt++) {
-      const code = makeRoundCode();
-      const { data: round, error } = await supabaseAdmin
-        .from("rounds")
-        .insert({ code, title: data.title.trim(), budget_min: data.budgetMin })
-        .select("code, title, status")
-        .single();
-      if (!error && round) return round;
+      const { data: rows, error } = await db.rpc("teacher_create_round", {
+        p_password_hash: passwordHash,
+        p_code: makeRoundCode(),
+        p_title: data.title.trim(),
+        p_budget_min: data.budgetMin,
+      });
+      if (!error && rows?.[0]) return rows[0];
+      lastError = error?.message ?? null;
+      if (error && !/duplicate|unique/i.test(error.message)) throw new Error(error.message);
     }
-    throw new Error("Rundencode konnte nicht erzeugt werden. Bitte nochmals versuchen.");
+    throw new Error(
+      lastError ?? "Rundencode konnte nicht erzeugt werden. Bitte nochmals versuchen.",
+    );
   });
 
 export const teacherSetRoundStatus = createServerFn({ method: "POST" })
@@ -254,28 +205,26 @@ export const teacherSetRoundStatus = createServerFn({ method: "POST" })
       .parse(d),
   )
   .handler(async ({ data }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { assertTeacher } = await import("./rounds.server");
-    assertTeacher(data.password);
-    const { error } = await supabaseAdmin
-      .from("rounds")
-      .update({ status: data.status })
-      .eq("code", data.code.trim().toUpperCase());
+    const { roundsDb, hashPassword } = await import("./rounds.server");
+    const { error } = await roundsDb().rpc("teacher_set_round_status", {
+      p_password_hash: hashPassword(data.password),
+      p_code: data.code,
+      p_status: data.status,
+    });
     if (error) throw new Error(error.message);
     return { ok: true as const };
   });
 
 export const teacherDeleteTeam = createServerFn({ method: "POST" })
   .inputValidator((d) =>
-    z
-      .object({ password: z.string().min(1).max(200), teamId: z.string().uuid() })
-      .parse(d),
+    z.object({ password: z.string().min(1).max(200), teamId: z.string().uuid() }).parse(d),
   )
   .handler(async ({ data }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { assertTeacher } = await import("./rounds.server");
-    assertTeacher(data.password);
-    const { error } = await supabaseAdmin.from("teams").delete().eq("id", data.teamId);
+    const { roundsDb, hashPassword } = await import("./rounds.server");
+    const { error } = await roundsDb().rpc("teacher_delete_team", {
+      p_password_hash: hashPassword(data.password),
+      p_team_id: data.teamId,
+    });
     if (error) throw new Error(error.message);
     return { ok: true as const };
   });

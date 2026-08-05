@@ -14,6 +14,27 @@ export type Database = {
   }
   public: {
     Tables: {
+      app_config: {
+        Row: {
+          created_at: string
+          key: string
+          updated_at: string
+          value: string
+        }
+        Insert: {
+          created_at?: string
+          key: string
+          updated_at?: string
+          value: string
+        }
+        Update: {
+          created_at?: string
+          key?: string
+          updated_at?: string
+          value?: string
+        }
+        Relationships: []
+      }
       rounds: {
         Row: {
           budget_min: number
@@ -125,7 +146,69 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      assert_teacher: { Args: { p_password_hash: string }; Returns: undefined }
+      round_finish: {
+        Args: { p_team_id: string; p_token_hash: string }
+        Returns: boolean
+      }
+      round_join: {
+        Args: {
+          p_code: string
+          p_members: Json
+          p_team_name: string
+          p_token_hash: string
+        }
+        Returns: {
+          round_code: string
+          round_title: string
+          team_id: string
+        }[]
+      }
+      round_leaderboard_data: { Args: { p_code: string }; Returns: Json }
+      round_lookup: {
+        Args: { p_code: string }
+        Returns: {
+          budget_min: number
+          code: string
+          status: string
+          title: string
+        }[]
+      }
+      round_push_events: {
+        Args: { p_events: Json; p_team_id: string; p_token_hash: string }
+        Returns: number
+      }
+      teacher_create_round: {
+        Args: {
+          p_budget_min: number
+          p_code: string
+          p_password_hash: string
+          p_title: string
+        }
+        Returns: {
+          code: string
+          status: string
+          title: string
+        }[]
+      }
+      teacher_delete_team: {
+        Args: { p_password_hash: string; p_team_id: string }
+        Returns: boolean
+      }
+      teacher_list_rounds: {
+        Args: { p_password_hash: string }
+        Returns: {
+          code: string
+          created_at: string
+          status: string
+          team_count: number
+          title: string
+        }[]
+      }
+      teacher_set_round_status: {
+        Args: { p_code: string; p_password_hash: string; p_status: string }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
