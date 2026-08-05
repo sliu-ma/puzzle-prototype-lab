@@ -18,6 +18,7 @@ import { Route as Etappe2RouteImport } from './routes/etappe-2'
 import { Route as Etappe1RouteImport } from './routes/etappe-1'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as LehrerIndexRouteImport } from './routes/lehrer.index'
+import { Route as LehrerCodeRouteImport } from './routes/lehrer.$code'
 
 const LobbyRoute = LobbyRouteImport.update({
   id: '/lobby',
@@ -64,6 +65,11 @@ const LehrerIndexRoute = LehrerIndexRouteImport.update({
   path: '/lehrer/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LehrerCodeRoute = LehrerCodeRouteImport.update({
+  id: '/lehrer/$code',
+  path: '/lehrer/$code',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -74,6 +80,7 @@ export interface FileRoutesByFullPath {
   '/etappe-5': typeof Etappe5Route
   '/finale': typeof FinaleRoute
   '/lobby': typeof LobbyRoute
+  '/lehrer/$code': typeof LehrerCodeRoute
   '/lehrer/': typeof LehrerIndexRoute
 }
 export interface FileRoutesByTo {
@@ -85,6 +92,7 @@ export interface FileRoutesByTo {
   '/etappe-5': typeof Etappe5Route
   '/finale': typeof FinaleRoute
   '/lobby': typeof LobbyRoute
+  '/lehrer/$code': typeof LehrerCodeRoute
   '/lehrer': typeof LehrerIndexRoute
 }
 export interface FileRoutesById {
@@ -97,6 +105,7 @@ export interface FileRoutesById {
   '/etappe-5': typeof Etappe5Route
   '/finale': typeof FinaleRoute
   '/lobby': typeof LobbyRoute
+  '/lehrer/$code': typeof LehrerCodeRoute
   '/lehrer/': typeof LehrerIndexRoute
 }
 export interface FileRouteTypes {
@@ -110,6 +119,7 @@ export interface FileRouteTypes {
     | '/etappe-5'
     | '/finale'
     | '/lobby'
+    | '/lehrer/$code'
     | '/lehrer/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -121,6 +131,7 @@ export interface FileRouteTypes {
     | '/etappe-5'
     | '/finale'
     | '/lobby'
+    | '/lehrer/$code'
     | '/lehrer'
   id:
     | '__root__'
@@ -132,6 +143,7 @@ export interface FileRouteTypes {
     | '/etappe-5'
     | '/finale'
     | '/lobby'
+    | '/lehrer/$code'
     | '/lehrer/'
   fileRoutesById: FileRoutesById
 }
@@ -144,6 +156,7 @@ export interface RootRouteChildren {
   Etappe5Route: typeof Etappe5Route
   FinaleRoute: typeof FinaleRoute
   LobbyRoute: typeof LobbyRoute
+  LehrerCodeRoute: typeof LehrerCodeRoute
   LehrerIndexRoute: typeof LehrerIndexRoute
 }
 
@@ -212,6 +225,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LehrerIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/lehrer/$code': {
+      id: '/lehrer/$code'
+      path: '/lehrer/$code'
+      fullPath: '/lehrer/$code'
+      preLoaderRoute: typeof LehrerCodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -224,6 +244,7 @@ const rootRouteChildren: RootRouteChildren = {
   Etappe5Route: Etappe5Route,
   FinaleRoute: FinaleRoute,
   LobbyRoute: LobbyRoute,
+  LehrerCodeRoute: LehrerCodeRoute,
   LehrerIndexRoute: LehrerIndexRoute,
 }
 export const routeTree = rootRouteImport
