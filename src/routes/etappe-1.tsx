@@ -387,6 +387,7 @@ function AktePage() {
           />
         )}
 
+        {step === "naechstes" && <StageScoreRecap stage={1} />}
         {step === "naechstes" && (
           <PaperCard rotate={-0.5} tape="top-left">
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">Etappe 2 · Dorfladen</p>
