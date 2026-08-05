@@ -87,9 +87,17 @@ export function recordHintRevealed(stage: number, level: 1 | 2 | 3) {
   });
 }
 
-export function recordHearingAnswer(question: number, correct: boolean) {
+/**
+ * Verbucht eine Hearing-Antwort. Wird erst nach bestandenem Hearing
+ * aufgerufen; `attempt` hält die Ereignis-IDs pro Versuch eindeutig.
+ */
+export function recordHearingAnswer(
+  question: number,
+  correct: boolean,
+  attempt = 1,
+) {
   addScoreEvent({
-    id: `hearing_answer:${question}`,
+    id: `hearing_answer:${attempt}:${question}`,
     type: "hearing_answer",
     at: Date.now(),
     question,

@@ -16,7 +16,8 @@ export const STAGE_MIN_POINTS = 600;
 export const STAGE_REF_SHARE = 10 / 90;
 
 
-export const HINT_CAP: Record<1 | 2 | 3, number> = {
+/** Faktor auf die Etappenpunkte je höchster genutzter Hinweisstufe. */
+export const HINT_FACTOR: Record<1 | 2 | 3, number> = {
   1: 0.9,
   2: 0.75,
   3: 0.5,
@@ -91,11 +92,10 @@ export function computeScore(
     const factor = stageTimeFactor(e.durationSec, budgetMin);
     const rawPoints = Math.round(STAGE_BASE_POINTS * factor);
     const level = hintLevel.get(e.stage) ?? 0;
-    const cap =
-      level === 0 ? STAGE_BASE_POINTS : Math.round(STAGE_BASE_POINTS * HINT_CAP[level]);
+    const hintFactor = level === 0 ? 1 : HINT_FACTOR[level];
     stages.push({
       stage: e.stage,
-      points: Math.min(rawPoints, cap),
+      points: Math.round(rawPoints * hintFactor),
       rawPoints,
       hintLevel: level,
       durationSec: e.durationSec,

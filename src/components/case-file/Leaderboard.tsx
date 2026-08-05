@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ChevronDown, Trophy, Users, RefreshCw } from "lucide-react";
 import { getTeam } from "@/lib/progress";
 import { getBadge } from "@/lib/badges";
@@ -72,91 +72,121 @@ export function Leaderboard({
 
   const max = Math.max(1, ...rows.map((r) => r.points));
   const leader = rows[0]!;
-  const myRank = rows.findIndex((r) => r.self) + 1;
+  const myIndex = rows.findIndex((r) => r.self);
+  const me = rows[myIndex] ?? rows[0]!;
+  const myRank = myIndex + 1;
+  const gap = leader.points - me.points;
+  const selfRef = useRef<HTMLLIElement | null>(null);
+
+  useEffect(() => {
+    if (rows.length > 6) {
+      selfRef.current?.scrollIntoView({ block: "nearest" });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [myRank, rows.length]);
 
   return (
     <div className={cn("space-y-5", variant === "outro" && "space-y-3")}>
-      {/* Podest */}
-      {variant === "dialog" && (
-        <div className="relative overflow-hidden rounded-sm border border-border bg-secondary/40 p-4 text-center">
-          <div className="flex items-center justify-center gap-2 text-[0.68rem] uppercase tracking-[0.2em] text-muted-foreground">
-            <Trophy className="h-3.5 w-3.5 text-stamp" />
-            {session ? `Runde ${session.code}` : "Rangliste · Lauf 1"}
-          </div>
-          <p className="mt-3 font-serif text-xl font-semibold text-foreground">
-            {leader.name}
-          </p>
-          <p className="font-mono-typed text-4xl font-bold tabular-nums text-foreground">
-            {leader.points}
-          </p>
-          <p className="text-xs text-muted-foreground">
-            Punkte · Rang 1{myRank > 1 ? ` · ihr seid Rang ${myRank}` : ""}
-          </p>
-          <div
-            aria-hidden
-            className="mx-auto mt-3 h-2 w-24 rounded-full bg-stamp/60"
-          />
+      {/* Eigener Stand */}
+      <div
+        className={cn(
+          "relative overflow-hidden rounded-sm border border-stamp/50 bg-secondary/40 text-center",
+          variant === "outro" ? "p-3" : "p-4",
+        )}
+      >
+        <div className="flex items-center justify-center gap-2 font-mono-typed text-[0.68rem] uppercase tracking-[0.2em] text-muted-foreground">
+          <Trophy className="h-3.5 w-3.5 text-stamp" />
+          Euer Stand
         </div>
-      )}
+        <p className="mt-2 font-serif text-lg font-semibold text-foreground">
+          {me.name}
+        </p>
+        <p className="font-mono-typed text-3xl font-bold leading-none tabular-nums text-foreground">
+          Rang {myRank}
+          <span className="text-base font-normal text-muted-foreground">
+            {" "}
+            von {rows.length}
+          </span>
+        </p>
+        <p className="mt-1 font-mono-typed text-sm tabular-nums text-foreground">
+          {me.points} Punkte
+        </p>
+        <p className="mt-1 text-xs text-muted-foreground">
+          {gap <= 0
+            ? "Ihr führt die Rangliste an."
+            : `Rückstand auf Platz 1: ${gap} Punkte`}
+        </p>
+        {gap > 0 && (
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            Spitze: {leader.name} · {leader.points} Punkte
+          </p>
+        )}
+      </div>
 
       {/* Zeilen */}
-      <ol className="space-y-2">
-        {rows.map((r, i) => (
-          <li
-            key={r.id}
-            className={cn(
-              "relative overflow-hidden rounded-sm border px-3 py-2.5",
-              r.self
-                ? "border-stamp/60 bg-card shadow-sm"
-                : "border-border bg-card/70",
-            )}
-          >
-            <div
-              aria-hidden
-              className="absolute inset-y-0 left-0 bg-stamp/10"
-              style={{ width: `${Math.round((r.points / max) * 100)}%` }}
-            />
-            <div className="relative flex items-center gap-3">
-              <span className="font-mono-typed w-5 text-sm font-bold tabular-nums text-muted-foreground">
-                {i + 1}
-              </span>
-              <span className="flex-1 truncate font-serif text-sm font-semibold text-foreground">
-                {r.name}
-                {r.self && (
-                  <span className="ml-2 rounded-sm bg-secondary px-1.5 py-0.5 text-[0.6rem] uppercase tracking-wider text-muted-foreground">
-                    ihr
-                  </span>
-                )}
-              </span>
-              <span className="font-mono-typed text-sm font-bold tabular-nums text-foreground">
-                {r.points}
-              </span>
-            </div>
-          </li>
-        ))}
-        {session ? (
-          <li className="flex items-center justify-between gap-2 rounded-sm border border-dashed border-border px-3 py-2.5 text-xs text-muted-foreground">
-            <span className="flex items-center gap-2">
-              <Users className="h-3.5 w-3.5" />
-              Runde {session.code}
-              {session.title ? ` · ${session.title}` : ""}
-            </span>
-            <button
-              type="button"
-              onClick={load}
-              className="flex items-center gap-1 font-mono-typed uppercase tracking-wider"
+      <div>
+        <p className="mb-2 font-mono-typed text-[0.62rem] uppercase tracking-[0.2em] text-muted-foreground">
+          Rangliste · {session ? `Runde ${session.code}` : "Einzellauf"}
+        </p>
+        <ol className="max-h-72 space-y-2 overflow-y-auto">
+          {rows.map((r, i) => (
+            <li
+              key={r.id}
+              ref={r.self ? selfRef : undefined}
+              className={cn(
+                "relative overflow-hidden rounded-sm border px-3 py-2.5",
+                r.self
+                  ? "border-stamp/60 bg-card shadow-sm"
+                  : "border-border bg-card/70",
+              )}
             >
-              <RefreshCw className={cn("h-3.5 w-3.5", loading && "animate-spin")} />
-              Aktualisieren
-            </button>
-          </li>
-        ) : (
-          <li className="flex items-center gap-2 rounded-sm border border-dashed border-border px-3 py-2.5 text-xs text-muted-foreground">
-            <Users className="h-3.5 w-3.5" />
-            Ohne Rundencode spielt ihr allein. Fragt eure Lehrperson nach dem Code.
-          </li>
-        )}
-      </ol>
+              <div
+                aria-hidden
+                className="absolute inset-y-0 left-0 bg-stamp/10"
+                style={{ width: `${Math.round((r.points / max) * 100)}%` }}
+              />
+              <div className="relative flex items-center gap-3">
+                <span className="font-mono-typed w-5 text-sm font-bold tabular-nums text-muted-foreground">
+                  {i + 1}
+                </span>
+                <span className="flex-1 truncate font-serif text-sm font-semibold text-foreground">
+                  {r.name}
+                  {r.self && (
+                    <span className="ml-2 rounded-sm bg-secondary px-1.5 py-0.5 text-[0.6rem] uppercase tracking-wider text-muted-foreground">
+                      ihr
+                    </span>
+                  )}
+                </span>
+                <span className="font-mono-typed text-sm font-bold tabular-nums text-foreground">
+                  {r.points}
+                </span>
+              </div>
+            </li>
+          ))}
+          {session ? (
+            <li className="flex items-center justify-between gap-2 rounded-sm border border-dashed border-border px-3 py-2.5 text-xs text-muted-foreground">
+              <span className="flex items-center gap-2">
+                <Users className="h-3.5 w-3.5" />
+                Runde {session.code}
+                {session.title ? ` · ${session.title}` : ""}
+              </span>
+              <button
+                type="button"
+                onClick={load}
+                className="flex items-center gap-1 font-mono-typed uppercase tracking-wider"
+              >
+                <RefreshCw className={cn("h-3.5 w-3.5", loading && "animate-spin")} />
+                Aktualisieren
+              </button>
+            </li>
+          ) : (
+            <li className="flex items-center gap-2 rounded-sm border border-dashed border-border px-3 py-2.5 text-xs text-muted-foreground">
+              <Users className="h-3.5 w-3.5" />
+              Ohne Rundencode spielt ihr allein. Fragt eure Lehrperson nach dem Code.
+            </li>
+          )}
+        </ol>
+      </div>
 
       {/* Aufschlüsselung */}
       <div className="rounded-sm border border-border bg-card/70">

@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { CheckCircle2, XCircle, Gauge, RefreshCw, ArrowUp, ArrowDown, Sparkles, Clock, Lightbulb, Scale, AlertTriangle, Trophy } from "lucide-react";
+import { CheckCircle2, XCircle, Gauge, RefreshCw, ArrowUp, ArrowDown, Sparkles, Clock, Lightbulb, Scale, AlertTriangle } from "lucide-react";
 import { PaperCard } from "@/components/case-file/PaperCard";
 import { Stamp } from "@/components/case-file/Stamp";
 import { StageGate } from "@/components/case-file/StageGate";
@@ -380,6 +380,10 @@ function FinalePage() {
     "akte-finale-antworten",
     () => Array(FRAGEN.length).fill(null),
   );
+  const [versuch, setVersuch] = usePersistentState<number>(
+    "akte-finale-versuch",
+    () => 1,
+  );
   const [resetKey, setResetKey] = useState(0);
   const [pulse, setPulse] = useState<null | "up" | "down">(null);
   const [review, setReview] = useState(false);
@@ -420,6 +424,11 @@ function FinalePage() {
 
   useEffect(() => {
     if (status === "won") {
+      // Hearing-Punkte erst jetzt verbuchen: ein Fehlversuch zählt nicht.
+      ergebnisse.forEach((r, i) => {
+        if (r === null) return;
+        recordHearingAnswer(i, r, versuch);
+      });
       completeStage(6);
       finishGame();
       markRoundFinished();
@@ -438,6 +447,7 @@ function FinalePage() {
         }
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status]);
 
   const handleResult = (correct: boolean, userAnswer?: unknown) => {
@@ -451,7 +461,6 @@ function FinalePage() {
       next[aktuell] = userAnswer ?? null;
       return next;
     });
-    recordHearingAnswer(aktuell, correct);
     setPulse(correct ? "up" : "down");
     if (!correct && typeof navigator !== "undefined" && "vibrate" in navigator) {
       navigator.vibrate?.([80, 60, 120]);
@@ -477,6 +486,7 @@ function FinalePage() {
     setResetKey((k) => k + 1);
     setPulse(null);
     setResultRevealed(false);
+    setVersuch((v) => v + 1);
   };
 
   const frage = FRAGEN[aktuell];
@@ -2136,7 +2146,7 @@ function OutroScreen() {
   const elapsedLabel = useState(() => {
     const start = getStartTs();
     if (!start) return "...";
-    const ms = Math.max(0, Date.now() - start);
+    const ms = Math.max(0, (getEndTs() ?? Date.now()) - start);
     const totalSec = Math.floor(ms / 1000);
     const h = Math.floor(totalSec / 3600);
     const m = Math.floor((totalSec % 3600) / 60);
@@ -2350,10 +2360,6 @@ function OutroScreen() {
             <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
               <span className="rounded-sm border border-border bg-secondary/60 px-2.5 py-1 font-serif text-sm font-semibold text-foreground">
                 {teamName}
-              </span>
-              <span className="inline-flex items-center gap-1.5 rounded-sm border border-stamp/50 bg-stamp/10 px-2.5 py-1 font-mono-typed text-[11px] uppercase tracking-wider text-stamp">
-                <Trophy className="h-3.5 w-3.5" />
-                Rang 1
               </span>
             </div>
           </div>
