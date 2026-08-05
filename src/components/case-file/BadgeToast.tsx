@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import type { Badge } from "@/lib/badges";
+import { setBadgeOverlayOpen } from "@/lib/overlay-bus";
 
 
 const CONFETTI_COLORS = [
