@@ -6,7 +6,7 @@ import { PaperCard } from "@/components/case-file/PaperCard";
 import { Stamp } from "@/components/case-file/Stamp";
 import { StageGate } from "@/components/case-file/StageGate";
 import { getTotalRevealedHints } from "@/components/case-file/HintSystem";
-import { completeStage, finishGame, getHearingClock, getStartTs, getEndTs, getTeam, TIMER_DURATION_MIN } from "@/lib/progress";
+import { completeStage, finishGame, getHearingClock, getStartTs, getEndTs, getTeam, getBudgetMin } from "@/lib/progress";
 import { awardBadge } from "@/lib/badges";
 import { recordHearingAnswer, getScore } from "@/lib/score-events";
 import { Leaderboard } from "@/components/case-file/Leaderboard";
@@ -441,7 +441,7 @@ function FinalePage() {
       // Badge „Auf den letzten Drücker": in den letzten 5 Minuten gelöst.
       if (start) {
         const elapsed = end - start;
-        const total = TIMER_DURATION_MIN * 60_000;
+        const total = getBudgetMin() * 60_000;
         if (elapsed >= total - 5 * 60_000 && elapsed <= total) {
           awardBadge("letzte-5-minuten");
         }

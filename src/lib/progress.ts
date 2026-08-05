@@ -157,7 +157,7 @@ export function getNowClock(): string {
 export function getHearingClock(): string | null {
   const ts = getStartTs();
   if (!ts) return null;
-  return formatClock(new Date(ts + TIMER_DURATION_MIN * 60_000));
+  return formatClock(new Date(ts + getBudgetMin() * 60_000));
 }
 
 /** True, wenn die 90 Minuten seit Registrierung abgelaufen sind. */
@@ -165,7 +165,7 @@ export function isTimeUp(): boolean {
   if (getEndTs()) return false;
   const ts = getStartTs();
   if (!ts) return false;
-  return Date.now() >= ts + TIMER_DURATION_MIN * 60_000;
+  return Date.now() >= ts + getBudgetMin() * 60_000;
 }
 
 /**
@@ -279,7 +279,7 @@ export function getStageDurationMin(n: number): number | null {
 export function getRemainingMs(): number | null {
   const start = getStartTs();
   if (!start) return null;
-  const deadline = start + TIMER_DURATION_MIN * 60_000;
+  const deadline = start + getBudgetMin() * 60_000;
   const ref = getEndTs() ?? Date.now();
   return Math.max(0, deadline - ref);
 }
