@@ -57,17 +57,14 @@ function LobbyPage() {
       if (started.current) return;
       started.current = true;
       const startTs = startedAt ? new Date(startedAt).getTime() : Date.now();
-      // Countdown 3 – 2 – 1, danach startet die ganze Klasse gemeinsam.
+      // Countdown 3 – 2 – 1 – Los, danach startet die ganze Klasse gemeinsam.
       setCountdown(3);
       let n = 3;
       const iv = window.setInterval(() => {
         n -= 1;
-        if (n > 0) {
-          setCountdown(n);
-          return;
-        }
+        setCountdown(n);
+        if (n > 0) return;
         window.clearInterval(iv);
-        setCountdown(0);
         resetAll();
         setBudgetMin(budgetMin);
         registerTeam(p.teamName, p.code, p.members, startTs);
@@ -80,67 +77,12 @@ function LobbyPage() {
         });
         clearPendingJoin();
         // Briefing zuerst: die Startseite zeigt den IntroScreen.
-        void navigate({ to: "/" });
+        window.setTimeout(() => void navigate({ to: "/" }), 900);
       }, 1000);
     },
     [navigate],
   );
 
-  useEffect(() => {
-    if (!pending) return;
-    let alive = true;
-
-    const poll = async () => {
-      try {
-        const res = await getRoundState({
-          data: { code: pending.code, teamId: pending.teamId, token: pending.token },
-        });
-        if (!alive) return;
-        if (!res.found) {
-          setRemoved(true);
-          return;
-        }
-        setTeams(res.teams);
-        setStatus(res.status);
-        setError(null);
-        if (!res.teamExists) {
-          setRemoved(true);
-          return;
-        }
-        if (res.status === "running") {
-          beginGame(pending, res.startedAt, res.budgetMin);
-        }
-      } catch {
-        if (alive) setError("Keine Verbindung. Wir versuchen es weiter.");
-      }
-    };
-
-    void poll();
-    const iv = window.setInterval(() => void poll(), 3000);
-    return () => {
-      alive = false;
-      window.clearInterval(iv);
-    };
-  }, [pending, beginGame]);
-
-  if (!pending) return null;
-
-  if (countdown !== null) {
-    return (
-      <main className="flex min-h-screen flex-col items-center justify-center px-4">
-        <p className="font-mono-typed text-[10px] uppercase tracking-[0.3em] text-stamp">
-          Die Ermittlung beginnt
-        </p>
-        <p
-          key={countdown}
-          className="font-mono-typed mt-6 text-[7rem] leading-none font-bold tabular-nums text-foreground"
-        >
-          {countdown === 0 ? "Los!" : countdown}
-        </p>
-        <p className="mt-6 font-serif text-lg font-semibold">{pending.teamName}</p>
-      </main>
-    );
-  }
 
 
   if (removed) {
