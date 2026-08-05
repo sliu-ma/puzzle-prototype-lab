@@ -424,6 +424,11 @@ function FinalePage() {
 
   useEffect(() => {
     if (status === "won") {
+      // Hearing-Punkte erst jetzt verbuchen: ein Fehlversuch zählt nicht.
+      ergebnisse.forEach((r, i) => {
+        if (r === null) return;
+        recordHearingAnswer(i, r, versuch);
+      });
       completeStage(6);
       finishGame();
       markRoundFinished();
@@ -442,6 +447,7 @@ function FinalePage() {
         }
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status]);
 
   const handleResult = (correct: boolean, userAnswer?: unknown) => {
@@ -455,7 +461,6 @@ function FinalePage() {
       next[aktuell] = userAnswer ?? null;
       return next;
     });
-    recordHearingAnswer(aktuell, correct);
     setPulse(correct ? "up" : "down");
     if (!correct && typeof navigator !== "undefined" && "vibrate" in navigator) {
       navigator.vibrate?.([80, 60, 120]);
@@ -481,6 +486,7 @@ function FinalePage() {
     setResetKey((k) => k + 1);
     setPulse(null);
     setResultRevealed(false);
+    setVersuch((v) => v + 1);
   };
 
   const frage = FRAGEN[aktuell];
