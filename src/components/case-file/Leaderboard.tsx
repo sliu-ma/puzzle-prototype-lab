@@ -34,7 +34,7 @@ const MEDALS = [
 ] as const;
 
 /** Rangziffer: Platz 1–3 als Medaille mit Band, ab Platz 4 nur Ziffer. */
-function Rank({ index, self }: { index: number; self: boolean }) {
+export function Rank({ index, self }: { index: number; self: boolean }) {
   const medal = MEDALS[index];
   if (medal) {
     return (
@@ -82,7 +82,7 @@ function Rank({ index, self }: { index: number; self: boolean }) {
 }
 
 /** Status: nur visuell — fertig (Häkchen) oder noch unterwegs (pulsierender Punkt). */
-function Status({ finished }: { finished: boolean }) {
+export function Status({ finished }: { finished: boolean }) {
   return finished ? (
     <span
       title="abgeschlossen"

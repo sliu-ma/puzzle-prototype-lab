@@ -15,6 +15,7 @@ import { useScrollToTopOnChange } from "@/hooks/use-scroll-top";
 import { cn } from "@/lib/utils";
 import { useEnvelopePrompt } from "@/components/case-file/EnvelopeDialog";
 import { useSuccessBurst } from "@/components/case-file/SuccessBurst";
+import { StageScoreRecap } from "@/components/case-file/StageScoreRecap";
 import { IconStamp } from "@/components/case-file/IconStamp";
 import { Search } from "lucide-react";
 import {
@@ -292,6 +293,7 @@ function AktePage() {
           />
         )}
 
+        {step === "naechstes" && <StageScoreRecap stage={3} />}
         {step === "naechstes" && (
           <PaperCard rotate={-0.5} tape="top-left">
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">

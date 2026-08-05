@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import type { Badge } from "@/lib/badges";
+import { setBadgeOverlayOpen } from "@/lib/overlay-bus";
 
 
 const CONFETTI_COLORS = [
@@ -80,6 +81,12 @@ export function BadgeToast() {
     const t = setTimeout(() => setConfettiOn(false), 4500);
     return () => clearTimeout(t);
   }, [badge?.id]);
+
+  // Andere Overlays (z. B. der Zwischenstand) warten, bis hier zu ist.
+  useEffect(() => {
+    setBadgeOverlayOpen(!!badge);
+    return () => setBadgeOverlayOpen(false);
+  }, [badge]);
 
   if (!badge) return null;
 
