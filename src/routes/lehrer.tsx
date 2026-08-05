@@ -115,8 +115,9 @@ function TeacherPage() {
   const [selected, setSelected] = useState<string | null>(null);
 
   const loadRounds = async (pw: string) => {
-    const list = await teacherListRounds({ data: { password: pw } });
-    setRounds(list as RoundItem[]);
+    const res = await teacherListRounds({ data: { password: pw } });
+    if (!res.ok) throw new Error(res.message);
+    setRounds(res.rounds as RoundItem[]);
   };
 
   const login = async (e: React.FormEvent) => {
