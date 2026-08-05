@@ -159,8 +159,11 @@ export const finishTeam = createServerFn({ method: "POST" })
     z.object({ teamId: z.string().uuid(), token: z.string().min(10).max(200) }).parse(d),
   )
   .handler(async ({ data }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { hashToken, safeEqual } = await import("./rounds.server");
+    const { hashToken, safeEqual, tryAdmin, rateLimit, callerKey, BINDING_MESSAGE, RATE_MESSAGE } =
+      await import("./rounds.server");
+    if (!rateLimit("finish", await callerKey(), 30, 5 * 60_000)) throw new Error(RATE_MESSAGE);
+    const supabaseAdmin = await tryAdmin();
+    if (!supabaseAdmin) throw new Error(BINDING_MESSAGE);
     const { data: team } = await supabaseAdmin
       .from("teams")
       .select("id, token_hash, finished_at")
