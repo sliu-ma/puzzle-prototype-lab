@@ -15,6 +15,7 @@ import { useScrollToTopOnChange } from "@/hooks/use-scroll-top";
 import { cn } from "@/lib/utils";
 import { useEnvelopePrompt } from "@/components/case-file/EnvelopeDialog";
 import { useSuccessBurst } from "@/components/case-file/SuccessBurst";
+import { StageScoreRecap } from "@/components/case-file/StageScoreRecap";
 import energieetiketteAsset from "@/assets/energieetikette.png.asset.json";
 import waschmaschineEtiketteAsset from "@/assets/waschmaschine-klasse-a.png.asset.json";
 import waschmaschineEtiketteEAsset from "@/assets/waschmaschine-klasse-e.png.asset.json";
