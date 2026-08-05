@@ -19,6 +19,7 @@ import { useScrollToTopOnChange } from "@/hooks/use-scroll-top";
 import { cn } from "@/lib/utils";
 import { useEnvelopePrompt } from "@/components/case-file/EnvelopeDialog";
 import { useSuccessBurst } from "@/components/case-file/SuccessBurst";
+import { StageScoreRecap } from "@/components/case-file/StageScoreRecap";
 
 
 export const Route = createFileRoute("/etappe-1")({
