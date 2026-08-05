@@ -124,8 +124,69 @@ export async function tryAdmin() {
     // Zugriff erzwingt die Initialisierung des Clients.
     void supabaseAdmin.from;
     return supabaseAdmin;
-  } catch (err) {
-    console.error("[rounds] Supabase-Serverbindung nicht verfügbar:", err);
+  } catch {
+    // Bewusst ohne Fehlerobjekt: Logs dürfen niemals Schlüsselwerte enthalten.
+    console.error(
+      "[rounds] Supabase-Serverbindung nicht verfügbar. Service-Role-Key gesetzt:",
+      Boolean(process.env["SUPABASE_SERVICE_ROLE_KEY"]),
+    );
     return null;
+  }
+}
+
+/** Freundliche Meldung, wenn die Serverbindung fehlt. */
+export const BINDING_MESSAGE =
+  "Die Verbindung zur Klassen-Runde ist momentan nicht möglich. Das Spiel läuft weiter, die Punkte werden lokal gezählt.";
+
+/** Freundliche Meldung, wenn zu viele Anfragen kamen. */
+export const RATE_MESSAGE =
+  "Es kamen zu viele Anfragen in kurzer Zeit. Wartet einen Moment und versucht es nochmals.";
+
+// ---- Missbrauchsbremse und Cache (pro Worker im Speicher) -------------------
+
+const buckets = new Map<string, { count: number; resetAt: number }>();
+
+/**
+ * Einfaches Zähl-Limit pro Schlüssel. Gibt false zurück, wenn das Limit
+ * überschritten ist. Reicht als Bremse gegen Scraping und Passwort-Raten.
+ */
+export function rateLimit(bucket: string, key: string, max: number, windowMs: number): boolean {
+  const now = Date.now();
+  const id = `${bucket}:${key}`;
+  const entry = buckets.get(id);
+  if (!entry || entry.resetAt <= now) {
+    buckets.set(id, { count: 1, resetAt: now + windowMs });
+    if (buckets.size > 5000) {
+      for (const [k, v] of buckets) if (v.resetAt <= now) buckets.delete(k);
+    }
+    return true;
+  }
+  entry.count += 1;
+  return entry.count <= max;
+}
+
+const cache = new Map<string, { at: number; value: unknown }>();
+
+export function cacheGet<T>(key: string, ttlMs: number): T | null {
+  const hit = cache.get(key);
+  if (!hit || Date.now() - hit.at > ttlMs) return null;
+  return hit.value as T;
+}
+
+export function cacheSet(key: string, value: unknown) {
+  cache.set(key, { at: Date.now(), value });
+  if (cache.size > 500) {
+    const oldest = [...cache.entries()].sort((a, b) => a[1].at - b[1].at)[0];
+    if (oldest) cache.delete(oldest[0]);
+  }
+}
+
+/** IP des Aufrufers, für die Missbrauchsbremse. */
+export async function callerKey(): Promise<string> {
+  try {
+    const { getRequestIP } = await import("@tanstack/react-start/server");
+    return getRequestIP({ xForwardedFor: true }) ?? "unbekannt";
+  } catch {
+    return "unbekannt";
   }
 }
