@@ -33,16 +33,20 @@ export function Leaderboard({
   >(null);
   const [loading, setLoading] = useState(!!session);
 
+  const [offline, setOffline] = useState(false);
+
   const load = () => {
     if (!session) return;
     setLoading(true);
     getRoundLeaderboard({ data: { code: session.code } })
       .then((res) => {
+        setOffline(!!res.unavailable);
         if (res.found) setRemote(res.rows);
       })
-      .catch(() => undefined)
+      .catch(() => setOffline(true))
       .finally(() => setLoading(false));
   };
+
 
   useEffect(() => {
     if (!session) return;
