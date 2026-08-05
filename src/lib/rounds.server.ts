@@ -1,6 +1,43 @@
 // Server-only Helfer für Klassen-Runden. Kein Client-Import!
 import { createHash, randomBytes, timingSafeEqual } from "node:crypto";
+import { createClient } from "@supabase/supabase-js";
+import type { Database } from "@/integrations/supabase/types";
 import { computeScore, type ScoreEvent } from "./score";
+
+/**
+ * Zugang zur Datenbank über den öffentlichen Schlüssel. Die Tabellen selbst
+ * sind gesperrt; erreichbar sind nur die geprüften Datenbank-Funktionen
+ * (round_* / teacher_*). Dieser Weg hängt bewusst NICHT am
+ * plattformverwalteten Service-Role-Key, der bei Deployments verloren gehen kann.
+ */
+export function roundsDb() {
+  const url = process.env["SUPABASE_URL"];
+  const key = process.env["SUPABASE_PUBLISHABLE_KEY"];
+  if (!url || !key) {
+    throw new Error(
+      "Runden-Zugang ist nicht konfiguriert. Bitte die Supabase-Verbindung im Projekt prüfen.",
+    );
+  }
+  return createClient<Database>(url, key, {
+    auth: { storage: undefined, persistSession: false, autoRefreshToken: false },
+    global: {
+      fetch: (input, init) => {
+        const headers = new Headers(init?.headers);
+        if (key.startsWith("sb_") && headers.get("Authorization") === `Bearer ${key}`) {
+          headers.delete("Authorization");
+        }
+        headers.set("apikey", key);
+        return fetch(input, { ...init, headers });
+      },
+    },
+  });
+}
+
+/** Passwort nie im Klartext an die Datenbank: nur der Prüfwert wird gesendet. */
+export function hashPassword(password: string): string {
+  return createHash("sha256").update(password).digest("hex");
+}
+
 
 export type LeaderboardRow = {
   teamId: string;
