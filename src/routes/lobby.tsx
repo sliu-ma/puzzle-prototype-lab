@@ -40,6 +40,7 @@ function LobbyPage() {
   const [status, setStatus] = useState<string>("lobby");
   const [removed, setRemoved] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [countdown, setCountdown] = useState<number | null>(null);
   const started = useRef(false);
 
   useEffect(() => {
@@ -56,18 +57,31 @@ function LobbyPage() {
       if (started.current) return;
       started.current = true;
       const startTs = startedAt ? new Date(startedAt).getTime() : Date.now();
-      resetAll();
-      setBudgetMin(budgetMin);
-      registerTeam(p.teamName, p.code, p.members, startTs);
-      setRoundSession({
-        code: p.code,
-        title: p.title,
-        teamId: p.teamId,
-        token: p.token,
-        startedAt,
-      });
-      clearPendingJoin();
-      void navigate({ to: "/etappe-1" });
+      // Countdown 3 – 2 – 1, danach startet die ganze Klasse gemeinsam.
+      setCountdown(3);
+      let n = 3;
+      const iv = window.setInterval(() => {
+        n -= 1;
+        if (n > 0) {
+          setCountdown(n);
+          return;
+        }
+        window.clearInterval(iv);
+        setCountdown(0);
+        resetAll();
+        setBudgetMin(budgetMin);
+        registerTeam(p.teamName, p.code, p.members, startTs);
+        setRoundSession({
+          code: p.code,
+          title: p.title,
+          teamId: p.teamId,
+          token: p.token,
+          startedAt,
+        });
+        clearPendingJoin();
+        // Briefing zuerst: die Startseite zeigt den IntroScreen.
+        void navigate({ to: "/" });
+      }, 1000);
     },
     [navigate],
   );
@@ -110,6 +124,24 @@ function LobbyPage() {
   }, [pending, beginGame]);
 
   if (!pending) return null;
+
+  if (countdown !== null) {
+    return (
+      <main className="flex min-h-screen flex-col items-center justify-center px-4">
+        <p className="font-mono-typed text-[10px] uppercase tracking-[0.3em] text-stamp">
+          Die Ermittlung beginnt
+        </p>
+        <p
+          key={countdown}
+          className="font-mono-typed mt-6 animate-[fade-in_0.3s_ease-out] text-[7rem] leading-none font-bold tabular-nums text-foreground"
+        >
+          {countdown === 0 ? "Los!" : countdown}
+        </p>
+        <p className="mt-6 font-serif text-lg font-semibold">{pending.teamName}</p>
+      </main>
+    );
+  }
+
 
   if (removed) {
     return (
