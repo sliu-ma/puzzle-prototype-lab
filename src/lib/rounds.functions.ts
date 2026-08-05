@@ -181,53 +181,73 @@ export const finishTeam = createServerFn({ method: "POST" })
     return { ok: true as const };
   });
 
+type LeaderboardResult = {
+  found: boolean;
+  unavailable: boolean;
+  rateLimited?: boolean;
+  code?: string;
+  title?: string;
+  status?: string;
+  rows: import("./rounds.server").LeaderboardRow[];
+};
+
 /** Öffentliche Rangliste einer Runde (nur Teamname und Punkte). */
 export const getRoundLeaderboard = createServerFn({ method: "POST" })
   .inputValidator((d) => z.object({ code: z.string().min(1).max(20) }).parse(d))
-  .handler(async ({ data }) => {
-    const { tryAdmin, buildLeaderboard } = await import("./rounds.server");
+  .handler(async ({ data }): Promise<LeaderboardResult> => {
+    const { tryAdmin, buildLeaderboard, rateLimit, callerKey, cacheGet, cacheSet } = await import(
+      "./rounds.server"
+    );
+    const code = data.code.trim().toUpperCase();
+    const empty: LeaderboardResult = { found: false, unavailable: true, rows: [] };
+
+    // Kurzer Cache: wiederholte Abfragen belasten die Datenbank nicht.
+    const cached = cacheGet<LeaderboardResult>(`lb:${code}`, 10_000);
+    if (cached) return cached;
+
+    if (!rateLimit("leaderboard", await callerKey(), 60, 60_000)) {
+      return { found: false, unavailable: true, rateLimited: true, rows: [] };
+    }
+
     const admin = await tryAdmin();
-    const empty = { found: false as const, unavailable: true as const, rows: [] };
     if (!admin) return empty;
 
     const { data: round, error } = await admin
       .from("rounds")
       .select("id, code, title, status, budget_min")
-      .eq("code", data.code.trim().toUpperCase())
+      .eq("code", code)
       .maybeSingle();
     if (error) return empty;
-    if (!round) return { found: false as const, unavailable: false as const, rows: [] };
+    if (!round) return { found: false, unavailable: false, rows: [] };
 
     const { data: teams } = await admin
       .from("teams")
       .select("id, name, finished_at")
       .eq("round_id", round.id);
     const teamList = teams ?? [];
-    if (teamList.length === 0) {
-      return {
-        found: true as const,
-        unavailable: false as const,
-        code: round.code,
-        title: round.title,
-        status: round.status,
-        rows: [],
-      };
+
+    let rows: LeaderboardResult["rows"] = [];
+    if (teamList.length > 0) {
+      const { data: events } = await admin
+        .from("score_events")
+        .select("team_id, event_id, type, payload")
+        .in(
+          "team_id",
+          teamList.map((t) => t.id),
+        );
+      rows = buildLeaderboard(teamList, events ?? [], round.budget_min);
     }
-    const { data: events } = await admin
-      .from("score_events")
-      .select("team_id, event_id, type, payload")
-      .in(
-        "team_id",
-        teamList.map((t) => t.id),
-      );
-    return {
-      found: true as const,
-      unavailable: false as const,
+
+    const result: LeaderboardResult = {
+      found: true,
+      unavailable: false,
       code: round.code,
       title: round.title,
       status: round.status,
-      rows: buildLeaderboard(teamList, events ?? [], round.budget_min),
+      rows,
     };
+    cacheSet(`lb:${code}`, result);
+    return result;
   });
 
 
