@@ -332,9 +332,8 @@ export const teacherDeleteTeam = createServerFn({ method: "POST" })
       .parse(d),
   )
   .handler(async ({ data }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { assertTeacher } = await import("./rounds.server");
-    assertTeacher(data.password);
+    const { requireTeacherAdmin } = await import("./rounds.server");
+    const supabaseAdmin = await requireTeacherAdmin(data.password);
     const { error } = await supabaseAdmin.from("teams").delete().eq("id", data.teamId);
     if (error) throw new Error(error.message);
     return { ok: true as const };
