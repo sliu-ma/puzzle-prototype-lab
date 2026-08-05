@@ -109,13 +109,13 @@ function RoundPage() {
     );
   }, [load]);
 
-  // Schritt folgt dem Rundenstatus, bleibt aber manuell wechselbar.
+  // Schritt folgt dem Rundenstatus; ungültige Schritte werden korrigiert.
   useEffect(() => {
-    if (!round || step !== null) return;
-    setStep(
-      round.status === "running" ? "live" : round.status === "closed" ? "report" : "lobby",
-    );
+    if (!round) return;
+    const allowed = stepsFor(round.status);
+    if (step === null || !allowed.includes(step)) setStep(allowed[0]);
   }, [round, step]);
+
 
   const login = async (e: React.FormEvent) => {
     e.preventDefault();
