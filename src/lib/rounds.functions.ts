@@ -253,12 +253,33 @@ export const getRoundLeaderboard = createServerFn({ method: "POST" })
 
 // ---- Lehrpersonen -----------------------------------------------------------
 
+export type TeacherRoundsResult =
+  | {
+      ok: true;
+      rounds: {
+        code: string;
+        title: string;
+        status: string;
+        created_at: string;
+        teamCount: number;
+      }[];
+    }
+  | { ok: false; message: string };
+
 export const teacherListRounds = createServerFn({ method: "POST" })
   .inputValidator((d) => z.object({ password: z.string().min(1).max(200) }).parse(d))
-  .handler(async ({ data }) => {
+  .handler(async ({ data }): Promise<TeacherRoundsResult> => {
     const { requireTeacherAdmin } = await import("./rounds.server");
-    const supabaseAdmin = await requireTeacherAdmin(data.password);
-
+    // Falsches Passwort ist ein normaler Fall, kein Serverfehler.
+    let supabaseAdmin;
+    try {
+      supabaseAdmin = await requireTeacherAdmin(data.password);
+    } catch (err) {
+      return {
+        ok: false,
+        message: err instanceof Error ? err.message : "Anmeldung fehlgeschlagen.",
+      };
+    }
 
     const { data: rounds } = await supabaseAdmin
       .from("rounds")
@@ -274,7 +295,10 @@ export const teacherListRounds = createServerFn({ method: "POST" })
       const code = codeById.get(t.round_id);
       if (code) counts.set(code, (counts.get(code) ?? 0) + 1);
     }
-    return list.map((r) => ({ ...r, teamCount: counts.get(r.code) ?? 0 }));
+    return {
+      ok: true,
+      rounds: list.map((r) => ({ ...r, teamCount: counts.get(r.code) ?? 0 })),
+    };
   });
 
 export const teacherCreateRound = createServerFn({ method: "POST" })
