@@ -1,7 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Trophy, ArrowUp } from "lucide-react";
 import { getTeam } from "@/lib/progress";
-import { getBadge } from "@/lib/badges";
 import { getRoundSession } from "@/lib/round-client";
 import { getRoundLeaderboard } from "@/lib/rounds.functions";
 import { getScore, readScoreEvents } from "@/lib/score-events";
@@ -17,7 +16,6 @@ type Row = {
   finished: boolean;
 };
 
-type Line = { label: string; value: string; tone?: "plus" | "minus" };
 
 function useCountUp(target: number, from: number, run: boolean) {
   const [shown, setShown] = useState(from);
