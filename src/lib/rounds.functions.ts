@@ -68,6 +68,9 @@ export const joinRound = createServerFn({ method: "POST" })
       token,
       roundCode: row.round_code,
       roundTitle: row.round_title,
+      roundStatus: row.round_status,
+      startedAt: row.started_at ?? null,
+      budgetMin: row.budget_min ?? 90,
     };
   });
 

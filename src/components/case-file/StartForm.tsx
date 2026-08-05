@@ -3,7 +3,8 @@ import { ArrowRight, Plus, X, KeyRound, Users, Check, Loader2 } from "lucide-rea
 import { cn } from "@/lib/utils";
 import { START_CODE } from "@/lib/progress";
 import { joinRound, lookupRound } from "@/lib/rounds.functions";
-import { setRoundSession, type RoundSession } from "@/lib/round-client";
+import { setPendingJoin } from "@/lib/round-client";
+import { useNavigate } from "@tanstack/react-router";
 
 
 const CHEAT_CODE = "KRXZMVBQ";
@@ -39,6 +40,7 @@ export function StartForm({
 }: {
   onStart: (name: string, code: string, members: string[]) => void;
 }) {
+  const navigate = useNavigate();
   const [step, setStep] = useState<0 | 1>(0);
   const [code, setCode] = useState("");
   const [codeError, setCodeError] = useState<string | null>(null);
@@ -76,7 +78,7 @@ export function StartForm({
         setCodeError("Der Code stimmt nicht. Fragt eure Lehrperson.");
         return;
       }
-      if (res.status !== "open") {
+      if (res.status === "closed") {
         setCodeError("Diese Runde ist geschlossen.");
         return;
       }
@@ -112,24 +114,25 @@ export function StartForm({
     if (!ok) return;
 
     const cleanCode = code.trim().toUpperCase();
-    let session: RoundSession | null = null;
+    const finalMembers = cleanMembers.slice(0, MAX_MEMBERS);
+
     if (mode === "round") {
       setBusy(true);
       try {
         const res = await joinRound({
-          data: {
-            code: cleanCode,
-            teamName: cleanName,
-            members: cleanMembers.slice(0, MAX_MEMBERS),
-          },
+          data: { code: cleanCode, teamName: cleanName, members: finalMembers },
         });
-        session = {
+        setRoundError(null);
+        setPendingJoin({
           code: res.roundCode,
           title: res.roundTitle,
           teamId: res.teamId,
           token: res.token,
-        };
-        setRoundError(null);
+          teamName: cleanName,
+          members: finalMembers,
+          budgetMin: res.budgetMin,
+        });
+        void navigate({ to: "/lobby" });
       } catch (err) {
         setRoundError(
           err instanceof Error
@@ -137,13 +140,11 @@ export function StartForm({
             : "Die Runde konnte nicht erreicht werden.",
         );
         setBusy(false);
-        return;
       }
-      setBusy(false);
+      return;
     }
 
-    onStart(cleanName, cleanCode, cleanMembers.slice(0, MAX_MEMBERS));
-    if (session) setRoundSession(session);
+    onStart(cleanName, cleanCode, finalMembers);
   };
 
 
