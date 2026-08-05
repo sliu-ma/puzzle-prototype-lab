@@ -2354,7 +2354,7 @@ function OutroScreen() {
             <p className="font-mono-typed text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
               Schlusspunktzahl
             </p>
-            <p className="font-mono-typed text-6xl font-bold leading-none tabular-nums text-foreground sm:text-7xl">
+            <p className="pt-3 font-mono-typed text-6xl font-bold leading-tight tabular-nums text-foreground sm:text-7xl">
               {shownPoints}
             </p>
             <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
@@ -2370,7 +2370,7 @@ function OutroScreen() {
           </div>
 
           {/* Kleine Fakten */}
-          <div className="mt-6 grid grid-cols-3 gap-2">
+          <div className="mt-6 grid grid-cols-2 gap-2">
             <FactChip
               icon={<Clock className="h-3.5 w-3.5" />}
               label="Zeit"
@@ -2381,12 +2381,8 @@ function OutroScreen() {
               label="Hinweise"
               value={`${hintsUsed} / 15`}
             />
-            <FactChip
-              icon={<CheckCircle2 className="h-3.5 w-3.5" />}
-              label="Etappen"
-              value={`${score.stages.length} / 5`}
-            />
           </div>
+
 
           <BadgeShowcase />
 

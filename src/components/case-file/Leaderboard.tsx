@@ -191,22 +191,20 @@ export function Leaderboard({
   return (
     <div className={cn("space-y-5", variant === "outro" && "space-y-3")}>
       {/* Eigener Stand: nur Name + Punkte */}
-      <div
-        className={cn(
-          "rounded-sm border border-stamp/40 bg-secondary/40 text-center",
-          variant === "outro" ? "p-3" : "p-4",
-        )}
-      >
-        <p className="font-serif text-base font-semibold text-foreground">
-          {me.name}
-        </p>
-        <p className="font-mono-typed text-4xl font-bold leading-none tabular-nums text-stamp">
-          {me.points}
-        </p>
-        <p className="mt-1 font-mono-typed text-[0.62rem] uppercase tracking-[0.2em] text-muted-foreground">
-          Punkte
-        </p>
-      </div>
+      {variant !== "outro" && (
+        <div className="rounded-sm border border-stamp/40 bg-secondary/40 p-4 text-center">
+          <p className="font-serif text-base font-semibold text-foreground">
+            {me.name}
+          </p>
+          <p className="pt-2 font-mono-typed text-4xl font-bold leading-tight tabular-nums text-stamp">
+            {me.points}
+          </p>
+          <p className="mt-1 font-mono-typed text-[0.62rem] uppercase tracking-[0.2em] text-muted-foreground">
+            Punkte
+          </p>
+        </div>
+      )}
+
 
       {/* Rangliste */}
       <div>

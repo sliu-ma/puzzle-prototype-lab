@@ -1,7 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Trophy, ArrowUp } from "lucide-react";
 import { getTeam } from "@/lib/progress";
-import { getBadge } from "@/lib/badges";
 import { getRoundSession } from "@/lib/round-client";
 import { getRoundLeaderboard } from "@/lib/rounds.functions";
 import { getScore, readScoreEvents } from "@/lib/score-events";
@@ -17,7 +16,6 @@ type Row = {
   finished: boolean;
 };
 
-type Line = { label: string; value: string; tone?: "plus" | "minus" };
 
 function useCountUp(target: number, from: number, run: boolean) {
   const [shown, setShown] = useState(from);
@@ -198,30 +196,8 @@ export function StageScoreRecap({ stage }: { stage: number }) {
     posRef.current = next;
   }, [phase, rows.length]);
 
-  const lines: Line[] = [];
-  if (stageEntry) {
-    lines.push({
-      label: `Etappe ${stage} gelöst`,
-      value: `+${stageEntry.rawPoints}`,
-      tone: "plus",
-    });
-    if (stageEntry.hintLevel > 0) {
-      lines.push({
-        label: `Hinweise genutzt (Stufe ${stageEntry.hintLevel})`,
-        value: `−${stageEntry.rawPoints - stageEntry.points}`,
-        tone: "minus",
-      });
-    }
-  }
-  for (const b of stageBadges) {
-    const pts = score?.badges.find((x) => x.badgeId === b.badgeId)?.points ?? 0;
-    if (pts <= 0) continue;
-    lines.push({
-      label: `Abzeichen · ${getBadge(b.badgeId)?.title ?? b.badgeId}`,
-      value: `+${pts}`,
-      tone: "plus",
-    });
-  }
+
+
 
   const close = () => {
     try {
@@ -257,9 +233,10 @@ export function StageScoreRecap({ stage }: { stage: number }) {
         </p>
 
         {/* Punkte */}
-        <div className="mt-3 flex flex-col items-center">
-          <Trophy className="mb-1 h-5 w-5 text-stamp" />
-          <p className="font-mono-typed text-5xl font-bold leading-none tabular-nums text-foreground">
+        <div className="mt-5 flex flex-col items-center">
+          <Trophy className="mb-3 h-5 w-5 text-stamp" />
+          <p className="pt-1 font-mono-typed text-5xl font-bold leading-tight tabular-nums text-foreground">
+
             {shown}
           </p>
           <p className="mt-1 font-mono-typed text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
@@ -275,31 +252,8 @@ export function StageScoreRecap({ stage }: { stage: number }) {
           )}
         </div>
 
-        {/* Abrechnung */}
-        {lines.length > 0 && (
-          <dl className="mt-4 space-y-1.5 rounded-sm border border-border bg-secondary/30 px-3 py-3">
-            {lines.map((l, i) => (
-              <div
-                key={l.label}
-                className="flex items-baseline justify-between gap-3 animate-fade-in"
-                style={{
-                  animationDelay: `${0.15 + i * 0.18}s`,
-                  animationFillMode: "backwards",
-                }}
-              >
-                <dt className="font-serif text-sm text-foreground">{l.label}</dt>
-                <dd
-                  className={cn(
-                    "font-mono-typed text-sm font-bold tabular-nums",
-                    l.tone === "minus" ? "text-destructive" : "text-emerald-700",
-                  )}
-                >
-                  {l.value}
-                </dd>
-              </div>
-            ))}
-          </dl>
-        )}
+
+
 
         {/* Rangaufstieg oder Solo-Verlauf */}
         {rows.length > 1 ? (
