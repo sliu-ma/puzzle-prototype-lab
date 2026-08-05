@@ -2146,7 +2146,7 @@ function OutroScreen() {
   const elapsedLabel = useState(() => {
     const start = getStartTs();
     if (!start) return "...";
-    const ms = Math.max(0, Date.now() - start);
+    const ms = Math.max(0, (getEndTs() ?? Date.now()) - start);
     const totalSec = Math.floor(ms / 1000);
     const h = Math.floor(totalSec / 3600);
     const m = Math.floor((totalSec % 3600) / 60);
