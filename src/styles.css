@@ -72,11 +72,18 @@
   --tape: oklch(0.85 0.06 90 / 0.7);       /* translucent tape */
 
   /* Medaillen + Status */
-  --medal-gold: oklch(0.74 0.13 85);
-  --medal-silver: oklch(0.72 0.015 260);
-  --medal-bronze: oklch(0.55 0.09 55);
+  --medal-gold: oklch(0.78 0.135 88);
+  --medal-gold-light: oklch(0.9 0.09 95);
+  --medal-gold-deep: oklch(0.6 0.12 78);
+  --medal-silver: oklch(0.8 0.012 250);
+  --medal-silver-light: oklch(0.92 0.008 250);
+  --medal-silver-deep: oklch(0.63 0.015 255);
+  --medal-bronze: oklch(0.65 0.095 55);
+  --medal-bronze-light: oklch(0.78 0.08 62);
+  --medal-bronze-deep: oklch(0.48 0.09 48);
   --status-done: oklch(0.55 0.11 150);
   --status-active: oklch(0.68 0.13 75);
+
 
 
   /* Semantic mapping */
