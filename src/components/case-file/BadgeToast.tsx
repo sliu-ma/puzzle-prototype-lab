@@ -81,6 +81,12 @@ export function BadgeToast() {
     return () => clearTimeout(t);
   }, [badge?.id]);
 
+  // Andere Overlays (z. B. der Zwischenstand) warten, bis hier zu ist.
+  useEffect(() => {
+    setBadgeOverlayOpen(!!badge);
+    return () => setBadgeOverlayOpen(false);
+  }, [badge]);
+
   if (!badge) return null;
 
 
