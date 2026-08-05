@@ -56,12 +56,20 @@ const inputBase =
 
 type Step = "prepare" | "lobby" | "live" | "report";
 
-const STEPS: [Step, string][] = [
-  ["prepare", "Vorbereiten"],
-  ["lobby", "Lobby"],
-  ["live", "Live"],
-  ["report", "Auswertung"],
-];
+const STEP_LABEL: Record<Step, string> = {
+  prepare: "Vorbereiten",
+  lobby: "Lobby",
+  live: "Live",
+  report: "Auswertung",
+};
+
+// Lobby verschwindet, sobald die Runde läuft; Live erscheint erst dann.
+function stepsFor(status: string): Step[] {
+  if (status === "running") return ["live"];
+  if (status === "closed") return ["report", "prepare"];
+  return ["prepare", "lobby"];
+}
+
 
 function RoundPage() {
   const { code } = Route.useParams();
@@ -101,13 +109,13 @@ function RoundPage() {
     );
   }, [load]);
 
-  // Schritt folgt dem Rundenstatus, bleibt aber manuell wechselbar.
+  // Schritt folgt dem Rundenstatus; ungültige Schritte werden korrigiert.
   useEffect(() => {
-    if (!round || step !== null) return;
-    setStep(
-      round.status === "running" ? "live" : round.status === "closed" ? "report" : "lobby",
-    );
+    if (!round) return;
+    const allowed = stepsFor(round.status);
+    if (step === null || !allowed.includes(step)) setStep(allowed[0]);
   }, [round, step]);
+
 
   const login = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -227,21 +235,22 @@ function RoundPage() {
         </div>
       </div>
 
-      <nav className="mt-5 grid grid-cols-4 gap-1.5">
-        {STEPS.map(([key, label]) => (
+      <nav className="mt-5 flex gap-1.5">
+        {stepsFor(round.status).map((key) => (
           <button
             key={key}
             type="button"
             onClick={() => setStep(key)}
             className={cn(
-              "min-h-[44px] rounded-sm border border-border px-1 font-mono-typed text-[10px] uppercase tracking-wider",
+              "min-h-[44px] flex-1 rounded-sm border border-border px-2 font-mono-typed text-[10px] uppercase tracking-wider",
               step === key && "border-stamp bg-stamp/10 text-stamp",
             )}
           >
-            {label}
+            {STEP_LABEL[key]}
           </button>
         ))}
       </nav>
+
 
       {error && (
         <p className="mt-3 rounded-sm border border-destructive/40 bg-destructive/10 p-2 text-xs text-destructive">
