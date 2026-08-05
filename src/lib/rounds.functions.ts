@@ -288,9 +288,9 @@ export const teacherCreateRound = createServerFn({ method: "POST" })
       .parse(d),
   )
   .handler(async ({ data }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { assertTeacher, makeRoundCode } = await import("./rounds.server");
-    assertTeacher(data.password);
+    const { requireTeacherAdmin, makeRoundCode } = await import("./rounds.server");
+    const supabaseAdmin = await requireTeacherAdmin(data.password);
+
 
     for (let attempt = 0; attempt < 6; attempt++) {
       const code = makeRoundCode();
