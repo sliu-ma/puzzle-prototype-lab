@@ -33,16 +33,20 @@ export function Leaderboard({
   >(null);
   const [loading, setLoading] = useState(!!session);
 
+  const [offline, setOffline] = useState(false);
+
   const load = () => {
     if (!session) return;
     setLoading(true);
     getRoundLeaderboard({ data: { code: session.code } })
       .then((res) => {
+        setOffline(!!res.unavailable);
         if (res.found) setRemote(res.rows);
       })
-      .catch(() => undefined)
+      .catch(() => setOffline(true))
       .finally(() => setLoading(false));
   };
+
 
   useEffect(() => {
     if (!session) return;
@@ -150,12 +154,20 @@ export function Leaderboard({
               Aktualisieren
             </button>
           </li>
-        ) : (
+        ) : null}
+        {session && offline ? (
+          <li className="rounded-sm border border-dashed border-stamp/50 bg-stamp/5 px-3 py-2.5 text-xs text-muted-foreground">
+            Die Rangliste der anderen Teams ist momentan nicht erreichbar. Eure Punkte
+            werden weiter lokal gezählt und später nachgetragen.
+          </li>
+        ) : null}
+        {!session ? (
           <li className="flex items-center gap-2 rounded-sm border border-dashed border-border px-3 py-2.5 text-xs text-muted-foreground">
             <Users className="h-3.5 w-3.5" />
             Ohne Rundencode spielt ihr allein. Fragt eure Lehrperson nach dem Code.
           </li>
-        )}
+        ) : null}
+
       </ol>
 
       {/* Aufschlüsselung */}

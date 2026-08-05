@@ -15,6 +15,8 @@ import {
   teacherCreateRound,
   teacherSetRoundStatus,
   getRoundLeaderboard,
+  checkRoundsHealth,
+
 } from "@/lib/rounds.functions";
 import { cn } from "@/lib/utils";
 
@@ -59,6 +61,48 @@ type Row = {
 
 const inputBase =
   "w-full min-h-[48px] rounded-sm border border-border bg-paper px-3 py-3 text-[16px] focus:border-stamp focus:outline-none focus:ring-2 focus:ring-stamp/25";
+
+/** Kurzer Selbsttest: steht die Serververbindung zur Datenbank? */
+function HealthLine() {
+  const [state, setState] = useState<"pruefen" | "ok" | "fehler">("pruefen");
+
+  const check = () => {
+    setState("pruefen");
+    checkRoundsHealth()
+      .then((res) => setState(res.ok ? "ok" : "fehler"))
+      .catch(() => setState("fehler"));
+  };
+
+  useEffect(check, []);
+
+  return (
+    <div
+      className={cn(
+        "mt-4 flex items-center justify-between gap-2 rounded-sm border px-3 py-2 text-xs",
+        state === "ok" && "border-border bg-secondary/40 text-muted-foreground",
+        state === "fehler" && "border-destructive/40 bg-destructive/10 text-destructive",
+        state === "pruefen" && "border-dashed border-border text-muted-foreground",
+      )}
+    >
+      <span className="flex items-center gap-2">
+        {state === "pruefen" && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+        {state === "pruefen" && "Datenbank wird geprüft ..."}
+        {state === "ok" && "Datenbank erreichbar. Runden und Rangliste funktionieren."}
+        {state === "fehler" &&
+          "Datenbank nicht erreichbar. Rangliste fällt aus, das Spiel läuft mit dem Code OEKOLOGIE weiter."}
+      </span>
+      <button
+        type="button"
+        onClick={check}
+        className="flex items-center gap-1 font-mono-typed uppercase tracking-wider"
+      >
+        <RefreshCw className={cn("h-3.5 w-3.5", state === "pruefen" && "animate-spin")} />
+        Prüfen
+      </button>
+    </div>
+  );
+}
+
 
 function TeacherPage() {
   const [password, setPassword] = useState("");
@@ -180,6 +224,10 @@ function TeacherPage() {
       <p className="mt-1 text-sm text-muted-foreground">
         Jede Runde hat einen Code. Die Gruppen geben ihn bei der Anmeldung ein.
       </p>
+
+      <HealthLine />
+
+
 
       <form
         onSubmit={(e) => void create(e)}

@@ -72,10 +72,17 @@ export function StartForm({
     setChecking(true);
     try {
       const res = await lookupRound({ data: { code: clean } });
+      if (res.unavailable) {
+        setCodeError(
+          "Die Verbindung zur Klassen-Runde ist momentan nicht möglich. Startet mit dem Code OEKOLOGIE, dann läuft das Spiel ohne Rangliste weiter.",
+        );
+        return;
+      }
       if (!res.found) {
         setCodeError("Der Code stimmt nicht. Fragt eure Lehrperson.");
         return;
       }
+
       if (res.status !== "open") {
         setCodeError("Diese Runde ist geschlossen.");
         return;

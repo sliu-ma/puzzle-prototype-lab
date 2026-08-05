@@ -13,25 +13,40 @@ const eventSchema = z.object({
   correct: z.boolean().optional(),
 });
 
+/** Prüft, ob die Serverbindung zur Datenbank steht (für die Lehrpersonen-Seite). */
+export const checkRoundsHealth = createServerFn({ method: "POST" }).handler(async () => {
+  const { tryAdmin } = await import("./rounds.server");
+  const admin = await tryAdmin();
+  if (!admin) return { ok: false as const, reason: "binding" as const };
+  const { error } = await admin.from("rounds").select("id").limit(1);
+  if (error) return { ok: false as const, reason: "query" as const };
+  return { ok: true as const };
+});
+
 /** Prüft, ob ein eingegebener Code zu einer offenen Klassen-Runde gehört. */
 export const lookupRound = createServerFn({ method: "POST" })
   .inputValidator((d) => z.object({ code: z.string().min(1).max(20) }).parse(d))
   .handler(async ({ data }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: round } = await supabaseAdmin
+    const { tryAdmin } = await import("./rounds.server");
+    const admin = await tryAdmin();
+    if (!admin) return { found: false as const, unavailable: true as const };
+    const { data: round, error } = await admin
       .from("rounds")
       .select("code, title, status, budget_min")
       .eq("code", data.code.trim().toUpperCase())
       .maybeSingle();
-    if (!round) return { found: false as const };
+    if (error) return { found: false as const, unavailable: true as const };
+    if (!round) return { found: false as const, unavailable: false as const };
     return {
       found: true as const,
+      unavailable: false as const,
       code: round.code,
       title: round.title,
       status: round.status,
       budgetMin: round.budget_min,
     };
   });
+
 
 /** Team einer Runde beitreten. Gibt ein geheimes Token für Punkte-Meldungen zurück. */
 export const joinRound = createServerFn({ method: "POST" })
@@ -150,17 +165,20 @@ export const finishTeam = createServerFn({ method: "POST" })
 export const getRoundLeaderboard = createServerFn({ method: "POST" })
   .inputValidator((d) => z.object({ code: z.string().min(1).max(20) }).parse(d))
   .handler(async ({ data }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { buildLeaderboard } = await import("./rounds.server");
+    const { tryAdmin, buildLeaderboard } = await import("./rounds.server");
+    const admin = await tryAdmin();
+    const empty = { found: false as const, unavailable: true as const, rows: [] };
+    if (!admin) return empty;
 
-    const { data: round } = await supabaseAdmin
+    const { data: round, error } = await admin
       .from("rounds")
       .select("id, code, title, status, budget_min")
       .eq("code", data.code.trim().toUpperCase())
       .maybeSingle();
-    if (!round) return { found: false as const };
+    if (error) return empty;
+    if (!round) return { found: false as const, unavailable: false as const, rows: [] };
 
-    const { data: teams } = await supabaseAdmin
+    const { data: teams } = await admin
       .from("teams")
       .select("id, name, finished_at")
       .eq("round_id", round.id);
@@ -168,13 +186,14 @@ export const getRoundLeaderboard = createServerFn({ method: "POST" })
     if (teamList.length === 0) {
       return {
         found: true as const,
+        unavailable: false as const,
         code: round.code,
         title: round.title,
         status: round.status,
         rows: [],
       };
     }
-    const { data: events } = await supabaseAdmin
+    const { data: events } = await admin
       .from("score_events")
       .select("team_id, event_id, type, payload")
       .in(
@@ -183,12 +202,14 @@ export const getRoundLeaderboard = createServerFn({ method: "POST" })
       );
     return {
       found: true as const,
+      unavailable: false as const,
       code: round.code,
       title: round.title,
       status: round.status,
       rows: buildLeaderboard(teamList, events ?? [], round.budget_min),
     };
   });
+
 
 // ---- Lehrpersonen -----------------------------------------------------------
 

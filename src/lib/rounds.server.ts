@@ -112,3 +112,20 @@ export function buildLeaderboard(
   rows.sort((a, b) => b.points - a.points || a.name.localeCompare(b.name));
   return rows;
 }
+
+/**
+ * Liefert den privilegierten Server-Client, oder null, wenn die
+ * Umgebungs-Bindung (Service-Role-Key) fehlt. So bleibt das Spiel spielbar,
+ * auch wenn die Server-Bindung nach einem neuen Build verloren geht.
+ */
+export async function tryAdmin() {
+  try {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    // Zugriff erzwingt die Initialisierung des Clients.
+    void supabaseAdmin.from;
+    return supabaseAdmin;
+  } catch (err) {
+    console.error("[rounds] Supabase-Serverbindung nicht verfügbar:", err);
+    return null;
+  }
+}
