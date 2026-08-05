@@ -92,11 +92,10 @@ export function computeScore(
     const factor = stageTimeFactor(e.durationSec, budgetMin);
     const rawPoints = Math.round(STAGE_BASE_POINTS * factor);
     const level = hintLevel.get(e.stage) ?? 0;
-    const cap =
-      level === 0 ? STAGE_BASE_POINTS : Math.round(STAGE_BASE_POINTS * HINT_CAP[level]);
+    const hintFactor = level === 0 ? 1 : HINT_FACTOR[level];
     stages.push({
       stage: e.stage,
-      points: Math.min(rawPoints, cap),
+      points: Math.round(rawPoints * hintFactor),
       rawPoints,
       hintLevel: level,
       durationSec: e.durationSec,
