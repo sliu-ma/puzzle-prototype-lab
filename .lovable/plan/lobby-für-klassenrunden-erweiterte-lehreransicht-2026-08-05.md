@@ -16,7 +16,7 @@
 Pro Runde ein aufklappbarer Bereich mit drei Reitern: **Lobby**, **Live**, **Auswertung**.
 
 - **Runde verwalten**
-  - Titel und Zeitbudget nachträglich anpassen.
+  - Titel und Zeitbudget nachträglich anpassen. (Beachte, welche Implikation es hat mit den Triggern der Nachrichten "Noch 15 Minuten" usw und den adaptiven Nachrichten im Text).
   - Runde löschen (mit Rückfrage; löscht Teams und Punkte dieser Runde).
   - Rundencode gross dargestellt, mit Kopier-Knopf.
   - Anmeldung öffnen/schliessen wie heute.
@@ -36,6 +36,7 @@ Pro Runde ein aufklappbarer Bereich mit drei Reitern: **Lobby**, **Live**, **Aus
 ## 3. Technische Umsetzung
 
 **Migration**
+
 - `rounds`: neue Spalten `started_at timestamptz`, Status erweitert auf `lobby | running | closed` (bestehende `open` → `lobby`, `closed` bleibt).
 - Neue/angepasste SECURITY-DEFINER-Funktionen (Rechte wie bisher, Passwort-Hash-Prüfung über `assert_teacher`):
   - `round_state(p_code, p_team_id, p_token_hash)` – Status, `started_at`, Teamnamen der Lobby, ob eigenes Team noch existiert.
@@ -44,6 +45,7 @@ Pro Runde ein aufklappbarer Bereich mit drei Reitern: **Lobby**, **Live**, **Aus
   - `round_join` akzeptiert Status `lobby` und `running`; `round_lookup` gibt `started_at` mit zurück.
 
 **Frontend**
+
 - `src/lib/rounds.functions.ts`: neue Server-Funktionen `getRoundState`, `teacherStartRound`, `teacherUpdateRound`, `teacherDeleteRound`, `teacherRoundReport`.
 - `src/lib/round-client.ts`: `RoundSession` erhält `startedAt` und `status`; Helfer zum Setzen der gemeinsamen Startzeit.
 - Neue Route `src/routes/lobby.tsx`: pollt `getRoundState` (alle 3 s), zeigt Teamliste, ruft bei Start `registerTeam` + setzt Startzeitstempel und navigiert zu `/etappe-1`.
