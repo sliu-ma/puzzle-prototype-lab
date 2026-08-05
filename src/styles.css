@@ -41,10 +41,17 @@
   --color-kraft: var(--kraft);
   --color-tape: var(--tape);
   --color-medal-gold: var(--medal-gold);
+  --color-medal-gold-light: var(--medal-gold-light);
+  --color-medal-gold-deep: var(--medal-gold-deep);
   --color-medal-silver: var(--medal-silver);
+  --color-medal-silver-light: var(--medal-silver-light);
+  --color-medal-silver-deep: var(--medal-silver-deep);
   --color-medal-bronze: var(--medal-bronze);
+  --color-medal-bronze-light: var(--medal-bronze-light);
+  --color-medal-bronze-deep: var(--medal-bronze-deep);
   --color-status-done: var(--status-done);
   --color-status-active: var(--status-active);
+
 
   --font-serif: "Lora", Georgia, serif;
   --font-mono: "Special Elite", "Courier New", monospace;
