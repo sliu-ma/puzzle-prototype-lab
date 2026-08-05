@@ -30,6 +30,7 @@ export const lookupRound = createServerFn({ method: "POST" })
       title: round.title,
       status: round.status,
       budgetMin: round.budget_min,
+      startedAt: round.started_at ?? null,
     };
   });
 
