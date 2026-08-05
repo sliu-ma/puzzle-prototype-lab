@@ -1,26 +1,26 @@
-# Leaderboard: Design aufräumen
+# Leaderboard neu gestalten (Gold/Silber/Bronze)
 
-## Ziel
+## Kopfbereich
 
-Ruhige, klare Rangliste. Nur was zählt: eigener Rang, eigene Punkte, wer wo steht und ob ein Team noch unterwegs oder fertig ist.
+- Nur zwei Dinge: **Teamname** und die **eigenen Punkte** (gross, tabellarisch). Kein Rang, kein Rückstand, keine Spitzen-Zeile, kein Pokal-Label.
+- Ruhige Karte auf Papier-Ton, dünner Rahmen, zentriert.
 
-## Was wegfällt
+## Rangliste
 
-- Fortschrittsbalken hinter jeder Zeile (die farbige Füllung nach Punkteanteil).
-- Zeile „Rückstand auf Platz 1“ und „Spitze: Team X · … Punkte“.
-- Doppelte Runden-Infozeile am Listenende (Runde/Code steht schon im Titel); der „Aktualisieren“-Knopf wandert kompakt neben den Listentitel.
+- **Medaillen-Kreise** für Platz 1–3 wie im Referenzbild: runde Ziffer in Gold, Silber, Bronze mit kleiner Bandspitze darunter. Ab Platz 4 nur die Ziffer in Textfarbe (eigene Zeile in Stamp-Rot).
+- **Fortschrittsbalken entfällt** komplett.
+- **Status nur visuell:** kleiner farbiger Punkt/Häkchen — „abgeschlossen“ (grün) vs. „noch am Spielen“ (pulsierender Bernstein-Punkt), Tooltip/Screenreader-Text mit Klartext. Datenquelle ist der schon vorhandene Abschluss-Zeitstempel (`finished` aus dem Runden-Leaderboard); für das eigene Team der lokale Abschlussstand.
+- **Zeilenaufbau:** Medaille/Ziffer · Teamname (+ Marke „Du“ für die eigene Zeile) · Status · Punkte mit kleinem „Punkte“-Label darunter.
+- Zeilen durch dünne Trennlinien getrennt, gemeinsame Umrandung um die Liste (wie im Bild); eigene Zeile hervorgehoben mit Stamp-Rahmen und leicht getöntem Hintergrund.
+- Titel „Rangliste“ klein in Grossbuchstaben, „Aktualisieren“ kompakt rechts daneben. Doppelte Runden-Infozeile am Listenende entfällt; ohne Rundencode bleibt der kurze Hinweis auf den Einzellauf.
 
-## Was bleibt / neu
+## Rest
 
-- **Kopf (eigenes Team):** Teamname, gross „Rang 3 von 7“, darunter die eigenen Punkte. Sonst nichts.
-- **Statusangabe statt Balken:** pro Zeile ein kleines Kennzeichen — „fertig“ (Häkchen) oder „unterwegs“ (Punkt/Uhr), gespeist aus dem bereits vorhandenen Abschluss-Zeitstempel des Teams. Das eigene Team nutzt den lokalen Abschlussstand.
-- **Zeilenaufbau:** Rang · Teamname (eigene Zeile mit „ihr“ markiert und hervorgehoben) · Status · Punkte. Gleichmässige Zeilenhöhe, dünne Trennlinien statt Kästchen-Rahmen um jede Zeile, Top-3 nur durch Rangziffer betont.
-- **Titel:** „Rangliste · Runde <Code>“ bzw. „Einzellauf“; ohne Rundencode bleibt der kurze Hinweis, dass man allein spielt.
-- **Aufschlüsselung „Meine Punkte“** bleibt unverändert (aufklappbar).
+- Aufklappbare Aufschlüsselung „Meine Punkte“ bleibt unverändert.
 - Outro-Variante: gleiche Struktur, kompaktere Abstände.
 
 ## Technisch
 
 - Nur `src/components/case-file/Leaderboard.tsx` wird angepasst; keine Logik-, Score- oder Datenbankänderungen.
-- `finished` aus `getRoundLeaderboard` in den Row-Typ übernehmen (Feld liegt serverseitig schon vor), für das eigene Team aus dem lokalen Abschlussstatus ergänzen.
-- Alle Farben über bestehende Tokens (`stamp`, `muted-foreground`, `border`, `card`); keine harten Farbwerte.
+- `finished` in den Row-Typ übernehmen (liegt serverseitig bereits vor).
+- Neue Farbtokens für Medaillen (`--medal-gold`, `--medal-silver`, `--medal-bronze`) sowie Status (`--status-done`, `--status-active`) in `src/styles.css` ergänzen und über `@theme inline` verfügbar machen — keine harten Farbwerte im Bauteil.
