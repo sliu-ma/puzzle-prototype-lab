@@ -129,18 +129,20 @@ export function LobbyPanel({
       <button
         type="button"
         onClick={onStart}
-        disabled={busy || teams.length === 0}
+        disabled={busy || status !== "lobby" || teams.length === 0}
         className="mt-3 flex min-h-[48px] w-full items-center justify-center gap-2 rounded-sm bg-primary px-4 font-serif text-base font-semibold text-primary-foreground disabled:opacity-50"
       >
         <Play className="h-4 w-4" />
-        {status === "running"
-          ? "Runde läuft, Startzeit bestätigen"
+        {status !== "lobby"
+          ? "Runde bereits gestartet"
           : `Runde für alle ${teams.length} Teams starten`}
       </button>
       <p className="mt-1 text-xs text-muted-foreground">
-        Alle Geräte zählen kurz herunter und öffnen dann das Briefing. Der Timer läuft ab
-        jetzt für alle gleich.
+        {status !== "lobby"
+          ? "Die Runde läuft. Teams können mit dem Rundencode weiterhin beitreten, ein erneuter Start ist nicht möglich."
+          : "Alle Geräte zählen kurz herunter und öffnen dann das Briefing. Der Timer läuft ab jetzt für alle gleich."}
       </p>
+
     </div>
   );
 }
