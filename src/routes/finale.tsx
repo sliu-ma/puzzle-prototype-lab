@@ -380,6 +380,10 @@ function FinalePage() {
     "akte-finale-antworten",
     () => Array(FRAGEN.length).fill(null),
   );
+  const [versuch, setVersuch] = usePersistentState<number>(
+    "akte-finale-versuch",
+    () => 1,
+  );
   const [resetKey, setResetKey] = useState(0);
   const [pulse, setPulse] = useState<null | "up" | "down">(null);
   const [review, setReview] = useState(false);
