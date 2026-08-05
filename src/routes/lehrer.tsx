@@ -121,6 +121,10 @@ function TeacherPage() {
 
   const login = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (password.trim().length === 0) {
+      setError("Bitte Passwort eingeben.");
+      return;
+    }
     setBusy(true);
     try {
       await loadRounds(password);
