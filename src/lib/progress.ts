@@ -18,7 +18,30 @@ const KEY_MEMBERS = "maya-team-members";
 const KEY_STAGE = "maya-current-stage";
 export const KEY_START_TS = "maya-start-ts";
 export const KEY_END_TS = "maya-end-ts";
+const KEY_BUDGET = "maya-budget-min";
+/** Standard-Zeitbudget in Minuten. Eine Klassen-Runde kann davon abweichen. */
 export const TIMER_DURATION_MIN = 90;
+
+/** Zeitbudget dieser Partie in Minuten (Runde kann es vorgeben). */
+export function getBudgetMin(): number {
+  try {
+    const v = localStorage.getItem(KEY_BUDGET);
+    const n = v ? parseInt(v, 10) : NaN;
+    if (Number.isFinite(n) && n >= 15 && n <= 240) return n;
+  } catch {
+    /* ignore */
+  }
+  return TIMER_DURATION_MIN;
+}
+
+export function setBudgetMin(min: number) {
+  try {
+    localStorage.setItem(KEY_BUDGET, String(min));
+    window.dispatchEvent(new Event("maya-progress"));
+  } catch {
+    /* ignore */
+  }
+}
 
 export type StageInfo = {
   nr: number;
