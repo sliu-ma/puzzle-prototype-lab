@@ -163,6 +163,8 @@ export const teacherListRounds = createServerFn({ method: "POST" })
       status: r.status,
       created_at: r.created_at,
       teamCount: r.team_count ?? 0,
+      budget_min: r.budget_min ?? 90,
+      started_at: r.started_at ?? null,
     }));
   });
 
