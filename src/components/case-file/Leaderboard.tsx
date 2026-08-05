@@ -34,7 +34,7 @@ const MEDALS = [
 ] as const;
 
 /** Rangziffer: Platz 1–3 als Medaille mit Band, ab Platz 4 nur Ziffer. */
-function Rank({ index, self }: { index: number; self: boolean }) {
+export function Rank({ index, self }: { index: number; self: boolean }) {
   const medal = MEDALS[index];
   if (medal) {
     return (
