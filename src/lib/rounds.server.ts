@@ -190,3 +190,17 @@ export async function callerKey(): Promise<string> {
     return "unbekannt";
   }
 }
+
+/**
+ * Gemeinsamer Einstieg für Lehrpersonen-Funktionen: bremst Rateversuche,
+ * prüft das Passwort zeitkonstant und liefert den Server-Client.
+ */
+export async function requireTeacherAdmin(password: string) {
+  const key = await callerKey();
+  // Strenges Limit: schützt das Lehrer-Passwort vor Durchprobieren.
+  if (!rateLimit("teacher", key, 12, 5 * 60_000)) throw new Error(RATE_MESSAGE);
+  assertTeacher(password);
+  const admin = await tryAdmin();
+  if (!admin) throw new Error(BINDING_MESSAGE);
+  return admin;
+}
