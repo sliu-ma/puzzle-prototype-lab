@@ -41,6 +41,7 @@ export type Database = {
           code: string
           created_at: string
           id: string
+          started_at: string | null
           status: string
           title: string
           updated_at: string
@@ -50,6 +51,7 @@ export type Database = {
           code: string
           created_at?: string
           id?: string
+          started_at?: string | null
           status?: string
           title?: string
           updated_at?: string
@@ -59,6 +61,7 @@ export type Database = {
           code?: string
           created_at?: string
           id?: string
+          started_at?: string | null
           status?: string
           title?: string
           updated_at?: string
@@ -159,8 +162,11 @@ export type Database = {
           p_token_hash: string
         }
         Returns: {
+          budget_min: number
           round_code: string
+          round_status: string
           round_title: string
+          started_at: string
           team_id: string
         }[]
       }
@@ -170,6 +176,7 @@ export type Database = {
         Returns: {
           budget_min: number
           code: string
+          started_at: string
           status: string
           title: string
         }[]
@@ -177,6 +184,10 @@ export type Database = {
       round_push_events: {
         Args: { p_events: Json; p_team_id: string; p_token_hash: string }
         Returns: number
+      }
+      round_state: {
+        Args: { p_code: string; p_team_id: string; p_token_hash: string }
+        Returns: Json
       }
       teacher_create_round: {
         Args: {
@@ -191,6 +202,10 @@ export type Database = {
           title: string
         }[]
       }
+      teacher_delete_round: {
+        Args: { p_code: string; p_password_hash: string }
+        Returns: boolean
+      }
       teacher_delete_team: {
         Args: { p_password_hash: string; p_team_id: string }
         Returns: boolean
@@ -198,15 +213,34 @@ export type Database = {
       teacher_list_rounds: {
         Args: { p_password_hash: string }
         Returns: {
+          budget_min: number
           code: string
           created_at: string
+          started_at: string
           status: string
           team_count: number
           title: string
         }[]
       }
+      teacher_round_report: {
+        Args: { p_code: string; p_password_hash: string }
+        Returns: Json
+      }
       teacher_set_round_status: {
         Args: { p_code: string; p_password_hash: string; p_status: string }
+        Returns: boolean
+      }
+      teacher_start_round: {
+        Args: { p_code: string; p_password_hash: string }
+        Returns: string
+      }
+      teacher_update_round: {
+        Args: {
+          p_budget_min: number
+          p_code: string
+          p_password_hash: string
+          p_title: string
+        }
         Returns: boolean
       }
     }

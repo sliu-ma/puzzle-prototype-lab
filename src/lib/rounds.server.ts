@@ -149,3 +149,101 @@ export function buildLeaderboard(
   rows.sort((a, b) => b.points - a.points || a.name.localeCompare(b.name));
   return rows;
 }
+
+export type ReportTeam = {
+  teamId: string;
+  name: string;
+  members: string[];
+  joinedAt: string;
+  finishedAt: string | null;
+  points: number;
+  stagesSolved: number;
+  hintsUsed: number;
+  badges: string[];
+  hearingCorrect: number;
+  hearingWrong: number;
+  totalMin: number | null;
+  stageMinutes: { stage: number; minutes: number }[];
+};
+
+/** Auswertung pro Team für die Lehreransicht. */
+export function buildReport(
+  teams: {
+    id: string;
+    name: string;
+    members: unknown;
+    created_at: string;
+    finished_at: string | null;
+  }[],
+  events: {
+    team_id: string;
+    event_id: string;
+    type: string;
+    payload: unknown;
+    created_at: string;
+  }[],
+  budgetMin: number,
+): ReportTeam[] {
+  const byTeam = new Map<string, typeof events>();
+  for (const e of events) {
+    const list = byTeam.get(e.team_id) ?? [];
+    list.push(e);
+    byTeam.set(e.team_id, list);
+  }
+
+  const rows = teams.map((t) => {
+    const raw = byTeam.get(t.id) ?? [];
+    const score = computeScore(rowsToEvents(raw), budgetMin);
+    const stageMinutes = raw
+      .filter((e) => e.type === "stage_solved")
+      .map((e) => {
+        const p = (e.payload ?? {}) as Record<string, unknown>;
+        return {
+          stage: Number(p["stage"]) || 0,
+          minutes: Math.max(1, Math.round((Number(p["durationSec"]) || 0) / 60)),
+        };
+      })
+      .sort((a, b) => a.stage - b.stage);
+    const hearing = raw.filter((e) => e.type === "hearing_answer");
+    const firstEvent = raw.reduce<string | null>(
+      (min, e) => (min === null || e.created_at < min ? e.created_at : min),
+      null,
+    );
+    const startRef = firstEvent ?? t.created_at;
+    const totalMin = t.finished_at
+      ? Math.max(
+          1,
+          Math.round(
+            (new Date(t.finished_at).getTime() - new Date(startRef).getTime()) / 60_000,
+          ),
+        )
+      : null;
+
+    return {
+      teamId: t.id,
+      name: t.name,
+      members: Array.isArray(t.members)
+        ? (t.members as unknown[]).filter((m): m is string => typeof m === "string")
+        : [],
+      joinedAt: t.created_at,
+      finishedAt: t.finished_at,
+      points: score.total,
+      stagesSolved: score.stages.length,
+      hintsUsed: raw.filter((e) => e.type === "hint_revealed").length,
+      badges: raw
+        .filter((e) => e.type === "badge_earned")
+        .map((e) => String(((e.payload ?? {}) as Record<string, unknown>)["badgeId"] ?? "")),
+      hearingCorrect: hearing.filter(
+        (e) => ((e.payload ?? {}) as Record<string, unknown>)["correct"] === true,
+      ).length,
+      hearingWrong: hearing.filter(
+        (e) => ((e.payload ?? {}) as Record<string, unknown>)["correct"] !== true,
+      ).length,
+      totalMin,
+      stageMinutes,
+    } satisfies ReportTeam;
+  });
+
+  rows.sort((a, b) => b.points - a.points || a.name.localeCompare(b.name));
+  return rows;
+}

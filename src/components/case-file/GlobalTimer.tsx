@@ -10,7 +10,7 @@ import {
 import {
   getStartTs,
   getEndTs,
-  TIMER_DURATION_MIN,
+  getBudgetMin,
   formatClock,
   getHearingClock,
 } from "@/lib/progress";
@@ -132,7 +132,7 @@ export function GlobalTimer() {
 
   if (!startTs) return null;
 
-  const totalMs = TIMER_DURATION_MIN * 60_000;
+  const totalMs = getBudgetMin() * 60_000;
   const effectiveNow = endTs ?? now;
   const remaining = startTs + totalMs - effectiveNow;
   const isFinished = !!endTs;

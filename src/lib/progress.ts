@@ -18,7 +18,30 @@ const KEY_MEMBERS = "maya-team-members";
 const KEY_STAGE = "maya-current-stage";
 export const KEY_START_TS = "maya-start-ts";
 export const KEY_END_TS = "maya-end-ts";
+const KEY_BUDGET = "maya-budget-min";
+/** Standard-Zeitbudget in Minuten. Eine Klassen-Runde kann davon abweichen. */
 export const TIMER_DURATION_MIN = 90;
+
+/** Zeitbudget dieser Partie in Minuten (Runde kann es vorgeben). */
+export function getBudgetMin(): number {
+  try {
+    const v = localStorage.getItem(KEY_BUDGET);
+    const n = v ? parseInt(v, 10) : NaN;
+    if (Number.isFinite(n) && n >= 15 && n <= 240) return n;
+  } catch {
+    /* ignore */
+  }
+  return TIMER_DURATION_MIN;
+}
+
+export function setBudgetMin(min: number) {
+  try {
+    localStorage.setItem(KEY_BUDGET, String(min));
+    window.dispatchEvent(new Event("maya-progress"));
+  } catch {
+    /* ignore */
+  }
+}
 
 export type StageInfo = {
   nr: number;
@@ -58,7 +81,12 @@ export function getTeamMembers(): string[] {
   }
 }
 
-export function registerTeam(name: string, code: string, members: string[] = []) {
+export function registerTeam(
+  name: string,
+  code: string,
+  members: string[] = [],
+  startTs?: number,
+) {
   try {
     localStorage.setItem(KEY_TEAM, name.trim());
     localStorage.setItem(KEY_CODE, code.trim());
@@ -68,7 +96,9 @@ export function registerTeam(name: string, code: string, members: string[] = [])
     if (!localStorage.getItem(KEY_STAGE)) {
       localStorage.setItem(KEY_STAGE, "1");
     }
-    if (!localStorage.getItem(KEY_START_TS)) {
+    if (startTs) {
+      localStorage.setItem(KEY_START_TS, String(startTs));
+    } else if (!localStorage.getItem(KEY_START_TS)) {
       localStorage.setItem(KEY_START_TS, String(Date.now()));
     }
     window.dispatchEvent(new Event("maya-progress"));
@@ -127,7 +157,7 @@ export function getNowClock(): string {
 export function getHearingClock(): string | null {
   const ts = getStartTs();
   if (!ts) return null;
-  return formatClock(new Date(ts + TIMER_DURATION_MIN * 60_000));
+  return formatClock(new Date(ts + getBudgetMin() * 60_000));
 }
 
 /** True, wenn die 90 Minuten seit Registrierung abgelaufen sind. */
@@ -135,7 +165,7 @@ export function isTimeUp(): boolean {
   if (getEndTs()) return false;
   const ts = getStartTs();
   if (!ts) return false;
-  return Date.now() >= ts + TIMER_DURATION_MIN * 60_000;
+  return Date.now() >= ts + getBudgetMin() * 60_000;
 }
 
 /**
@@ -249,7 +279,7 @@ export function getStageDurationMin(n: number): number | null {
 export function getRemainingMs(): number | null {
   const start = getStartTs();
   if (!start) return null;
-  const deadline = start + TIMER_DURATION_MIN * 60_000;
+  const deadline = start + getBudgetMin() * 60_000;
   const ref = getEndTs() ?? Date.now();
   return Math.max(0, deadline - ref);
 }
