@@ -72,6 +72,12 @@ export function StartForm({
     setChecking(true);
     try {
       const res = await lookupRound({ data: { code: clean } });
+      if ("rateLimited" in res && res.rateLimited) {
+        setCodeError(
+          "Es kamen zu viele Anfragen in kurzer Zeit. Wartet einen Moment und versucht es nochmals.",
+        );
+        return;
+      }
       if (res.unavailable) {
         setCodeError(
           "Die Verbindung zur Klassen-Runde ist momentan nicht möglich. Startet mit dem Code OEKOLOGIE, dann läuft das Spiel ohne Rangliste weiter.",
