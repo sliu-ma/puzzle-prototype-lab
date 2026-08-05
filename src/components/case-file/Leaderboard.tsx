@@ -154,6 +154,15 @@ export function Leaderboard({
               Aktualisieren
             </button>
           </li>
+        ) : null}
+        {session && offline ? (
+          <li className="rounded-sm border border-dashed border-stamp/50 bg-stamp/5 px-3 py-2.5 text-xs text-muted-foreground">
+            Die Rangliste der anderen Teams ist momentan nicht erreichbar. Eure Punkte
+            werden weiter lokal gezählt und später nachgetragen.
+          </li>
+        ) : null}
+        {!session ? (
+
         ) : (
           <li className="flex items-center gap-2 rounded-sm border border-dashed border-border px-3 py-2.5 text-xs text-muted-foreground">
             <Users className="h-3.5 w-3.5" />
