@@ -83,6 +83,35 @@ function LobbyPage() {
     [navigate],
   );
 
+  if (!pending) return null;
+
+  if (countdown !== null) {
+    return (
+      <main className="flex min-h-screen flex-col items-center justify-center overflow-hidden px-4">
+        <p className="font-mono-typed text-[10px] uppercase tracking-[0.3em] text-stamp">
+          Die Ermittlung beginnt
+        </p>
+        <div className="relative mt-8 flex h-44 w-44 items-center justify-center">
+          <span
+            key={`ring-${countdown}`}
+            aria-hidden
+            className="absolute inset-0 animate-[ping_1s_ease-out_1] rounded-full border-2 border-stamp/40"
+          />
+          <span
+            key={`num-${countdown}`}
+            className={cn(
+              "font-mono-typed animate-scale-in font-bold tabular-nums text-foreground",
+              countdown === 0 ? "text-6xl text-stamp" : "text-[7rem] leading-none",
+            )}
+          >
+            {countdown === 0 ? "Los!" : countdown}
+          </span>
+        </div>
+        <p className="mt-8 font-serif text-lg font-semibold">{pending.teamName}</p>
+        <p className="mt-1 text-sm text-muted-foreground">Runde {pending.code}</p>
+      </main>
+    );
+  }
 
 
   if (removed) {
