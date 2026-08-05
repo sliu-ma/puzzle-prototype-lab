@@ -7,6 +7,7 @@ import {
   KeyRound,
   Loader2,
   Lock,
+  LogOut,
   Pencil,
   Trash2,
   Unlock,
@@ -19,6 +20,7 @@ import {
   teacherDeleteRound,
 } from "@/lib/rounds.functions";
 import {
+  clearTeacherPassword,
   getTeacherPassword,
   setTeacherPassword,
   STATUS_LABEL,
