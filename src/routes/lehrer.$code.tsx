@@ -56,12 +56,20 @@ const inputBase =
 
 type Step = "prepare" | "lobby" | "live" | "report";
 
-const STEPS: [Step, string][] = [
-  ["prepare", "Vorbereiten"],
-  ["lobby", "Lobby"],
-  ["live", "Live"],
-  ["report", "Auswertung"],
-];
+const STEP_LABEL: Record<Step, string> = {
+  prepare: "Vorbereiten",
+  lobby: "Lobby",
+  live: "Live",
+  report: "Auswertung",
+};
+
+// Lobby verschwindet, sobald die Runde läuft; Live erscheint erst dann.
+function stepsFor(status: string): Step[] {
+  if (status === "running") return ["live"];
+  if (status === "closed") return ["report", "prepare"];
+  return ["prepare", "lobby"];
+}
+
 
 function RoundPage() {
   const { code } = Route.useParams();
