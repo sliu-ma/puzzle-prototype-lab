@@ -5,7 +5,7 @@ import { teacherListRounds, teacherCreateRound } from "@/lib/rounds.functions";
 import { RoundCard, type RoundItem } from "@/components/teacher/RoundCard";
 import { cn } from "@/lib/utils";
 
-export const Route = createFileRoute("/lehrer")({
+export const Route = createFileRoute("/lehrer/")({
   head: () => ({
     meta: [
       { title: "Lehrpersonen, Runden, Lobby und Auswertung" },

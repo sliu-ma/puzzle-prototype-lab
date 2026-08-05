@@ -10,7 +10,6 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as LobbyRouteImport } from './routes/lobby'
-import { Route as LehrerRouteImport } from './routes/lehrer'
 import { Route as FinaleRouteImport } from './routes/finale'
 import { Route as Etappe5RouteImport } from './routes/etappe-5'
 import { Route as Etappe4RouteImport } from './routes/etappe-4'
@@ -18,15 +17,11 @@ import { Route as Etappe3RouteImport } from './routes/etappe-3'
 import { Route as Etappe2RouteImport } from './routes/etappe-2'
 import { Route as Etappe1RouteImport } from './routes/etappe-1'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as LehrerIndexRouteImport } from './routes/lehrer.index'
 
 const LobbyRoute = LobbyRouteImport.update({
   id: '/lobby',
   path: '/lobby',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LehrerRoute = LehrerRouteImport.update({
-  id: '/lehrer',
-  path: '/lehrer',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FinaleRoute = FinaleRouteImport.update({
@@ -64,6 +59,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LehrerIndexRoute = LehrerIndexRouteImport.update({
+  id: '/lehrer/',
+  path: '/lehrer/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -73,8 +73,8 @@ export interface FileRoutesByFullPath {
   '/etappe-4': typeof Etappe4Route
   '/etappe-5': typeof Etappe5Route
   '/finale': typeof FinaleRoute
-  '/lehrer': typeof LehrerRoute
   '/lobby': typeof LobbyRoute
+  '/lehrer/': typeof LehrerIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -84,8 +84,8 @@ export interface FileRoutesByTo {
   '/etappe-4': typeof Etappe4Route
   '/etappe-5': typeof Etappe5Route
   '/finale': typeof FinaleRoute
-  '/lehrer': typeof LehrerRoute
   '/lobby': typeof LobbyRoute
+  '/lehrer': typeof LehrerIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -96,8 +96,8 @@ export interface FileRoutesById {
   '/etappe-4': typeof Etappe4Route
   '/etappe-5': typeof Etappe5Route
   '/finale': typeof FinaleRoute
-  '/lehrer': typeof LehrerRoute
   '/lobby': typeof LobbyRoute
+  '/lehrer/': typeof LehrerIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -109,8 +109,8 @@ export interface FileRouteTypes {
     | '/etappe-4'
     | '/etappe-5'
     | '/finale'
-    | '/lehrer'
     | '/lobby'
+    | '/lehrer/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -120,8 +120,8 @@ export interface FileRouteTypes {
     | '/etappe-4'
     | '/etappe-5'
     | '/finale'
-    | '/lehrer'
     | '/lobby'
+    | '/lehrer'
   id:
     | '__root__'
     | '/'
@@ -131,8 +131,8 @@ export interface FileRouteTypes {
     | '/etappe-4'
     | '/etappe-5'
     | '/finale'
-    | '/lehrer'
     | '/lobby'
+    | '/lehrer/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -143,8 +143,8 @@ export interface RootRouteChildren {
   Etappe4Route: typeof Etappe4Route
   Etappe5Route: typeof Etappe5Route
   FinaleRoute: typeof FinaleRoute
-  LehrerRoute: typeof LehrerRoute
   LobbyRoute: typeof LobbyRoute
+  LehrerIndexRoute: typeof LehrerIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -154,13 +154,6 @@ declare module '@tanstack/react-router' {
       path: '/lobby'
       fullPath: '/lobby'
       preLoaderRoute: typeof LobbyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/lehrer': {
-      id: '/lehrer'
-      path: '/lehrer'
-      fullPath: '/lehrer'
-      preLoaderRoute: typeof LehrerRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/finale': {
@@ -212,6 +205,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/lehrer/': {
+      id: '/lehrer/'
+      path: '/lehrer'
+      fullPath: '/lehrer/'
+      preLoaderRoute: typeof LehrerIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -223,18 +223,9 @@ const rootRouteChildren: RootRouteChildren = {
   Etappe4Route: Etappe4Route,
   Etappe5Route: Etappe5Route,
   FinaleRoute: FinaleRoute,
-  LehrerRoute: LehrerRoute,
   LobbyRoute: LobbyRoute,
+  LehrerIndexRoute: LehrerIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}
