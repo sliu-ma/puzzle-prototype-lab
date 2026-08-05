@@ -13,43 +13,25 @@ const eventSchema = z.object({
   correct: z.boolean().optional(),
 });
 
-/** Prüft, ob die Serverbindung zur Datenbank steht (für die Lehrpersonen-Seite). */
-export const checkRoundsHealth = createServerFn({ method: "POST" }).handler(async () => {
-  const { tryAdmin } = await import("./rounds.server");
-  const admin = await tryAdmin();
-  if (!admin) return { ok: false as const, reason: "binding" as const };
-  const { error } = await admin.from("rounds").select("id").limit(1);
-  if (error) return { ok: false as const, reason: "query" as const };
-  return { ok: true as const };
-});
-
 /** Prüft, ob ein eingegebener Code zu einer offenen Klassen-Runde gehört. */
 export const lookupRound = createServerFn({ method: "POST" })
   .inputValidator((d) => z.object({ code: z.string().min(1).max(20) }).parse(d))
   .handler(async ({ data }) => {
-    const { tryAdmin, rateLimit, callerKey } = await import("./rounds.server");
-    if (!rateLimit("lookup", await callerKey(), 40, 60_000)) {
-      return { found: false as const, unavailable: true as const, rateLimited: true as const };
-    }
-    const admin = await tryAdmin();
-    if (!admin) return { found: false as const, unavailable: true as const };
-    const { data: round, error } = await admin
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: round } = await supabaseAdmin
       .from("rounds")
       .select("code, title, status, budget_min")
       .eq("code", data.code.trim().toUpperCase())
       .maybeSingle();
-    if (error) return { found: false as const, unavailable: true as const };
-    if (!round) return { found: false as const, unavailable: false as const };
+    if (!round) return { found: false as const };
     return {
       found: true as const,
-      unavailable: false as const,
       code: round.code,
       title: round.title,
       status: round.status,
       budgetMin: round.budget_min,
     };
   });
-
 
 /** Team einer Runde beitreten. Gibt ein geheimes Token für Punkte-Meldungen zurück. */
 export const joinRound = createServerFn({ method: "POST" })
@@ -63,18 +45,8 @@ export const joinRound = createServerFn({ method: "POST" })
       .parse(d),
   )
   .handler(async ({ data }) => {
-    const {
-      makeTeamToken,
-      hashToken,
-      tryAdmin,
-      rateLimit,
-      callerKey,
-      BINDING_MESSAGE,
-      RATE_MESSAGE,
-    } = await import("./rounds.server");
-    if (!rateLimit("join", await callerKey(), 15, 5 * 60_000)) throw new Error(RATE_MESSAGE);
-    const supabaseAdmin = await tryAdmin();
-    if (!supabaseAdmin) throw new Error(BINDING_MESSAGE);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { makeTeamToken, hashToken } = await import("./rounds.server");
 
     const { data: round } = await supabaseAdmin
       .from("rounds")
@@ -119,12 +91,8 @@ export const pushScoreEvents = createServerFn({ method: "POST" })
       .parse(d),
   )
   .handler(async ({ data }) => {
-    const { hashToken, safeEqual, tryAdmin, rateLimit, callerKey, BINDING_MESSAGE, RATE_MESSAGE } =
-      await import("./rounds.server");
-    if (!rateLimit("push", await callerKey(), 120, 60_000)) throw new Error(RATE_MESSAGE);
-    const supabaseAdmin = await tryAdmin();
-    if (!supabaseAdmin) throw new Error(BINDING_MESSAGE);
-
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { hashToken, safeEqual } = await import("./rounds.server");
 
     const { data: team } = await supabaseAdmin
       .from("teams")
@@ -159,11 +127,8 @@ export const finishTeam = createServerFn({ method: "POST" })
     z.object({ teamId: z.string().uuid(), token: z.string().min(10).max(200) }).parse(d),
   )
   .handler(async ({ data }) => {
-    const { hashToken, safeEqual, tryAdmin, rateLimit, callerKey, BINDING_MESSAGE, RATE_MESSAGE } =
-      await import("./rounds.server");
-    if (!rateLimit("finish", await callerKey(), 30, 5 * 60_000)) throw new Error(RATE_MESSAGE);
-    const supabaseAdmin = await tryAdmin();
-    if (!supabaseAdmin) throw new Error(BINDING_MESSAGE);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { hashToken, safeEqual } = await import("./rounds.server");
     const { data: team } = await supabaseAdmin
       .from("teams")
       .select("id, token_hash, finished_at")
@@ -181,105 +146,58 @@ export const finishTeam = createServerFn({ method: "POST" })
     return { ok: true as const };
   });
 
-type LeaderboardResult = {
-  found: boolean;
-  unavailable: boolean;
-  rateLimited?: boolean;
-  code?: string;
-  title?: string;
-  status?: string;
-  rows: import("./rounds.server").LeaderboardRow[];
-};
-
 /** Öffentliche Rangliste einer Runde (nur Teamname und Punkte). */
 export const getRoundLeaderboard = createServerFn({ method: "POST" })
   .inputValidator((d) => z.object({ code: z.string().min(1).max(20) }).parse(d))
-  .handler(async ({ data }): Promise<LeaderboardResult> => {
-    const { tryAdmin, buildLeaderboard, rateLimit, callerKey, cacheGet, cacheSet } = await import(
-      "./rounds.server"
-    );
-    const code = data.code.trim().toUpperCase();
-    const empty: LeaderboardResult = { found: false, unavailable: true, rows: [] };
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { buildLeaderboard } = await import("./rounds.server");
 
-    // Kurzer Cache: wiederholte Abfragen belasten die Datenbank nicht.
-    const cached = cacheGet<LeaderboardResult>(`lb:${code}`, 10_000);
-    if (cached) return cached;
-
-    if (!rateLimit("leaderboard", await callerKey(), 60, 60_000)) {
-      return { found: false, unavailable: true, rateLimited: true, rows: [] };
-    }
-
-    const admin = await tryAdmin();
-    if (!admin) return empty;
-
-    const { data: round, error } = await admin
+    const { data: round } = await supabaseAdmin
       .from("rounds")
       .select("id, code, title, status, budget_min")
-      .eq("code", code)
+      .eq("code", data.code.trim().toUpperCase())
       .maybeSingle();
-    if (error) return empty;
-    if (!round) return { found: false, unavailable: false, rows: [] };
+    if (!round) return { found: false as const };
 
-    const { data: teams } = await admin
+    const { data: teams } = await supabaseAdmin
       .from("teams")
       .select("id, name, finished_at")
       .eq("round_id", round.id);
     const teamList = teams ?? [];
-
-    let rows: LeaderboardResult["rows"] = [];
-    if (teamList.length > 0) {
-      const { data: events } = await admin
-        .from("score_events")
-        .select("team_id, event_id, type, payload")
-        .in(
-          "team_id",
-          teamList.map((t) => t.id),
-        );
-      rows = buildLeaderboard(teamList, events ?? [], round.budget_min);
+    if (teamList.length === 0) {
+      return {
+        found: true as const,
+        code: round.code,
+        title: round.title,
+        status: round.status,
+        rows: [],
+      };
     }
-
-    const result: LeaderboardResult = {
-      found: true,
-      unavailable: false,
+    const { data: events } = await supabaseAdmin
+      .from("score_events")
+      .select("team_id, event_id, type, payload")
+      .in(
+        "team_id",
+        teamList.map((t) => t.id),
+      );
+    return {
+      found: true as const,
       code: round.code,
       title: round.title,
       status: round.status,
-      rows,
+      rows: buildLeaderboard(teamList, events ?? [], round.budget_min),
     };
-    cacheSet(`lb:${code}`, result);
-    return result;
   });
-
 
 // ---- Lehrpersonen -----------------------------------------------------------
 
-export type TeacherRoundsResult =
-  | {
-      ok: true;
-      rounds: {
-        code: string;
-        title: string;
-        status: string;
-        created_at: string;
-        teamCount: number;
-      }[];
-    }
-  | { ok: false; message: string };
-
 export const teacherListRounds = createServerFn({ method: "POST" })
   .inputValidator((d) => z.object({ password: z.string().min(1).max(200) }).parse(d))
-  .handler(async ({ data }): Promise<TeacherRoundsResult> => {
-    const { requireTeacherAdmin } = await import("./rounds.server");
-    // Falsches Passwort ist ein normaler Fall, kein Serverfehler.
-    let supabaseAdmin;
-    try {
-      supabaseAdmin = await requireTeacherAdmin(data.password);
-    } catch (err) {
-      return {
-        ok: false,
-        message: err instanceof Error ? err.message : "Anmeldung fehlgeschlagen.",
-      };
-    }
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { assertTeacher } = await import("./rounds.server");
+    assertTeacher(data.password);
 
     const { data: rounds } = await supabaseAdmin
       .from("rounds")
@@ -295,10 +213,7 @@ export const teacherListRounds = createServerFn({ method: "POST" })
       const code = codeById.get(t.round_id);
       if (code) counts.set(code, (counts.get(code) ?? 0) + 1);
     }
-    return {
-      ok: true,
-      rounds: list.map((r) => ({ ...r, teamCount: counts.get(r.code) ?? 0 })),
-    };
+    return list.map((r) => ({ ...r, teamCount: counts.get(r.code) ?? 0 }));
   });
 
 export const teacherCreateRound = createServerFn({ method: "POST" })
@@ -312,9 +227,9 @@ export const teacherCreateRound = createServerFn({ method: "POST" })
       .parse(d),
   )
   .handler(async ({ data }) => {
-    const { requireTeacherAdmin, makeRoundCode } = await import("./rounds.server");
-    const supabaseAdmin = await requireTeacherAdmin(data.password);
-
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { assertTeacher, makeRoundCode } = await import("./rounds.server");
+    assertTeacher(data.password);
 
     for (let attempt = 0; attempt < 6; attempt++) {
       const code = makeRoundCode();
@@ -339,8 +254,9 @@ export const teacherSetRoundStatus = createServerFn({ method: "POST" })
       .parse(d),
   )
   .handler(async ({ data }) => {
-    const { requireTeacherAdmin } = await import("./rounds.server");
-    const supabaseAdmin = await requireTeacherAdmin(data.password);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { assertTeacher } = await import("./rounds.server");
+    assertTeacher(data.password);
     const { error } = await supabaseAdmin
       .from("rounds")
       .update({ status: data.status })
@@ -356,8 +272,9 @@ export const teacherDeleteTeam = createServerFn({ method: "POST" })
       .parse(d),
   )
   .handler(async ({ data }) => {
-    const { requireTeacherAdmin } = await import("./rounds.server");
-    const supabaseAdmin = await requireTeacherAdmin(data.password);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { assertTeacher } = await import("./rounds.server");
+    assertTeacher(data.password);
     const { error } = await supabaseAdmin.from("teams").delete().eq("id", data.teamId);
     if (error) throw new Error(error.message);
     return { ok: true as const };
