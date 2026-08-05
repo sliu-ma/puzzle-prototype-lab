@@ -171,8 +171,7 @@ export function StartForm({
               Code eingeben
             </div>
             <p className="text-sm text-foreground/70">
-              Den Code erhaltet ihr von eurer Lehrperson. Ist es ein Rundencode,
-              erscheint euer Team in der Klassen-Rangliste.
+              Den Code erhaltet ihr von eurer Lehrperson.
             </p>
             <div>
               <label
