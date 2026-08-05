@@ -198,30 +198,8 @@ export function StageScoreRecap({ stage }: { stage: number }) {
     posRef.current = next;
   }, [phase, rows.length]);
 
-  const lines: Line[] = [];
-  if (stageEntry) {
-    lines.push({
-      label: `Etappe ${stage} gelöst`,
-      value: `+${stageEntry.rawPoints}`,
-      tone: "plus",
-    });
-    if (stageEntry.hintLevel > 0) {
-      lines.push({
-        label: `Hinweise genutzt (Stufe ${stageEntry.hintLevel})`,
-        value: `−${stageEntry.rawPoints - stageEntry.points}`,
-        tone: "minus",
-      });
-    }
-  }
-  for (const b of stageBadges) {
-    const pts = score?.badges.find((x) => x.badgeId === b.badgeId)?.points ?? 0;
-    if (pts <= 0) continue;
-    lines.push({
-      label: `Abzeichen · ${getBadge(b.badgeId)?.title ?? b.badgeId}`,
-      value: `+${pts}`,
-      tone: "plus",
-    });
-  }
+
+
 
   const close = () => {
     try {
