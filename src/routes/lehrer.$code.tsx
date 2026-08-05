@@ -235,21 +235,22 @@ function RoundPage() {
         </div>
       </div>
 
-      <nav className="mt-5 grid grid-cols-4 gap-1.5">
-        {STEPS.map(([key, label]) => (
+      <nav className="mt-5 flex gap-1.5">
+        {stepsFor(round.status).map((key) => (
           <button
             key={key}
             type="button"
             onClick={() => setStep(key)}
             className={cn(
-              "min-h-[44px] rounded-sm border border-border px-1 font-mono-typed text-[10px] uppercase tracking-wider",
+              "min-h-[44px] flex-1 rounded-sm border border-border px-2 font-mono-typed text-[10px] uppercase tracking-wider",
               step === key && "border-stamp bg-stamp/10 text-stamp",
             )}
           >
-            {label}
+            {STEP_LABEL[key]}
           </button>
         ))}
       </nav>
+
 
       {error && (
         <p className="mt-3 rounded-sm border border-destructive/40 bg-destructive/10 p-2 text-xs text-destructive">
