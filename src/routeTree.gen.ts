@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as LobbyRouteImport } from './routes/lobby'
 import { Route as LehrerRouteImport } from './routes/lehrer'
 import { Route as FinaleRouteImport } from './routes/finale'
 import { Route as Etappe5RouteImport } from './routes/etappe-5'
@@ -18,6 +19,11 @@ import { Route as Etappe2RouteImport } from './routes/etappe-2'
 import { Route as Etappe1RouteImport } from './routes/etappe-1'
 import { Route as IndexRouteImport } from './routes/index'
 
+const LobbyRoute = LobbyRouteImport.update({
+  id: '/lobby',
+  path: '/lobby',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LehrerRoute = LehrerRouteImport.update({
   id: '/lehrer',
   path: '/lehrer',
@@ -68,6 +74,7 @@ export interface FileRoutesByFullPath {
   '/etappe-5': typeof Etappe5Route
   '/finale': typeof FinaleRoute
   '/lehrer': typeof LehrerRoute
+  '/lobby': typeof LobbyRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -78,6 +85,7 @@ export interface FileRoutesByTo {
   '/etappe-5': typeof Etappe5Route
   '/finale': typeof FinaleRoute
   '/lehrer': typeof LehrerRoute
+  '/lobby': typeof LobbyRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -89,6 +97,7 @@ export interface FileRoutesById {
   '/etappe-5': typeof Etappe5Route
   '/finale': typeof FinaleRoute
   '/lehrer': typeof LehrerRoute
+  '/lobby': typeof LobbyRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -101,6 +110,7 @@ export interface FileRouteTypes {
     | '/etappe-5'
     | '/finale'
     | '/lehrer'
+    | '/lobby'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -111,6 +121,7 @@ export interface FileRouteTypes {
     | '/etappe-5'
     | '/finale'
     | '/lehrer'
+    | '/lobby'
   id:
     | '__root__'
     | '/'
@@ -121,6 +132,7 @@ export interface FileRouteTypes {
     | '/etappe-5'
     | '/finale'
     | '/lehrer'
+    | '/lobby'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -132,10 +144,18 @@ export interface RootRouteChildren {
   Etappe5Route: typeof Etappe5Route
   FinaleRoute: typeof FinaleRoute
   LehrerRoute: typeof LehrerRoute
+  LobbyRoute: typeof LobbyRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/lobby': {
+      id: '/lobby'
+      path: '/lobby'
+      fullPath: '/lobby'
+      preLoaderRoute: typeof LobbyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/lehrer': {
       id: '/lehrer'
       path: '/lehrer'
@@ -204,6 +224,7 @@ const rootRouteChildren: RootRouteChildren = {
   Etappe5Route: Etappe5Route,
   FinaleRoute: FinaleRoute,
   LehrerRoute: LehrerRoute,
+  LobbyRoute: LobbyRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
