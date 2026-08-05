@@ -16,7 +16,8 @@ export const STAGE_MIN_POINTS = 600;
 export const STAGE_REF_SHARE = 10 / 90;
 
 
-export const HINT_CAP: Record<1 | 2 | 3, number> = {
+/** Faktor auf die Etappenpunkte je höchster genutzter Hinweisstufe. */
+export const HINT_FACTOR: Record<1 | 2 | 3, number> = {
   1: 0.9,
   2: 0.75,
   3: 0.5,
