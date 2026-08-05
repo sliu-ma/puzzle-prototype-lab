@@ -57,34 +57,35 @@ function LobbyPage() {
       if (started.current) return;
       started.current = true;
       const startTs = startedAt ? new Date(startedAt).getTime() : Date.now();
-      // Countdown 3 – 2 – 1, danach startet die ganze Klasse gemeinsam.
+      // Sichtbarer Countdown 3 – 2 – 1 – Los!, danach startet die Klasse gemeinsam.
       setCountdown(3);
       let n = 3;
       const iv = window.setInterval(() => {
         n -= 1;
-        if (n > 0) {
-          setCountdown(n);
-          return;
-        }
+        setCountdown(n);
+        if (n > 0) return;
         window.clearInterval(iv);
-        setCountdown(0);
-        resetAll();
-        setBudgetMin(budgetMin);
-        registerTeam(p.teamName, p.code, p.members, startTs);
-        setRoundSession({
-          code: p.code,
-          title: p.title,
-          teamId: p.teamId,
-          token: p.token,
-          startedAt,
-        });
-        clearPendingJoin();
-        // Briefing zuerst: die Startseite zeigt den IntroScreen.
-        void navigate({ to: "/" });
+        // "Los!" kurz stehen lassen, dann ins Briefing.
+        window.setTimeout(() => {
+          resetAll();
+          setBudgetMin(budgetMin);
+          registerTeam(p.teamName, p.code, p.members, startTs);
+          setRoundSession({
+            code: p.code,
+            title: p.title,
+            teamId: p.teamId,
+            token: p.token,
+            startedAt,
+          });
+          clearPendingJoin();
+          // Briefing zuerst: die Startseite zeigt den IntroScreen.
+          void navigate({ to: "/" });
+        }, 900);
       }, 1000);
     },
     [navigate],
   );
+
 
   useEffect(() => {
     if (!pending) return;
@@ -127,20 +128,32 @@ function LobbyPage() {
 
   if (countdown !== null) {
     return (
-      <main className="flex min-h-screen flex-col items-center justify-center px-4">
+      <main className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-background px-4">
         <p className="font-mono-typed text-[10px] uppercase tracking-[0.3em] text-stamp">
           Die Ermittlung beginnt
         </p>
-        <p
-          key={countdown}
-          className="font-mono-typed mt-6 text-[7rem] leading-none font-bold tabular-nums text-foreground"
-        >
-          {countdown === 0 ? "Los!" : countdown}
-        </p>
-        <p className="mt-6 font-serif text-lg font-semibold">{pending.teamName}</p>
+        <div className="relative mt-8 flex h-44 w-44 items-center justify-center">
+          <span
+            key={`ring-${countdown}`}
+            className="absolute inset-0 animate-[countdown-ring_1s_ease-out] rounded-full border-2 border-stamp/60"
+          />
+          <span
+            key={countdown}
+            className={cn(
+              "font-mono-typed font-bold tabular-nums text-foreground",
+              countdown === 0
+                ? "animate-[countdown-pop_0.9s_ease-out] text-[3.5rem] uppercase tracking-[0.1em] text-stamp"
+                : "animate-[countdown-pop_1s_ease-out] text-[7.5rem] leading-none",
+            )}
+          >
+            {countdown === 0 ? "Los!" : countdown}
+          </span>
+        </div>
+        <p className="mt-8 font-serif text-lg font-semibold">{pending.teamName}</p>
       </main>
     );
   }
+
 
 
   if (removed) {
