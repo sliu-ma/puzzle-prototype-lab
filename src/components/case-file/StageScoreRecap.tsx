@@ -257,9 +257,10 @@ export function StageScoreRecap({ stage }: { stage: number }) {
         </p>
 
         {/* Punkte */}
-        <div className="mt-3 flex flex-col items-center">
-          <Trophy className="mb-1 h-5 w-5 text-stamp" />
-          <p className="font-mono-typed text-5xl font-bold leading-none tabular-nums text-foreground">
+        <div className="mt-5 flex flex-col items-center">
+          <Trophy className="mb-3 h-5 w-5 text-stamp" />
+          <p className="pt-1 font-mono-typed text-5xl font-bold leading-tight tabular-nums text-foreground">
+
             {shown}
           </p>
           <p className="mt-1 font-mono-typed text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
