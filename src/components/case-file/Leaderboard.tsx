@@ -16,44 +16,63 @@ type Row = {
 };
 
 const MEDALS = [
-  "border-medal-gold/70 bg-medal-gold/25 text-foreground",
-  "border-medal-silver/70 bg-medal-silver/25 text-foreground",
-  "border-medal-bronze/70 bg-medal-bronze/25 text-foreground",
-] as const;
-
-const RIBBONS = [
-  "border-t-medal-gold",
-  "border-t-medal-silver",
-  "border-t-medal-bronze",
+  {
+    disc: "bg-gradient-to-br from-medal-gold-light via-medal-gold to-medal-gold-deep ring-medal-gold-deep/50",
+    text: "text-medal-gold-deep",
+    ribbon: "bg-medal-gold-deep",
+  },
+  {
+    disc: "bg-gradient-to-br from-medal-silver-light via-medal-silver to-medal-silver-deep ring-medal-silver-deep/50",
+    text: "text-medal-silver-deep",
+    ribbon: "bg-medal-silver-deep",
+  },
+  {
+    disc: "bg-gradient-to-br from-medal-bronze-light via-medal-bronze to-medal-bronze-deep ring-medal-bronze-deep/50",
+    text: "text-medal-bronze-deep",
+    ribbon: "bg-medal-bronze-deep",
+  },
 ] as const;
 
 /** Rangziffer: Platz 1–3 als Medaille mit Band, ab Platz 4 nur Ziffer. */
 function Rank({ index, self }: { index: number; self: boolean }) {
-  if (index < 3) {
+  const medal = MEDALS[index];
+  if (medal) {
     return (
-      <span className="relative flex w-8 shrink-0 justify-center">
-        <span
-          className={cn(
-            "flex h-7 w-7 items-center justify-center rounded-full border font-mono-typed text-xs font-bold tabular-nums",
-            MEDALS[index],
-          )}
-        >
-          {index + 1}
-        </span>
+      <span className="relative flex h-8 w-9 shrink-0 items-center justify-center">
         <span
           aria-hidden
           className={cn(
-            "absolute -bottom-1.5 left-1/2 -translate-x-1/2 border-x-[5px] border-t-[7px] border-x-transparent",
-            RIBBONS[index],
+            "absolute bottom-0 left-1/2 h-3 w-3.5 -translate-x-1/2 translate-y-1 opacity-80 [clip-path:polygon(0_0,100%_0,100%_100%,50%_62%,0_100%)]",
+            medal.ribbon,
           )}
         />
+        <span
+          className={cn(
+            "relative flex h-7 w-7 items-center justify-center rounded-full shadow-sm ring-1 ring-inset",
+            medal.disc,
+          )}
+        >
+          <span
+            aria-hidden
+            className="absolute inset-[3px] rounded-full border border-background/30"
+          />
+          <span
+            className={cn(
+              "relative font-mono-typed text-xs font-bold tabular-nums",
+              medal.text,
+            )}
+          >
+            {index + 1}
+          </span>
+        </span>
       </span>
     );
   }
+
   return (
     <span
       className={cn(
-        "flex w-8 shrink-0 justify-center font-mono-typed text-sm font-bold tabular-nums",
+        "flex w-9 shrink-0 justify-center font-mono-typed text-sm font-bold tabular-nums",
         self ? "text-stamp" : "text-muted-foreground",
       )}
     >
