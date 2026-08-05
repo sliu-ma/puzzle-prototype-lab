@@ -1,0 +1,1 @@
+REVOKE ALL ON FUNCTION public.assert_teacher(text) FROM anon, authenticated, public;
