@@ -245,8 +245,8 @@ export const getRoundState = createServerFn({ method: "POST" })
     const { roundsDb, hashToken } = await import("./rounds.server");
     const { data: raw, error } = await roundsDb().rpc("round_state", {
       p_code: data.code,
-      p_team_id: data.teamId ?? null,
-      p_token_hash: data.token ? hashToken(data.token) : null,
+      p_team_id: (data.teamId ?? null) as unknown as string,
+      p_token_hash: (data.token ? hashToken(data.token) : null) as unknown as string,
     });
     if (error) throw new Error(error.message);
     const p = (raw ?? {}) as {
@@ -304,8 +304,8 @@ export const teacherUpdateRound = createServerFn({ method: "POST" })
     const { error } = await roundsDb().rpc("teacher_update_round", {
       p_password_hash: hashPassword(data.password),
       p_code: data.code,
-      p_title: data.title ?? null,
-      p_budget_min: data.budgetMin ?? null,
+      p_title: (data.title ?? null) as unknown as string,
+      p_budget_min: (data.budgetMin ?? null) as unknown as number,
     });
     if (error) throw new Error(error.message);
     return { ok: true as const };
