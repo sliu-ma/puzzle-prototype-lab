@@ -40,6 +40,12 @@
   --color-stamp: var(--stamp);
   --color-kraft: var(--kraft);
   --color-tape: var(--tape);
+  --color-medal-gold: var(--medal-gold);
+  --color-medal-silver: var(--medal-silver);
+  --color-medal-bronze: var(--medal-bronze);
+  --color-status-done: var(--status-done);
+  --color-status-active: var(--status-active);
+
   --font-serif: "Lora", Georgia, serif;
   --font-mono: "Special Elite", "Courier New", monospace;
   --font-sans: "Inter", -apple-system, sans-serif;
