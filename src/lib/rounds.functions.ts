@@ -228,3 +228,148 @@ export const teacherDeleteTeam = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true as const };
   });
+
+/** Zustand einer Runde für die Lobby (inkl. Prüfung, ob das eigene Team noch existiert). */
+export const getRoundState = createServerFn({ method: "POST" })
+  .inputValidator((d) =>
+    z
+      .object({
+        code: z.string().min(1).max(20),
+        teamId: z.string().uuid().optional(),
+        token: z.string().min(10).max(200).optional(),
+      })
+      .parse(d),
+  )
+  .handler(async ({ data }) => {
+    const { roundsDb, hashToken } = await import("./rounds.server");
+    const { data: raw, error } = await roundsDb().rpc("round_state", {
+      p_code: data.code,
+      p_team_id: data.teamId ?? null,
+      p_token_hash: data.token ? hashToken(data.token) : null,
+    });
+    if (error) throw new Error(error.message);
+    const p = (raw ?? {}) as {
+      found?: boolean;
+      code?: string;
+      title?: string;
+      status?: string;
+      budgetMin?: number;
+      startedAt?: string | null;
+      teamExists?: boolean;
+      teams?: { id: string; name: string }[];
+    };
+    if (!p.found) return { found: false as const };
+    return {
+      found: true as const,
+      code: p.code ?? data.code,
+      title: p.title ?? "",
+      status: p.status ?? "lobby",
+      budgetMin: p.budgetMin ?? 90,
+      startedAt: p.startedAt ?? null,
+      teamExists: !!p.teamExists,
+      teams: p.teams ?? [],
+    };
+  });
+
+export const teacherStartRound = createServerFn({ method: "POST" })
+  .inputValidator((d) =>
+    z
+      .object({ password: z.string().min(1).max(200), code: z.string().min(1).max(20) })
+      .parse(d),
+  )
+  .handler(async ({ data }) => {
+    const { roundsDb, hashPassword } = await import("./rounds.server");
+    const { data: startedAt, error } = await roundsDb().rpc("teacher_start_round", {
+      p_password_hash: hashPassword(data.password),
+      p_code: data.code,
+    });
+    if (error) throw new Error(error.message);
+    return { startedAt: startedAt as string | null };
+  });
+
+export const teacherUpdateRound = createServerFn({ method: "POST" })
+  .inputValidator((d) =>
+    z
+      .object({
+        password: z.string().min(1).max(200),
+        code: z.string().min(1).max(20),
+        title: z.string().min(1).max(80).optional(),
+        budgetMin: z.number().int().min(15).max(240).optional(),
+      })
+      .parse(d),
+  )
+  .handler(async ({ data }) => {
+    const { roundsDb, hashPassword } = await import("./rounds.server");
+    const { error } = await roundsDb().rpc("teacher_update_round", {
+      p_password_hash: hashPassword(data.password),
+      p_code: data.code,
+      p_title: data.title ?? null,
+      p_budget_min: data.budgetMin ?? null,
+    });
+    if (error) throw new Error(error.message);
+    return { ok: true as const };
+  });
+
+export const teacherDeleteRound = createServerFn({ method: "POST" })
+  .inputValidator((d) =>
+    z
+      .object({ password: z.string().min(1).max(200), code: z.string().min(1).max(20) })
+      .parse(d),
+  )
+  .handler(async ({ data }) => {
+    const { roundsDb, hashPassword } = await import("./rounds.server");
+    const { error } = await roundsDb().rpc("teacher_delete_round", {
+      p_password_hash: hashPassword(data.password),
+      p_code: data.code,
+    });
+    if (error) throw new Error(error.message);
+    return { ok: true as const };
+  });
+
+/** Auswertung einer Runde: Punkte, Zeiten pro Etappe, Hinweise, Abzeichen. */
+export const teacherRoundReport = createServerFn({ method: "POST" })
+  .inputValidator((d) =>
+    z
+      .object({ password: z.string().min(1).max(200), code: z.string().min(1).max(20) })
+      .parse(d),
+  )
+  .handler(async ({ data }) => {
+    const { roundsDb, hashPassword, buildReport } = await import("./rounds.server");
+    const { data: raw, error } = await roundsDb().rpc("teacher_round_report", {
+      p_password_hash: hashPassword(data.password),
+      p_code: data.code,
+    });
+    if (error) throw new Error(error.message);
+    const p = (raw ?? {}) as {
+      found?: boolean;
+      code?: string;
+      title?: string;
+      status?: string;
+      budgetMin?: number;
+      startedAt?: string | null;
+      teams?: {
+        id: string;
+        name: string;
+        members: unknown;
+        created_at: string;
+        finished_at: string | null;
+      }[];
+      events?: {
+        team_id: string;
+        event_id: string;
+        type: string;
+        payload: unknown;
+        created_at: string;
+      }[];
+    };
+    if (!p.found) return { found: false as const };
+    return {
+      found: true as const,
+      code: p.code ?? data.code,
+      title: p.title ?? "",
+      status: p.status ?? "lobby",
+      budgetMin: p.budgetMin ?? 90,
+      startedAt: p.startedAt ?? null,
+      teams: buildReport(p.teams ?? [], p.events ?? [], p.budgetMin ?? 90),
+    };
+  });
