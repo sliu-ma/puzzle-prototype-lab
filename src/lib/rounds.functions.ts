@@ -27,7 +27,10 @@ export const checkRoundsHealth = createServerFn({ method: "POST" }).handler(asyn
 export const lookupRound = createServerFn({ method: "POST" })
   .inputValidator((d) => z.object({ code: z.string().min(1).max(20) }).parse(d))
   .handler(async ({ data }) => {
-    const { tryAdmin } = await import("./rounds.server");
+    const { tryAdmin, rateLimit, callerKey } = await import("./rounds.server");
+    if (!rateLimit("lookup", await callerKey(), 40, 60_000)) {
+      return { found: false as const, unavailable: true as const, rateLimited: true as const };
+    }
     const admin = await tryAdmin();
     if (!admin) return { found: false as const, unavailable: true as const };
     const { data: round, error } = await admin
