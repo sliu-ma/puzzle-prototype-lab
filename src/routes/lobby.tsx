@@ -133,7 +133,7 @@ function LobbyPage() {
         </p>
         <p
           key={countdown}
-          className="font-mono-typed mt-6 animate-[fade-in_0.3s_ease-out] text-[7rem] leading-none font-bold tabular-nums text-foreground"
+          className="font-mono-typed mt-6 text-[7rem] leading-none font-bold tabular-nums text-foreground"
         >
           {countdown === 0 ? "Los!" : countdown}
         </p>
