@@ -57,34 +57,35 @@ function LobbyPage() {
       if (started.current) return;
       started.current = true;
       const startTs = startedAt ? new Date(startedAt).getTime() : Date.now();
-      // Countdown 3 – 2 – 1, danach startet die ganze Klasse gemeinsam.
+      // Sichtbarer Countdown 3 – 2 – 1 – Los!, danach startet die Klasse gemeinsam.
       setCountdown(3);
       let n = 3;
       const iv = window.setInterval(() => {
         n -= 1;
-        if (n > 0) {
-          setCountdown(n);
-          return;
-        }
+        setCountdown(n);
+        if (n > 0) return;
         window.clearInterval(iv);
-        setCountdown(0);
-        resetAll();
-        setBudgetMin(budgetMin);
-        registerTeam(p.teamName, p.code, p.members, startTs);
-        setRoundSession({
-          code: p.code,
-          title: p.title,
-          teamId: p.teamId,
-          token: p.token,
-          startedAt,
-        });
-        clearPendingJoin();
-        // Briefing zuerst: die Startseite zeigt den IntroScreen.
-        void navigate({ to: "/" });
+        // "Los!" kurz stehen lassen, dann ins Briefing.
+        window.setTimeout(() => {
+          resetAll();
+          setBudgetMin(budgetMin);
+          registerTeam(p.teamName, p.code, p.members, startTs);
+          setRoundSession({
+            code: p.code,
+            title: p.title,
+            teamId: p.teamId,
+            token: p.token,
+            startedAt,
+          });
+          clearPendingJoin();
+          // Briefing zuerst: die Startseite zeigt den IntroScreen.
+          void navigate({ to: "/" });
+        }, 900);
       }, 1000);
     },
     [navigate],
   );
+
 
   useEffect(() => {
     if (!pending) return;
