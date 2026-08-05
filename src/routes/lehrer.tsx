@@ -181,6 +181,10 @@ function TeacherPage() {
         Jede Runde hat einen Code. Die Gruppen geben ihn bei der Anmeldung ein.
       </p>
 
+      <HealthLine />
+
+
+
       <form
         onSubmit={(e) => void create(e)}
         className="mt-5 flex flex-col gap-2 rounded-sm border border-border bg-secondary/50 p-3 sm:flex-row"
