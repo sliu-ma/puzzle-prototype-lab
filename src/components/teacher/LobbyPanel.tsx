@@ -88,8 +88,8 @@ export function LobbyPanel({
   };
 
   return (
-    <div className="mt-3 border-t border-border pt-3">
-      <div className="flex items-center justify-between text-[10px] uppercase tracking-wider text-muted-foreground">
+    <div className="mt-4">
+      <div className="flex items-center justify-between font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
         <span className="flex items-center gap-1">
           <Users className="h-3.5 w-3.5" />
           {teams.length} Teams angemeldet
@@ -138,8 +138,8 @@ export function LobbyPanel({
           : `Runde für alle ${teams.length} Teams starten`}
       </button>
       <p className="mt-1 text-xs text-muted-foreground">
-        Alle Geräte springen automatisch in Etappe 1. Der Timer läuft ab jetzt für alle
-        gleich.
+        Alle Geräte zählen kurz herunter und öffnen dann das Briefing. Der Timer läuft ab
+        jetzt für alle gleich.
       </p>
     </div>
   );
