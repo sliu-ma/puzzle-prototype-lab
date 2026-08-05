@@ -7,6 +7,7 @@ import {
   KeyRound,
   Loader2,
   Lock,
+  LogOut,
   Pencil,
   Trash2,
   Unlock,
@@ -19,6 +20,7 @@ import {
   teacherDeleteRound,
 } from "@/lib/rounds.functions";
 import {
+  clearTeacherPassword,
   getTeacherPassword,
   setTeacherPassword,
   STATUS_LABEL,
@@ -196,13 +198,27 @@ function RoundPage() {
 
   return (
     <main className="mx-auto min-h-screen max-w-2xl px-4 py-8">
-      <Link
-        to="/lehrer"
-        className="font-mono-typed flex items-center gap-1 text-[10px] uppercase tracking-wider text-muted-foreground"
-      >
-        <ArrowLeft className="h-3.5 w-3.5" />
-        Alle Runden
-      </Link>
+      <div className="flex items-center justify-between gap-3">
+        <Link
+          to="/lehrer"
+          className="font-mono-typed flex items-center gap-1 text-[10px] uppercase tracking-wider text-muted-foreground"
+        >
+          <ArrowLeft className="h-3.5 w-3.5" />
+          Alle Runden
+        </Link>
+        <button
+          type="button"
+          onClick={() => {
+            clearTeacherPassword();
+            void navigate({ to: "/lehrer" });
+          }}
+          className="flex min-h-[40px] items-center gap-1.5 rounded-sm border border-border px-3 font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground hover:border-stamp hover:text-foreground"
+        >
+          <LogOut className="h-3.5 w-3.5" />
+          Abmelden
+        </button>
+      </div>
+
 
       <div className="mt-3 flex flex-wrap items-center gap-3">
         <button

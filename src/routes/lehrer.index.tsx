@@ -1,8 +1,9 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
-import { ChevronRight, KeyRound, Loader2, Plus, Users } from "lucide-react";
+import { ChevronRight, KeyRound, Loader2, LogOut, Plus, Users } from "lucide-react";
 import { teacherListRounds, teacherCreateRound } from "@/lib/rounds.functions";
 import {
+  clearTeacherPassword,
   getTeacherPassword,
   setTeacherPassword,
   STATUS_LABEL,
@@ -155,10 +156,29 @@ function TeacherPage() {
 
   return (
     <main className="mx-auto min-h-screen max-w-2xl px-4 py-8">
-      <h1 className="font-serif text-3xl font-bold text-foreground">Runden</h1>
-      <p className="mt-1 text-sm text-muted-foreground">
-        Jede Runde hat einen Code und eine eigene Seite: Lobby, Live und Auswertung.
-      </p>
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <h1 className="font-serif text-3xl font-bold text-foreground">Runden</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Jede Runde hat einen Code und eine eigene Seite: Lobby, Live und Auswertung.
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={() => {
+            clearTeacherPassword();
+            setPassword("");
+            setAuthed(false);
+            setRounds([]);
+            setError(null);
+          }}
+          className="flex min-h-[40px] shrink-0 items-center gap-1.5 rounded-sm border border-border px-3 font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground hover:border-stamp hover:text-foreground"
+        >
+          <LogOut className="h-3.5 w-3.5" />
+          Abmelden
+        </button>
+      </div>
+
 
       <form
         onSubmit={(e) => void create(e)}
