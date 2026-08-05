@@ -63,8 +63,18 @@ export const joinRound = createServerFn({ method: "POST" })
       .parse(d),
   )
   .handler(async ({ data }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { makeTeamToken, hashToken } = await import("./rounds.server");
+    const {
+      makeTeamToken,
+      hashToken,
+      tryAdmin,
+      rateLimit,
+      callerKey,
+      BINDING_MESSAGE,
+      RATE_MESSAGE,
+    } = await import("./rounds.server");
+    if (!rateLimit("join", await callerKey(), 15, 5 * 60_000)) throw new Error(RATE_MESSAGE);
+    const supabaseAdmin = await tryAdmin();
+    if (!supabaseAdmin) throw new Error(BINDING_MESSAGE);
 
     const { data: round } = await supabaseAdmin
       .from("rounds")
