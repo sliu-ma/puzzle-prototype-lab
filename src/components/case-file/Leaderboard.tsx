@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ChevronDown, Trophy, Users, RefreshCw } from "lucide-react";
 import { getTeam } from "@/lib/progress";
 import { getBadge } from "@/lib/badges";
