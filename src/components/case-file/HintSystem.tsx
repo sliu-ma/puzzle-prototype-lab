@@ -120,12 +120,13 @@ export function HintSystem({
   const elapsedMinForIntro = startedAt ? (now - startedAt) / 60000 : 0;
   useEffect(() => {
     if (typeof window === "undefined") return;
+    if (stageSolved) return;
     if (!startedAt) return;
     if (elapsedMinForIntro < 3) return;
     if (revealed.has(0)) return;
     if (window.localStorage.getItem(INTRO_FLAG_KEY)) return;
     setShowIntro(true);
-  }, [startedAt, elapsedMinForIntro, revealed]);
+  }, [startedAt, elapsedMinForIntro, revealed, stageSolved]);
 
 
   const dismissIntro = () => {
