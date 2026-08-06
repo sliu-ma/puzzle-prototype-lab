@@ -13,6 +13,10 @@ import {
 import houseAsset from "@/assets/haus.png.asset.json";
 import coin from "@/assets/coin.png";
 import trophy from "@/assets/trophy.png";
+import { awardBadge } from "@/lib/badges";
+
+/** Punktemaximum, das mit dem Budget praktisch erreichbar ist. */
+const ESP_MAX_BADGE = 3750;
 
 function Coin({ value, variant = "coin" }: { value: string | number; variant?: "coin" | "energy" }) {
   return (
@@ -93,8 +97,10 @@ export function EnergyGame({ onErfolg }: { onErfolg: () => void }) {
   };
 
   const pruefen = () => {
-    if (erreicht && totals.invested <= BUDGET) onErfolg();
-    else setShowFail(true);
+    if (erreicht && totals.invested <= BUDGET) {
+      if (totals.energy >= ESP_MAX_BADGE) awardBadge("wohnen-max");
+      onErfolg();
+    } else setShowFail(true);
   };
 
   return (

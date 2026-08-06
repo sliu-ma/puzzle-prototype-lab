@@ -102,5 +102,6 @@ export function recordHearingAnswer(
     at: Date.now(),
     question,
     correct,
+    attempt,
   });
 }

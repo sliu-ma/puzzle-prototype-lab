@@ -3,8 +3,10 @@ import {
   BADGES,
   getEarnedBadges,
   getBadgeEarnedAt,
+  formatCriteria,
   type Badge,
 } from "@/lib/badges";
+import { getBudgetMin } from "@/lib/progress";
 import { ChevronLeft, ChevronRight, Lock } from "lucide-react";
 import {
   Dialog,
@@ -178,7 +180,9 @@ export function BadgeShowcase() {
                   {selected.title}
                 </DialogTitle>
                 <DialogDescription className="text-center font-serif text-[15px] text-foreground/85">
-                  {selectedHas ? selected.description : selected.criteria}
+                  {selectedHas
+                    ? selected.description
+                    : formatCriteria(selected.criteria, getBudgetMin())}
                 </DialogDescription>
               </DialogHeader>
               <p

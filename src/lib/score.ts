@@ -5,7 +5,15 @@ export type ScoreEvent =
   | { id: string; type: "stage_solved"; at: number; stage: number; durationSec: number }
   | { id: string; type: "badge_earned"; at: number; badgeId: string }
   | { id: string; type: "hint_revealed"; at: number; stage: number; level: 1 | 2 | 3 }
-  | { id: string; type: "hearing_answer"; at: number; question: number; correct: boolean };
+  | {
+      id: string;
+      type: "hearing_answer";
+      at: number;
+      question: number;
+      correct: boolean;
+      /** Versuchsnummer des bestandenen Hearings (1 = erster Anlauf). */
+      attempt?: number;
+    };
 
 /** Zeitbudget, auf das der Zeitfaktor bezogen wird (Minuten). */
 export const SCORE_BUDGET_MIN = 90;
@@ -29,7 +37,9 @@ export const BADGE_POINTS: Record<string, number> = {
   "erstes-ohne-hinweise": 300,
   "erstversuch-konsum": 300,
   "route-anhieb": 300,
+  "wohnen-max": 300,
   "letzte-5-minuten": 250,
+  "zweiter-anlauf": 150,
 };
 
 export const HEARING_CORRECT = 100;
@@ -116,7 +126,11 @@ export function computeScore(
   );
   const hearingCorrect = answers.filter((a) => a.correct).length;
   const hearingWrong = answers.length - hearingCorrect;
-  const hearingPoints = hearingCorrect * HEARING_CORRECT + hearingWrong * HEARING_WRONG;
+  // Wurde das Hearing wiederholt, gibt es keine Hearing-Punkte (nur das Badge).
+  const hearingRepeated = answers.some((a) => (a.attempt ?? 1) > 1);
+  const hearingPoints = hearingRepeated
+    ? 0
+    : hearingCorrect * HEARING_CORRECT + hearingWrong * HEARING_WRONG;
 
   const total = Math.max(0, stagePoints + badgePoints + hearingPoints);
 

@@ -6,7 +6,8 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { BADGES, getEarnedBadges, getBadgeEarnedAt, type Badge } from "@/lib/badges";
+import { BADGES, getEarnedBadges, getBadgeEarnedAt, formatCriteria, type Badge } from "@/lib/badges";
+import { getBudgetMin } from "@/lib/progress";
 import { cn } from "@/lib/utils";
 
 /**
@@ -101,7 +102,9 @@ export function BadgeShelf() {
               </DialogTitle>
               <DialogDescription asChild>
                 <p className="mt-2 text-[15px] leading-relaxed text-foreground/85">
-                  {isEarned(selected.id) ? selected.description : selected.criteria}
+                  {isEarned(selected.id)
+                    ? selected.description
+                    : formatCriteria(selected.criteria, getBudgetMin())}
                 </p>
               </DialogDescription>
               {isEarned(selected.id) && earnedAt && (
