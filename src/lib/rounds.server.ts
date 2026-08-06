@@ -108,14 +108,20 @@ export function rowsToEvents(
           level: (Number(p["level"]) || 1) as 1 | 2 | 3,
         });
         break;
-      case "hearing_answer":
+      case "hearing_answer": {
+        // Versuchsnummer: aus der Nutzlast, sonst aus der Ereignis-Kennung
+        // `hearing_answer:<versuch>:<frage>` (Altbestand ohne Feld).
+        const fromId = Number(r.event_id.split(":")[1]);
+        const attempt = Number(p["attempt"]) || (Number.isFinite(fromId) ? fromId : 1) || 1;
         out.push({
           ...base,
           type: "hearing_answer",
           question: Number(p["question"]) || 0,
           correct: Boolean(p["correct"]),
+          attempt,
         });
         break;
+      }
       default:
         break;
     }
