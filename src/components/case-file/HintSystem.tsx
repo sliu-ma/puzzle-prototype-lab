@@ -71,9 +71,15 @@ export function getTotalRevealedHints(): number {
 type Props = {
   hints?: Hint[];
   storageKey?: string;
+  /** Etappen-Nummer: ist die Etappe gelöst, können keine Hinweise mehr aufgedeckt werden. */
+  stage?: number;
 };
 
-export function HintSystem({ hints = DEFAULT_HINTS, storageKey = DEFAULT_STORAGE_KEY }: Props = {}) {
+export function HintSystem({
+  hints = DEFAULT_HINTS,
+  storageKey = DEFAULT_STORAGE_KEY,
+  stage: stageNr,
+}: Props = {}) {
   const HINTS = hints;
   const STORAGE_KEY = storageKey;
   const [now, setNow] = useState(() => Date.now());
@@ -82,6 +88,13 @@ export function HintSystem({ hints = DEFAULT_HINTS, storageKey = DEFAULT_STORAGE
   const [activeId, setActiveId] = useState<number>(0);
   const [revealed, setRevealed] = useState<Set<number>>(new Set());
   const [showIntro, setShowIntro] = useState(false);
+  const [stageSolved, setStageSolved] = useState(false);
+
+  useEffect(() => {
+    if (!stageNr) return;
+    setStageSolved(getStageDoneTs(stageNr) !== null);
+  }, [stageNr]);
+
 
   // Timer beim ersten Mounten starten (oder aus localStorage wieder aufnehmen)
   useEffect(() => {
