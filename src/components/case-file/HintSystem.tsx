@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Lock, Lightbulb, Clock, KeyRound, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { recordHintRevealed } from "@/lib/score-events";
+import { getStageDoneTs } from "@/lib/progress";
 
 export type Hint = {
   id: number;
