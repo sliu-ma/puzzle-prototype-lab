@@ -11,6 +11,7 @@ const eventSchema = z.object({
   level: z.union([z.literal(1), z.literal(2), z.literal(3)]).optional(),
   question: z.number().int().min(0).max(100).optional(),
   correct: z.boolean().optional(),
+  attempt: z.number().int().min(1).max(20).optional(),
 });
 
 /** Prüft, ob ein eingegebener Code zu einer offenen Klassen-Runde gehört. */
