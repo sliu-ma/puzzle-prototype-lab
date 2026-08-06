@@ -347,7 +347,7 @@ function AktePage() {
       </div>
 
       {step === "code" && (
-        <HintSystem hints={HINTS_002} storageKey="akte-002-hints-start" />
+        <HintSystem stage={3} hints={HINTS_002} storageKey="akte-002-hints-start" />
       )}
 
       <Dialog open={showCodeHint} onOpenChange={setShowCodeHint}>

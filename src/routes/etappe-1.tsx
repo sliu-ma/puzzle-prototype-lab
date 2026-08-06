@@ -431,7 +431,7 @@ function AktePage() {
       </div>
 
       {unlockedSteps.has("eingabe") && (step === "eingabe" || step === "routen") && (
-        <HintSystem hints={HINTS_003} storageKey="akte-003-hints-start" />
+        <HintSystem stage={1} hints={HINTS_003} storageKey="akte-003-hints-start" />
       )}
     </main>
   );

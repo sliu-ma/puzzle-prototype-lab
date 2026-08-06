@@ -320,7 +320,7 @@ function AktePage() {
       </div>
 
       {unlockedSteps.has("shop") && (step === "shop" || step === "input") && (
-        <HintSystem hints={DORFLADEN_HINTS} storageKey="akte-002-hints-start" />
+        <HintSystem stage={2} hints={DORFLADEN_HINTS} storageKey="akte-002-hints-start" />
       )}
 
     </main>

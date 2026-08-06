@@ -390,7 +390,7 @@ function AktePage() {
       </div>
 
       {step === "spiel" && (
-        <HintSystem hints={HINTS_004} storageKey="akte-004-hints-start" />
+        <HintSystem stage={4} hints={HINTS_004} storageKey="akte-004-hints-start" />
       )}
       {envelope.dialog}
     </main>
