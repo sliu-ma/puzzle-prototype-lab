@@ -102,7 +102,9 @@ export function BadgeShelf() {
               </DialogTitle>
               <DialogDescription asChild>
                 <p className="mt-2 text-[15px] leading-relaxed text-foreground/85">
-                  {isEarned(selected.id) ? selected.description : selected.criteria}
+                  {isEarned(selected.id)
+                    ? selected.description
+                    : formatCriteria(selected.criteria, getBudgetMin())}
                 </p>
               </DialogDescription>
               {isEarned(selected.id) && earnedAt && (
