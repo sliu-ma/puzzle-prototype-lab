@@ -150,6 +150,7 @@ export function HintSystem({
   const canRevealActive = !prevHint || revealed.has(prevHint.id);
 
   const reveal = (id: number) => {
+    if (stageSolved) return;
     const idx = HINTS.findIndex((h) => h.id === id);
     if (idx < 0) return;
     // Vorgänger müssen aufgedeckt sein
