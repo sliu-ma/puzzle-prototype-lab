@@ -97,8 +97,10 @@ export function EnergyGame({ onErfolg }: { onErfolg: () => void }) {
   };
 
   const pruefen = () => {
-    if (erreicht && totals.invested <= BUDGET) onErfolg();
-    else setShowFail(true);
+    if (erreicht && totals.invested <= BUDGET) {
+      if (totals.energy >= ESP_MAX_BADGE) awardBadge("wohnen-max");
+      onErfolg();
+    } else setShowFail(true);
   };
 
   return (
