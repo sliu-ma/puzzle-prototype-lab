@@ -37,7 +37,9 @@ export const BADGE_POINTS: Record<string, number> = {
   "erstes-ohne-hinweise": 300,
   "erstversuch-konsum": 300,
   "route-anhieb": 300,
+  "wohnen-max": 300,
   "letzte-5-minuten": 250,
+  "zweiter-anlauf": 150,
 };
 
 export const HEARING_CORRECT = 100;
