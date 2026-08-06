@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Lock, Lightbulb, Clock, KeyRound, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { recordHintRevealed } from "@/lib/score-events";
+import { getStageDoneTs } from "@/lib/progress";
 
 export type Hint = {
   id: number;
@@ -71,9 +72,15 @@ export function getTotalRevealedHints(): number {
 type Props = {
   hints?: Hint[];
   storageKey?: string;
+  /** Etappen-Nummer: ist die Etappe gelöst, können keine Hinweise mehr aufgedeckt werden. */
+  stage?: number;
 };
 
-export function HintSystem({ hints = DEFAULT_HINTS, storageKey = DEFAULT_STORAGE_KEY }: Props = {}) {
+export function HintSystem({
+  hints = DEFAULT_HINTS,
+  storageKey = DEFAULT_STORAGE_KEY,
+  stage: stageNr,
+}: Props = {}) {
   const HINTS = hints;
   const STORAGE_KEY = storageKey;
   const [now, setNow] = useState(() => Date.now());
@@ -82,6 +89,13 @@ export function HintSystem({ hints = DEFAULT_HINTS, storageKey = DEFAULT_STORAGE
   const [activeId, setActiveId] = useState<number>(0);
   const [revealed, setRevealed] = useState<Set<number>>(new Set());
   const [showIntro, setShowIntro] = useState(false);
+  const [stageSolved, setStageSolved] = useState(false);
+
+  useEffect(() => {
+    if (!stageNr) return;
+    setStageSolved(getStageDoneTs(stageNr) !== null);
+  }, [stageNr]);
+
 
   // Timer beim ersten Mounten starten (oder aus localStorage wieder aufnehmen)
   useEffect(() => {
@@ -106,12 +120,13 @@ export function HintSystem({ hints = DEFAULT_HINTS, storageKey = DEFAULT_STORAGE
   const elapsedMinForIntro = startedAt ? (now - startedAt) / 60000 : 0;
   useEffect(() => {
     if (typeof window === "undefined") return;
+    if (stageSolved) return;
     if (!startedAt) return;
     if (elapsedMinForIntro < 3) return;
     if (revealed.has(0)) return;
     if (window.localStorage.getItem(INTRO_FLAG_KEY)) return;
     setShowIntro(true);
-  }, [startedAt, elapsedMinForIntro, revealed]);
+  }, [startedAt, elapsedMinForIntro, revealed, stageSolved]);
 
 
   const dismissIntro = () => {
@@ -135,6 +150,7 @@ export function HintSystem({ hints = DEFAULT_HINTS, storageKey = DEFAULT_STORAGE
   const canRevealActive = !prevHint || revealed.has(prevHint.id);
 
   const reveal = (id: number) => {
+    if (stageSolved) return;
     const idx = HINTS.findIndex((h) => h.id === id);
     if (idx < 0) return;
     // Vorgänger müssen aufgedeckt sein
@@ -388,7 +404,18 @@ export function HintSystem({ hints = DEFAULT_HINTS, storageKey = DEFAULT_STORAGE
                   </p>
                 </div>
               ) : !activeRevealed ? (
-                canRevealActive ? (
+                stageSolved ? (
+                  <div className="rounded-sm border border-dashed border-border bg-paper-deep/30 p-5 text-center">
+                    <p className="text-2xl">✅</p>
+                    <p className="mt-2 font-mono-typed text-[11px] uppercase tracking-wider text-muted-foreground">
+                      Etappe gelöst
+                    </p>
+                    <p className="mt-1 text-sm text-foreground/70">
+                      Diese Etappe ist abgeschlossen, {activeHint.label} kann
+                      nicht mehr nachträglich aufgedeckt werden.
+                    </p>
+                  </div>
+                ) : canRevealActive ? (
                   <div className="rounded-sm border border-dashed border-stamp/40 bg-stamp/5 p-5 text-center">
                     <button
                       onClick={() => reveal(activeHint.id)}
