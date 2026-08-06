@@ -4,13 +4,13 @@
 
 - Neues Badge, verliehen in Etappe 4 (Wohnen), wenn beim Prüfen **mindestens 3'750 ESP** innerhalb des Budgets erreicht sind.
 - Kriterium-Text: „Hol in der Etappe Wohnen 3'750 ESP oder mehr, ohne das Budget zu sprengen.“
-- Punkte: **400** (auf Höhe der anspruchsvollen Badges).
+- Punkte: **300** (auf Höhe der anspruchsvollen Badges).
 
 ## 2. Hearing-Wiederholung: „Zweiter Anlauf“ (secondtry.svg)
 
 - Badge für Teams, die das Hearing wiederholen mussten und es im zweiten (oder späteren) Versuch bestehen.
 - **Punkteregel neu:** Wird das Hearing nicht im ersten Versuch bestanden, gibt es **keine** Hearing-Punkte (weder plus noch minus). Nur das Badge bringt eine kleine Anerkennung von **150 Punkten**.
-  So lohnt sich absichtliches Durchfallen nicht, und ein Team mit perfektem zweitem Versuch steht nicht besser da als ein Team, das beim ersten Mal besteht.
+So lohnt sich absichtliches Durchfallen nicht, und ein Team mit perfektem zweitem Versuch steht nicht besser da als ein Team, das beim ersten Mal besteht.
 
 ## 3. „Punktlandung“ ersetzt „Auf den letzten Drücker“ (punktlandung.svg)
 
