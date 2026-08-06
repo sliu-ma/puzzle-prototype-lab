@@ -59,12 +59,12 @@ export const BADGES: Badge[] = [
   },
   {
     id: "letzte-5-minuten",
-    title: "Auf den letzten Drücker",
+    title: "Punktlandung",
     description:
-      "Fall gelöst, als der Sekundenzeiger schon am Anschlag stand. Nerven aus Stahl.",
+      "Volltreffer ins Schwarze: Der Fall stand kurz vor dem Schlusspfiff, ihr habt genau ins Ziel getroffen.",
     criteria:
-      "Bestehe das Hearing in den letzten fünf Minuten der 90-Minuten-Frist.",
-    imageUrl: badgeLetzten5.url,
+      "Bestehe das Hearing in den letzten fünf Minuten der {budget}-Minuten-Frist.",
+    imageUrl: badgePunktlandung.url,
   },
   {
     id: "route-anhieb",
@@ -75,7 +75,31 @@ export const BADGES: Badge[] = [
       "Gib in Etappe 1 Start und Ziel beim ersten Versuch korrekt ein und wähle direkt danach die richtige Route.",
     imageUrl: badgeRoute.url,
   },
+  {
+    id: "wohnen-max",
+    title: "Sparfuchs im Eigenheim",
+    description:
+      "3'750 Energiesparpunkte aus einem einzigen Haushaltsbudget herausgeholt, mehr geht praktisch nicht.",
+    criteria:
+      "Hol in der Etappe Wohnen 3'750 ESP oder mehr, ohne das Budget zu sprengen.",
+    imageUrl: badgeWohnen.url,
+  },
+  {
+    id: "zweiter-anlauf",
+    title: "Zweiter Anlauf",
+    description:
+      "Beim ersten Hearing gestrauchelt, aufgestanden und im zweiten Durchgang überzeugt.",
+    criteria:
+      "Bestehe das Hearing, nachdem du es einmal wiederholen musstest.",
+    imageUrl: badgeSecondTry.url,
+  },
 ];
+
+/** Ersetzt Platzhalter im Kriterium-Text (z. B. das aktuelle Zeitbudget). */
+export function formatCriteria(criteria: string, budgetMin: number): string {
+  return criteria.replace(/\{budget\}/g, String(budgetMin));
+}
+
 
 const KEY_EARNED = "maya-badges-earned";
 
