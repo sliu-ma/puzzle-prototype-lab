@@ -180,7 +180,9 @@ export function BadgeShowcase() {
                   {selected.title}
                 </DialogTitle>
                 <DialogDescription className="text-center font-serif text-[15px] text-foreground/85">
-                  {selectedHas ? selected.description : selected.criteria}
+                  {selectedHas
+                    ? selected.description
+                    : formatCriteria(selected.criteria, getBudgetMin())}
                 </DialogDescription>
               </DialogHeader>
               <p
