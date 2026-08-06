@@ -126,7 +126,11 @@ export function computeScore(
   );
   const hearingCorrect = answers.filter((a) => a.correct).length;
   const hearingWrong = answers.length - hearingCorrect;
-  const hearingPoints = hearingCorrect * HEARING_CORRECT + hearingWrong * HEARING_WRONG;
+  // Wurde das Hearing wiederholt, gibt es keine Hearing-Punkte (nur das Badge).
+  const hearingRepeated = answers.some((a) => (a.attempt ?? 1) > 1);
+  const hearingPoints = hearingRepeated
+    ? 0
+    : hearingCorrect * HEARING_CORRECT + hearingWrong * HEARING_WRONG;
 
   const total = Math.max(0, stagePoints + badgePoints + hearingPoints);
 
