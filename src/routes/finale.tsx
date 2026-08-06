@@ -446,6 +446,10 @@ function FinalePage() {
           awardBadge("letzte-5-minuten");
         }
       }
+      // Badge „Zweiter Anlauf": Hearing musste wiederholt werden.
+      if (versuch > 1) {
+        awardBadge("zweiter-anlauf");
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status]);
