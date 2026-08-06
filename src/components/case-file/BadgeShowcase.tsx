@@ -3,8 +3,10 @@ import {
   BADGES,
   getEarnedBadges,
   getBadgeEarnedAt,
+  formatCriteria,
   type Badge,
 } from "@/lib/badges";
+import { getBudgetMin } from "@/lib/progress";
 import { ChevronLeft, ChevronRight, Lock } from "lucide-react";
 import {
   Dialog,
