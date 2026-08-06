@@ -404,7 +404,18 @@ export function HintSystem({
                   </p>
                 </div>
               ) : !activeRevealed ? (
-                canRevealActive ? (
+                stageSolved ? (
+                  <div className="rounded-sm border border-dashed border-border bg-paper-deep/30 p-5 text-center">
+                    <p className="text-2xl">✅</p>
+                    <p className="mt-2 font-mono-typed text-[11px] uppercase tracking-wider text-muted-foreground">
+                      Etappe gelöst
+                    </p>
+                    <p className="mt-1 text-sm text-foreground/70">
+                      Diese Etappe ist abgeschlossen, {activeHint.label} kann
+                      nicht mehr nachträglich aufgedeckt werden.
+                    </p>
+                  </div>
+                ) : canRevealActive ? (
                   <div className="rounded-sm border border-dashed border-stamp/40 bg-stamp/5 p-5 text-center">
                     <button
                       onClick={() => reveal(activeHint.id)}
