@@ -6,7 +6,8 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { BADGES, getEarnedBadges, getBadgeEarnedAt, type Badge } from "@/lib/badges";
+import { BADGES, getEarnedBadges, getBadgeEarnedAt, formatCriteria, type Badge } from "@/lib/badges";
+import { getBudgetMin } from "@/lib/progress";
 import { cn } from "@/lib/utils";
 
 /**
