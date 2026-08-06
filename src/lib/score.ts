@@ -5,7 +5,15 @@ export type ScoreEvent =
   | { id: string; type: "stage_solved"; at: number; stage: number; durationSec: number }
   | { id: string; type: "badge_earned"; at: number; badgeId: string }
   | { id: string; type: "hint_revealed"; at: number; stage: number; level: 1 | 2 | 3 }
-  | { id: string; type: "hearing_answer"; at: number; question: number; correct: boolean };
+  | {
+      id: string;
+      type: "hearing_answer";
+      at: number;
+      question: number;
+      correct: boolean;
+      /** Versuchsnummer des bestandenen Hearings (1 = erster Anlauf). */
+      attempt?: number;
+    };
 
 /** Zeitbudget, auf das der Zeitfaktor bezogen wird (Minuten). */
 export const SCORE_BUDGET_MIN = 90;
