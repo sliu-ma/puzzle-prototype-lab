@@ -148,8 +148,8 @@ export function IntroScreen({
   const finish = () => {
     envelope.ask({
       nr: 1,
-      ort: "Küchentisch · Elviras Haus",
-      etappeLabel: "Umschlag 1 · Küchentisch",
+      ort: "Alter Bahnhof · Fahrkartenschalter",
+      etappeLabel: "Umschlag 1 · Alter Bahnhof",
       onConfirm: () => {
         markIntroSeen();
         onDone();
