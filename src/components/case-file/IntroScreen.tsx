@@ -5,7 +5,7 @@ import {
   Compass,
   Clock,
   Search,
-  TreePine,
+  
   Footprints,
   TriangleAlert,
   Play,
@@ -147,17 +147,10 @@ export function IntroScreen({
 
             <ul className="mt-5 space-y-4 text-[15px] leading-relaxed text-foreground/85">
               <li className="flex gap-3">
-                <TreePine className="mt-0.5 h-5 w-5 shrink-0 text-stamp" />
-                <span>
-                  Maja ist heute 15. Seit Jakobs Tod war sie nicht mehr hier. Sie
-                  will noch einmal zum alten Forsthaus.
-                </span>
-              </li>
-              <li className="flex gap-3">
                 <Footprints className="mt-0.5 h-5 w-5 shrink-0 text-stamp" />
                 <span>
-                  Der Weg führt mitten durch den Wald. Plötzlich erkennt sie den
-                  grossen Felsen. <strong>Die Lichtung.</strong>
+                  Zum ersten Mal seit Jakobs Tod ist Maja wieder hier. Sie erkennt
+                  den grossen Felsen. <strong>Die Lichtung.</strong>
                 </span>
               </li>
               <li className="flex gap-3">
@@ -182,8 +175,8 @@ export function IntroScreen({
             </div>
 
             <p className="mt-4 text-[15px] leading-relaxed text-foreground/85">
-              Maja bleibt stehen. Ihre Lichtung soll gerodet werden. Sie geht weiter
-              zum Forsthaus. Die Tür steht offen. Dann hört sie Schritte.
+              Ihre Lichtung soll gerodet werden. Am Forsthaus steht die Tür offen.
+              Dann hört sie Schritte.
             </p>
 
             <div className="mt-4 rounded-sm border border-border bg-paper-deep/40 p-4 font-serif italic text-[15px] leading-relaxed text-foreground/90">
@@ -223,27 +216,17 @@ export function IntroScreen({
               >
                 <p>Liebe Maja</p>
                 <p className="mt-3">
-                  Wenn du diesen Brief liest, bist du wieder im Forsthaus.
-                  Vielleicht hast du schon gesehen, was hier passieren soll.
-                </p>
-                <p className="mt-3">
                   <strong>
                     Heute Abend um {getHearingClock() ?? "19:00"} Uhr entscheidet
-                    der Gemeinderat über den Bau eines Gaskraftwerks auf der
-                    Waldlichtung.
+                    der Gemeinderat über das Gaskraftwerk auf der Waldlichtung.
                   </strong>{" "}
                   Dafür müsste ein Teil des Waldes gerodet werden.
                 </p>
                 <p className="mt-3">
-                  Ich habe in den letzten Monaten Informationen gesammelt. Ich
-                  glaube, dass wichtige Fakten noch fehlen. Ich konnte meine Arbeit
-                  nicht fertigstellen. Jetzt brauche ich deine Hilfe.
-                </p>
-                <p className="mt-3">
-                  Folge meinen Spuren und sammle alle Hinweise. Wenn wir rechtzeitig
-                  alle Fakten zusammenbringen, können wir die Rodung vielleicht noch
-                  verhindern. <strong>Fang beim alten Bahnhof an.</strong> Und
-                  vergiss nie unser Versprechen.
+                  Ich habe Fakten gesammelt, aber meine Arbeit nicht fertigstellen
+                  können. Folge meinen Spuren, sammle alle Hinweise.{" "}
+                  <strong>Fang beim alten Bahnhof an.</strong> Und vergiss nie
+                  unser Versprechen.
                 </p>
                 <p className="mt-4 text-right italic text-foreground/70">
                   Dein Opa Jakob
@@ -264,32 +247,25 @@ export function IntroScreen({
             <h2 className="mt-2 font-serif text-3xl font-bold sm:text-4xl">
               Fünf Etappen. Ein Hearing.
             </h2>
-            <p className="mt-4 text-[15px] leading-relaxed text-foreground/85">
-              Ihr habt bis <strong>{getHearingClock() ?? "19:00"} Uhr</strong>, um
-              Jakobs Spuren zu folgen. An jedem Ort im Dorf wartet ein Rätsel. Löst
-              ihr es, schaltet sich die nächste Etappe frei.
-            </p>
             <ul className="mt-5 space-y-3 text-[15px]">
               <li className="flex gap-3">
                 <Compass className="mt-0.5 h-5 w-5 shrink-0 text-stamp" />
                 <span>
-                  <strong>QR-Code scannen</strong>, jede Etappe startet mit einem
-                  Code, den ihr im Dorf findet.
+                  <strong>QR-Code scannen</strong>, an jedem Ort im Dorf.
                 </span>
               </li>
               <li className="flex gap-3">
                 <Search className="mt-0.5 h-5 w-5 shrink-0 text-stamp" />
                 <span>
-                  <strong>Rätsel lösen</strong>, lest genau, wählt bewusst. Nach 3,
-                  6 und 9 Minuten gibt es Tipps.
+                  <strong>Rätsel lösen</strong>, das schaltet die nächste Etappe
+                  frei.
                 </span>
               </li>
               <li className="flex gap-3">
                 <Clock className="mt-0.5 h-5 w-5 shrink-0 text-stamp" />
                 <span>
-                  <strong>Zeit im Blick</strong>, um{" "}
-                  {getHearingClock() ?? "19:00"} Uhr beginnt die
-                  Gemeinderatssitzung. Bis dahin müsst ihr im Saal sein.
+                  <strong>Bis {getHearingClock() ?? "19:00"} Uhr</strong> im
+                  Gemeindesaal sein.
                 </span>
               </li>
             </ul>
