@@ -25,7 +25,8 @@ Von etwa 620 auf etwa 300 Zeichen.
 ## Karte «So spielt ihr»
 
 - Der Einleitungsabsatz entfällt; die drei Icon-Punkte sagen dasselbe.
-- Jeder Punkt wird auf eine Zeile gekürzt: «QR-Code scannen», «Rätsel lösen, Tipps nach 3/6/9 Minuten», «Bis {Uhrzeit} im Gemeindesaal».
+- Jeder Punkt wird auf eine Zeile gekürzt: «QR-Code scannen», «Rätsel lösen, 
+- Tipps nach 3/6/9 Minuten» entfernen das wird im Rätsel auch nochmals aufgegriffen (Pop-Up beim ersten mal Tipp)
 - Die Uhrzeit steht dann einmal statt dreimal.
 
 ## Landing-Karte
