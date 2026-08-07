@@ -151,7 +151,7 @@ function AktePage() {
               Etappe 3 · Wald-Lichtung
             </h1>
             <p className="mt-0.5 font-serif italic text-sm text-foreground/70 sm:text-base">
-              Elviras Beobachtungsposten
+              Jakobs Notizbuch beim Forsthaus
             </p>
           </div>
           <Stamp rotate={-6}>Vertraulich</Stamp>
