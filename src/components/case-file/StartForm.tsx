@@ -153,11 +153,11 @@ export function StartForm({
     <div className="mt-8 space-y-6">
       <div className="space-y-3 text-[15px] leading-relaxed text-foreground/90">
         <p>
-          <strong className="font-serif">Maja, 17,</strong> findet das Haus ihrer
-          Grosstante leer. Auf dem Tisch ein Brief: Heute Abend stimmt der
-          Gemeinderat über ein{" "}
-          <span className="ink-underline">Gaskraftwerk</span> ab. Elvira hat
-          fünf Hinweise im Dorf hinterlegt.
+          <strong className="font-serif">Maja, 17,</strong> räumt das Haus ihres
+          verstorbenen Grossvaters Jakob. Heute Abend stimmt der Gemeinderat
+          über ein Bauprojekt auf der{" "}
+          <span className="ink-underline">Waldlichtung</span> ab. Jakob hat fünf
+          Hinweise im Dorf hinterlassen.
         </p>
       </div>
 
