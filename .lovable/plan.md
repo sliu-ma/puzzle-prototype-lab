@@ -5,10 +5,8 @@
 Text exakt wie vorgegeben:
 
 - Einleitung: „Am Forsthaus steht die Tür offen. Dann hört sie Schritte."
-- Eine Sprechblase (Zitat-Block) mit dem vollständigen Dialog:
-  „Maja! Du bist wirklich gekommen, ich wusste nicht, ob ich noch mit dir rechnen darf." Der Mann atmet erleichtert aus. „Ich bin ein Freund deines Grossvaters. Bevor er starb, hat er mir diesen Umschlag für dich gegeben."
-- Der Dringlichkeits-Block (rot, mit Uhr-Icon) enthält:
-  „Aber es bleibt keine Zeit. In 90 Minuten entscheidet der Gemeinderat über das Gaskraftwerk hier, auf eurer Lichtung. Du musst dich beeilen."
+- Ein einziger Sprechblasen-Block (Zitat) mit dem vollständigen Dialog:
+  „Maja! Du bist wirklich gekommen, ich wusste nicht, ob ich noch mit dir rechnen darf." Der Mann atmet erleichtert aus. „Ich bin ein Freund deines Grossvaters. Bevor er starb, hat er mir diesen Umschlag für dich gegeben." „Aber es bleibt keine Zeit. In 90 Minuten entscheidet der Gemeinderat über das Gaskraftwerk hier, auf eurer Lichtung. Du musst dich beeilen."
 
 ## 2. Jakobs Brief
 
