@@ -202,23 +202,14 @@ export function IntroScreen({
             </p>
 
             <div className="mt-4 rounded-sm border border-border bg-paper-deep/40 p-4 font-serif italic text-[15px] leading-relaxed text-foreground/90">
-              „Du musst Maja sein. Ich wusste gar nicht, dass du überhaupt noch
-              einmal zurückkommst. Ich bin ein Freund deines Grossvaters – kurz
-              vor seinem Tod hat er mir diesen Umschlag für dich gegeben.“
+              „Maja! Du bist wirklich gekommen, ich wusste nicht, ob ich noch mit
+              dir rechnen darf.“ Der Mann atmet erleichtert aus. „Ich bin ein
+              Freund deines Grossvaters. Bevor er starb, hat er mir diesen
+              Umschlag für dich gegeben.“ „Aber es bleibt keine Zeit. In{" "}
+              <strong className="not-italic">90 Minuten</strong> entscheidet der
+              Gemeinderat über das Gaskraftwerk hier, auf eurer Lichtung. Du
+              musst dich beeilen.“
             </div>
-
-            <div className="mt-3 flex gap-3 rounded-sm border-2 border-destructive/50 bg-destructive/5 p-4">
-              <Clock className="mt-0.5 h-5 w-5 shrink-0 text-destructive" />
-              <p className="font-serif italic text-[15px] leading-relaxed text-foreground/90">
-                „Und du kommst gerade rechtzeitig: Heute Abend stimmt der
-                Gemeinderat über das Gaskraftwerk ab. In{" "}
-                <strong className="not-italic">90 Minuten</strong> beginnt die
-                Sitzung. Was Jakob begonnen hat, kann nur noch jemand
-                fertigmachen, der jetzt losläuft.“
-              </p>
-            </div>
-
-
 
             {!letterOpen ? (
               <button
@@ -241,25 +232,20 @@ export function IntroScreen({
               <div className="animate-letter-unfold mt-5 rounded-sm border border-border bg-paper-deep/40 p-5 font-serif text-[15px] leading-relaxed text-foreground/90 shadow-inner">
                 <p>Liebe Maja</p>
                 <p className="mt-3">
-                  Wenn du diesen Brief liest, bin ich nicht mehr da. Aber unser Ort
-                  ist es vielleicht auch bald nicht mehr.
-                </p>
-                <p className="mt-3">
-                  <strong>
-                    Wenn du diesen Brief liest, bin ich nicht mehr da. Aber unser Ort ist es vielleicht auch bald nicht mehr.Wenn du diesen Brief liest, steht die Entscheidung über das Gaskraftwerk auf der Waldlichtung an.
-                  </strong>
-                </p>
-
-                <p className="mt-3">
-                  Ich habe Fakten gesammelt, aber meine Arbeit nicht fertigstellen
-                  können. Folge meinen Spuren, sammle alle Hinweise. Und vergiss nie
-                  unser Versprechen.
+                  Unser Ort ist in Gefahr. Ich habe Hinweise gesammelt, die
+                  zeigen: Man darf diesen Wald nicht roden. Ich konnte die Arbeit
+                  nicht mehr zu Ende bringen. Das musst jetzt du tun. Folge
+                  meinen Spuren. Und halte unser Versprechen.
                 </p>
                 <p className="mt-4 text-right italic text-foreground/70">
                   Dein Opa Jakob
                 </p>
               </div>
             )}
+          </PaperCard>
+        )}
+
+
           </PaperCard>
         )}
 
