@@ -84,40 +84,37 @@ export function PrologueOverlay({
         </button>
       )}
 
-      {/* Gemeinsamer Rahmen: Titel-/Schlusstafel sind genau so hoch wie das Video (16:9). */}
-      <div className="relative flex w-full max-w-[min(100vw,calc(100svh*16/9))] items-center justify-center overflow-hidden aspect-video">
-        {phase === "video" ? (
-          <video
-            ref={videoRef}
-            src={PROLOGUE_VIDEO_URL}
-            controls
-            playsInline
-            preload="auto"
-            onEnded={() => setPhase("outro")}
-            className="h-full w-full animate-fade-in object-contain"
-          />
-        ) : (
-          <div className="w-full px-5 text-center sm:px-6">
-            {phase === "intro" && (
-              <div className="animate-prologue-fade">
-                <p className="font-mono-typed uppercase tracking-[0.25em] text-kraft text-[clamp(0.7rem,2.6vw,2.6rem)] sm:tracking-[0.35em]">
-                  {dateLabel}
-                </p>
-                <p className="mt-4 font-serif leading-[1.15] text-paper text-[clamp(1.5rem,6vw,7rem)] sm:mt-6">
-                  {PROLOGUE_INTRO_PLACE}
-                </p>
-              </div>
-            )}
-            {(phase === "outro" || phase === "done") && (
-              <div className="animate-prologue-fade-slow">
-                <p className="font-serif leading-[1.2] text-paper/95 text-[clamp(1.35rem,5vw,5.5rem)]">
-                  {PROLOGUE_OUTRO_TEXT}
-                </p>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
+      {phase === "video" ? (
+        <video
+          ref={videoRef}
+          src={PROLOGUE_VIDEO_URL}
+          controls
+          playsInline
+          preload="auto"
+          onEnded={() => setPhase("outro")}
+          className="max-h-full w-full animate-fade-in"
+        />
+      ) : (
+        <div className="w-full max-w-6xl px-5 text-center sm:px-6">
+          {phase === "intro" && (
+            <div className="animate-prologue-fade">
+              <p className="font-mono-typed uppercase tracking-[0.25em] text-kraft text-[clamp(0.7rem,2.6vw,2.6rem)] sm:tracking-[0.35em]">
+                {dateLabel}
+              </p>
+              <p className="mt-4 font-serif leading-[1.15] text-paper text-[clamp(1.5rem,6vw,7rem)] sm:mt-6">
+                {PROLOGUE_INTRO_PLACE}
+              </p>
+            </div>
+          )}
+          {(phase === "outro" || phase === "done") && (
+            <div className="animate-prologue-fade-slow">
+              <p className="font-serif leading-[1.2] text-paper/95 text-[clamp(1.35rem,5vw,5.5rem)]">
+                {PROLOGUE_OUTRO_TEXT}
+              </p>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
