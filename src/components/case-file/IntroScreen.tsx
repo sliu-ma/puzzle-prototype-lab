@@ -227,8 +227,8 @@ export function IntroScreen({
                 <p>Liebe Maja</p>
                 <p className="mt-3">
                   <strong>
-                    Heute Abend um {getHearingClock() ?? "19:00"} Uhr entscheidet
-                    der Gemeinderat über das Gaskraftwerk auf der Waldlichtung.
+                    Heute&nbsp;entscheidet der Gemeinderat über das Gaskraftwerk
+                    auf der Waldlichtung.
                   </strong>{" "}
                   Dafür müsste ein Teil des Waldes gerodet werden.
                 </p>
