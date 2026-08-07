@@ -240,3 +240,33 @@ input, textarea, select {
 }
 
 
+/* Hinweis-Wippen für «Tipp auf den Brief». */
+@keyframes tap-hint {
+  0%, 100% { transform: translateY(0); opacity: 0.75; }
+  50% { transform: translateY(4px); opacity: 1; }
+}
+
+@utility animate-tap-hint {
+  animation: tap-hint 1400ms ease-in-out infinite;
+}
+
+/* Umschlag atmet leicht, bis er angetippt wird. */
+@keyframes envelope-breathe {
+  0%, 100% { transform: translateY(0) rotate(-0.4deg); }
+  50% { transform: translateY(-3px) rotate(0.4deg); }
+}
+
+@utility animate-envelope-breathe {
+  animation: envelope-breathe 3200ms ease-in-out infinite;
+}
+
+/* Brief entfaltet sich aus dem Umschlag. */
+@keyframes letter-unfold {
+  0% { opacity: 0; transform: translateY(-12px) scaleY(0.82) rotate(-1.6deg); transform-origin: top center; }
+  60% { opacity: 1; transform: translateY(0) scaleY(1.02) rotate(0.3deg); }
+  100% { opacity: 1; transform: translateY(0) scaleY(1) rotate(-0.4deg); }
+}
+
+@utility animate-letter-unfold {
+  animation: letter-unfold 800ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
