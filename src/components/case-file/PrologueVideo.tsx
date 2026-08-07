@@ -92,7 +92,7 @@ export function PrologueOverlay({
           playsInline
           preload="auto"
           onEnded={() => setPhase("outro")}
-          className="max-h-full w-full animate-fade-in"
+          className="animate-fade-in aspect-video max-h-full max-w-full object-contain"
         />
       ) : (
         <div className="w-full max-w-6xl px-5 text-center sm:px-6">
