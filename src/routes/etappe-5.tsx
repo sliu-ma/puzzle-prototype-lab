@@ -193,16 +193,15 @@ function AktePage() {
               [Altes Wasserkraftwerk · {getFrozenClock("maya-clock-akte-005")} Uhr]
             </p>
             <blockquote className="mt-5 border-l-4 border-stamp pl-4 text-[15px] leading-relaxed">
-              Im staubigen Abstellraum des alten Wasserkraftwerks wartet Marlene
-              Vogt vom Umweltamt. „Gut, dass du da bist. Der Gemeinderat
-              entscheidet heute Abend über das Kraftwerk, doch die Grundlage
-              sind fehlerhafte Gutachten.“
+              Im alten Wasserkraftwerk wartet Marlene Vogt. Vor ihr liegen
+              mehrere Ordner. „Jakob hat in den letzten Monaten viele
+              Informationen gesammelt. Ich habe seine Unterlagen ergänzt.“
               <br />
               <br />
-              Sie legt einen Stapel Dokumente auf den Tisch. „Ich habe die
-              wichtigsten Fakten geprüft. In den Gutachten zu Solarenergie, Gas
-              und Kohle sind fünf Aussagen falsch. Findet sie, bevor die
-              Entscheidung fällt.“&nbsp;&nbsp;
+              Sie legt drei Gutachten auf den Tisch. „Der Gemeinderat
+              entscheidet heute Abend. Leider enthalten diese Gutachten der
+              Gemeinde mehrere Fehler. Finde die fünf falschen Aussagen. Nur so
+              können wir rechtzeitig die vollständigen Fakten vorlegen.“&nbsp;&nbsp;
             </blockquote>
             <div className="mt-6 flex justify-end">
               <button
