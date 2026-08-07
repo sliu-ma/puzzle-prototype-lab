@@ -118,7 +118,7 @@ export function EnvelopeDialog({
 
             <DialogTitle asChild>
               <h2 className="mt-4 text-center font-serif text-2xl font-bold sm:text-3xl">
-                Öffne jetzt Umschlag {nr}
+                Öffne jetzt den Umschlag {stageGlyph(nr)}
               </h2>
             </DialogTitle>
 
