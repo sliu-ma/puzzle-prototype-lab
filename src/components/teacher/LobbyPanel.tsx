@@ -76,7 +76,7 @@ export function LobbyPanel({
   password: string;
   code: string;
   status: string;
-  onStart: () => void;
+  onStart: (auto: boolean) => void;
   busy: boolean;
 }) {
   const { report, loading, reload } = useRoundReport(password, code, 4000);
@@ -84,13 +84,14 @@ export function LobbyPanel({
   const [autoStart, setAutoStart] = useState(true);
   const autoFired = useRef(false);
 
-  // Video zu Ende -> Runde genau einmal starten (Countdown auf allen Handys).
+  // Video zu Ende -> Runde genau einmal starten (ohne Rückfrage, da bewusst angekreuzt).
   const handleVideoEnded = () => {
     if (!autoStart || autoFired.current) return;
     if (status !== "lobby" || busy || teams.length === 0) return;
     autoFired.current = true;
-    onStart();
+    onStart(true);
   };
+
 
   const removeTeam = async (teamId: string) => {
     if (!confirm("Dieses Team wirklich entfernen?")) return;
@@ -154,7 +155,7 @@ export function LobbyPanel({
 
       <button
         type="button"
-        onClick={onStart}
+        onClick={() => onStart(false)}
         disabled={busy || status !== "lobby" || teams.length === 0}
         className="mt-3 flex min-h-[48px] w-full items-center justify-center gap-2 rounded-sm bg-primary px-4 font-serif text-base font-semibold text-primary-foreground disabled:opacity-50"
       >
