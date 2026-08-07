@@ -124,14 +124,19 @@ export function IntroScreen({
               className="mt-4 flex min-h-[48px] w-full items-center justify-center gap-2 rounded-sm bg-primary px-4 font-serif text-base font-semibold text-primary-foreground"
             >
               <Play className="h-4 w-4" />
-              Vorgeschichte abspielen
+              {videoWatched ? "Vorgeschichte nochmals ansehen" : "Vorgeschichte abspielen"}
             </button>
+            {!videoWatched && (
+              <p className="mt-3 font-mono-typed text-[11px] uppercase tracking-wider text-muted-foreground">
+                Weiter geht es, sobald die Vorgeschichte gesehen wurde.
+              </p>
+            )}
             {prologueOpen && (
               <PrologueOverlay
                 allowSkip={false}
                 onFinished={() => {
                   setPrologueOpen(false);
-                  setStep(step + 1);
+                  setVideoWatched(true);
                 }}
               />
             )}
