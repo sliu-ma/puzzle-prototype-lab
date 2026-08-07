@@ -142,7 +142,11 @@ export function ReportPanel({
             className="rounded-sm border border-border bg-card p-2 text-center"
           >
             <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
-              E{s.stage}
+            <p
+              className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground"
+              title={stageLabelA11y(s.stage)}
+            >
+              {stageGlyph(s.stage)}
             </p>
             <p className="font-mono-typed mt-0.5 font-bold tabular-nums">
               {s.minutes === null ? "–" : `${s.minutes}′`}
