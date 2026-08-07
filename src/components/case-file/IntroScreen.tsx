@@ -179,9 +179,6 @@ export function IntroScreen({
               </p>
             </div>
 
-            <p className="mt-4 text-[15px] leading-relaxed text-foreground/85">
-              Ihre Lichtung soll gerodet werden.
-            </p>
 
           </PaperCard>
         )}
