@@ -44,7 +44,7 @@ const HINTS_003: Hint[] = [
     unlockMin: 3,
     label: "Tipp 1",
     title: "Schau dir die Unterlagen genau an",
-    body: "Wo hat Elvira geschlafen, und von wo aus ist sie am nächsten Morgen aufgebrochen?",
+    body: "Wo hat Jakob geschlafen, und von wo aus ist er am nächsten Morgen aufgebrochen?",
   },
   {
     id: 1,
