@@ -1,5 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 
+import { stageGlyph, stageLabel } from "@/lib/stage-symbols";
+
 interface SuccessBurstProps {
   show: boolean;
   onDone?: () => void;
@@ -120,7 +122,7 @@ export function SuccessBurst({
             style={{ animation: "sb-text 400ms ease-out 600ms both" }}
           >
             <p className="font-mono-typed text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-              Etappe {n} von 5 gelöst
+              {stageLabel(n)} gelöst · {n} von 5
             </p>
             <div className="flex items-center gap-2">
               {[1, 2, 3, 4, 5].map((i) => {
@@ -143,10 +145,12 @@ export function SuccessBurst({
                         : "none",
                     }}
                     aria-label={
-                      done ? `Etappe ${i} gelöst` : `Etappe ${i} offen`
+                      done
+                        ? `${stageLabel(i)} gelöst`
+                        : `${stageLabel(i)} offen`
                     }
                   >
-                    {done ? "✓" : i}
+                    {done ? "✓" : stageGlyph(i)}
                   </span>
                 );
               })}

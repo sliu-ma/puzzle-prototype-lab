@@ -24,11 +24,11 @@ import { useScrollToTopOnChange } from "@/hooks/use-scroll-top";
 export const Route = createFileRoute("/etappe-5")({
   head: () => ({
     meta: [
-      { title: "Etappe 5, Altes Wasserkraftwerk" },
+      { title: "Etappe Stern, Altes Wasserkraftwerk" },
       {
         name: "description",
         content:
-          "Etappe 5: Marlene Vogt vom Umweltamt zeigt dir drei Gutachten. Finde die fünf falschen Aussagen, bevor im Gemeindesaal abgestimmt wird.",
+          "Etappe Stern: Marlene Vogt vom Umweltamt zeigt dir drei Gutachten. Finde die fünf falschen Aussagen, bevor im Gemeindesaal abgestimmt wird.",
       },
     ],
   }),
@@ -68,9 +68,9 @@ function AkteGated() {
         stage={5}
         token={AKTE_005_TOKEN}
         storageKey="akte-005-unlocked"
-        title={<>Etappe 5, QR-Code am Wasserkraftwerk scannen</>}
+        title={<>Etappe ★, QR-Code am Wasserkraftwerk scannen</>}
         description="Letzte Etappe vor dem Hearing. Scanne den QR-Code am Tor des alten Wasserkraftwerks."
-        label="Etappe 5 · Versiegelt"
+        label="Etappe ★ · Versiegelt"
       >
         <AktePage />
       </QRGate>
@@ -135,7 +135,7 @@ function AktePage() {
               ← Zurück zur Übersicht
             </Link>
             <h1 className="mt-1.5 font-serif text-2xl font-bold leading-tight sm:mt-2 sm:text-5xl">
-              Etappe 5 · Wasserkraftwerk
+              Etappe ★ · Wasserkraftwerk
             </h1>
             <p className="mt-0.5 font-serif italic text-sm text-foreground/70 sm:text-base">
               Treffen mit Marlene Vogt
@@ -296,7 +296,7 @@ function AktePage() {
         )}
 
         <p className="mt-12 text-center font-mono-typed text-xs uppercase tracking-[0.2em] text-muted-foreground">
-         , Etappe 5 · Altes Wasserkraftwerk
+         , Etappe ★ · Altes Wasserkraftwerk
         </p>
       </div>
 

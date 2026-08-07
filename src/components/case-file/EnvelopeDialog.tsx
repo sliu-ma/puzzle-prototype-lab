@@ -7,6 +7,8 @@ import {
 } from "@/components/ui/dialog";
 import { ArrowRight, MapPin } from "lucide-react";
 
+import { stageGlyph, stageLabel } from "@/lib/stage-symbols";
+
 /* ---------- SVG Envelope Illustration ---------- */
 
 function EnvelopeArt({ nr }: { nr: number }) {
@@ -16,7 +18,7 @@ function EnvelopeArt({ nr }: { nr: number }) {
         viewBox="0 0 320 220"
         className="h-full w-full drop-shadow-lg"
         role="img"
-        aria-label={`Umschlag Nummer ${nr}`}
+        aria-label={`Umschlag ${stageLabel(nr)}`}
       >
         {/* Body */}
         <rect
@@ -60,7 +62,7 @@ function EnvelopeArt({ nr }: { nr: number }) {
             fontWeight="700"
             fill="#f5ecd7"
           >
-            {nr}
+            {stageGlyph(nr)}
           </text>
         </g>
         <defs>
@@ -107,7 +109,7 @@ export function EnvelopeDialog({
 
           <div className="relative px-6 pb-6 pt-8 sm:px-8">
             <p className="text-center font-mono-typed text-[11px] uppercase tracking-[0.22em] text-stamp">
-              {etappeLabel ?? `Umschlag ${nr}`}
+              {etappeLabel ?? `Umschlag ${stageGlyph(nr)}`}
             </p>
 
             <div className="mt-4">
