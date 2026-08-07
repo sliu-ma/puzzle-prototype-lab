@@ -239,6 +239,18 @@ input, textarea, select {
     radial-gradient(circle at 75% 80%, oklch(0.24 0.02 40 / 0.5) 0%, transparent 50%);
 }
 
+/* Einheitliche 16:9-Bühne: Video sowie Intro- und Outrotafel nutzen immer
+   exakt dieselbe, maximal mögliche Fläche innerhalb des Viewports. */
+@utility prologue-frame {
+  container-type: size;
+  aspect-ratio: 16 / 9;
+  width: min(calc(100vw - 1rem), calc((100dvh - 1rem) * 16 / 9));
+  max-width: none;
+  flex: none;
+  overflow: hidden;
+  background-color: oklch(0.08 0.005 60);
+}
+
 
 /* Hinweis-Wippen für «Tipp auf den Brief». */
 @keyframes tap-hint {
