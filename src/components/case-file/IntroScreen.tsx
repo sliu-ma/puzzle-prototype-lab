@@ -263,18 +263,19 @@ export function IntroScreen({
         {step === 2 && (
           <PaperCard rotate={-0.2} tape="top-left">
             <div className="absolute right-4 top-6 sm:right-8 sm:top-8">
-              <Stamp rotate={-8}>Küchentisch</Stamp>
+              <Stamp rotate={-8}>Der Brief</Stamp>
             </div>
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
               Der Brief
             </p>
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-              Maja sitzt im Zug nach Speicher …
+              Maja räumt Grossvaters Haus …
             </h2>
             <p className="mt-3 text-[15px] leading-relaxed text-foreground/85">
-              Ihr letzter Sommer vor der Matura. Grosstante Elvira hat sie zu
-              sich aufs Land eingeladen. Doch als sie ankommt, ist das Haus
-              leer. Auf dem Küchentisch liegt nur ein Brief:
+              Ihr letzter Sommer vor der Matura. Ihr Grossvater Jakob ist vor
+              kurzem gestorben, und Maja hilft, sein Haus zu räumen. Zwischen
+              alten Karten und Notizbüchern findet sie einen Brief, adressiert
+              an sie:
             </p>
 
 
@@ -285,23 +286,20 @@ export function IntroScreen({
             >
               <Mail className="mb-2 h-4 w-4 text-stamp" />
               <p>
-                „Liebe Maja, falls du das liest, bin ich gerade im Dorf
-                unterwegs. Du erinnerst dich an unsere Hütte im Wald, dort, wo
-                wir als Kind stundenlang Vögel beobachtet haben? Die Gemeinde
-                sucht wegen drohender Stromengpässe dringend nach Lösungen und
-                plant dort ein neues <strong>Gaskraftwerk</strong>. Heute Abend
-                um <strong>{getHearingClock() ?? "19:00"} Uhr</strong> findet
-                die Gemeinderatssitzung statt, dann wird abgestimmt.
+                „Liebe Maja, wenn du das liest, bin ich nicht mehr da. Du
+                erinnerst dich an die Lichtung im Wald, wo wir stundenlang Vögel
+                beobachtet haben? Dort soll gebaut werden. Heute Abend um{" "}
+                <strong>{getHearingClock() ?? "19:00"} Uhr</strong> entscheidet
+                der Gemeinderat darüber.
               </p>
               <p className="mt-3">
-                Ich bin sicher, dass wir mit den richtigen Fakten eine viel
-                nachhaltigere Lösung für Speicher zeigen können! Ich bin
-                unterwegs und sammle die letzten Daten. Kannst du mir helfen?
-                Fang am <strong>alten Bahnhof</strong> an, dort liegt ein
-                Hinweis für dich."
+                Ich habe jahrelang Daten gesammelt und im Dorf Hinweise für dich
+                versteckt. Wenn du ihnen folgst, hast du alles, was der
+                Gemeinderat wissen muss. Fang am{" "}
+                <strong>alten Bahnhof</strong> an.“
               </p>
               <p className="mt-4 text-right italic text-foreground/70">
-               , Elvira
+               , Jakob
               </p>
             </div>
           </PaperCard>
