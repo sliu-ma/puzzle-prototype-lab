@@ -81,16 +81,17 @@ export function LobbyPanel({
 }) {
   const { report, loading, reload } = useRoundReport(password, code, 4000);
   const teams = report?.teams ?? [];
-  const [autoStart, setAutoStart] = useState(true);
-  const autoFired = useRef(false);
+  const [prologueOpen, setPrologueOpen] = useState(false);
+  const fired = useRef(false);
 
-  // Video zu Ende -> Runde genau einmal starten (ohne Rückfrage, da bewusst angekreuzt).
-  const handleVideoEnded = () => {
-    if (!autoStart || autoFired.current) return;
-    if (status !== "lobby" || busy || teams.length === 0) return;
-    autoFired.current = true;
+  // Startknopf -> Vorgeschichte im Vollbild -> Runde genau einmal starten.
+  const handlePrologueFinished = () => {
+    setPrologueOpen(false);
+    if (fired.current) return;
+    fired.current = true;
     onStart(true);
   };
+
 
 
   const removeTeam = async (teamId: string) => {
