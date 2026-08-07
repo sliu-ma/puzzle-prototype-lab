@@ -48,7 +48,7 @@ export function IntroScreen({
   const [letterOpen, setLetterOpen] = useState(false);
   const [prologueOpen, setPrologueOpen] = useState(false);
   const [videoWatched, setVideoWatched] = useState(false);
-  const envelope = useEnvelopePrompt();
+  const [showStartTimer, setShowStartTimer] = useState(false);
   useScrollToTopOnChange(step);
 
   // In einer Klassenrunde zeigt die Lehrperson das Video am Beamer.
