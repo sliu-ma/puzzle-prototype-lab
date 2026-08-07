@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { RefreshCw, Trash2, Play, Users } from "lucide-react";
-import { PrologueVideo } from "@/components/case-file/PrologueVideo";
+import { PrologueOverlay } from "@/components/case-file/PrologueVideo";
 import { teacherRoundReport, teacherDeleteTeam } from "@/lib/rounds.functions";
 import { cn } from "@/lib/utils";
 
@@ -81,16 +81,17 @@ export function LobbyPanel({
 }) {
   const { report, loading, reload } = useRoundReport(password, code, 4000);
   const teams = report?.teams ?? [];
-  const [autoStart, setAutoStart] = useState(true);
-  const autoFired = useRef(false);
+  const [prologueOpen, setPrologueOpen] = useState(false);
+  const fired = useRef(false);
 
-  // Video zu Ende -> Runde genau einmal starten (ohne Rückfrage, da bewusst angekreuzt).
-  const handleVideoEnded = () => {
-    if (!autoStart || autoFired.current) return;
-    if (status !== "lobby" || busy || teams.length === 0) return;
-    autoFired.current = true;
+  // Startknopf -> Vorgeschichte im Vollbild -> Runde genau einmal starten.
+  const handlePrologueFinished = () => {
+    setPrologueOpen(false);
+    if (fired.current) return;
+    fired.current = true;
     onStart(true);
   };
+
 
 
   const removeTeam = async (teamId: string) => {
@@ -138,24 +139,11 @@ export function LobbyPanel({
         ))}
       </ul>
 
-      {status === "lobby" && (
-        <div className="mt-3">
-          <PrologueVideo onEnded={handleVideoEnded} />
-          <label className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
-            <input
-              type="checkbox"
-              checked={autoStart}
-              onChange={(e) => setAutoStart(e.target.checked)}
-              className="h-4 w-4 accent-[var(--color-stamp)]"
-            />
-            Nach dem Video automatisch starten
-          </label>
-        </div>
-      )}
+      {prologueOpen && <PrologueOverlay onFinished={handlePrologueFinished} />}
 
       <button
         type="button"
-        onClick={() => onStart(false)}
+        onClick={() => setPrologueOpen(true)}
         disabled={busy || status !== "lobby" || teams.length === 0}
         className="mt-3 flex min-h-[48px] w-full items-center justify-center gap-2 rounded-sm bg-primary px-4 font-serif text-base font-semibold text-primary-foreground disabled:opacity-50"
       >
@@ -167,8 +155,9 @@ export function LobbyPanel({
       <p className="mt-1 text-xs text-muted-foreground">
         {status !== "lobby"
           ? "Die Runde läuft. Teams können mit dem Rundencode weiterhin beitreten, ein erneuter Start ist nicht möglich."
-          : "Alle Geräte zählen kurz herunter und öffnen dann das Briefing. Der Timer läuft ab jetzt für alle gleich."}
+          : "Zuerst läuft die Vorgeschichte im Vollbild. Danach zählen alle Geräte kurz herunter und öffnen das Briefing."}
       </p>
+
 
     </div>
   );

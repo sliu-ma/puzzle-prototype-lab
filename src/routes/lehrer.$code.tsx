@@ -393,8 +393,7 @@ function RoundPage() {
           code={round.code}
           status={round.status}
           busy={busy}
-          onStart={(auto) => {
-            if (!auto && !confirm("Runde jetzt für alle starten?")) return;
+          onStart={() => {
             void run(async () => {
               await teacherStartRound({ data: { password, code: round.code } });
               setStep("live");

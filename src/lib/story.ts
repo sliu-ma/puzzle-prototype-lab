@@ -4,7 +4,18 @@ import prologueAsset from "@/assets/vorgeschichte.mp4.asset.json";
 export const PROLOGUE_VIDEO_URL: string = prologueAsset.url;
 export const PROLOGUE_TITLE = "Die Vorgeschichte";
 export const PROLOGUE_SUBTITLE = "Maja, Jakob und das Versprechen an der Lichtung";
-export const PROLOGUE_INTRO_TEXT =
-  "Vor einem Jahr, an einer Lichtung mitten im Wald";
+
+/** Heutiges Datum minus ein Jahr, ausgeschrieben (z. B. «7. August 2025»). */
+export function prologueIntroDate(now: Date = new Date()) {
+  const d = new Date(now);
+  d.setFullYear(d.getFullYear() - 1);
+  return d.toLocaleDateString("de-CH", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+}
+
+export const PROLOGUE_INTRO_PLACE = "an einer Lichtung mitten im Wald";
 export const PROLOGUE_OUTRO_TEXT =
   "Wenige Monate später starb Jakob nach kurzer Krankheit.";

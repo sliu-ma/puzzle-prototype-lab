@@ -228,3 +228,15 @@ input, textarea, select {
   animation: prologue-card-fade 900ms ease-out both;
 }
 
+@utility animate-prologue-fade-slow {
+  animation: prologue-card-fade 1600ms ease-out both;
+}
+
+/* Feine Körnung für die Tafeln der Vorgeschichte. */
+@utility prologue-grain {
+  background-image:
+    radial-gradient(circle at 25% 20%, oklch(0.28 0.02 60 / 0.55) 0%, transparent 45%),
+    radial-gradient(circle at 75% 80%, oklch(0.24 0.02 40 / 0.5) 0%, transparent 50%);
+}
+
+

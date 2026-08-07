@@ -8,10 +8,11 @@ import {
   TreePine,
   Footprints,
   TriangleAlert,
+  Play,
 } from "lucide-react";
 import { PaperCard } from "@/components/case-file/PaperCard";
 import { Stamp } from "@/components/case-file/Stamp";
-import { PrologueVideo } from "@/components/case-file/PrologueVideo";
+import { PrologueOverlay } from "@/components/case-file/PrologueVideo";
 import { getHearingClock } from "@/lib/progress";
 import { getRoundSession } from "@/lib/round-client";
 import { useEnvelopePrompt } from "@/components/case-file/EnvelopeDialog";
@@ -46,6 +47,7 @@ export function IntroScreen({
 }) {
   const [step, setStep] = useState(0);
   const [letterOpen, setLetterOpen] = useState(false);
+  const [prologueOpen, setPrologueOpen] = useState(false);
   const envelope = useEnvelopePrompt();
   useScrollToTopOnChange(step);
 
@@ -114,7 +116,22 @@ export function IntroScreen({
             <p className="mt-3 text-[15px] leading-relaxed text-foreground/85">
               Schaut zuerst die Vorgeschichte. Danach geht es los.
             </p>
-            <PrologueVideo className="mt-4" onEnded={() => setStep(step + 1)} />
+            <button
+              type="button"
+              onClick={() => setPrologueOpen(true)}
+              className="mt-4 flex min-h-[48px] w-full items-center justify-center gap-2 rounded-sm bg-primary px-4 font-serif text-base font-semibold text-primary-foreground"
+            >
+              <Play className="h-4 w-4" />
+              Vorgeschichte abspielen
+            </button>
+            {prologueOpen && (
+              <PrologueOverlay
+                onFinished={() => {
+                  setPrologueOpen(false);
+                  setStep(step + 1);
+                }}
+              />
+            )}
           </PaperCard>
         )}
 
