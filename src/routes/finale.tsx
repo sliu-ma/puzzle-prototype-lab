@@ -2281,40 +2281,32 @@ function OutroScreen() {
           <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
             Später · auf der Lichtung
           </p>
-          <h2
-            className="mt-2 font-serif text-2xl font-bold sm:text-3xl"
-            style={{ animation: "fade-in 1200ms ease-out both" }}
-          >
+          <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
             Ausatmen.
           </h2>
 
           <div className="mt-5 space-y-4 font-serif text-[15px] leading-relaxed text-foreground/90">
-            <p style={{ animation: "fade-in 600ms ease-out 200ms both" }}>
+            <p>
               Maja verlässt erleichtert den Gemeindesaal. Bevor sie nach Hause
               fährt, geht sie noch einmal zur Lichtung. Sie setzt sich auf den
               grossen Felsen.
             </p>
-            <p style={{ animation: "fade-in 600ms ease-out 900ms both" }}>
+            <p>
               Es dauert nicht lange, bis ein Specht im Baum landet. Maja
               lächelt. Sie erinnert sich an Jakobs Worte:
             </p>
-            <blockquote
-              className="border-l-2 border-stamp/50 pl-4 italic text-foreground"
-              style={{ animation: "fade-in 700ms ease-out 1600ms both" }}
-            >
+            <blockquote className="border-l-2 border-stamp/50 pl-4 italic text-foreground">
               „Wenn wir der Natur Zeit geben, zeigt sie uns mehr, als wir
               erwarten.“
             </blockquote>
-            <p style={{ animation: "fade-in 600ms ease-out 2300ms both" }}>
+            <p>
               Sie blickt ein letztes Mal über die Lichtung.{" "}
               <strong>„Versprochen.“</strong>
             </p>
-            <p
-              className="pt-2 text-center font-mono-typed text-[11px] uppercase tracking-[0.3em] text-muted-foreground"
-              style={{ animation: "fade-in 900ms ease-out 3000ms both" }}
-            >
+            <p className="pt-2 text-center font-mono-typed text-[11px] uppercase tracking-[0.3em] text-muted-foreground">
               Ende
             </p>
+
           </div>
 
           <div className="mt-6 flex justify-between gap-3">
