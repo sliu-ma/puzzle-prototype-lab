@@ -8,10 +8,11 @@ import {
   TreePine,
   Footprints,
   TriangleAlert,
+  Play,
 } from "lucide-react";
 import { PaperCard } from "@/components/case-file/PaperCard";
 import { Stamp } from "@/components/case-file/Stamp";
-import { PrologueVideo } from "@/components/case-file/PrologueVideo";
+import { PrologueOverlay } from "@/components/case-file/PrologueVideo";
 import { getHearingClock } from "@/lib/progress";
 import { getRoundSession } from "@/lib/round-client";
 import { useEnvelopePrompt } from "@/components/case-file/EnvelopeDialog";
