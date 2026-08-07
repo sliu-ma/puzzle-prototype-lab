@@ -247,24 +247,18 @@ export function IntroScreen({
             <h2 className="mt-2 font-serif text-3xl font-bold sm:text-4xl">
               Fünf Etappen. Ein Hearing.
             </h2>
-            <p className="mt-4 text-[15px] leading-relaxed text-foreground/85">
-              Ihr habt bis <strong>{getHearingClock() ?? "19:00"} Uhr</strong>, um
-              Jakobs Spuren zu folgen. An jedem Ort im Dorf wartet ein Rätsel. Löst
-              ihr es, schaltet sich die nächste Etappe frei.
-            </p>
             <ul className="mt-5 space-y-3 text-[15px]">
               <li className="flex gap-3">
                 <Compass className="mt-0.5 h-5 w-5 shrink-0 text-stamp" />
                 <span>
-                  <strong>QR-Code scannen</strong>, jede Etappe startet mit einem
-                  Code, den ihr im Dorf findet.
+                  <strong>QR-Code scannen</strong>, an jedem Ort im Dorf.
                 </span>
               </li>
               <li className="flex gap-3">
                 <Search className="mt-0.5 h-5 w-5 shrink-0 text-stamp" />
                 <span>
-                  <strong>Rätsel lösen</strong>, lest genau, wählt bewusst. Nach 3,
-                  6 und 9 Minuten gibt es Tipps.
+                  <strong>Rätsel lösen</strong>, das schaltet die nächste Etappe
+                  frei.
                 </span>
               </li>
               <li className="flex gap-3">
