@@ -184,7 +184,7 @@ function AktePage() {
         {step === "brief" && (
           <PaperCard rotate={-0.4}>
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-              Notiz 05 · staubiger Abstellraum · zwischen Aktenregalen
+              Notiz 05 · altes Wasserkraftwerk · zwischen den Ordnern
             </p>
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
               Marlene Vogt vom Umweltamt
