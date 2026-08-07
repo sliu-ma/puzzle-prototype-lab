@@ -114,7 +114,22 @@ export function IntroScreen({
             <p className="mt-3 text-[15px] leading-relaxed text-foreground/85">
               Schaut zuerst die Vorgeschichte. Danach geht es los.
             </p>
-            <PrologueVideo className="mt-4" onEnded={() => setStep(step + 1)} />
+            <button
+              type="button"
+              onClick={() => setPrologueOpen(true)}
+              className="mt-4 flex min-h-[48px] w-full items-center justify-center gap-2 rounded-sm bg-primary px-4 font-serif text-base font-semibold text-primary-foreground"
+            >
+              <Play className="h-4 w-4" />
+              Vorgeschichte abspielen
+            </button>
+            {prologueOpen && (
+              <PrologueOverlay
+                onFinished={() => {
+                  setPrologueOpen(false);
+                  setStep(step + 1);
+                }}
+              />
+            )}
           </PaperCard>
         )}
 
