@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { RefreshCw, Trash2, Play, Users } from "lucide-react";
+import { PrologueVideo } from "@/components/case-file/PrologueVideo";
 import { teacherRoundReport, teacherDeleteTeam } from "@/lib/rounds.functions";
 import { cn } from "@/lib/utils";
 
@@ -80,6 +81,16 @@ export function LobbyPanel({
 }) {
   const { report, loading, reload } = useRoundReport(password, code, 4000);
   const teams = report?.teams ?? [];
+  const [autoStart, setAutoStart] = useState(true);
+  const autoFired = useRef(false);
+
+  // Video zu Ende -> Runde genau einmal starten (Countdown auf allen Handys).
+  const handleVideoEnded = () => {
+    if (!autoStart || autoFired.current) return;
+    if (status !== "lobby" || busy || teams.length === 0) return;
+    autoFired.current = true;
+    onStart();
+  };
 
   const removeTeam = async (teamId: string) => {
     if (!confirm("Dieses Team wirklich entfernen?")) return;
@@ -125,6 +136,21 @@ export function LobbyPanel({
           </li>
         ))}
       </ul>
+
+      {status === "lobby" && (
+        <div className="mt-3">
+          <PrologueVideo onEnded={handleVideoEnded} />
+          <label className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
+            <input
+              type="checkbox"
+              checked={autoStart}
+              onChange={(e) => setAutoStart(e.target.checked)}
+              className="h-4 w-4 accent-[var(--color-stamp)]"
+            />
+            Nach dem Video automatisch starten
+          </label>
+        </div>
+      )}
 
       <button
         type="button"
