@@ -4,14 +4,16 @@
 
 Klassenrunde:
 ```text
-Lobby  ->  Lehrperson startet
+Lobby  ->  Lehrperson startet das Video (Beamer, ca. 1 Min)
+       ->  Video zu Ende  ->  Runde startet automatisch
        ->  Countdown 3-2-1 (Handys)
        ->  Briefing: Ankunft im Wald -> Umschlag -> Brief -> So spielt ihr
        ->  Umschlag 1 / Etappe 1
 ```
-Das Vorgeschichte-Video zeigst du vor dem Start am Beamer: auf `/lehrer/<code>` erscheint im Schritt «Lobby» ein Video-Block mit Abspielfeld, direkt über dem Startknopf.
+Auf `/lehrer/<code>` steht im Schritt «Lobby» das Video (`Vorgeschichte.mp4`, 61 s) gross über dem Startknopf. Sobald es zu Ende ist, wird die Runde automatisch gestartet – auf allen Handys läuft der 3-2-1-Countdown. Der Startknopf bleibt als manuelle Alternative (falls du das Video überspringst oder es nicht abspielt), und es gibt einen Schalter «Nach dem Video automatisch starten», damit du das Verhalten notfalls ausschalten kannst.
 
-Einzelspieler-Code (ohne Klassenrunde): das gleiche Video wird als erste Briefing-Karte auf dem Handy eingebettet, mit «Weiter»-Knopf, der erst nach dem Video (oder per Überspringen) freigibt.
+Einzelspieler-Code (ohne Klassenrunde): das gleiche Video wird als erste Briefing-Karte auf dem Handy eingebettet; nach dem Videoende geht es automatisch zur nächsten Karte, «Überspringen» bleibt möglich.
+
 
 ## Neues Briefing (Handy, 4 Karten)
 
