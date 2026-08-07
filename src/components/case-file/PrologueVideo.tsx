@@ -93,28 +93,28 @@ export function PrologueOverlay({
           preload="auto"
           onEnded={() => setPhase("outro")}
           className="max-h-full w-full animate-fade-in"
+          style={{ transform: "rotate(-0.8deg)" }}
         />
       ) : (
-        <div className="w-full max-w-6xl px-5 text-center sm:px-6">
+        <div
+          className="w-full max-w-6xl px-5 text-center sm:px-6"
+          style={{ transform: "rotate(-0.8deg)" }}
+        >
           {phase === "intro" && (
             <div className="animate-prologue-fade">
-              <span className="mx-auto block h-px w-16 bg-paper/30 sm:w-24" />
-              <p className="mt-5 font-mono-typed uppercase tracking-[0.25em] text-kraft text-[clamp(0.7rem,2.6vw,2.6rem)] sm:mt-6 sm:tracking-[0.35em]">
+              <p className="font-mono-typed uppercase tracking-[0.25em] text-kraft text-[clamp(0.7rem,2.6vw,2.6rem)] sm:tracking-[0.35em]">
                 {dateLabel}
               </p>
               <p className="mt-4 font-serif leading-[1.15] text-paper text-[clamp(1.5rem,6vw,7rem)] sm:mt-6">
                 {PROLOGUE_INTRO_PLACE}
               </p>
-              <span className="mx-auto mt-6 block h-px w-16 bg-paper/30 sm:mt-8 sm:w-24" />
             </div>
           )}
           {(phase === "outro" || phase === "done") && (
             <div className="animate-prologue-fade-slow">
-              <span className="mx-auto block h-px w-12 bg-paper/25 sm:w-16" />
-              <p className="mt-6 font-serif leading-[1.2] text-paper/95 text-[clamp(1.35rem,5vw,5.5rem)] sm:mt-8">
+              <p className="font-serif leading-[1.2] text-paper/95 text-[clamp(1.35rem,5vw,5.5rem)]">
                 {PROLOGUE_OUTRO_TEXT}
               </p>
-              <span className="mx-auto mt-6 block h-px w-12 bg-paper/25 sm:mt-8 sm:w-16" />
             </div>
           )}
         </div>
