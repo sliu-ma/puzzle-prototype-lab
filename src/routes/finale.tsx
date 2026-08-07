@@ -2186,28 +2186,19 @@ function OutroScreen() {
     tone: "emerald" | "amber" | "stamp";
   }[] = [
     {
-      name: "Ratsfrau Schmid",
-      rolle: "Ressort Verkehr",
+      name: "Ratsmitglied",
+      rolle: "Gemeinderat",
       side: "left",
       tone: "emerald",
-      text:
-        "„Ich beantrage, die Abstimmung zu vertagen und die neuen Unterlagen zu prüfen.“",
+      text: "„Diese Unterlagen sollten wir sorgfältig prüfen.“",
     },
     {
-      name: "Ratsherr Brunner",
-      rolle: "Ressort Landwirtschaft",
+      name: "Ratsmitglied",
+      rolle: "Gemeinderat",
       side: "right",
       tone: "amber",
       text:
-        "„Die Zahlen sind sauber. Damit können wir arbeiten, nicht mit dem alten Gutachten.“",
-    },
-    {
-      name: "Ratsfrau Lindenmann",
-      rolle: "Ressort Umwelt",
-      side: "left",
-      tone: "emerald",
-      text:
-        "„Ein Gaskraftwerk mitten im Waldreservat? Das hätte ich fast durchgewinkt. Danke.“",
+        "„Mit diesen neuen Informationen können wir heute keine endgültige Entscheidung treffen.“",
     },
     {
       name: "Gemeindepräsident",
@@ -2215,7 +2206,7 @@ function OutroScreen() {
       side: "right",
       tone: "stamp",
       text:
-        "„Antrag angenommen. Die Abstimmung wird auf nächsten Monat verschoben.“",
+        "„Die Abstimmung wird verschoben. Die neuen Erkenntnisse werden in die weitere Planung einfliessen.“",
     },
   ];
 
