@@ -261,7 +261,7 @@ export function IntroScreen({
           </button>
         </div>
       </div>
-      {envelope.dialog}
+      {showStartTimer && <StartTimerOverlay onConfirm={confirmStart} />}
     </main>
   );
 }
