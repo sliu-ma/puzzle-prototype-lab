@@ -2285,20 +2285,20 @@ function OutroScreen() {
 
           <div className="mt-5 space-y-4 font-serif text-[15px] leading-relaxed text-foreground/90">
             <p>
-              Die Abstimmung ist verschoben. Der Gemeinderat prüft die neuen
-              Unterlagen. Maja schaut auf ihr Handy.{" "}
-              <strong>{nowClock} Uhr.</strong>
+              Maja verlässt erleichtert den Gemeindesaal. Bevor sie nach Hause
+              fährt, geht sie noch einmal zur Lichtung. Sie setzt sich auf den
+              grossen Felsen. Es dauert nicht lange, bis ein Specht im Baum
+              landet. Maja lächelt.
             </p>
             <p>
-              Später steht sie allein auf der Lichtung. Die Absperrbänder hängen
-              noch zwischen den Bäumen, aber heute stören sie niemanden.
-              Irgendwo klopft ein Specht.
+              Sie erinnert sich an Jakobs Worte: „Wenn wir der Natur Zeit geben,
+              zeigt sie uns mehr, als wir erwarten.“
             </p>
             <p>
-              Sie denkt an Jakobs Worte: Wer genau hinschaut, findet die Spuren,
-              die andere übersehen.
+              Sie blickt ein letztes Mal über die Lichtung. „Versprochen.“
             </p>
           </div>
+
 
 
 
