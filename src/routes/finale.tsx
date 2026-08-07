@@ -2170,52 +2170,39 @@ function OutroScreen() {
 
 
 
-  const nowClock =
-    typeof window !== "undefined"
-      ? new Date().toLocaleTimeString("de-CH", {
-          hour: "2-digit",
-          minute: "2-digit",
-        })
-      : "19:04";
-
   const reaktionen: {
     name: string;
     rolle: string;
+    lead?: string;
     text: string;
     side: "left" | "right";
     tone: "emerald" | "amber" | "stamp";
   }[] = [
     {
-      name: "Ratsfrau Schmid",
-      rolle: "Ressort Verkehr",
+      name: "Ratsmitglied",
+      rolle: "Gemeinderat",
       side: "left",
       tone: "emerald",
-      text:
-        "„Ich beantrage, die Abstimmung zu vertagen und die neuen Unterlagen zu prüfen.“",
+      lead: "Dann meldet sich ein Ratsmitglied.",
+      text: "„Diese Unterlagen sollten wir sorgfältig prüfen.“",
     },
     {
-      name: "Ratsherr Brunner",
-      rolle: "Ressort Landwirtschaft",
+      name: "Ratsmitglied",
+      rolle: "Gemeinderat",
       side: "right",
       tone: "amber",
+      lead: "Ein anderes nickt.",
       text:
-        "„Die Zahlen sind sauber. Damit können wir arbeiten, nicht mit dem alten Gutachten.“",
-    },
-    {
-      name: "Ratsfrau Lindenmann",
-      rolle: "Ressort Umwelt",
-      side: "left",
-      tone: "emerald",
-      text:
-        "„Ein Gaskraftwerk mitten im Waldreservat? Das hätte ich fast durchgewinkt. Danke.“",
+        "„Mit diesen neuen Informationen können wir heute keine endgültige Entscheidung treffen.“",
     },
     {
       name: "Gemeindepräsident",
       rolle: "Vorsitz",
-      side: "right",
+      side: "left",
       tone: "stamp",
+      lead: "Der Gemeindepräsident schaut in die Runde.",
       text:
-        "„Antrag angenommen. Die Abstimmung wird auf nächsten Monat verschoben.“",
+        "„Die Abstimmung wird verschoben. Die neuen Erkenntnisse werden in die weitere Planung einfliessen.“",
     },
   ];
 
@@ -2242,23 +2229,35 @@ function OutroScreen() {
             <Stamp rotate={8}>Im Saal</Stamp>
           </div>
           <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-            Reaktionen des Gemeinderats
+            Ending
           </p>
-          <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-            Stille. Dann geht ein Raunen durch den Saal.
+          <h2
+            className="mt-2 font-serif text-2xl font-bold sm:text-3xl"
+            style={{ animation: "fade-in 900ms ease-out both" }}
+          >
+            Für einen Moment herrscht Stille.
           </h2>
 
-          <div className="mt-6 space-y-3">
+          <div className="mt-6 space-y-4">
             {reaktionen.slice(0, bubble + 1).map((r, i) => (
-              <SpeechBubble
+              <div
                 key={i}
-                name={r.name}
-                rolle={r.rolle}
-                side={r.side}
-                tone={r.tone}
+                style={{ animation: "fade-in 500ms ease-out both" }}
               >
-                {r.text}
-              </SpeechBubble>
+                {r.lead && (
+                  <p className="mb-1.5 font-serif text-[14px] italic text-foreground/70">
+                    {r.lead}
+                  </p>
+                )}
+                <SpeechBubble
+                  name={r.name}
+                  rolle={r.rolle}
+                  side={r.side}
+                  tone={r.tone}
+                >
+                  {r.text}
+                </SpeechBubble>
+              </div>
             ))}
           </div>
 
@@ -2268,7 +2267,7 @@ function OutroScreen() {
                 onClick={() => setBubble(bubble + 1)}
                 className="rounded-sm border border-border bg-card px-4 py-2 font-serif text-sm hover:bg-secondary"
               >
-                Weitere Reaktion →
+                Weiter →
               </button>
             ) : (
               <button
@@ -2288,28 +2287,41 @@ function OutroScreen() {
           <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
             Später · auf der Lichtung
           </p>
-          <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
+          <h2
+            className="mt-2 font-serif text-2xl font-bold sm:text-3xl"
+            style={{ animation: "fade-in 1200ms ease-out both" }}
+          >
             Ausatmen.
           </h2>
 
           <div className="mt-5 space-y-4 font-serif text-[15px] leading-relaxed text-foreground/90">
-            <p>
-              Die Abstimmung ist verschoben. Der Gemeinderat prüft die neuen
-              Unterlagen. Maja schaut auf ihr Handy.{" "}
-              <strong>{nowClock} Uhr.</strong>
+            <p style={{ animation: "fade-in 600ms ease-out 200ms both" }}>
+              Maja verlässt erleichtert den Gemeindesaal. Bevor sie nach Hause
+              fährt, geht sie noch einmal zur Lichtung. Sie setzt sich auf den
+              grossen Felsen.
             </p>
-            <p>
-              Später steht sie allein auf der Lichtung. Die Absperrbänder hängen
-              noch zwischen den Bäumen, aber heute stören sie niemanden.
-              Irgendwo klopft ein Specht.
+            <p style={{ animation: "fade-in 600ms ease-out 900ms both" }}>
+              Es dauert nicht lange, bis ein Specht im Baum landet. Maja
+              lächelt. Sie erinnert sich an Jakobs Worte:
             </p>
-            <p>
-              Sie denkt an Jakobs Worte: Wer genau hinschaut, findet die Spuren,
-              die andere übersehen.
+            <blockquote
+              className="border-l-2 border-stamp/50 pl-4 italic text-foreground"
+              style={{ animation: "fade-in 700ms ease-out 1600ms both" }}
+            >
+              „Wenn wir der Natur Zeit geben, zeigt sie uns mehr, als wir
+              erwarten.“
+            </blockquote>
+            <p style={{ animation: "fade-in 600ms ease-out 2300ms both" }}>
+              Sie blickt ein letztes Mal über die Lichtung.{" "}
+              <strong>„Versprochen.“</strong>
+            </p>
+            <p
+              className="pt-2 text-center font-mono-typed text-[11px] uppercase tracking-[0.3em] text-muted-foreground"
+              style={{ animation: "fade-in 900ms ease-out 3000ms both" }}
+            >
+              Ende
             </p>
           </div>
-
-
 
           <div className="mt-6 flex justify-between gap-3">
             <button
@@ -2330,6 +2342,7 @@ function OutroScreen() {
           </div>
         </PaperCard>
       )}
+
 
       {/* STEP 2. Abschluss der gesamten Ermittlung */}
       {step === 2 && (
