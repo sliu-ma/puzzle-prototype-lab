@@ -6,7 +6,9 @@ import {
   TriangleAlert,
   Play,
   Hand,
+  Clock,
 } from "lucide-react";
+
 import { PaperCard } from "@/components/case-file/PaperCard";
 import { Stamp } from "@/components/case-file/Stamp";
 import { PrologueOverlay } from "@/components/case-file/PrologueVideo";
@@ -200,9 +202,22 @@ export function IntroScreen({
             </p>
 
             <div className="mt-4 rounded-sm border border-border bg-paper-deep/40 p-4 font-serif italic text-[15px] leading-relaxed text-foreground/90">
-              „Du musst Maja sein. Ich bin ein Freund deines Grossvaters. Kurz vor
-              seinem Tod hat er mir diesen Umschlag für dich gegeben.“
+              „Du musst Maja sein. Ich wusste gar nicht, dass du überhaupt noch
+              einmal zurückkommst. Ich bin ein Freund deines Grossvaters – kurz
+              vor seinem Tod hat er mir diesen Umschlag für dich gegeben.“
             </div>
+
+            <div className="mt-3 flex gap-3 rounded-sm border-2 border-destructive/50 bg-destructive/5 p-4">
+              <Clock className="mt-0.5 h-5 w-5 shrink-0 text-destructive" />
+              <p className="font-serif italic text-[15px] leading-relaxed text-foreground/90">
+                „Und du kommst gerade rechtzeitig: Heute Abend stimmt der
+                Gemeinderat über das Gaskraftwerk ab. In{" "}
+                <strong className="not-italic">90 Minuten</strong> beginnt die
+                Sitzung. Was Jakob begonnen hat, kann nur noch jemand
+                fertigmachen, der jetzt losläuft.“
+              </p>
+            </div>
+
 
 
             {!letterOpen ? (
@@ -227,11 +242,12 @@ export function IntroScreen({
                 <p>Liebe Maja</p>
                 <p className="mt-3">
                   <strong>
-                    Heute&nbsp;entscheidet der Gemeinderat über das Gaskraftwerk
-                    auf der Waldlichtung.
+                    Wenn du diesen Brief liest, steht die Entscheidung über das
+                    Gaskraftwerk auf der Waldlichtung an.
                   </strong>{" "}
                   Dafür müsste ein Teil des Waldes gerodet werden.
                 </p>
+
                 <p className="mt-3">
                   Ich habe Fakten gesammelt, aber meine Arbeit nicht fertigstellen
                   können. Folge meinen Spuren, sammle alle Hinweise. Und vergiss nie
@@ -245,8 +261,22 @@ export function IntroScreen({
           </PaperCard>
         )}
 
+        {current === "brief" && letterOpen && (
+          <div className="animate-fade-in mt-5 flex items-center gap-3 rounded-sm border border-stamp/40 bg-paper-deep/30 p-4">
+            <Clock className="h-5 w-5 shrink-0 text-stamp" />
+            <div>
+              <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
+                Sitzung beginnt in
+              </p>
+              <p className="font-serif text-2xl font-bold leading-tight">
+                90 Minuten
+              </p>
+            </div>
+          </div>
+        )}
 
         <div className="mt-6 flex items-center justify-end gap-3">
+
           <button
             onClick={next}
             disabled={
