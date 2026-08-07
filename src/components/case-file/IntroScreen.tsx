@@ -2,10 +2,6 @@ import { useMemo, useState } from "react";
 import {
   Mail,
   ArrowRight,
-  Compass,
-  Clock,
-  Search,
-  
   Footprints,
   TriangleAlert,
   Play,
@@ -56,8 +52,8 @@ export function IntroScreen({
   // Ohne Runde (Einzelspieler-Code) läuft es hier auf dem Gerät.
   const showVideo = useMemo(() => getRoundSession() === null, []);
   const steps = showVideo
-    ? (["video", "ankunft", "brief", "regeln"] as const)
-    : (["ankunft", "brief", "regeln"] as const);
+    ? (["video", "ankunft", "brief"] as const)
+    : (["ankunft", "brief"] as const);
   const total = steps.length;
   const current = steps[step];
 
@@ -80,7 +76,7 @@ export function IntroScreen({
   };
 
   return (
-    <main className="relative min-h-screen overflow-hidden px-4 py-8 sm:py-14">
+    <main className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-4 py-8 sm:py-14">
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 opacity-[0.06]"
@@ -90,7 +86,8 @@ export function IntroScreen({
         }}
       />
 
-      <div className="relative mx-auto max-w-2xl">
+      <div className="relative mx-auto w-full max-w-2xl">
+
         <div className="mb-4 flex items-center justify-between">
           <p className="font-mono-typed text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
             Team {teamName} · Briefing
@@ -247,38 +244,6 @@ export function IntroScreen({
           </PaperCard>
         )}
 
-        {current === "regeln" && (
-          <PaperCard rotate={-0.4}>
-            <div className="absolute right-4 top-6 sm:right-8 sm:top-8">
-              <Stamp rotate={8}>Briefing</Stamp>
-            </div>
-            <h2 className="mt-2 font-serif text-3xl font-bold sm:text-4xl">
-              Fünf Etappen. Ein Hearing.
-            </h2>
-            <ul className="mt-5 space-y-3 text-[15px]">
-              <li className="flex gap-3">
-                <Compass className="mt-0.5 h-5 w-5 shrink-0 text-stamp" />
-                <span>
-                  <strong>QR-Code scannen</strong>, an jedem Ort im Dorf.
-                </span>
-              </li>
-              <li className="flex gap-3">
-                <Search className="mt-0.5 h-5 w-5 shrink-0 text-stamp" />
-                <span>
-                  <strong>Rätsel lösen</strong>, das schaltet die nächste Etappe
-                  frei.
-                </span>
-              </li>
-              <li className="flex gap-3">
-                <Clock className="mt-0.5 h-5 w-5 shrink-0 text-stamp" />
-                <span>
-                  <strong>Bis {getHearingClock() ?? "19:00"} Uhr</strong> im
-                  Gemeindesaal sein.
-                </span>
-              </li>
-            </ul>
-          </PaperCard>
-        )}
 
         <div className="mt-6 flex items-center justify-end gap-3">
           <button
