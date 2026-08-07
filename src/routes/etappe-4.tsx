@@ -69,8 +69,8 @@ function AkteGated() {
         stage={4}
         token={AKTE_004_TOKEN}
         storageKey="akte-004-unlocked"
-        title={<>Etappe 4, QR-Code in Elviras Haus scannen</>}
-        description="Diese Etappe ist versiegelt. Scanne den QR-Code, der bei Elvira auf dem Küchentisch liegt."
+        title={<>Etappe 4, QR-Code in Jakobs Haus scannen</>}
+        description="Diese Etappe ist versiegelt. Scanne den QR-Code, der bei Jakob auf dem Küchentisch liegt."
         label="Etappe 4 · Versiegelt"
       >
         <AktePage />
