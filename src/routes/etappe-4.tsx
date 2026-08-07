@@ -49,11 +49,11 @@ const HINTS_004: Hint[] = [
 export const Route = createFileRoute("/etappe-4")({
   head: () => ({
     meta: [
-      { title: "Etappe 4, Elviras Haus" },
+      { title: "Etappe 4, Jakobs Haus" },
       {
         name: "description",
         content:
-          "Etappe 4: Zurück bei Elvira. Eine Querschnittszeichnung des Hauses, alte Rechnungen, und das Ziel: 3'500 Energiesparpunkte sammeln.",
+          "Etappe 4: Eine Zeichnung von Jakobs Haus, alte Rechnungen, und das Ziel: Energiesparpunkte sammeln.",
       },
     ],
   }),
@@ -69,8 +69,8 @@ function AkteGated() {
         stage={4}
         token={AKTE_004_TOKEN}
         storageKey="akte-004-unlocked"
-        title={<>Etappe 4, QR-Code in Elviras Haus scannen</>}
-        description="Diese Etappe ist versiegelt. Scanne den QR-Code, der bei Elvira auf dem Küchentisch liegt."
+        title={<>Etappe 4, QR-Code in Jakobs Haus scannen</>}
+        description="Diese Etappe ist versiegelt. Scanne den QR-Code, der bei Jakob auf dem Küchentisch liegt."
         label="Etappe 4 · Versiegelt"
       >
         <AktePage />
@@ -140,7 +140,7 @@ function AktePage() {
               Etappe 4 · Zuhause
             </h1>
             <p className="mt-0.5 font-serif italic text-sm text-foreground/70 sm:text-base">
-              Elviras Haus, Querschnitt auf dem Küchentisch
+              Jakobs Haus, Zeichnung auf dem Küchentisch
             </p>
           </div>
           <Stamp rotate={-6}>Vertraulich</Stamp>
@@ -195,14 +195,12 @@ function AktePage() {
               [Hauszeichnung + Rechnungen aus der Kiste · {getFrozenClock("maya-clock-akte-004")} Uhr]
             </p>
             <blockquote className="mt-5 border-l-4 border-stamp pl-4 text-[15px] leading-relaxed">
-              Zurück in Elviras Haus liegt auf dem Küchentisch eine Zeichnung: ein
-              Querschnitt des Hauses mit allen Räumen. Daneben ein Zettel:
+              Auf dem Küchentisch liegt eine Zeichnung des Hauses: ein
+              Querschnitt mit allen Räumen. Daneben ein kurzer Zettel:
               <br />
               <br />
-              „Neue Kraftwerke werden oft nötig, weil wir zuhause zu viel Energie
-              verbrauchen. Zeige, wie viele Energie ein Haushalt sammeln kann.
-              Nimm die Rechnungen und finde die wirksamsten Massnahmen, oft sind
-              es nicht die teuersten.“
+              „Nicht jede Massnahme spart gleich viel Energie. Finde heraus,
+              welche am meisten bewirken.“
             </blockquote>
             <div className="mt-6 flex justify-end">
               <button
@@ -218,10 +216,10 @@ function AktePage() {
         {step === "raetselkarte" && (
           <PaperCard rotate={0.3} tape="top">
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-              Rätselkarte · Auftrag von Elvira
+              Rätselkarte · Auftrag von Jakob
             </p>
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-              Plane Elviras Haus um
+              Plane Jakobs Haus um
             </h2>
             <div className="mt-5 grid gap-4 sm:grid-cols-2">
               <div className="rounded-sm border border-border bg-paper p-4">
@@ -342,18 +340,19 @@ function AktePage() {
               Etappe 5 · altes Wasserkraftwerk
             </p>
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-              „Komm zum alten Wasserkraftwerk."
+              „Zum Wasserkraftwerk."
             </h2>
             <div className="mt-4 rounded-sm border border-dashed border-stamp/40 bg-paper-deep/30 p-5">
               <p className="font-serif italic leading-relaxed">
-                Es klickt, die Abdeckung des alten Sicherungskastens springt auf.
-                Darin: eine Schlüsselkarte und ein Zettel.&nbsp;
+                Im Sicherungskasten steckt eine Schlüsselkarte und ein Brief.
                 <br />
                 <br />
-                Wir haben bewiesen, dass viele kleine Veränderungen zuhause eine
-                grosse Wirkung haben können. Ich bin beim Wasserkraftwerk. Marlene
-                Vogt vom Umweltamt wartet dort auf uns. Beeil dich, die Zeit
-                läuft!&nbsp;&nbsp;
+                „Du hast fast alles gefunden. Mit dieser Karte gelangst du ins
+                alte Wasserkraftwerk. Dort wartet Marlene mit den letzten
+                Unterlagen.“&nbsp;&nbsp;
+              </p>
+              <p className="mt-3 font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
+               , J.
               </p>
             </div>
             <p className="mt-5 text-sm text-foreground/70">
@@ -385,7 +384,7 @@ function AktePage() {
         )}
 
         <p className="mt-12 text-center font-mono-typed text-xs uppercase tracking-[0.2em] text-muted-foreground">
-         , Etappe 4 · Elviras Haus
+         , Etappe 4 · Jakobs Haus
         </p>
       </div>
 

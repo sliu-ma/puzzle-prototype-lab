@@ -29,7 +29,7 @@ export const Route = createFileRoute("/etappe-1")({
       {
         name: "description",
         content:
-          "Etappe 1: Auf dem Bahnhof liegen Elviras alte Reisetickets. Welche Verbindung hat sie wirklich gewählt?",
+          "Etappe 1: Auf dem Bahnhof liegt Jakobs altes Reiseticket. Welchen Weg hat er wirklich gewählt?",
       },
     ],
   }),
@@ -44,7 +44,7 @@ const HINTS_003: Hint[] = [
     unlockMin: 3,
     label: "Tipp 1",
     title: "Schau dir die Unterlagen genau an",
-    body: "Wo hat Elvira geschlafen, und von wo aus ist sie am nächsten Morgen aufgebrochen?",
+    body: "Wo hat Jakob geschlafen, und von wo aus ist er am nächsten Morgen aufgebrochen?",
   },
   {
     id: 1,
@@ -153,7 +153,7 @@ function AktePage() {
       goto("routen");
     } else {
       setHadFail(true);
-      setEingabeError("Hm, das passt noch nicht. Lies Elviras Brief und die Tickets nochmal genau.");
+      setEingabeError("Hm, das passt noch nicht. Lies Jakobs Zettel und die Tickets nochmal genau.");
     }
   };
 
@@ -232,10 +232,10 @@ function AktePage() {
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
               Notiz 01, Bahnhof Speicher, Bank am Gleis 1
             </p>
-            <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">Elviras alte Reisetickets</h2>
+            <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">Grossvaters altes Reiseticket</h2>
             <p className="mt-1 font-mono-typed text-xs text-muted-foreground">[Hinweis gefunden um {jetzt}]</p>
             <p className="mt-5 text-[15px] leading-relaxed">
-              Im alten Bahnhofsgebäude findet Maja am Fahrkartenschalter ein Couvert mit Elviras alten Reiseunterlagen und ein Zettel. Darauf steht:
+              Im alten Bahnhofsgebäude findet Maja am Fahrkartenschalter ein Couvert mit Jakobs alten Reiseunterlagen und ein Zettel. Darauf steht:
             </p>
             <blockquote className="mt-4 border-l-4 border-stamp pl-4 font-serif italic text-[15px] leading-relaxed">
               „Ich habe immer das gewählt, was am wenigsten Spuren hinterlässt. Findest du heraus, welchen Weg ich nach
@@ -256,10 +256,10 @@ function AktePage() {
           <PaperCard rotate={-0.2} tape="top-right">
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">Tickets analysieren</p>
             <h2 className="mt-2 flex items-center gap-2 font-serif text-2xl font-bold sm:text-3xl">
-              <MapPin className="h-6 w-6 text-stamp" /> Rekonstruiere Elviras Reiseroute
+              <MapPin className="h-6 w-6 text-stamp" /> Rekonstruiere Jakobs Reiseroute
             </h2>
             <p className="mt-3 text-[15px] text-foreground/80">
-              Elvira hat ihre Hinweise gut versteckt. Vielleicht lohnt sich ein zweiter Blick auf ihre Unterlagen.
+              Jakob hat seine Hinweise gut versteckt. Vielleicht lohnt sich ein zweiter Blick auf seine Unterlagen.
             </p>
 
             <form onSubmit={handleEingabe} className="mt-6 space-y-4">
@@ -395,10 +395,10 @@ function AktePage() {
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">„Geh zum alten Dorfladen."</h2>
             <div className="mt-4 rounded-sm border border-dashed border-stamp/40 bg-paper-deep/30 p-5">
               <p className="font-serif italic leading-relaxed">
-                Auf der Rückseite des Bahntickets steht in Elviras Handschrift: „Frau Berger im Dorfladen wartet schon.
+                Auf der Rückseite des Bahntickets steht in Jakobs Handschrift: „Frau Berger im Dorfladen wartet schon.
                 Sie hat etwas für dich vorbereitet."
               </p>
-              <p className="mt-3 font-mono-typed text-[10px] uppercase tracking-wider text-stamp">E.</p>
+              <p className="mt-3 font-mono-typed text-[10px] uppercase tracking-wider text-stamp">J.</p>
             </div>
             <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
               <button

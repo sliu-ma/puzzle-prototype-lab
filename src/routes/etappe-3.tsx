@@ -39,7 +39,7 @@ export const Route = createFileRoute("/etappe-3")({
       {
         name: "description",
         content:
-          "Etappe 3: Auf der Lichtung steht Elviras Beobachtungsposten. Sortiere die Tiere und entschlüssele den Code des Zahlenschlosses.",
+          "Etappe 3: Beim Forsthaus liegt Jakobs Notizbuch. Sortiere die Tiere und entschlüssele den Code des Türschlosses.",
       },
     ],
   }),
@@ -81,7 +81,7 @@ function AkteGated() {
         token={AKTE_002_TOKEN}
         storageKey="akte-002-unlocked"
         title={<>Etappe 3, QR-Code an der Hütte scannen</>}
-        description="Diese Etappe ist versiegelt. Scanne den QR-Code an Elviras Beobachtungsposten auf der Lichtung."
+        description="Diese Etappe ist versiegelt. Scanne den QR-Code beim Forsthaus an der Lichtung."
         label="Etappe 3 · Versiegelt"
       >
         <AktePage />
@@ -151,7 +151,7 @@ function AktePage() {
               Etappe 3 · Wald-Lichtung
             </h1>
             <p className="mt-0.5 font-serif italic text-sm text-foreground/70 sm:text-base">
-              Elviras Beobachtungsposten
+              Jakobs Notizbuch beim Forsthaus
             </p>
           </div>
           <Stamp rotate={-6}>Vertraulich</Stamp>
@@ -197,32 +197,28 @@ function AktePage() {
         {step === "brief" && (
           <PaperCard rotate={-0.4}>
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-              Notiz 03 · Beobachtungsposten · Lichtung
+              Notiz 03 · Beobachtungsbuch · Forsthaus
             </p>
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-              „Rodung ab Montag."
+              „Die Zeit läuft."
             </h2>
             <p className="mt-1 font-mono-typed text-xs text-muted-foreground">
               [Aufgeschlagenes Beobachtungsbuch · {getFrozenClock("maya-clock-akte-003")} Uhr]
             </p>
             <blockquote className="mt-5 border-l-4 border-stamp pl-4 text-[15px] leading-relaxed">
-              Am Waldrand entdeckt Maja rote Bänder an den Bäumen und ein Schild:
-              „Baubeginn, Zutritt verboten. Rodung ab Montag.“ Montag ist
-              übermorgen.
+              Die Lichtung hat sich verändert. Zwischen den Bäumen hängen
+              Absperrbänder. Ein Schild warnt: Rodung beginnt in Kürze.
               <br />
               &nbsp;&nbsp;&nbsp;
               <br />
-              Die Hütte steht noch. Im Beobachtungsposten liegen Fotokarten von
-              Tieren und Elviras Beobachtungsbuch. Die letzten Einträge sind
-              auffällig kurz, einige Arten wurden seit Jahren nicht mehr
-              gesichtet.
+              Beim Forsthaus liegt Jakobs Notizbuch. Auf der letzten Seite
+              steht:
               <br />
               &nbsp;&nbsp;&nbsp;
               <br />
-              Auf der aufgeschlagenen Seite steht: „Manche dieser Tiere sind
-              noch sicher, andere stehen kurz vor dem Verschwinden. Trenne die
-              gefährdeten von den nicht gefährdeten Arten, um meinen Code zu
-              entschlüsseln.“
+              „Manche dieser Tiere sind hier noch sicher, andere stehen kurz vor
+              dem Verschwinden. Trenne die gefährdeten von den nicht
+              gefährdeten Arten, um das Türschloss zu öffnen.“
             </blockquote>
             <div className="mt-6 flex justify-end">
               <button
@@ -298,32 +294,34 @@ function AktePage() {
           <PaperCard rotate={-0.5} tape="top-left">
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
 
-              Etappe 4 · Elviras Haus
+              Etappe 4 · Jakobs Haus
             </p>
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-              „Geh zurück ins Haus."
+              „Zurück ins Haus."
             </h2>
             <div className="mt-4 rounded-sm border border-dashed border-stamp/40 bg-paper-deep/30 p-5">
               <p className="font-serif italic leading-relaxed">
-                Statt Forschungsausrüstung findest du eine Mappe mit Strom- und Heizrechnungen. Darauf steht:
+                Im Forsthaus entdeckt Maja eine Holzkiste. Darin liegen alte
+                Strom- und Heizrechnungen. Ein Zettel steckt dazwischen:
                 <br /><br />
-                „Der erste Schritt beginnt zuhause. Ich habe im Haus Vorbereitungen getroffen. Nimm die Rechnungen mit und untersuche die Räume.“
+                „Wer sorgsam mit Energie umgeht, schützt mehr als nur sein
+                Zuhause. Im Haus wartet der nächste Hinweis.“
               </p>
               <p className="mt-3 font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
-               , E.
+               , J.
               </p>
             </div>
             <p className="mt-5 text-sm text-foreground/70">
               Du wirfst einen letzten Blick auf das Bauschild, greifst die
-              Mappe, und rennst los.
+              Rechnungen, und rennst los.
             </p>
             <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
               <button
                 onClick={() =>
                   envelope.ask({
                     nr: 4,
-                    ort: "Elviras Haus · Etappe 4",
-                    etappeLabel: "Etappe 4 · Elviras Haus",
+                    ort: "Jakobs Haus · Etappe 4",
+                    etappeLabel: "Etappe 4 · Jakobs Haus",
                     onConfirm: () => navigate({ to: "/etappe-4" }),
                   })
                 }

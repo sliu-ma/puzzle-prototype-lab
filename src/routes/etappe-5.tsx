@@ -184,7 +184,7 @@ function AktePage() {
         {step === "brief" && (
           <PaperCard rotate={-0.4}>
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-              Notiz 05 · staubiger Abstellraum · zwischen Aktenregalen
+              Notiz 05 · altes Wasserkraftwerk · zwischen den Ordnern
             </p>
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
               Marlene Vogt vom Umweltamt
@@ -193,16 +193,15 @@ function AktePage() {
               [Altes Wasserkraftwerk · {getFrozenClock("maya-clock-akte-005")} Uhr]
             </p>
             <blockquote className="mt-5 border-l-4 border-stamp pl-4 text-[15px] leading-relaxed">
-              Im staubigen Abstellraum des alten Wasserkraftwerks wartet Marlene
-              Vogt vom Umweltamt. „Gut, dass du da bist. Der Gemeinderat
-              entscheidet heute Abend über das Kraftwerk, doch die Grundlage
-              sind fehlerhafte Gutachten.“
+              Im alten Wasserkraftwerk wartet Marlene Vogt. Vor ihr liegen
+              mehrere Ordner. „Jakob hat in den letzten Monaten viele
+              Informationen gesammelt. Ich habe seine Unterlagen ergänzt.“
               <br />
               <br />
-              Sie legt einen Stapel Dokumente auf den Tisch. „Ich habe die
-              wichtigsten Fakten geprüft. In den Gutachten zu Solarenergie, Gas
-              und Kohle sind fünf Aussagen falsch. Findet sie, bevor die
-              Entscheidung fällt.“&nbsp;&nbsp;
+              Sie legt drei Gutachten auf den Tisch. „Der Gemeinderat
+              entscheidet heute Abend. Leider enthalten diese Gutachten der
+              Gemeinde mehrere Fehler. Finde die fünf falschen Aussagen. Nur so
+              können wir rechtzeitig die vollständigen Fakten vorlegen.“&nbsp;&nbsp;
             </blockquote>
             <div className="mt-6 flex justify-end">
               <button
@@ -268,10 +267,11 @@ function AktePage() {
             </h2>
             <div className="mt-4 rounded-sm border border-dashed border-stamp/40 bg-paper-deep/30 p-5">
               <p className="font-serif italic leading-relaxed">
-                Mit den korrigierten Gutachten, den Rechnungen und Elviras Notizen im Rucksack rennt ihr zum Gemeindesaal. Kurz davor kommt euch Tante Elvira entgegen, atemlos, mit einem Stapel Papiere in der Hand. „Maja! Ich habe noch die letzten Messdaten vom Bachamt. Jetzt haben wir alles, was wir brauchen!“
+                Marlene schliesst den Ordner. „Jetzt haben wir alles. Komm, wir
+                müssen sofort zur Gemeinderatssitzung.“
               </p>
               <p className="mt-3 font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
-               , E.
+               , Marlene Vogt
               </p>
             </div>
             <p className="mt-5 text-sm text-foreground/70">

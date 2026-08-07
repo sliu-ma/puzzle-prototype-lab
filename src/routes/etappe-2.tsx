@@ -70,7 +70,7 @@ const DORFLADEN_HINTS: Hint[] = [
     id: 0,
     unlockMin: 3,
     label: "Tipp 1",
-    title: "Starte mit Elviras Rezept",
+    title: "Starte mit Jakobs Rezept",
     body: "Der Korb ist leer, das ist Absicht. Öffne oben das Rezept-Akkordeon und geh die Zutaten Schritt für Schritt durch. Für jede Zutat gibt es im Laden mindestens eine Option.",
   },
   {
@@ -202,9 +202,9 @@ function AktePage() {
               [Holztresen · leerer Korb · {getFrozenClock("maya-clock-akte-002")} Uhr]
             </p>
             <blockquote className="mt-5 border-l-4 border-stamp pl-4 text-[15px] leading-relaxed">
-              Der Dorfladen ist eigentlich geschlossen, doch Elviras Freundin Frau Berger lässt dich hinein. „Deine Tante war jede Woche hier. Sie sagte: Wenn ich sehe, was die Leute kaufen, weiss ich, was schiefläuft.“&nbsp;&nbsp;
+              Der Dorfladen ist eigentlich geschlossen, doch Jakobs Freundin Frau Berger lässt dich hinein. „Dein Grossvater war jede Woche hier. Er sagte: Wenn ich sehe, was die Leute kaufen, weiss ich, was schiefläuft.“&nbsp;&nbsp;
               <br /><br />
-              Frau Berger betrachtet Elviras Einkaufsliste und stellt einen leeren Korb auf den Tresen. „Alles ist da. Aber welche Zutaten du wählst, musst du selbst entscheiden. Elvira hätte es gewusst.“&nbsp;&nbsp;
+              Frau Berger betrachtet Jakobs Einkaufsliste und stellt einen leeren Korb auf den Tresen. „Alles ist da. Aber welche Zutaten du wählst, musst du selbst entscheiden. Jakob hätte es gewusst.“&nbsp;&nbsp;
             </blockquote>
             <div className="mt-6 flex justify-end">
               <button
@@ -273,17 +273,17 @@ function AktePage() {
               Etappe 3 · Wald-Lichtung
             </p>
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-              „Geh zur Lichtung im Wald."
+              „Zur Waldlichtung."
             </h2>
             <div className="mt-4 rounded-sm border border-dashed border-stamp/40 bg-paper-deep/30 p-5">
               <p className="font-serif italic leading-relaxed">
-                Die Kasse piept und druckt einen Kassenzettel aus. Frau Berger reicht ihn dir. Auf der Rückseite steht:
+                Die Kasse piepst. Auf dem Kassenbon steht:
                 <br /><br />
-                „Gut gemacht! Geh zur Lichtung im Wald, wo wir früher Vögel
-                beobachtet haben. Dort findest du meinen Beobachtungsposten."
+                „Du bist auf dem richtigen Weg. Geh zurück zur Lichtung im Wald.
+                Dort wartet mein Notizbuch auf dich."
               </p>
               <p className="mt-3 font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
-               , E.
+               , J.
               </p>
             </div>
             <p className="mt-5 text-sm text-foreground/70">
