@@ -267,10 +267,11 @@ function AktePage() {
             </h2>
             <div className="mt-4 rounded-sm border border-dashed border-stamp/40 bg-paper-deep/30 p-5">
               <p className="font-serif italic leading-relaxed">
-                Mit den korrigierten Gutachten, den Rechnungen und Elviras Notizen im Rucksack rennt ihr zum Gemeindesaal. Kurz davor kommt euch Tante Elvira entgegen, atemlos, mit einem Stapel Papiere in der Hand. „Maja! Ich habe noch die letzten Messdaten vom Bachamt. Jetzt haben wir alles, was wir brauchen!“
+                Marlene schliesst den Ordner. „Jetzt haben wir alles. Komm, wir
+                müssen sofort zur Gemeinderatssitzung.“
               </p>
               <p className="mt-3 font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
-               , E.
+               , Marlene Vogt
               </p>
             </div>
             <p className="mt-5 text-sm text-foreground/70">
