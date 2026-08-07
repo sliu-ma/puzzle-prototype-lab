@@ -246,22 +246,6 @@ export function IntroScreen({
         )}
 
 
-          </PaperCard>
-        )}
-
-        {current === "brief" && letterOpen && (
-          <div className="animate-fade-in mt-5 flex items-center gap-3 rounded-sm border border-stamp/40 bg-paper-deep/30 p-4">
-            <Clock className="h-5 w-5 shrink-0 text-stamp" />
-            <div>
-              <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-                Sitzung beginnt in
-              </p>
-              <p className="font-serif text-2xl font-bold leading-tight">
-                90 Minuten
-              </p>
-            </div>
-          </div>
-        )}
 
         <div className="mt-6 flex items-center justify-end gap-3">
 
