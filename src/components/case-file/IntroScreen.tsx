@@ -2,10 +2,6 @@ import { useMemo, useState } from "react";
 import {
   Mail,
   ArrowRight,
-  Compass,
-  Clock,
-  Search,
-  
   Footprints,
   TriangleAlert,
   Play,
