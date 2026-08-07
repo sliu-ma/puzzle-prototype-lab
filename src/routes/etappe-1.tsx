@@ -256,10 +256,10 @@ function AktePage() {
           <PaperCard rotate={-0.2} tape="top-right">
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">Tickets analysieren</p>
             <h2 className="mt-2 flex items-center gap-2 font-serif text-2xl font-bold sm:text-3xl">
-              <MapPin className="h-6 w-6 text-stamp" /> Rekonstruiere Elviras Reiseroute
+              <MapPin className="h-6 w-6 text-stamp" /> Rekonstruiere Jakobs Reiseroute
             </h2>
             <p className="mt-3 text-[15px] text-foreground/80">
-              Elvira hat ihre Hinweise gut versteckt. Vielleicht lohnt sich ein zweiter Blick auf ihre Unterlagen.
+              Jakob hat seine Hinweise gut versteckt. Vielleicht lohnt sich ein zweiter Blick auf seine Unterlagen.
             </p>
 
             <form onSubmit={handleEingabe} className="mt-6 space-y-4">
