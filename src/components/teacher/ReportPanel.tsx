@@ -141,7 +141,6 @@ export function ReportPanel({
             key={s.stage}
             className="rounded-sm border border-border bg-card p-2 text-center"
           >
-            <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
             <p
               className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground"
               title={stageLabelA11y(s.stage)}
