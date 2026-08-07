@@ -193,7 +193,7 @@ export function ReportPanel({
                     key={s.stage}
                     className="font-mono-typed rounded-sm bg-secondary px-1.5 py-0.5 text-[10px]"
                   >
-                    E{s.stage}: {s.minutes}′
+                    {stageGlyph(s.stage)}: {s.minutes}′
                   </span>
                 ))}
               </div>
