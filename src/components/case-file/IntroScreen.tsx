@@ -5,7 +5,7 @@ import {
   Compass,
   Clock,
   Search,
-  TreePine,
+  
   Footprints,
   TriangleAlert,
   Play,
