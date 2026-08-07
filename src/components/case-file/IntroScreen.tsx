@@ -6,7 +6,6 @@ import {
   TriangleAlert,
   Play,
   Hand,
-  Clock,
 } from "lucide-react";
 
 import { PaperCard } from "@/components/case-file/PaperCard";
