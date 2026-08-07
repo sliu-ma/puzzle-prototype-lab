@@ -14,8 +14,20 @@ const OUTRO_MS = 4600;
 /**
  * Vorgeschichte als Vollbild-Overlay: Titeltafel, Video, Schlusstafel.
  * `onFinished` feuert genau einmal, nachdem die Schlusstafel gezeigt wurde.
+ * `allowSkip=false`: kein Überspringen, bis das Video durchgelaufen ist.
+ * `holdOnOutro`: Overlay bleibt auf der Schlusstafel stehen (Lehrperson schliesst selbst).
  */
-export function PrologueOverlay({ onFinished }: { onFinished: () => void }) {
+export function PrologueOverlay({
+  onFinished,
+  allowSkip = true,
+  holdOnOutro = false,
+  onClose,
+}: {
+  onFinished: () => void;
+  allowSkip?: boolean;
+  holdOnOutro?: boolean;
+  onClose?: () => void;
+}) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [phase, setPhase] = useState<Phase>("intro");
   const done = useRef(false);
@@ -24,7 +36,7 @@ export function PrologueOverlay({ onFinished }: { onFinished: () => void }) {
   const finish = () => {
     if (done.current) return;
     done.current = true;
-    setPhase("done");
+    if (!holdOnOutro) setPhase("done");
     onFinished();
   };
 
@@ -48,15 +60,26 @@ export function PrologueOverlay({ onFinished }: { onFinished: () => void }) {
     return () => window.clearTimeout(t);
   }, [phase]);
 
+  const showSkip = allowSkip || phase === "outro" || phase === "done";
+
   return (
     <div className="fixed inset-0 z-[90] flex items-center justify-center bg-[oklch(0.14_0.01_60)] prologue-grain">
-      <button
-        type="button"
-        onClick={() => (phase === "outro" ? finish() : setPhase("outro"))}
-        className="absolute right-4 top-4 z-10 rounded-sm border border-paper/30 px-3 py-2 font-mono-typed text-[10px] uppercase tracking-[0.2em] text-paper/70"
-      >
-        Überspringen
-      </button>
+      {showSkip && (
+        <button
+          type="button"
+          onClick={() => {
+            if (phase === "outro" || phase === "done") {
+              finish();
+              onClose?.();
+            } else {
+              setPhase("outro");
+            }
+          }}
+          className="absolute right-4 top-4 z-10 rounded-sm border border-paper/30 px-4 py-2.5 font-mono-typed text-xs uppercase tracking-[0.2em] text-paper/70"
+        >
+          {phase === "outro" || phase === "done" ? "Weiter" : "Überspringen"}
+        </button>
+      )}
 
       {phase === "video" ? (
         <video
@@ -69,26 +92,26 @@ export function PrologueOverlay({ onFinished }: { onFinished: () => void }) {
           className="max-h-full w-full animate-fade-in"
         />
       ) : (
-        <div className="w-full max-w-3xl px-8 text-center">
+        <div className="w-full max-w-6xl px-6 text-center">
           {phase === "intro" && (
             <div className="animate-prologue-fade">
               <span className="mx-auto block h-px w-24 bg-paper/30" />
-              <p className="mt-6 font-mono-typed text-xs uppercase tracking-[0.42em] text-kraft sm:text-sm">
+              <p className="mt-6 font-mono-typed uppercase tracking-[0.35em] text-kraft text-[clamp(1.1rem,3.4vw,2.6rem)]">
                 {dateLabel}
               </p>
-              <p className="mt-5 font-serif text-2xl leading-snug text-paper sm:text-4xl">
+              <p className="mt-6 font-serif leading-[1.1] text-paper text-[clamp(2.4rem,8vw,7rem)]">
                 {PROLOGUE_INTRO_PLACE}
               </p>
-              <span className="mx-auto mt-7 block h-px w-24 bg-paper/30" />
+              <span className="mx-auto mt-8 block h-px w-24 bg-paper/30" />
             </div>
           )}
           {(phase === "outro" || phase === "done") && (
             <div className="animate-prologue-fade-slow">
               <span className="mx-auto block h-px w-16 bg-paper/25" />
-              <p className="mt-7 font-serif text-xl leading-relaxed text-paper/90 sm:text-3xl">
+              <p className="mt-8 font-serif leading-[1.15] text-paper/95 text-[clamp(2rem,6.5vw,5.5rem)]">
                 {PROLOGUE_OUTRO_TEXT}
               </p>
-              <span className="mx-auto mt-7 block h-px w-16 bg-paper/25" />
+              <span className="mx-auto mt-8 block h-px w-16 bg-paper/25" />
             </div>
           )}
         </div>
