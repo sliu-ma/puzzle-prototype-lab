@@ -257,7 +257,7 @@ function ProgressPanel({
     const target = STAGES.find((s) => s.nr === nr);
     if (!target) return;
     const go = () => navigate({ to: target.to as string });
-    if (nr === 1 || nr === 6) {
+    if (nr === 6) {
       go();
       return;
     }
