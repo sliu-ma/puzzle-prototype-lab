@@ -66,7 +66,7 @@ export function PrologueOverlay({
     allowSkip || (holdOnOutro && (phase === "outro" || phase === "done"));
 
   return (
-    <div className="fixed inset-0 z-[90] flex items-center justify-center bg-[oklch(0.14_0.01_60)] prologue-grain">
+    <div className="fixed inset-0 z-[90] flex items-center justify-center overflow-hidden bg-[oklch(0.14_0.01_60)] prologue-grain">
       {showSkip && (
         <button
           type="button"
@@ -78,43 +78,46 @@ export function PrologueOverlay({
               setPhase("outro");
             }
           }}
-          className="absolute right-4 top-4 z-10 rounded-sm border border-paper/30 px-4 py-2.5 font-mono-typed text-xs uppercase tracking-[0.2em] text-paper/70"
+          className="absolute right-[max(1rem,env(safe-area-inset-right))] top-[max(1rem,env(safe-area-inset-top))] z-10 rounded-sm border border-paper/30 bg-black/30 px-4 py-2.5 font-mono-typed text-xs uppercase tracking-[0.2em] text-paper/70"
         >
           {phase === "outro" || phase === "done" ? "Weiter" : "Überspringen"}
         </button>
       )}
 
       {phase === "video" ? (
-        <video
-          ref={videoRef}
-          src={PROLOGUE_VIDEO_URL}
-          controls
-          playsInline
-          preload="auto"
-          onEnded={() => setPhase("outro")}
-          className="max-h-full w-full animate-fade-in"
-        />
+        <div className="flex h-full w-full items-center justify-center p-2 sm:p-4">
+          <video
+            ref={videoRef}
+            src={PROLOGUE_VIDEO_URL}
+            controls
+            playsInline
+            preload="auto"
+            onEnded={() => setPhase("outro")}
+            className="h-full w-full animate-fade-in object-contain"
+          />
+        </div>
       ) : (
-        <div className="w-full max-w-6xl px-5 text-center sm:px-6">
+        <div className="flex max-h-full w-full max-w-5xl flex-col justify-center overflow-y-auto px-6 py-10 text-center sm:px-10">
           {phase === "intro" && (
             <div className="animate-prologue-fade">
-              <p className="font-mono-typed uppercase tracking-[0.25em] text-kraft text-[clamp(0.7rem,2.6vw,2.6rem)] sm:tracking-[0.35em]">
+              <p className="font-mono-typed uppercase tracking-[0.25em] text-kraft text-[clamp(0.75rem,2.6vmin,1.6rem)] sm:tracking-[0.35em]">
                 {dateLabel}
               </p>
-              <p className="mt-4 font-serif leading-[1.15] text-paper text-[clamp(1.5rem,6vw,7rem)] sm:mt-6">
+              <p className="mt-4 break-words text-balance font-serif leading-[1.15] text-paper text-[clamp(1.75rem,8vmin,5rem)] sm:mt-6">
                 {PROLOGUE_INTRO_PLACE}
               </p>
             </div>
           )}
           {(phase === "outro" || phase === "done") && (
             <div className="animate-prologue-fade-slow">
-              <p className="font-serif leading-[1.2] text-paper/95 text-[clamp(1.35rem,5vw,5.5rem)]">
+              <p className="break-words text-balance font-serif leading-[1.25] text-paper/95 text-[clamp(1.5rem,6.5vmin,4rem)]">
                 {PROLOGUE_OUTRO_TEXT}
               </p>
             </div>
           )}
         </div>
       )}
+
     </div>
   );
 }
