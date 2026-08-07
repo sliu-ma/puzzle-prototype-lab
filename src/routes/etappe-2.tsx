@@ -70,7 +70,7 @@ const DORFLADEN_HINTS: Hint[] = [
     id: 0,
     unlockMin: 3,
     label: "Tipp 1",
-    title: "Starte mit Elviras Rezept",
+    title: "Starte mit Jakobs Rezept",
     body: "Der Korb ist leer, das ist Absicht. Öffne oben das Rezept-Akkordeon und geh die Zutaten Schritt für Schritt durch. Für jede Zutat gibt es im Laden mindestens eine Option.",
   },
   {
