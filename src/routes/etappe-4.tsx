@@ -140,7 +140,7 @@ function AktePage() {
               Etappe 4 · Zuhause
             </h1>
             <p className="mt-0.5 font-serif italic text-sm text-foreground/70 sm:text-base">
-              Elviras Haus, Querschnitt auf dem Küchentisch
+              Jakobs Haus, Zeichnung auf dem Küchentisch
             </p>
           </div>
           <Stamp rotate={-6}>Vertraulich</Stamp>
