@@ -85,7 +85,7 @@ export function registerTeam(
   name: string,
   code: string,
   members: string[] = [],
-  startTs?: number,
+  _startTs?: number,
 ) {
   try {
     localStorage.setItem(KEY_TEAM, name.trim());
