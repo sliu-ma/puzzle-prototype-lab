@@ -36,7 +36,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Ein Bildungs-Escape-Room zur Ökologie. Fünf Etappen, ein Hearing, von Mobilität bis Energie.",
+          "Ein Bildungs-Escape-Room. Fünf Etappen, ein Hearing, von Mobilität bis Energie.",
       },
     ],
   }),
