@@ -2170,13 +2170,8 @@ function OutroScreen() {
 
 
 
-  const nowClock =
-    typeof window !== "undefined"
-      ? new Date().toLocaleTimeString("de-CH", {
-          hour: "2-digit",
-          minute: "2-digit",
-        })
-      : "19:04";
+
+
 
   const reaktionen: {
     name: string;
