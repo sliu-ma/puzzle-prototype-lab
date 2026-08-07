@@ -175,14 +175,9 @@ export function IntroScreen({
             </div>
 
             <p className="mt-4 text-[15px] leading-relaxed text-foreground/85">
-              Ihre Lichtung soll gerodet werden. Am Forsthaus steht die Tür offen.
-              Dann hört sie Schritte.
+              Ihre Lichtung soll gerodet werden.
             </p>
 
-            <div className="mt-4 rounded-sm border border-border bg-paper-deep/40 p-4 font-serif italic text-[15px] leading-relaxed text-foreground/90">
-              „Du musst Maja sein. Ich bin ein Freund deines Grossvaters. Kurz vor
-              seinem Tod hat er mir diesen Umschlag für dich gegeben.“
-            </div>
           </PaperCard>
         )}
 
@@ -197,6 +192,16 @@ export function IntroScreen({
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
               Ein Brief von Opa Jakob
             </h2>
+
+            <p className="mt-4 text-[15px] leading-relaxed text-foreground/85">
+              Am Forsthaus steht die Tür offen. Dann hört sie Schritte.
+            </p>
+
+            <div className="mt-4 rounded-sm border border-border bg-paper-deep/40 p-4 font-serif italic text-[15px] leading-relaxed text-foreground/90">
+              „Du musst Maja sein. Ich bin ein Freund deines Grossvaters. Kurz vor
+              seinem Tod hat er mir diesen Umschlag für dich gegeben.“
+            </div>
+
 
             {!letterOpen ? (
               <button
