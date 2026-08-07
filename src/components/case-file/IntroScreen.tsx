@@ -241,11 +241,13 @@ export function IntroScreen({
               <div className="animate-letter-unfold mt-5 rounded-sm border border-border bg-paper-deep/40 p-5 font-serif text-[15px] leading-relaxed text-foreground/90 shadow-inner">
                 <p>Liebe Maja</p>
                 <p className="mt-3">
+                  Wenn du diesen Brief liest, bin ich nicht mehr da. Aber unser Ort
+                  ist es vielleicht auch bald nicht mehr.
+                </p>
+                <p className="mt-3">
                   <strong>
-                    Wenn du diesen Brief liest, steht die Entscheidung über das
-                    Gaskraftwerk auf der Waldlichtung an.
-                  </strong>{" "}
-                  Dafür müsste ein Teil des Waldes gerodet werden.
+                    Wenn du diesen Brief liest, bin ich nicht mehr da. Aber unser Ort ist es vielleicht auch bald nicht mehr.Wenn du diesen Brief liest, steht die Entscheidung über das Gaskraftwerk auf der Waldlichtung an.
+                  </strong>
                 </p>
 
                 <p className="mt-3">
