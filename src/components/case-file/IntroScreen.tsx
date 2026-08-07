@@ -61,17 +61,16 @@ export function IntroScreen({
   const current = steps[step];
 
   const finish = () => {
-    envelope.ask({
-      nr: 1,
-      ort: "Alter Bahnhof · Fahrkartenschalter",
-      etappeLabel: "Umschlag 1 · Alter Bahnhof",
-      onConfirm: () => {
-        markIntroSeen();
-        startGame();
-        onDone();
-      },
-    });
+    setShowStartTimer(true);
   };
+
+  const confirmStart = () => {
+    setShowStartTimer(false);
+    markIntroSeen();
+    startGame();
+    onDone();
+  };
+
 
   const next = () => {
     if (step < total - 1) setStep(step + 1);
