@@ -16,6 +16,6 @@ export function prologueIntroDate(now: Date = new Date()) {
   });
 }
 
-export const PROLOGUE_INTRO_PLACE = "An einer Lichtung mitten im Wald";
+export const PROLOGUE_INTRO_PLACE = "an einer Lichtung mitten im Wald";
 export const PROLOGUE_OUTRO_TEXT =
   "Wenige Monate später starb Jakob nach kurzer Krankheit.";

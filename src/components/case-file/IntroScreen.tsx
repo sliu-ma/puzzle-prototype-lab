@@ -126,7 +126,6 @@ export function IntroScreen({
             </button>
             {prologueOpen && (
               <PrologueOverlay
-                allowSkip={false}
                 onFinished={() => {
                   setPrologueOpen(false);
                   setStep(step + 1);
