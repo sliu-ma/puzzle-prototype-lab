@@ -13,7 +13,7 @@ import {
 import { PaperCard } from "@/components/case-file/PaperCard";
 import { Stamp } from "@/components/case-file/Stamp";
 import { PrologueOverlay } from "@/components/case-file/PrologueVideo";
-import { getHearingClock } from "@/lib/progress";
+import { getHearingClock, startGame } from "@/lib/progress";
 import { getRoundSession } from "@/lib/round-client";
 import { useEnvelopePrompt } from "@/components/case-file/EnvelopeDialog";
 import { useScrollToTopOnChange } from "@/hooks/use-scroll-top";
@@ -48,6 +48,7 @@ export function IntroScreen({
   const [step, setStep] = useState(0);
   const [letterOpen, setLetterOpen] = useState(false);
   const [prologueOpen, setPrologueOpen] = useState(false);
+  const [videoWatched, setVideoWatched] = useState(false);
   const envelope = useEnvelopePrompt();
   useScrollToTopOnChange(step);
 
@@ -67,6 +68,7 @@ export function IntroScreen({
       etappeLabel: "Umschlag 1 · Alter Bahnhof",
       onConfirm: () => {
         markIntroSeen();
+        startGame();
         onDone();
       },
     });
@@ -122,14 +124,19 @@ export function IntroScreen({
               className="mt-4 flex min-h-[48px] w-full items-center justify-center gap-2 rounded-sm bg-primary px-4 font-serif text-base font-semibold text-primary-foreground"
             >
               <Play className="h-4 w-4" />
-              Vorgeschichte abspielen
+              {videoWatched ? "Vorgeschichte nochmals ansehen" : "Vorgeschichte abspielen"}
             </button>
+            {!videoWatched && (
+              <p className="mt-3 font-mono-typed text-[11px] uppercase tracking-wider text-muted-foreground">
+                Weiter geht es, sobald die Vorgeschichte gesehen wurde.
+              </p>
+            )}
             {prologueOpen && (
               <PrologueOverlay
                 allowSkip={false}
                 onFinished={() => {
                   setPrologueOpen(false);
-                  setStep(step + 1);
+                  setVideoWatched(true);
                 }}
               />
             )}
@@ -245,9 +252,6 @@ export function IntroScreen({
             <div className="absolute right-4 top-6 sm:right-8 sm:top-8">
               <Stamp rotate={8}>Briefing</Stamp>
             </div>
-            <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-              So spielt ihr
-            </p>
             <h2 className="mt-2 font-serif text-3xl font-bold sm:text-4xl">
               Fünf Etappen. Ein Hearing.
             </h2>
@@ -276,16 +280,11 @@ export function IntroScreen({
           </PaperCard>
         )}
 
-        <div className="mt-6 flex items-center justify-between gap-3">
-          <button
-            onClick={finish}
-            className="font-mono-typed text-[11px] uppercase tracking-wider text-muted-foreground hover:text-foreground"
-          >
-            Überspringen
-          </button>
+        <div className="mt-6 flex items-center justify-end gap-3">
           <button
             onClick={next}
-            className="inline-flex min-h-[48px] items-center gap-2 rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
+            disabled={current === "video" && !videoWatched}
+            className="inline-flex min-h-[48px] items-center gap-2 rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md disabled:pointer-events-none disabled:opacity-40"
           >
             {step < total - 1 ? "Weiter" : "Ermittlung starten"}
             <ArrowRight className="h-4 w-4" />

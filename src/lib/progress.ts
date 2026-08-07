@@ -85,7 +85,7 @@ export function registerTeam(
   name: string,
   code: string,
   members: string[] = [],
-  startTs?: number,
+  _startTs?: number,
 ) {
   try {
     localStorage.setItem(KEY_TEAM, name.trim());
@@ -96,16 +96,25 @@ export function registerTeam(
     if (!localStorage.getItem(KEY_STAGE)) {
       localStorage.setItem(KEY_STAGE, "1");
     }
-    if (startTs) {
-      localStorage.setItem(KEY_START_TS, String(startTs));
-    } else if (!localStorage.getItem(KEY_START_TS)) {
-      localStorage.setItem(KEY_START_TS, String(Date.now()));
-    }
+    // Die Zeit startet erst nach dem Briefing (siehe startGame()).
     window.dispatchEvent(new Event("maya-progress"));
   } catch {
     /* ignore */
   }
 }
+
+/** Startet die Spielzeit (nach abgeschlossenem Briefing). Idempotent. */
+export function startGame(ts?: number) {
+  try {
+    if (!localStorage.getItem(KEY_START_TS)) {
+      localStorage.setItem(KEY_START_TS, String(ts ?? Date.now()));
+      window.dispatchEvent(new Event("maya-progress"));
+    }
+  } catch {
+    /* ignore */
+  }
+}
+
 
 
 export function getStartTs(): number | null {
