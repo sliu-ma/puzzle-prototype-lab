@@ -5,9 +5,10 @@ Problem: Jakob ist vor Monaten gestorben, kann den heutigen Abstimmungstermin al
 ## Neuer Ablauf der Briefkarte
 
 1. **Der Freund spricht (bestehende Sprechblase, erweitert)**
-   „Du musst Maja sein. Ich bin ein Freund deines Grossvaters. Kurz vor seinem Tod hat er mir diesen Umschlag gegeben — mit der Bitte, ihn dir zu geben, sobald es ernst wird.“
+   „Du musst Maja sein. Ich wusste gar nicht, dass du überhaupt noch einmal zurückkommst. Ich bin ein Freund deines Grossvaters — kurz vor seinem Tod hat er mir diesen Umschlag für dich gegeben.“
    Danach, als zweite Sprechblase mit Dringlichkeits-Optik (kleiner Uhr-Icon, warmes Alarm-Rot):
-   „Heute Abend stimmt der Gemeinderat über das Gaskraftwerk ab. In **90 Minuten** beginnt die Sitzung. Was Jakob begonnen hat, kann nur noch jemand fertigmachen, der jetzt losläuft.“
+   „Und du kommst gerade rechtzeitig: Heute Abend stimmt der Gemeinderat über das Gaskraftwerk ab. In **90 Minuten** beginnt die Sitzung. Was Jakob begonnen hat, kann nur noch jemand fertigmachen, der jetzt losläuft.“
+
 
 2. **Brief von Jakob – zeitlos formuliert**
    - „Heute entscheidet der Gemeinderat …“ wird ersetzt durch: „Wenn du diesen Brief liest, steht die Entscheidung über das Gaskraftwerk auf der Waldlichtung an. Dafür müsste ein Teil des Waldes gerodet werden.“
