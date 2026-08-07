@@ -155,7 +155,7 @@ export function LobbyPanel({
 
       <button
         type="button"
-        onClick={onStart}
+        onClick={() => onStart(false)}
         disabled={busy || status !== "lobby" || teams.length === 0}
         className="mt-3 flex min-h-[48px] w-full items-center justify-center gap-2 rounded-sm bg-primary px-4 font-serif text-base font-semibold text-primary-foreground disabled:opacity-50"
       >
