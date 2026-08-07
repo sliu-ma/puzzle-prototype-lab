@@ -2231,19 +2231,13 @@ function OutroScreen() {
           <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
             Ending
           </p>
-          <h2
-            className="mt-2 font-serif text-2xl font-bold sm:text-3xl"
-            style={{ animation: "fade-in 900ms ease-out both" }}
-          >
+          <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
             Für einen Moment herrscht Stille.
           </h2>
 
           <div className="mt-6 space-y-4">
             {reaktionen.slice(0, bubble + 1).map((r, i) => (
-              <div
-                key={i}
-                style={{ animation: "fade-in 500ms ease-out both" }}
-              >
+              <div key={i}>
                 {r.lead && (
                   <p className="mb-1.5 font-serif text-[14px] italic text-foreground/70">
                     {r.lead}
