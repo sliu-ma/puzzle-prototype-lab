@@ -13,7 +13,7 @@ import {
 import { PaperCard } from "@/components/case-file/PaperCard";
 import { Stamp } from "@/components/case-file/Stamp";
 import { PrologueOverlay } from "@/components/case-file/PrologueVideo";
-import { getHearingClock } from "@/lib/progress";
+import { getHearingClock, startGame } from "@/lib/progress";
 import { getRoundSession } from "@/lib/round-client";
 import { useEnvelopePrompt } from "@/components/case-file/EnvelopeDialog";
 import { useScrollToTopOnChange } from "@/hooks/use-scroll-top";
