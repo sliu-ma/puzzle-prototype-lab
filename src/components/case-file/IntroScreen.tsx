@@ -245,9 +245,6 @@ export function IntroScreen({
             <div className="absolute right-4 top-6 sm:right-8 sm:top-8">
               <Stamp rotate={8}>Briefing</Stamp>
             </div>
-            <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-              So spielt ihr
-            </p>
             <h2 className="mt-2 font-serif text-3xl font-bold sm:text-4xl">
               Fünf Etappen. Ein Hearing.
             </h2>
