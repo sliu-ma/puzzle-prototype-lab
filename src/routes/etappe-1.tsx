@@ -395,10 +395,10 @@ function AktePage() {
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">„Geh zum alten Dorfladen."</h2>
             <div className="mt-4 rounded-sm border border-dashed border-stamp/40 bg-paper-deep/30 p-5">
               <p className="font-serif italic leading-relaxed">
-                Auf der Rückseite des Bahntickets steht in Elviras Handschrift: „Frau Berger im Dorfladen wartet schon.
+                Auf der Rückseite des Bahntickets steht in Jakobs Handschrift: „Frau Berger im Dorfladen wartet schon.
                 Sie hat etwas für dich vorbereitet."
               </p>
-              <p className="mt-3 font-mono-typed text-[10px] uppercase tracking-wider text-stamp">E.</p>
+              <p className="mt-3 font-mono-typed text-[10px] uppercase tracking-wider text-stamp">J.</p>
             </div>
             <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
               <button
