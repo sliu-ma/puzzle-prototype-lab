@@ -84,8 +84,8 @@ export function PrologueOverlay({
         </button>
       )}
 
-      {phase === "video" ? (
-        <div className="flex h-full w-full items-center justify-center p-2 sm:p-4">
+      <div className="prologue-frame">
+        {phase === "video" ? (
           <video
             ref={videoRef}
             src={PROLOGUE_VIDEO_URL}
@@ -95,29 +95,28 @@ export function PrologueOverlay({
             onEnded={() => setPhase("outro")}
             className="h-full w-full animate-fade-in object-contain"
           />
-        </div>
-      ) : (
-        <div className="flex max-h-full w-full max-w-5xl flex-col justify-center overflow-y-auto px-6 py-10 text-center sm:px-10">
+        ) : (
+          <div className="flex h-full w-full items-center justify-center overflow-hidden px-[5cqw] py-[4cqh] text-center">
           {phase === "intro" && (
-            <div className="animate-prologue-fade">
-              <p className="font-mono-typed uppercase tracking-[0.25em] text-kraft text-[clamp(0.75rem,2.6vmin,1.6rem)] sm:tracking-[0.35em]">
+            <div className="w-full animate-prologue-fade">
+              <p className="font-mono-typed uppercase tracking-[0.18em] text-kraft text-[clamp(0.65rem,3.2cqh,1.6rem)] sm:tracking-[0.3em]">
                 {dateLabel}
               </p>
-              <p className="mt-4 break-words text-balance font-serif leading-[1.15] text-paper text-[clamp(1.75rem,8vmin,5rem)] sm:mt-6">
+              <p className="mt-[4cqh] break-words text-balance font-serif leading-[1.08] text-paper text-[clamp(1.3rem,9cqh,5rem)]">
                 {PROLOGUE_INTRO_PLACE}
               </p>
             </div>
           )}
           {(phase === "outro" || phase === "done") && (
-            <div className="animate-prologue-fade-slow">
-              <p className="break-words text-balance font-serif leading-[1.25] text-paper/95 text-[clamp(1.5rem,6.5vmin,4rem)]">
+            <div className="w-full animate-prologue-fade-slow">
+              <p className="break-words text-balance font-serif leading-[1.15] text-paper/95 text-[clamp(1.15rem,7.2cqh,4rem)]">
                 {PROLOGUE_OUTRO_TEXT}
               </p>
             </div>
           )}
-        </div>
-      )}
-
+          </div>
+        )}
+      </div>
     </div>
   );
 }
