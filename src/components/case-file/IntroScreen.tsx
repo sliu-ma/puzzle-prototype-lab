@@ -216,27 +216,17 @@ export function IntroScreen({
               >
                 <p>Liebe Maja</p>
                 <p className="mt-3">
-                  Wenn du diesen Brief liest, bist du wieder im Forsthaus.
-                  Vielleicht hast du schon gesehen, was hier passieren soll.
-                </p>
-                <p className="mt-3">
                   <strong>
                     Heute Abend um {getHearingClock() ?? "19:00"} Uhr entscheidet
-                    der Gemeinderat über den Bau eines Gaskraftwerks auf der
-                    Waldlichtung.
+                    der Gemeinderat über das Gaskraftwerk auf der Waldlichtung.
                   </strong>{" "}
                   Dafür müsste ein Teil des Waldes gerodet werden.
                 </p>
                 <p className="mt-3">
-                  Ich habe in den letzten Monaten Informationen gesammelt. Ich
-                  glaube, dass wichtige Fakten noch fehlen. Ich konnte meine Arbeit
-                  nicht fertigstellen. Jetzt brauche ich deine Hilfe.
-                </p>
-                <p className="mt-3">
-                  Folge meinen Spuren und sammle alle Hinweise. Wenn wir rechtzeitig
-                  alle Fakten zusammenbringen, können wir die Rodung vielleicht noch
-                  verhindern. <strong>Fang beim alten Bahnhof an.</strong> Und
-                  vergiss nie unser Versprechen.
+                  Ich habe Fakten gesammelt, aber meine Arbeit nicht fertigstellen
+                  können. Folge meinen Spuren, sammle alle Hinweise.{" "}
+                  <strong>Fang beim alten Bahnhof an.</strong> Und vergiss nie
+                  unser Versprechen.
                 </p>
                 <p className="mt-4 text-right italic text-foreground/70">
                   Dein Opa Jakob
