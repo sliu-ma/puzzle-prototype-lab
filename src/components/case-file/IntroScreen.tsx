@@ -276,16 +276,11 @@ export function IntroScreen({
           </PaperCard>
         )}
 
-        <div className="mt-6 flex items-center justify-between gap-3">
-          <button
-            onClick={finish}
-            className="font-mono-typed text-[11px] uppercase tracking-wider text-muted-foreground hover:text-foreground"
-          >
-            Überspringen
-          </button>
+        <div className="mt-6 flex items-center justify-end gap-3">
           <button
             onClick={next}
-            className="inline-flex min-h-[48px] items-center gap-2 rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
+            disabled={current === "video" && !videoWatched}
+            className="inline-flex min-h-[48px] items-center gap-2 rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md disabled:pointer-events-none disabled:opacity-40"
           >
             {step < total - 1 ? "Weiter" : "Ermittlung starten"}
             <ArrowRight className="h-4 w-4" />
