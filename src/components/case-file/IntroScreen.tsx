@@ -247,38 +247,6 @@ export function IntroScreen({
           </PaperCard>
         )}
 
-        {current === "regeln" && (
-          <PaperCard rotate={-0.4}>
-            <div className="absolute right-4 top-6 sm:right-8 sm:top-8">
-              <Stamp rotate={8}>Briefing</Stamp>
-            </div>
-            <h2 className="mt-2 font-serif text-3xl font-bold sm:text-4xl">
-              Fünf Etappen. Ein Hearing.
-            </h2>
-            <ul className="mt-5 space-y-3 text-[15px]">
-              <li className="flex gap-3">
-                <Compass className="mt-0.5 h-5 w-5 shrink-0 text-stamp" />
-                <span>
-                  <strong>QR-Code scannen</strong>, an jedem Ort im Dorf.
-                </span>
-              </li>
-              <li className="flex gap-3">
-                <Search className="mt-0.5 h-5 w-5 shrink-0 text-stamp" />
-                <span>
-                  <strong>Rätsel lösen</strong>, das schaltet die nächste Etappe
-                  frei.
-                </span>
-              </li>
-              <li className="flex gap-3">
-                <Clock className="mt-0.5 h-5 w-5 shrink-0 text-stamp" />
-                <span>
-                  <strong>Bis {getHearingClock() ?? "19:00"} Uhr</strong> im
-                  Gemeindesaal sein.
-                </span>
-              </li>
-            </ul>
-          </PaperCard>
-        )}
 
         <div className="mt-6 flex items-center justify-end gap-3">
           <button
