@@ -2282,11 +2282,11 @@ function OutroScreen() {
         </PaperCard>
       )}
 
-      {/* STEP 1. Nach dem Saal, Maja & Elvira */}
+      {/* STEP 1. Nach dem Saal, Maja auf der Lichtung */}
       {step === 1 && (
         <PaperCard rotate={0.2} tape="top-right">
           <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-            Vor dem Gemeindesaal
+            Später · auf der Lichtung
           </p>
           <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
             Ausatmen.
@@ -2294,30 +2294,22 @@ function OutroScreen() {
 
           <div className="mt-5 space-y-4 font-serif text-[15px] leading-relaxed text-foreground/90">
             <p>
-              Draussen atmen Maja und Elvira gleichzeitig aus. Elvira legt
-              ihrer Grossnichte die Hand auf die Schulter und sagt nichts. Sie
-              müssen nichts sagen.
+              Die Abstimmung ist verschoben. Der Gemeinderat prüft die neuen
+              Unterlagen. Maja schaut auf ihr Handy.{" "}
+              <strong>{nowClock} Uhr.</strong>
             </p>
             <p>
-              Maja schaut auf ihr Handy. <strong>{nowClock} Uhr.</strong> Dann
-              schaut sie Elvira an.
+              Später steht sie allein auf der Lichtung. Die Absperrbänder hängen
+              noch zwischen den Bäumen, aber heute stören sie niemanden.
+              Irgendwo klopft ein Specht.
+            </p>
+            <p>
+              Sie denkt an Jakobs Worte: Wer genau hinschaut, findet die Spuren,
+              die andere übersehen.
             </p>
           </div>
 
-          <div className="mt-4 space-y-3">
-            <SpeechBubble name="Maja" side="left" tone="amber">
-              „Gehen wir zur Hütte?“
-            </SpeechBubble>
-            <SpeechBubble name="Elvira" side="right" tone="emerald">
-              „Klar. Das ist eine gute Idee.“
-            </SpeechBubble>
-          </div>
 
-          <p className="mt-5 font-serif text-[15px] leading-relaxed text-foreground/90">
-            Sie gehen zu zweit den Waldweg hinauf, die Sonne noch warm auf der
-            Haut. Das rote Band hängt noch an den Bäumen. Aber heute stört es
-            niemanden.
-          </p>
 
           <div className="mt-6 flex justify-between gap-3">
             <button
