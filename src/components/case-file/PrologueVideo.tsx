@@ -1,10 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import {
-  PROLOGUE_INTRO_PLACE,
-  PROLOGUE_OUTRO_TEXT,
-  PROLOGUE_VIDEO_URL,
-  prologueIntroDate,
-} from "@/lib/story";
+import { PROLOGUE_INTRO_PLACE, PROLOGUE_OUTRO_TEXT, PROLOGUE_VIDEO_URL, prologueIntroDate } from "@/lib/story";
 
 type Phase = "intro" | "video" | "outro" | "done";
 
@@ -62,8 +57,7 @@ export function PrologueOverlay({
 
   // Ohne Skip-Erlaubnis (Einzelspieler) gibt es keinen Knopf; nur die Lehrperson
   // braucht auf der Schlusstafel ein «Weiter».
-  const showSkip =
-    allowSkip || (holdOnOutro && (phase === "outro" || phase === "done"));
+  const showSkip = allowSkip || (holdOnOutro && (phase === "outro" || phase === "done"));
 
   return (
     <div className="fixed inset-0 z-[90] flex items-center justify-center bg-[oklch(0.14_0.01_60)] prologue-grain">
@@ -93,13 +87,9 @@ export function PrologueOverlay({
           preload="auto"
           onEnded={() => setPhase("outro")}
           className="max-h-full w-full animate-fade-in"
-          style={{ transform: "rotate(-0.8deg)" }}
         />
       ) : (
-        <div
-          className="w-full max-w-6xl px-5 text-center sm:px-6"
-          style={{ transform: "rotate(-0.8deg)" }}
-        >
+        <div className="w-full max-w-6xl px-5 text-center sm:px-6">
           {phase === "intro" && (
             <div className="animate-prologue-fade">
               <p className="font-mono-typed uppercase tracking-[0.25em] text-kraft text-[clamp(0.7rem,2.6vw,2.6rem)] sm:tracking-[0.35em]">
