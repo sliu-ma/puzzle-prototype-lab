@@ -193,6 +193,16 @@ export function IntroScreen({
               Ein Brief von Opa Jakob
             </h2>
 
+            <p className="mt-4 text-[15px] leading-relaxed text-foreground/85">
+              Am Forsthaus steht die Tür offen. Dann hört sie Schritte.
+            </p>
+
+            <div className="mt-4 rounded-sm border border-border bg-paper-deep/40 p-4 font-serif italic text-[15px] leading-relaxed text-foreground/90">
+              „Du musst Maja sein. Ich bin ein Freund deines Grossvaters. Kurz vor
+              seinem Tod hat er mir diesen Umschlag für dich gegeben.“
+            </div>
+
+
             {!letterOpen ? (
               <button
                 type="button"
