@@ -72,7 +72,7 @@ export const BADGES: Badge[] = [
     description:
       "Start, Ziel und die nachhaltigste Verbindung auf Anhieb getroffen, ohne einen einzigen Fehlversuch.",
     criteria:
-      "Gib in Etappe 1 Start und Ziel beim ersten Versuch korrekt ein und wähle direkt danach die richtige Route.",
+      "Gib in Etappe ▲ Start und Ziel beim ersten Versuch korrekt ein und wähle direkt danach die richtige Route.",
     imageUrl: badgeRoute.url,
   },
   {
