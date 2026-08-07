@@ -252,7 +252,10 @@ export function IntroScreen({
         <div className="mt-6 flex items-center justify-end gap-3">
           <button
             onClick={next}
-            disabled={current === "video" && !videoWatched}
+            disabled={
+              (current === "video" && !videoWatched) ||
+              (current === "brief" && !letterOpen)
+            }
             className="inline-flex min-h-[48px] items-center gap-2 rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md disabled:pointer-events-none disabled:opacity-40"
           >
             {step < total - 1 ? "Weiter" : "Ermittlung starten"}
