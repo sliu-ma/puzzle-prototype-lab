@@ -4,7 +4,6 @@ import { Lock } from "lucide-react";
 import { PaperCard } from "./PaperCard";
 import { Stamp } from "./Stamp";
 import { getCurrentStage, getTeam, STAGES } from "@/lib/progress";
-import { stageLabel } from "@/lib/stage-symbols";
 
 type Props = {
   stage: number; // 1..6
@@ -82,7 +81,7 @@ export function StageGate({ stage, children }: Props) {
             <div className="flex items-start justify-between gap-3">
               <div>
                 <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-                  {stageLabel(stage)} · Versiegelt
+                  Etappe {stage} · Versiegelt
                 </p>
                 <h1 className="mt-2 flex items-center gap-2 font-serif text-3xl font-bold leading-tight">
                   <Lock className="h-7 w-7 text-stamp" /> Noch nicht an der Reihe
@@ -92,7 +91,7 @@ export function StageGate({ stage, children }: Props) {
             </div>
             <p className="mt-5 text-[15px] leading-relaxed text-foreground/80">
               Die Etappen müssen der Reihe nach gelöst werden. Ihr seid aktuell
-              bei <strong>{stageLabel(current)}</strong>
+              bei <strong>Etappe {current}</strong>
               {next ? ` · ${next.ort}` : ""}.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
@@ -122,7 +121,7 @@ export function StageGate({ stage, children }: Props) {
     <>
       {isReview && (
         <div className="sticky top-0 z-40 border-b border-emerald-500/40 bg-emerald-500/10 px-3 py-2 text-center font-mono-typed text-[11px] uppercase tracking-[0.18em] text-emerald-800">
-          Rückblick · {stageLabel(stage)} abgeschlossen · eure Antworten bleiben sichtbar
+          Rückblick · Etappe {stage} abgeschlossen · eure Antworten bleiben sichtbar
         </div>
       )}
       {children}

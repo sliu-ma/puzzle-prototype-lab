@@ -7,7 +7,6 @@ import { getScore, readScoreEvents } from "@/lib/score-events";
 import { BADGE_OVERLAY, isBadgeOverlayOpen } from "@/lib/overlay-bus";
 import { Rank, Status } from "./Leaderboard";
 import { cn } from "@/lib/utils";
-import { stageLabel } from "@/lib/stage-symbols";
 
 type Row = {
   id: string;
@@ -230,7 +229,7 @@ export function StageScoreRecap({ stage }: { stage: number }) {
     >
       <div className="w-full max-w-md rounded-t-lg border border-border bg-card p-5 shadow-xl sm:rounded-sm">
         <p className="text-center font-mono-typed text-[10px] uppercase tracking-[0.25em] text-stamp">
-          Zwischenstand · {stageLabel(stage)} · {stage} von 5
+          Zwischenstand · Etappe {stage} von 5
         </p>
 
         {/* Punkte */}
@@ -326,7 +325,7 @@ export function StageScoreRecap({ stage }: { stage: number }) {
                     s.stage === stage && "bg-stamp/8",
                   )}
                 >
-                  <span className="font-serif text-sm">{stageLabel(s.stage)}</span>
+                  <span className="font-serif text-sm">Etappe {s.stage}</span>
                   <span className="font-mono-typed text-sm font-bold tabular-nums">
                     {s.points}
                   </span>

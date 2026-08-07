@@ -54,7 +54,7 @@ export const BADGES: Badge[] = [
     description:
       "Korb gepackt, Kasse geklingelt, beim ersten Versuch alles richtig regional, saisonal und fair.",
     criteria:
-      "Bestehe den Konsum-Fall (Etappe ●) beim allerersten Druck auf „Bezahlen“.",
+      "Bestehe den Konsum-Fall (Etappe 2) beim allerersten Druck auf „Bezahlen“.",
     imageUrl: badgeEinkauf.url,
   },
   {
@@ -72,7 +72,7 @@ export const BADGES: Badge[] = [
     description:
       "Start, Ziel und die nachhaltigste Verbindung auf Anhieb getroffen, ohne einen einzigen Fehlversuch.",
     criteria:
-      "Gib in Etappe ▲ Start und Ziel beim ersten Versuch korrekt ein und wähle direkt danach die richtige Route.",
+      "Gib in Etappe 1 Start und Ziel beim ersten Versuch korrekt ein und wähle direkt danach die richtige Route.",
     imageUrl: badgeRoute.url,
   },
   {

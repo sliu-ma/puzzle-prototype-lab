@@ -1,7 +1,5 @@
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 
-import { stageGlyph, stageLabel } from "@/lib/stage-symbols";
-
 type Props = {
   /** Etappennummer bzw. 6 für das Hearing. */
   nr: number;
@@ -45,7 +43,7 @@ export function NextStepCard({ nr, ort, thema, isFinale, finished, onOpen }: Pro
       <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
         <div className="min-w-0">
           <p className="font-mono-typed text-[10px] uppercase tracking-[0.18em] text-stamp">
-            {isFinale ? "Nächster Schritt · Hearing" : `Nächster Schritt · ${stageLabel(nr)}`}
+            {isFinale ? "Nächster Schritt · Hearing" : `Nächster Schritt · Etappe ${nr}`}
           </p>
           <h2 className="mt-1 font-serif text-2xl font-bold leading-tight sm:text-3xl">
             {ort}
@@ -56,7 +54,7 @@ export function NextStepCard({ nr, ort, thema, isFinale, finished, onOpen }: Pro
           aria-hidden
           className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-stamp font-mono-typed text-lg font-bold text-paper"
         >
-          {stageGlyph(nr)}
+          {nr}
         </span>
       </div>
 
@@ -66,7 +64,7 @@ export function NextStepCard({ nr, ort, thema, isFinale, finished, onOpen }: Pro
         onClick={onOpen}
         className="mt-3 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-sm bg-primary px-5 py-3 font-serif text-base font-semibold text-primary-foreground transition-all active:scale-[0.99] hover:-translate-y-0.5 hover:shadow-md"
       >
-        {isFinale ? "Hearing starten" : `${stageLabel(nr)} öffnen`}
+        {isFinale ? "Hearing starten" : `Etappe ${nr} öffnen`}
         <ArrowRight aria-hidden className="h-4 w-4" />
       </button>
     </section>

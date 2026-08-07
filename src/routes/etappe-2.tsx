@@ -28,11 +28,11 @@ import { StageScoreRecap } from "@/components/case-file/StageScoreRecap";
 export const Route = createFileRoute("/etappe-2")({
   head: () => ({
     meta: [
-      { title: "Etappe Kreis, Dorfladen Berger" },
+      { title: "Etappe 2, Dorfladen Berger" },
       {
         name: "description",
         content:
-          "Etappe Kreis: Im alten Dorfladen wartet ein gepackter Einkaufskorb. Zwei Produkte stimmen nicht, finde sie und tausche sie aus.",
+          "Etappe 2: Im alten Dorfladen wartet ein gepackter Einkaufskorb. Zwei Produkte stimmen nicht, finde sie und tausche sie aus.",
       },
     ],
   }),
@@ -46,9 +46,9 @@ function AkteGated() {
         stage={2}
         token="CpZk0z9RaQkL22gtiWoR"
         storageKey="akte-001-unlocked"
-        title={<>Etappe ●, QR-Code im Dorfladen scannen</>}
+        title={<>Etappe 2, QR-Code im Dorfladen scannen</>}
         description="Diese Etappe ist versiegelt. Scanne den QR-Code, den Frau Berger für dich bereitgelegt hat."
-        label="Etappe ● · Versiegelt"
+        label="Etappe 2 · Versiegelt"
       >
         <AktePage />
       </QRGate>
@@ -143,7 +143,7 @@ function AktePage() {
               ← Zurück zur Übersicht
             </Link>
             <h1 className="mt-1.5 font-serif text-2xl font-bold leading-tight sm:mt-2 sm:text-5xl">
-              Etappe ● · Dorfladen
+              Etappe 2 · Dorfladen
             </h1>
             <p className="mt-0.5 font-serif italic text-sm text-foreground/70 sm:text-base">
               Frau Bergers Regale
@@ -260,7 +260,7 @@ function AktePage() {
             ]}
             backLabel="← Zurück in den Laden"
             onBack={() => setStep("shop")}
-            nextLabel="Weiter zu Etappe ■ →"
+            nextLabel="Weiter zu Etappe 3 →"
             onNext={() => goto("naechstes")}
           />
           );
@@ -270,7 +270,7 @@ function AktePage() {
         {step === "naechstes" && (
           <PaperCard rotate={-0.5} tape="top-left">
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-              Etappe ■ · Wald-Lichtung
+              Etappe 3 · Wald-Lichtung
             </p>
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
               „Zur Waldlichtung."
@@ -294,14 +294,14 @@ function AktePage() {
                 onClick={() =>
                   envelope.ask({
                     nr: 3,
-                    ort: "Wald-Lichtung · Etappe ■",
-                    etappeLabel: "Etappe ■ · Wald-Lichtung",
+                    ort: "Wald-Lichtung · Etappe 3",
+                    etappeLabel: "Etappe 3 · Wald-Lichtung",
                     onConfirm: () => navigate({ to: "/etappe-3" }),
                   })
                 }
                 className="inline-flex items-center gap-2 rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
               >
-                Etappe ■ öffnen →
+                Etappe 3 öffnen →
               </button>
               <Link
                 to="/"

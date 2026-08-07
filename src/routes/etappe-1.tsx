@@ -25,11 +25,11 @@ import { StageScoreRecap } from "@/components/case-file/StageScoreRecap";
 export const Route = createFileRoute("/etappe-1")({
   head: () => ({
     meta: [
-      { title: "Etappe Dreieck, Bahnhof Speicher" },
+      { title: "Etappe 1, Bahnhof Speicher" },
       {
         name: "description",
         content:
-          "Etappe Dreieck: Auf dem Bahnhof liegt Jakobs altes Reiseticket. Welchen Weg hat er wirklich gewählt?",
+          "Etappe 1: Auf dem Bahnhof liegt Jakobs altes Reiseticket. Welchen Weg hat er wirklich gewählt?",
       },
     ],
   }),
@@ -69,9 +69,9 @@ function AkteGated() {
         stage={1}
         token={AKTE_003_TOKEN}
         storageKey="akte-003-unlocked"
-        title={<>Etappe ▲, QR-Code am Bahnhof scannen</>}
+        title={<>Etappe 1, QR-Code am Bahnhof scannen</>}
         description="Diese Etappe ist versiegelt. Scanne den QR-Code, der am Bahnhof Speicher für dich hinterlegt ist."
-        label="Etappe ▲ · Versiegelt"
+        label="Etappe 1 · Versiegelt"
       >
         <AktePage />
       </QRGate>
@@ -179,7 +179,7 @@ function AktePage() {
               ← Zurück zur Übersicht
             </Link>
             <h1 className="mt-1.5 font-serif text-2xl font-bold leading-tight sm:mt-2 sm:text-5xl">
-              Etappe ▲ · Bahnhof
+              Etappe 1 · Bahnhof
             </h1>
             <p className="mt-0.5 font-serif italic text-sm text-foreground/70 sm:text-base">
               Auf den Spuren einer alten Reise
@@ -382,7 +382,7 @@ function AktePage() {
               },
             ]}
             onBack={() => setStep("routen")}
-            nextLabel="Weiter zu Etappe ● →"
+            nextLabel="Weiter zu Etappe 2 →"
             onNext={() => goto("naechstes")}
           />
         )}
@@ -390,7 +390,7 @@ function AktePage() {
         {step === "naechstes" && <StageScoreRecap stage={1} />}
         {step === "naechstes" && (
           <PaperCard rotate={-0.5} tape="top-left">
-            <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">Etappe ● · Dorfladen</p>
+            <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">Etappe 2 · Dorfladen</p>
 
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">„Geh zum alten Dorfladen."</h2>
             <div className="mt-4 rounded-sm border border-dashed border-stamp/40 bg-paper-deep/30 p-5">
@@ -405,14 +405,14 @@ function AktePage() {
                 onClick={() =>
                   envelope.ask({
                     nr: 2,
-                    ort: "Dorfladen · Etappe ●",
-                    etappeLabel: "Etappe ● · Dorfladen",
+                    ort: "Dorfladen · Etappe 2",
+                    etappeLabel: "Etappe 2 · Dorfladen",
                     onConfirm: () => navigate({ to: "/etappe-2" }),
                   })
                 }
                 className="inline-flex items-center gap-2 rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
               >
-                Etappe ● öffnen →
+                Etappe 2 öffnen →
               </button>
               <Link
                 to="/"
@@ -426,7 +426,7 @@ function AktePage() {
         {envelope.dialog}
 
         <p className="mt-12 text-center font-mono-typed text-xs uppercase tracking-[0.2em] text-muted-foreground">
-         , Etappe ▲ · Bahnhof Speicher
+         , Etappe 1 · Bahnhof Speicher
         </p>
       </div>
 

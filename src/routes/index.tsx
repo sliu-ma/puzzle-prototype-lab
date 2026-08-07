@@ -27,7 +27,6 @@ const CHEAT_CODE = "KRXZMVBQ";
 import { IntroScreen, hasSeenIntro } from "@/components/case-file/IntroScreen";
 import { useScrollToTopOnChange } from "@/hooks/use-scroll-top";
 import { useEnvelopePrompt } from "@/components/case-file/EnvelopeDialog";
-import { stageGlyph, stageLabel, stageLabelA11y } from "@/lib/stage-symbols";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/")({
@@ -264,8 +263,8 @@ function ProgressPanel({
     }
     envelope.ask({
       nr,
-      ort: `${target.ort} · ${stageLabel(nr)}`,
-      etappeLabel: `${stageLabel(nr)} · ${target.ort}`,
+      ort: `${target.ort} · Etappe ${nr}`,
+      etappeLabel: `Etappe ${nr} · ${target.ort}`,
       onConfirm: go,
     });
   };
@@ -486,7 +485,7 @@ function ProgressPanel({
                     {finale.ort}
                   </p>
                   <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
-                    Hearing · nach Etappe ★
+                    Hearing · nach Etappe 5
                   </p>
                 </div>
                 <Lock className="h-4 w-4 shrink-0 text-muted-foreground" />
@@ -508,7 +507,7 @@ function ProgressPanel({
           >
             {currentStage >= 6
               ? "Weiter zum Hearing"
-              : `Weiter zu ${stageLabel(currentStage)}`}
+              : `Weiter zu Etappe ${currentStage}`}
             <span aria-hidden>→</span>
           </button>
         </div>
@@ -549,9 +548,7 @@ function PathNode({
           status === "locked" && "bg-secondary text-muted-foreground",
         )}
       >
-        <span aria-label={stageLabelA11y(nr)} role="img">
-          {stageGlyph(nr)}
-        </span>
+        {nr}
       </span>
     </span>
   );
