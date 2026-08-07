@@ -60,7 +60,10 @@ export function PrologueOverlay({
     return () => window.clearTimeout(t);
   }, [phase]);
 
-  const showSkip = allowSkip || phase === "outro" || phase === "done";
+  // Ohne Skip-Erlaubnis (Einzelspieler) gibt es keinen Knopf; nur die Lehrperson
+  // braucht auf der Schlusstafel ein «Weiter».
+  const showSkip =
+    allowSkip || (holdOnOutro && (phase === "outro" || phase === "done"));
 
   return (
     <div className="fixed inset-0 z-[90] flex items-center justify-center bg-[oklch(0.14_0.01_60)] prologue-grain">
@@ -92,26 +95,26 @@ export function PrologueOverlay({
           className="max-h-full w-full animate-fade-in"
         />
       ) : (
-        <div className="w-full max-w-6xl px-6 text-center">
+        <div className="w-full max-w-6xl px-5 text-center sm:px-6">
           {phase === "intro" && (
             <div className="animate-prologue-fade">
-              <span className="mx-auto block h-px w-24 bg-paper/30" />
-              <p className="mt-6 font-mono-typed uppercase tracking-[0.35em] text-kraft text-[clamp(1.1rem,3.4vw,2.6rem)]">
+              <span className="mx-auto block h-px w-16 bg-paper/30 sm:w-24" />
+              <p className="mt-5 font-mono-typed uppercase tracking-[0.25em] text-kraft text-[clamp(0.7rem,2.6vw,2.6rem)] sm:mt-6 sm:tracking-[0.35em]">
                 {dateLabel}
               </p>
-              <p className="mt-6 font-serif leading-[1.1] text-paper text-[clamp(2.4rem,8vw,7rem)]">
+              <p className="mt-4 font-serif leading-[1.15] text-paper text-[clamp(1.5rem,6vw,7rem)] sm:mt-6">
                 {PROLOGUE_INTRO_PLACE}
               </p>
-              <span className="mx-auto mt-8 block h-px w-24 bg-paper/30" />
+              <span className="mx-auto mt-6 block h-px w-16 bg-paper/30 sm:mt-8 sm:w-24" />
             </div>
           )}
           {(phase === "outro" || phase === "done") && (
             <div className="animate-prologue-fade-slow">
-              <span className="mx-auto block h-px w-16 bg-paper/25" />
-              <p className="mt-8 font-serif leading-[1.15] text-paper/95 text-[clamp(2rem,6.5vw,5.5rem)]">
+              <span className="mx-auto block h-px w-12 bg-paper/25 sm:w-16" />
+              <p className="mt-6 font-serif leading-[1.2] text-paper/95 text-[clamp(1.35rem,5vw,5.5rem)] sm:mt-8">
                 {PROLOGUE_OUTRO_TEXT}
               </p>
-              <span className="mx-auto mt-8 block h-px w-16 bg-paper/25" />
+              <span className="mx-auto mt-6 block h-px w-12 bg-paper/25 sm:mt-8 sm:w-16" />
             </div>
           )}
         </div>
