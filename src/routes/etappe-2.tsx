@@ -283,7 +283,7 @@ function AktePage() {
                 Dort wartet mein Notizbuch auf dich."
               </p>
               <p className="mt-3 font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
-               , J.
+                J.
               </p>
             </div>
             <p className="mt-5 text-sm text-foreground/70">
@@ -315,7 +315,7 @@ function AktePage() {
         {envelope.dialog}
 
         <p className="mt-12 text-center font-mono-typed text-xs uppercase tracking-[0.2em] text-muted-foreground">
-         , Etappe 2 · Dorfladen Berger
+          ETAPPE 2 · DORFLADEN BERGER
         </p>
       </div>
 
