@@ -39,7 +39,7 @@ export const Route = createFileRoute("/etappe-3")({
       {
         name: "description",
         content:
-          "Etappe 3: Auf der Lichtung steht Elviras Beobachtungsposten. Sortiere die Tiere und entschlüssele den Code des Zahlenschlosses.",
+          "Etappe 3: Beim Forsthaus liegt Jakobs Notizbuch. Sortiere die Tiere und entschlüssele den Code des Türschlosses.",
       },
     ],
   }),
