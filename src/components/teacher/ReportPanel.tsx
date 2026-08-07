@@ -1,6 +1,7 @@
 import { Download, RefreshCw } from "lucide-react";
 import { useRoundReport, fmtTime, type ReportTeam } from "./LobbyPanel";
 import { cn } from "@/lib/utils";
+import { stageGlyph, stageLabelA11y } from "@/lib/stage-symbols";
 
 const STAGES = [1, 2, 3, 4, 5];
 
