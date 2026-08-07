@@ -2236,8 +2236,9 @@ function OutroScreen() {
             Reaktionen des Gemeinderats
           </p>
           <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-            Stille. Dann geht ein Raunen durch den Saal.
+            Für einen Moment herrscht Stille.
           </h2>
+
 
           <div className="mt-6 space-y-3">
             {reaktionen.slice(0, bubble + 1).map((r, i) => (
