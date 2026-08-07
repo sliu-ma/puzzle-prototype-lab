@@ -218,7 +218,7 @@ function AktePage() {
               <br />
               „Manche dieser Tiere sind hier noch sicher, andere stehen kurz vor
               dem Verschwinden. Trenne die gefährdeten von den nicht
-              gefährdeten Arten, um das Türschloss zu öffnen.“
+              gefährdeten Arten, um das Kiste zu öffnen.“
             </blockquote>
             <div className="mt-6 flex justify-end">
               <button
