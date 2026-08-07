@@ -264,9 +264,8 @@ export function IntroScreen({
               <li className="flex gap-3">
                 <Clock className="mt-0.5 h-5 w-5 shrink-0 text-stamp" />
                 <span>
-                  <strong>Zeit im Blick</strong>, um{" "}
-                  {getHearingClock() ?? "19:00"} Uhr beginnt die
-                  Gemeinderatssitzung. Bis dahin müsst ihr im Saal sein.
+                  <strong>Bis {getHearingClock() ?? "19:00"} Uhr</strong> im
+                  Gemeindesaal sein.
                 </span>
               </li>
             </ul>
