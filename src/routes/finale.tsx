@@ -2170,13 +2170,8 @@ function OutroScreen() {
 
 
 
-  const nowClock =
-    typeof window !== "undefined"
-      ? new Date().toLocaleTimeString("de-CH", {
-          hour: "2-digit",
-          minute: "2-digit",
-        })
-      : "19:04";
+
+
 
   const reaktionen: {
     name: string;
@@ -2186,28 +2181,19 @@ function OutroScreen() {
     tone: "emerald" | "amber" | "stamp";
   }[] = [
     {
-      name: "Ratsfrau Schmid",
-      rolle: "Ressort Verkehr",
+      name: "Ratsmitglied",
+      rolle: "Gemeinderat",
       side: "left",
       tone: "emerald",
-      text:
-        "„Ich beantrage, die Abstimmung zu vertagen und die neuen Unterlagen zu prüfen.“",
+      text: "„Diese Unterlagen sollten wir sorgfältig prüfen.“",
     },
     {
-      name: "Ratsherr Brunner",
-      rolle: "Ressort Landwirtschaft",
+      name: "Ratsmitglied",
+      rolle: "Gemeinderat",
       side: "right",
       tone: "amber",
       text:
-        "„Die Zahlen sind sauber. Damit können wir arbeiten, nicht mit dem alten Gutachten.“",
-    },
-    {
-      name: "Ratsfrau Lindenmann",
-      rolle: "Ressort Umwelt",
-      side: "left",
-      tone: "emerald",
-      text:
-        "„Ein Gaskraftwerk mitten im Waldreservat? Das hätte ich fast durchgewinkt. Danke.“",
+        "„Mit diesen neuen Informationen können wir heute keine endgültige Entscheidung treffen.“",
     },
     {
       name: "Gemeindepräsident",
@@ -2215,7 +2201,7 @@ function OutroScreen() {
       side: "right",
       tone: "stamp",
       text:
-        "„Antrag angenommen. Die Abstimmung wird auf nächsten Monat verschoben.“",
+        "„Die Abstimmung wird verschoben. Die neuen Erkenntnisse werden in die weitere Planung einfliessen.“",
     },
   ];
 
@@ -2245,8 +2231,9 @@ function OutroScreen() {
             Reaktionen des Gemeinderats
           </p>
           <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-            Stille. Dann geht ein Raunen durch den Saal.
+            Für einen Moment herrscht Stille.
           </h2>
+
 
           <div className="mt-6 space-y-3">
             {reaktionen.slice(0, bubble + 1).map((r, i) => (
@@ -2294,20 +2281,20 @@ function OutroScreen() {
 
           <div className="mt-5 space-y-4 font-serif text-[15px] leading-relaxed text-foreground/90">
             <p>
-              Die Abstimmung ist verschoben. Der Gemeinderat prüft die neuen
-              Unterlagen. Maja schaut auf ihr Handy.{" "}
-              <strong>{nowClock} Uhr.</strong>
+              Maja verlässt erleichtert den Gemeindesaal. Bevor sie nach Hause
+              fährt, geht sie noch einmal zur Lichtung. Sie setzt sich auf den
+              grossen Felsen. Es dauert nicht lange, bis ein Specht im Baum
+              landet. Maja lächelt.
             </p>
             <p>
-              Später steht sie allein auf der Lichtung. Die Absperrbänder hängen
-              noch zwischen den Bäumen, aber heute stören sie niemanden.
-              Irgendwo klopft ein Specht.
+              Sie erinnert sich an Jakobs Worte: „Wenn wir der Natur Zeit geben,
+              zeigt sie uns mehr, als wir erwarten.“
             </p>
             <p>
-              Sie denkt an Jakobs Worte: Wer genau hinschaut, findet die Spuren,
-              die andere übersehen.
+              Sie blickt ein letztes Mal über die Lichtung. „Versprochen.“
             </p>
           </div>
+
 
 
 
