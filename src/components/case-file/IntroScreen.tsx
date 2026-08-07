@@ -56,8 +56,8 @@ export function IntroScreen({
   // Ohne Runde (Einzelspieler-Code) läuft es hier auf dem Gerät.
   const showVideo = useMemo(() => getRoundSession() === null, []);
   const steps = showVideo
-    ? (["video", "ankunft", "brief", "regeln"] as const)
-    : (["ankunft", "brief", "regeln"] as const);
+    ? (["video", "ankunft", "brief"] as const)
+    : (["ankunft", "brief"] as const);
   const total = steps.length;
   const current = steps[step];
 
