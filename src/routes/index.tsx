@@ -136,10 +136,10 @@ function CoverPage() {
             </p>
 
             <h1 className="mt-5 font-serif text-4xl font-bold leading-[0.95] text-foreground sm:text-7xl">
-              Tante Elvira
+              Grossvaters
               <br />
               <span className="relative inline-block">
-                ist weg.
+                letzte Spur.
                 <span
                   aria-hidden
                   className="absolute -bottom-2 left-0 h-[6px] w-full rounded-full"
