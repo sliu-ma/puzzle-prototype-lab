@@ -4,14 +4,16 @@
 
 Klassenrunde:
 ```text
-Lobby  ->  Lehrperson startet
+Lobby  ->  Lehrperson startet das Video (Beamer, ca. 1 Min)
+       ->  Video zu Ende  ->  Runde startet automatisch
        ->  Countdown 3-2-1 (Handys)
        ->  Briefing: Ankunft im Wald -> Umschlag -> Brief -> So spielt ihr
        ->  Umschlag 1 / Etappe 1
 ```
-Das Vorgeschichte-Video zeigst du vor dem Start am Beamer: auf `/lehrer/<code>` erscheint im Schritt «Lobby» ein Video-Block mit Abspielfeld, direkt über dem Startknopf.
+Auf `/lehrer/<code>` steht im Schritt «Lobby» das Video (`Vorgeschichte.mp4`, 61 s) gross über dem Startknopf. Sobald es zu Ende ist, wird die Runde automatisch gestartet – auf allen Handys läuft der 3-2-1-Countdown. Der Startknopf bleibt als manuelle Alternative (falls du das Video überspringst oder es nicht abspielt), und es gibt einen Schalter «Nach dem Video automatisch starten», damit du das Verhalten notfalls ausschalten kannst.
 
-Einzelspieler-Code (ohne Klassenrunde): das gleiche Video wird als erste Briefing-Karte auf dem Handy eingebettet, mit «Weiter»-Knopf, der erst nach dem Video (oder per Überspringen) freigibt.
+Einzelspieler-Code (ohne Klassenrunde): das gleiche Video wird als erste Briefing-Karte auf dem Handy eingebettet; nach dem Videoende geht es automatisch zur nächsten Karte, «Überspringen» bleibt möglich.
+
 
 ## Neues Briefing (Handy, 4 Karten)
 
@@ -36,10 +38,10 @@ Am Schluss wie bisher der Umschlag-Dialog «Umschlag 1 · Alter Bahnhof», «Üb
 ## Technisch
 
 - `src/components/case-file/IntroScreen.tsx`: Personen-Schritt und `PersonCard`/`Persona` entfernen; Schritte dynamisch (3 bzw. 4 mit Video); neue Story-Karten + Umschlag-Aufklapper; Regelkarte an den Schluss.
-- Neu `src/lib/story.ts`: `PROLOGUE_VIDEO_URL` (Konstante, von dir zu füllen) und die Briefing-Texte, damit Lehrerseite und Handy die gleiche Quelle nutzen.
-- Neu `src/components/case-file/PrologueVideo.tsx`: schlanker `<video controls playsInline>`-Block mit Titel und Hinweis, wenn kein Link gesetzt ist.
-- `src/routes/lehrer.$code.tsx` bzw. `src/components/teacher/LobbyPanel.tsx`: Video-Block im Lobby-Schritt vor dem Startknopf.
-- Erkennung Einzelspieler: kein Rundencode/Runden-Session vorhanden (`round-client`), dann Video-Karte im Briefing zeigen.
-- Keine Änderungen an Punkten, Badges, Timer oder Datenbank.
+- Video als Lovable-Asset (`src/assets/vorgeschichte.mp4.asset.json` aus der hochgeladenen Datei), Binary bleibt aus dem Repo.
+- Neu `src/lib/story.ts`: Briefing-Texte + Video-Referenz, damit Lehrerseite und Handy die gleiche Quelle nutzen.
+- Neu `src/components/case-file/PrologueVideo.tsx`: `<video controls playsInline preload="metadata">` mit `onEnded`-Callback.
+- `src/components/teacher/LobbyPanel.tsx`: Video-Block im Lobby-Schritt über dem Startknopf; `onEnded` ruft die bestehende Start-Funktion (`teacherStartRound`) genau einmal auf, geschützt gegen Doppelstart und nur wenn der Status noch `lobby` ist. Auto-Start-Schalter im lokalen State.
+- Erkennung Einzelspieler: keine Runden-Session (`round-client`), dann Video-Karte im Briefing zeigen; `onEnded` schaltet eine Karte weiter.
+- Keine Änderungen an Punkten, Badges, Timer, Countdown-Logik oder Datenbank.
 
-Ich brauche dazu noch den Video-Link oder die Datei; bis dahin steht ein Platzhalter mit Hinweis.
