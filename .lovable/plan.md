@@ -8,7 +8,7 @@ Ziel: Überall im sichtbaren Text und in den Grafiken erscheinen statt „Etappe
 Etappe 1  Bahnhof            ▲  Dreieck
 Etappe 2  Dorfladen          ●  Kreis
 Etappe 3  Wald-Lichtung      ■  Quadrat
-Etappe 4  Jakobs Haus        ◆  Raute
+Etappe 4  Jakobs Haus        ✚  Kreuz
 Etappe 5  Wasserkraftwerk    ★  Stern
 Hearing   Gemeindesaal       ✦  Siegel (bleibt „Hearing")
 ```
