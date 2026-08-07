@@ -125,7 +125,7 @@ export function EnvelopeDialog({
             <DialogDescription asChild>
               <p className="mt-3 text-center font-serif text-[15px] leading-relaxed text-foreground/85">
                 Jakobs nächster Hinweis liegt bereit. Nimm den Umschlag mit
-                der grossen Nummer <strong>{nr}</strong> und öffne ihn jetzt.
+                dem grossen Symbol <strong>{stageGlyph(nr)}</strong> ({stageLabel(nr)}) und öffne ihn jetzt.
               </p>
             </DialogDescription>
 
