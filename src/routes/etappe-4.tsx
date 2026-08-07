@@ -216,10 +216,10 @@ function AktePage() {
         {step === "raetselkarte" && (
           <PaperCard rotate={0.3} tape="top">
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-              Rätselkarte · Auftrag von Elvira
+              Rätselkarte · Auftrag von Jakob
             </p>
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-              Plane Elviras Haus um
+              Plane Jakobs Haus um
             </h2>
             <div className="mt-5 grid gap-4 sm:grid-cols-2">
               <div className="rounded-sm border border-border bg-paper p-4">
