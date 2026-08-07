@@ -49,11 +49,11 @@ const HINTS_004: Hint[] = [
 export const Route = createFileRoute("/etappe-4")({
   head: () => ({
     meta: [
-      { title: "Etappe 4, Elviras Haus" },
+      { title: "Etappe 4, Jakobs Haus" },
       {
         name: "description",
         content:
-          "Etappe 4: Zurück bei Elvira. Eine Querschnittszeichnung des Hauses, alte Rechnungen, und das Ziel: 3'500 Energiesparpunkte sammeln.",
+          "Etappe 4: Eine Zeichnung von Jakobs Haus, alte Rechnungen, und das Ziel: Energiesparpunkte sammeln.",
       },
     ],
   }),
