@@ -134,14 +134,14 @@ export function IntroScreen({
         "Fotografiert am liebsten mit einer alten Analogkamera vom Flohmarkt. Trägt immer ein zerknittertes Notizbuch mit Filmrollen-Nummern dabei.",
     },
     {
-      id: "elvira",
-      name: "Elvira",
-      alter: "68",
-      rolle: "Majas Grosstante.",
+      id: "jakob",
+      name: "Jakob",
+      alter: "†",
+      rolle: "Majas Grossvater.",
       color: "bg-emerald-100 text-emerald-700",
       icon: <Bird className="h-6 w-6" />,
       fact:
-        "War 40 Jahre lang Biologielehrerin an der Kanti. Steht seit ihrer Pensionierung fast täglich vor Sonnenaufgang auf, um Vögel zu zählen, und hat einen Ordner voller handgezeichneter Karten von Speicher.",
+        "War Förster und hat sein Leben lang die Natur rund um Speicher beobachtet. Er hinterliess Notizbücher, handgezeichnete Karten und überall im Dorf kleine Hinweise.",
     },
   ];
 
