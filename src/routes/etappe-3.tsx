@@ -308,7 +308,7 @@ function AktePage() {
                 Zuhause. Im Haus wartet der nächste Hinweis.“
               </p>
               <p className="mt-3 font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
-               , J.
+                J.
               </p>
             </div>
             <p className="mt-5 text-sm text-foreground/70">
