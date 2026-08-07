@@ -66,11 +66,7 @@ export function PrologueOverlay({
     allowSkip || (holdOnOutro && (phase === "outro" || phase === "done"));
 
   return (
-    <div
-      className={`fixed inset-0 z-[90] flex items-center justify-center prologue-grain ${
-        phase === "video" ? "bg-ink/95" : "bg-[oklch(0.14_0.01_60)]"
-      }`}
-    >
+    <div className="fixed inset-0 z-[90] flex items-center justify-center bg-[oklch(0.14_0.01_60)] prologue-grain">
       {showSkip && (
         <button
           type="button"
@@ -96,7 +92,7 @@ export function PrologueOverlay({
           playsInline
           preload="auto"
           onEnded={() => setPhase("outro")}
-          className="animate-fade-in block h-auto max-h-[100dvh] w-full max-w-full object-contain"
+          className="max-h-full w-full animate-fade-in"
         />
       ) : (
         <div className="w-full max-w-6xl px-5 text-center sm:px-6">
