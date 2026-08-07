@@ -85,8 +85,8 @@ export function LobbyPanel({
   const fired = useRef(false);
 
   // Startknopf -> Vorgeschichte im Vollbild -> Runde genau einmal starten.
+  // Das Overlay bleibt auf der Schlusstafel stehen, bis die Lehrperson weiterklickt.
   const handlePrologueFinished = () => {
-    setPrologueOpen(false);
     if (fired.current) return;
     fired.current = true;
     onStart(true);
@@ -139,7 +139,13 @@ export function LobbyPanel({
         ))}
       </ul>
 
-      {prologueOpen && <PrologueOverlay onFinished={handlePrologueFinished} />}
+      {prologueOpen && (
+        <PrologueOverlay
+          holdOnOutro
+          onFinished={handlePrologueFinished}
+          onClose={() => setPrologueOpen(false)}
+        />
+      )}
 
       <button
         type="button"
