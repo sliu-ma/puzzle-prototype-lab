@@ -340,18 +340,19 @@ function AktePage() {
               Etappe 5 · altes Wasserkraftwerk
             </p>
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-              „Komm zum alten Wasserkraftwerk."
+              „Zum Wasserkraftwerk."
             </h2>
             <div className="mt-4 rounded-sm border border-dashed border-stamp/40 bg-paper-deep/30 p-5">
               <p className="font-serif italic leading-relaxed">
-                Es klickt, die Abdeckung des alten Sicherungskastens springt auf.
-                Darin: eine Schlüsselkarte und ein Zettel.&nbsp;
+                Im Sicherungskasten steckt eine Schlüsselkarte und ein Brief.
                 <br />
                 <br />
-                Wir haben bewiesen, dass viele kleine Veränderungen zuhause eine
-                grosse Wirkung haben können. Ich bin beim Wasserkraftwerk. Marlene
-                Vogt vom Umweltamt wartet dort auf uns. Beeil dich, die Zeit
-                läuft!&nbsp;&nbsp;
+                „Du hast fast alles gefunden. Mit dieser Karte gelangst du ins
+                alte Wasserkraftwerk. Dort wartet Marlene mit den letzten
+                Unterlagen.“&nbsp;&nbsp;
+              </p>
+              <p className="mt-3 font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
+               , J.
               </p>
             </div>
             <p className="mt-5 text-sm text-foreground/70">
