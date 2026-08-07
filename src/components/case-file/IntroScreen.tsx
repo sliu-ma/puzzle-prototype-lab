@@ -5,6 +5,7 @@ import {
   Footprints,
   TriangleAlert,
   Play,
+  Hand,
 } from "lucide-react";
 import { PaperCard } from "@/components/case-file/PaperCard";
 import { Stamp } from "@/components/case-file/Stamp";
