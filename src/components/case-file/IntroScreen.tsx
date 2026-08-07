@@ -147,17 +147,10 @@ export function IntroScreen({
 
             <ul className="mt-5 space-y-4 text-[15px] leading-relaxed text-foreground/85">
               <li className="flex gap-3">
-                <TreePine className="mt-0.5 h-5 w-5 shrink-0 text-stamp" />
-                <span>
-                  Maja ist heute 15. Seit Jakobs Tod war sie nicht mehr hier. Sie
-                  will noch einmal zum alten Forsthaus.
-                </span>
-              </li>
-              <li className="flex gap-3">
                 <Footprints className="mt-0.5 h-5 w-5 shrink-0 text-stamp" />
                 <span>
-                  Der Weg führt mitten durch den Wald. Plötzlich erkennt sie den
-                  grossen Felsen. <strong>Die Lichtung.</strong>
+                  Zum ersten Mal seit Jakobs Tod ist Maja wieder hier. Sie erkennt
+                  den grossen Felsen. <strong>Die Lichtung.</strong>
                 </span>
               </li>
               <li className="flex gap-3">
@@ -182,8 +175,8 @@ export function IntroScreen({
             </div>
 
             <p className="mt-4 text-[15px] leading-relaxed text-foreground/85">
-              Maja bleibt stehen. Ihre Lichtung soll gerodet werden. Sie geht weiter
-              zum Forsthaus. Die Tür steht offen. Dann hört sie Schritte.
+              Ihre Lichtung soll gerodet werden. Am Forsthaus steht die Tür offen.
+              Dann hört sie Schritte.
             </p>
 
             <div className="mt-4 rounded-sm border border-border bg-paper-deep/40 p-4 font-serif italic text-[15px] leading-relaxed text-foreground/90">
