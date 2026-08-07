@@ -48,6 +48,7 @@ export function IntroScreen({
   const [step, setStep] = useState(0);
   const [letterOpen, setLetterOpen] = useState(false);
   const [prologueOpen, setPrologueOpen] = useState(false);
+  const [videoWatched, setVideoWatched] = useState(false);
   const envelope = useEnvelopePrompt();
   useScrollToTopOnChange(step);
 
