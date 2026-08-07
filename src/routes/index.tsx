@@ -149,7 +149,7 @@ function CoverPage() {
             </h1>
 
             <p className="mt-6 max-w-xl font-serif text-base italic leading-relaxed text-foreground/80 sm:text-xl">
-              Ein Bildungs-Escape-Room zur Ökologie.
+              Ein Bildungs-Escape-Room.
               <br />
               Fünf Etappen, ein Hearing.
             </p>
