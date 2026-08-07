@@ -211,3 +211,20 @@ input, textarea, select {
     transform: scale(1.25);
   }
 }
+
+/* Sanfte Einblendung für die Titel- und Schlusstafel der Vorgeschichte. */
+@keyframes prologue-card-fade {
+  0% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@utility animate-prologue-fade {
+  animation: prologue-card-fade 900ms ease-out both;
+}
+
