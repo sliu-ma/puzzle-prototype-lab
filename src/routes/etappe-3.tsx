@@ -294,32 +294,34 @@ function AktePage() {
           <PaperCard rotate={-0.5} tape="top-left">
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
 
-              Etappe 4 · Elviras Haus
+              Etappe 4 · Jakobs Haus
             </p>
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-              „Geh zurück ins Haus."
+              „Zurück ins Haus."
             </h2>
             <div className="mt-4 rounded-sm border border-dashed border-stamp/40 bg-paper-deep/30 p-5">
               <p className="font-serif italic leading-relaxed">
-                Statt Forschungsausrüstung findest du eine Mappe mit Strom- und Heizrechnungen. Darauf steht:
+                Im Forsthaus entdeckt Maja eine Holzkiste. Darin liegen alte
+                Strom- und Heizrechnungen. Ein Zettel steckt dazwischen:
                 <br /><br />
-                „Der erste Schritt beginnt zuhause. Ich habe im Haus Vorbereitungen getroffen. Nimm die Rechnungen mit und untersuche die Räume.“
+                „Wer sorgsam mit Energie umgeht, schützt mehr als nur sein
+                Zuhause. Im Haus wartet der nächste Hinweis.“
               </p>
               <p className="mt-3 font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
-               , E.
+               , J.
               </p>
             </div>
             <p className="mt-5 text-sm text-foreground/70">
               Du wirfst einen letzten Blick auf das Bauschild, greifst die
-              Mappe, und rennst los.
+              Rechnungen, und rennst los.
             </p>
             <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
               <button
                 onClick={() =>
                   envelope.ask({
                     nr: 4,
-                    ort: "Elviras Haus · Etappe 4",
-                    etappeLabel: "Etappe 4 · Elviras Haus",
+                    ort: "Jakobs Haus · Etappe 4",
+                    etappeLabel: "Etappe 4 · Jakobs Haus",
                     onConfirm: () => navigate({ to: "/etappe-4" }),
                   })
                 }
