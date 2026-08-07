@@ -244,7 +244,7 @@ input, textarea, select {
 @utility prologue-frame {
   container-type: size;
   aspect-ratio: 16 / 9;
-  width: min(calc(100vw - 1rem), calc((100dvh - 1rem) * 16 / 9));
+  width: min(100vw, calc(100dvh * 16 / 9));
   max-width: none;
   flex: none;
   overflow: hidden;

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import {
   PROLOGUE_INTRO_PLACE,
   PROLOGUE_OUTRO_TEXT,
@@ -65,7 +66,7 @@ export function PrologueOverlay({
   const showSkip =
     allowSkip || (holdOnOutro && (phase === "outro" || phase === "done"));
 
-  return (
+  const overlay = (
     <div className="fixed inset-0 z-[90] flex items-center justify-center overflow-hidden bg-[oklch(0.14_0.01_60)] prologue-grain">
       {showSkip && (
         <button
@@ -119,4 +120,11 @@ export function PrologueOverlay({
       </div>
     </div>
   );
+
+  // PaperCard ist leicht gedreht. Ein `fixed`-Element innerhalb dieses
+  // transformierten Elternteils wäre an die Karte statt an den Viewport
+  // gebunden. Das Portal garantiert echtes Vollbild auf jedem Gerät.
+  return typeof document === "undefined"
+    ? null
+    : createPortal(overlay, document.body);
 }
