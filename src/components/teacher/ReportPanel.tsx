@@ -155,8 +155,8 @@ export function ReportPanel({
       </div>
       {hardest && easiest && (
         <p className="mt-2 text-xs text-muted-foreground">
-          Zäheste Etappe: E{hardest.stage} mit Ø {hardest.minutes} min · schnellste: E
-          {easiest.stage} mit Ø {easiest.minutes} min
+          Zäheste Etappe: {stageGlyph(hardest.stage)} mit Ø {hardest.minutes} min · schnellste:{" "}
+          {stageGlyph(easiest.stage)} mit Ø {easiest.minutes} min
         </p>
       )}
 
