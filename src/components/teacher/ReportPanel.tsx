@@ -1,6 +1,7 @@
 import { Download, RefreshCw } from "lucide-react";
 import { useRoundReport, fmtTime, type ReportTeam } from "./LobbyPanel";
 import { cn } from "@/lib/utils";
+import { stageGlyph, stageLabelA11y } from "@/lib/stage-symbols";
 
 const STAGES = [1, 2, 3, 4, 5];
 
@@ -140,8 +141,11 @@ export function ReportPanel({
             key={s.stage}
             className="rounded-sm border border-border bg-card p-2 text-center"
           >
-            <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
-              E{s.stage}
+            <p
+              className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground"
+              title={stageLabelA11y(s.stage)}
+            >
+              {stageGlyph(s.stage)}
             </p>
             <p className="font-mono-typed mt-0.5 font-bold tabular-nums">
               {s.minutes === null ? "–" : `${s.minutes}′`}
@@ -151,8 +155,8 @@ export function ReportPanel({
       </div>
       {hardest && easiest && (
         <p className="mt-2 text-xs text-muted-foreground">
-          Zäheste Etappe: E{hardest.stage} mit Ø {hardest.minutes} min · schnellste: E
-          {easiest.stage} mit Ø {easiest.minutes} min
+          Zäheste Etappe: {stageGlyph(hardest.stage)} mit Ø {hardest.minutes} min · schnellste:{" "}
+          {stageGlyph(easiest.stage)} mit Ø {easiest.minutes} min
         </p>
       )}
 
@@ -189,7 +193,7 @@ export function ReportPanel({
                     key={s.stage}
                     className="font-mono-typed rounded-sm bg-secondary px-1.5 py-0.5 text-[10px]"
                   >
-                    E{s.stage}: {s.minutes}′
+                    {stageGlyph(s.stage)}: {s.minutes}′
                   </span>
                 ))}
               </div>
