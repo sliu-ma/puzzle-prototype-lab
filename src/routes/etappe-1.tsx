@@ -29,7 +29,7 @@ export const Route = createFileRoute("/etappe-1")({
       {
         name: "description",
         content:
-          "Etappe 1: Auf dem Bahnhof liegen Elviras alte Reisetickets. Welche Verbindung hat sie wirklich gewählt?",
+          "Etappe 1: Auf dem Bahnhof liegt Jakobs altes Reiseticket. Welchen Weg hat er wirklich gewählt?",
       },
     ],
   }),
