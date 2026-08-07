@@ -273,17 +273,17 @@ function AktePage() {
               Etappe 3 · Wald-Lichtung
             </p>
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-              „Geh zur Lichtung im Wald."
+              „Zur Waldlichtung."
             </h2>
             <div className="mt-4 rounded-sm border border-dashed border-stamp/40 bg-paper-deep/30 p-5">
               <p className="font-serif italic leading-relaxed">
-                Die Kasse piept und druckt einen Kassenzettel aus. Frau Berger reicht ihn dir. Auf der Rückseite steht:
+                Die Kasse piepst. Auf dem Kassenbon steht:
                 <br /><br />
-                „Gut gemacht! Geh zur Lichtung im Wald, wo wir früher Vögel
-                beobachtet haben. Dort findest du meinen Beobachtungsposten."
+                „Du bist auf dem richtigen Weg. Geh zurück zur Lichtung im Wald.
+                Dort wartet mein Notizbuch auf dich."
               </p>
               <p className="mt-3 font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
-               , E.
+               , J.
               </p>
             </div>
             <p className="mt-5 text-sm text-foreground/70">
