@@ -224,8 +224,7 @@ export function IntroScreen({
                 </p>
                 <p className="mt-3">
                   Ich habe Fakten gesammelt, aber meine Arbeit nicht fertigstellen
-                  können. Folge meinen Spuren, sammle alle Hinweise.{" "}
-                  <strong>Fang beim alten Bahnhof an.</strong> Und vergiss nie
+                  können. Folge meinen Spuren, sammle alle Hinweise. Und vergiss nie
                   unser Versprechen.
                 </p>
                 <p className="mt-4 text-right italic text-foreground/70">
