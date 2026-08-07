@@ -100,12 +100,12 @@ export function PrologueVideo({
               </button>
             )}
             {phase === "intro" && (
-              <p className="animate-fade-in font-serif text-lg leading-relaxed text-white/90 sm:text-2xl">
+              <p className="animate-prologue-fade font-serif text-lg leading-relaxed text-white/90 sm:text-2xl">
                 «{PROLOGUE_INTRO_TEXT}»
               </p>
             )}
             {phase === "outro" && (
-              <p className="animate-fade-in font-serif text-lg leading-relaxed text-white/90 sm:text-2xl">
+              <p className="animate-prologue-fade font-serif text-lg leading-relaxed text-white/90 sm:text-2xl">
                 {PROLOGUE_OUTRO_TEXT}
               </p>
             )}
