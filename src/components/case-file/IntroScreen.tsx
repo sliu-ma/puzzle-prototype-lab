@@ -213,16 +213,19 @@ export function IntroScreen({
                 onClick={() => setLetterOpen(true)}
                 className="mt-5 flex min-h-[140px] w-full flex-col items-center justify-center gap-3 rounded-sm border-2 border-dashed border-stamp/50 bg-paper-deep/30 p-6 transition-transform hover:-translate-y-0.5"
               >
-                <Mail className="h-10 w-10 text-stamp" />
+                <span className="animate-envelope-breathe">
+                  <Mail className="h-10 w-10 text-stamp" />
+                </span>
                 <span className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
                   Umschlag öffnen
                 </span>
+                <span className="animate-tap-hint flex items-center gap-1.5 font-mono-typed text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+                  <Hand className="h-3.5 w-3.5" />
+                  Tipp auf den Brief
+                </span>
               </button>
             ) : (
-              <div
-                className="mt-5 rounded-sm border border-border bg-paper-deep/40 p-5 font-serif text-[15px] leading-relaxed text-foreground/90 shadow-inner"
-                style={{ transform: "rotate(-0.4deg)" }}
-              >
+              <div className="animate-letter-unfold mt-5 rounded-sm border border-border bg-paper-deep/40 p-5 font-serif text-[15px] leading-relaxed text-foreground/90 shadow-inner">
                 <p>Liebe Maja</p>
                 <p className="mt-3">
                   <strong>
