@@ -1,17 +1,19 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Mail,
   ArrowRight,
   Compass,
   Clock,
   Search,
-  Camera,
-  Bird,
-  ChevronDown,
+  TreePine,
+  Footprints,
+  TriangleAlert,
 } from "lucide-react";
 import { PaperCard } from "@/components/case-file/PaperCard";
 import { Stamp } from "@/components/case-file/Stamp";
+import { PrologueVideo } from "@/components/case-file/PrologueVideo";
 import { getHearingClock } from "@/lib/progress";
+import { getRoundSession } from "@/lib/round-client";
 import { useEnvelopePrompt } from "@/components/case-file/EnvelopeDialog";
 import { useScrollToTopOnChange } from "@/hooks/use-scroll-top";
 
@@ -33,80 +35,6 @@ export function markIntroSeen() {
   }
 }
 
-/* ---------- Interaktive Personenkarte ---------- */
-
-type Persona = {
-  id: string;
-  name: string;
-  alter: string;
-  rolle: string;
-  icon: React.ReactNode;
-  fact: string;
-  color: string;
-};
-
-function PersonCard({
-  p,
-  open,
-  onToggle,
-}: {
-  p: Persona;
-  open: boolean;
-  onToggle: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onToggle}
-      className="group block w-full text-left"
-    >
-      <div className="flex gap-4 rounded-sm border border-border bg-paper p-4 transition-all hover:-translate-y-0.5 hover:shadow-md">
-        <div
-          className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-full ${p.color}`}
-        >
-          {p.icon}
-        </div>
-        <div className="min-w-0 flex-1">
-          <div className="flex items-baseline justify-between gap-2">
-            <p className="font-serif text-lg font-bold">
-              {p.name}
-              <span className="ml-2 font-mono-typed text-[11px] uppercase tracking-wider text-muted-foreground">
-                {p.alter}
-              </span>
-            </p>
-            <ChevronDown
-              className={`h-4 w-4 shrink-0 text-muted-foreground transition-transform ${
-                open ? "rotate-180" : ""
-              }`}
-            />
-          </div>
-          <p className="mt-0.5 text-sm text-foreground/75">{p.rolle}</p>
-
-          <div
-            className={`grid transition-all duration-300 ease-out ${
-              open
-                ? "mt-3 grid-rows-[1fr] opacity-100"
-                : "grid-rows-[0fr] opacity-0"
-            }`}
-          >
-            <div className="overflow-hidden">
-              <div className="rounded-sm border border-dashed border-stamp/40 bg-stamp/5 p-3 font-serif italic text-[14px] leading-relaxed text-foreground/85">
-                {p.fact}
-              </div>
-            </div>
-          </div>
-
-          {!open && (
-            <p className="mt-2 font-mono-typed text-[10px] uppercase tracking-wider text-stamp/80">
-              Tippen für ein Detail
-            </p>
-          )}
-        </div>
-      </div>
-    </button>
-  );
-}
-
 /* ---------- Screen ---------- */
 
 export function IntroScreen({
@@ -117,33 +45,18 @@ export function IntroScreen({
   onDone: () => void;
 }) {
   const [step, setStep] = useState(0);
-  const [openPerson, setOpenPerson] = useState<string | null>(null);
+  const [letterOpen, setLetterOpen] = useState(false);
   const envelope = useEnvelopePrompt();
-  const total = 3;
   useScrollToTopOnChange(step);
 
-  const personen: Persona[] = [
-    {
-      id: "maja",
-      name: "Maja",
-      alter: "17",
-      rolle: "Das seid ihr.",
-      color: "bg-amber-100 text-amber-700",
-      icon: <Camera className="h-6 w-6" />,
-      fact:
-        "Fotografiert am liebsten mit einer alten Analogkamera vom Flohmarkt. Trägt immer ein zerknittertes Notizbuch mit Filmrollen-Nummern dabei.",
-    },
-    {
-      id: "jakob",
-      name: "Jakob",
-      alter: "†",
-      rolle: "Majas Grossvater.",
-      color: "bg-emerald-100 text-emerald-700",
-      icon: <Bird className="h-6 w-6" />,
-      fact:
-        "War Förster und hat sein Leben lang die Natur rund um Speicher beobachtet. Er hinterliess Notizbücher, handgezeichnete Karten und überall im Dorf kleine Hinweise.",
-    },
-  ];
+  // In einer Klassenrunde zeigt die Lehrperson das Video am Beamer.
+  // Ohne Runde (Einzelspieler-Code) läuft es hier auf dem Gerät.
+  const showVideo = useMemo(() => getRoundSession() === null, []);
+  const steps = showVideo
+    ? (["video", "ankunft", "brief", "regeln"] as const)
+    : (["ankunft", "brief", "regeln"] as const);
+  const total = steps.length;
+  const current = steps[step];
 
   const finish = () => {
     envelope.ask({
@@ -190,7 +103,139 @@ export function IntroScreen({
           </div>
         </div>
 
-        {step === 0 && (
+        {current === "video" && (
+          <PaperCard rotate={-0.3}>
+            <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
+              Vor einem Jahr
+            </p>
+            <h2 className="mt-2 font-serif text-3xl font-bold sm:text-4xl">
+              Das Versprechen
+            </h2>
+            <p className="mt-3 text-[15px] leading-relaxed text-foreground/85">
+              Schaut zuerst die Vorgeschichte. Danach geht es los.
+            </p>
+            <PrologueVideo className="mt-4" onEnded={() => setStep(step + 1)} />
+          </PaperCard>
+        )}
+
+        {current === "ankunft" && (
+          <PaperCard rotate={0.3} tape="top-left">
+            <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
+              Heute · Grünwald
+            </p>
+            <h2 className="mt-2 font-serif text-3xl font-bold sm:text-4xl">
+              Zurück im Wald
+            </h2>
+
+            <ul className="mt-5 space-y-4 text-[15px] leading-relaxed text-foreground/85">
+              <li className="flex gap-3">
+                <TreePine className="mt-0.5 h-5 w-5 shrink-0 text-stamp" />
+                <span>
+                  Maja ist heute 15. Seit Jakobs Tod war sie nicht mehr hier. Sie
+                  will noch einmal zum alten Forsthaus.
+                </span>
+              </li>
+              <li className="flex gap-3">
+                <Footprints className="mt-0.5 h-5 w-5 shrink-0 text-stamp" />
+                <span>
+                  Der Weg führt mitten durch den Wald. Plötzlich erkennt sie den
+                  grossen Felsen. <strong>Die Lichtung.</strong>
+                </span>
+              </li>
+              <li className="flex gap-3">
+                <TriangleAlert className="mt-0.5 h-5 w-5 shrink-0 text-stamp" />
+                <span>
+                  Doch heute hängen rot-weisse Absperrbänder zwischen den Bäumen.
+                  Am Weg steht ein Schild:
+                </span>
+              </li>
+            </ul>
+
+            <div
+              className="mt-4 rounded-sm border-2 border-destructive/50 bg-destructive/5 p-4 text-center"
+              style={{ transform: "rotate(-1deg)" }}
+            >
+              <p className="font-mono-typed text-sm font-bold uppercase tracking-[0.15em] text-destructive">
+                Geplantes Gaskraftwerk
+              </p>
+              <p className="mt-1 font-mono-typed text-[11px] uppercase tracking-wider text-foreground/70">
+                Rodungsarbeiten beginnen nach Genehmigung
+              </p>
+            </div>
+
+            <p className="mt-4 text-[15px] leading-relaxed text-foreground/85">
+              Maja bleibt stehen. Ihre Lichtung soll gerodet werden. Sie geht weiter
+              zum Forsthaus. Die Tür steht offen. Dann hört sie Schritte.
+            </p>
+
+            <div className="mt-4 rounded-sm border border-border bg-paper-deep/40 p-4 font-serif italic text-[15px] leading-relaxed text-foreground/90">
+              „Du musst Maja sein. Ich bin ein Freund deines Grossvaters. Kurz vor
+              seinem Tod hat er mir diesen Umschlag für dich gegeben.“
+            </div>
+          </PaperCard>
+        )}
+
+        {current === "brief" && (
+          <PaperCard rotate={-0.2}>
+            <div className="absolute right-4 top-6 sm:right-8 sm:top-8">
+              <Stamp rotate={-8}>Der Brief</Stamp>
+            </div>
+            <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
+              Der Umschlag
+            </p>
+            <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
+              Ein Brief von Opa Jakob
+            </h2>
+
+            {!letterOpen ? (
+              <button
+                type="button"
+                onClick={() => setLetterOpen(true)}
+                className="mt-5 flex min-h-[140px] w-full flex-col items-center justify-center gap-3 rounded-sm border-2 border-dashed border-stamp/50 bg-paper-deep/30 p-6 transition-transform hover:-translate-y-0.5"
+              >
+                <Mail className="h-10 w-10 text-stamp" />
+                <span className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
+                  Umschlag öffnen
+                </span>
+              </button>
+            ) : (
+              <div
+                className="mt-5 rounded-sm border border-border bg-paper-deep/40 p-5 font-serif text-[15px] leading-relaxed text-foreground/90 shadow-inner"
+                style={{ transform: "rotate(-0.4deg)" }}
+              >
+                <p>Liebe Maja</p>
+                <p className="mt-3">
+                  Wenn du diesen Brief liest, bist du wieder im Forsthaus.
+                  Vielleicht hast du schon gesehen, was hier passieren soll.
+                </p>
+                <p className="mt-3">
+                  <strong>
+                    Heute Abend um {getHearingClock() ?? "19:00"} Uhr entscheidet
+                    der Gemeinderat über den Bau eines Gaskraftwerks auf der
+                    Waldlichtung.
+                  </strong>{" "}
+                  Dafür müsste ein Teil des Waldes gerodet werden.
+                </p>
+                <p className="mt-3">
+                  Ich habe in den letzten Monaten Informationen gesammelt. Ich
+                  glaube, dass wichtige Fakten noch fehlen. Ich konnte meine Arbeit
+                  nicht fertigstellen. Jetzt brauche ich deine Hilfe.
+                </p>
+                <p className="mt-3">
+                  Folge meinen Spuren und sammle alle Hinweise. Wenn wir rechtzeitig
+                  alle Fakten zusammenbringen, können wir die Rodung vielleicht noch
+                  verhindern. <strong>Fang beim alten Bahnhof an.</strong> Und
+                  vergiss nie unser Versprechen.
+                </p>
+                <p className="mt-4 text-right italic text-foreground/70">
+                  Dein Opa Jakob
+                </p>
+              </div>
+            )}
+          </PaperCard>
+        )}
+
+        {current === "regeln" && (
           <PaperCard rotate={-0.4}>
             <div className="absolute right-4 top-6 sm:right-8 sm:top-8">
               <Stamp rotate={8}>Briefing</Stamp>
@@ -202,9 +247,9 @@ export function IntroScreen({
               Fünf Etappen. Ein Hearing.
             </h2>
             <p className="mt-4 text-[15px] leading-relaxed text-foreground/85">
-              Ihr habt bis <strong>{getHearingClock() ?? "19:00"} Uhr</strong>,
-              um Jakobs Spuren zu folgen. An jedem Ort im Dorf
-              wartet ein Rätsel. Löst ihr es, schaltet sich die nächste Etappe frei.
+              Ihr habt bis <strong>{getHearingClock() ?? "19:00"} Uhr</strong>, um
+              Jakobs Spuren zu folgen. An jedem Ort im Dorf wartet ein Rätsel. Löst
+              ihr es, schaltet sich die nächste Etappe frei.
             </p>
             <ul className="mt-5 space-y-3 text-[15px]">
               <li className="flex gap-3">
@@ -217,8 +262,8 @@ export function IntroScreen({
               <li className="flex gap-3">
                 <Search className="mt-0.5 h-5 w-5 shrink-0 text-stamp" />
                 <span>
-                  <strong>Rätsel lösen</strong>, lest genau, wählt bewusst.
-                  Nach 3, 6 und 9 Minuten gibt es Tipps.
+                  <strong>Rätsel lösen</strong>, lest genau, wählt bewusst. Nach 3,
+                  6 und 9 Minuten gibt es Tipps.
                 </span>
               </li>
               <li className="flex gap-3">
@@ -233,78 +278,6 @@ export function IntroScreen({
           </PaperCard>
         )}
 
-        {step === 1 && (
-          <PaperCard rotate={0.3}>
-            <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-              Die Personen
-            </p>
-            <h2 className="mt-2 font-serif text-3xl font-bold sm:text-4xl">
-              Wer ist wer?
-            </h2>
-            <p className="mt-2 text-sm text-foreground/70">
-              Tippt auf eine Karte, um ein Detail zu entdecken.
-            </p>
-
-            <div className="mt-5 space-y-3">
-              {personen.map((p) => (
-                <PersonCard
-                  key={p.id}
-                  p={p}
-                  open={openPerson === p.id}
-                  onToggle={() =>
-                    setOpenPerson(openPerson === p.id ? null : p.id)
-                  }
-                />
-              ))}
-            </div>
-          </PaperCard>
-        )}
-
-        {step === 2 && (
-          <PaperCard rotate={-0.2} tape="top-left">
-            <div className="absolute right-4 top-6 sm:right-8 sm:top-8">
-              <Stamp rotate={-8}>Der Brief</Stamp>
-            </div>
-            <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-              Der Brief
-            </p>
-            <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-              Maja räumt Grossvaters Haus …
-            </h2>
-            <p className="mt-3 text-[15px] leading-relaxed text-foreground/85">
-              Ihr letzter Sommer vor der Matura. Ihr Grossvater Jakob ist vor
-              kurzem gestorben, und Maja hilft, sein Haus zu räumen. Zwischen
-              alten Karten und Notizbüchern findet sie einen Brief, adressiert
-              an sie:
-            </p>
-
-
-
-            <div
-              className="mt-5 rounded-sm border border-border bg-paper-deep/40 p-5 font-serif text-[15px] leading-relaxed text-foreground/90 shadow-inner"
-              style={{ transform: "rotate(-0.4deg)" }}
-            >
-              <Mail className="mb-2 h-4 w-4 text-stamp" />
-              <p>
-                „Liebe Maja, wenn du das liest, bin ich nicht mehr da. Du
-                erinnerst dich an die Lichtung im Wald, wo wir stundenlang Vögel
-                beobachtet haben? Dort soll gebaut werden. Heute Abend um{" "}
-                <strong>{getHearingClock() ?? "19:00"} Uhr</strong> entscheidet
-                der Gemeinderat darüber.
-              </p>
-              <p className="mt-3">
-                Ich habe jahrelang Daten gesammelt und im Dorf Hinweise für dich
-                versteckt. Wenn du ihnen folgst, hast du alles, was der
-                Gemeinderat wissen muss. Fang am{" "}
-                <strong>alten Bahnhof</strong> an.“
-              </p>
-              <p className="mt-4 text-right italic text-foreground/70">
-               , Jakob
-              </p>
-            </div>
-          </PaperCard>
-        )}
-
         <div className="mt-6 flex items-center justify-between gap-3">
           <button
             onClick={finish}
@@ -314,7 +287,7 @@ export function IntroScreen({
           </button>
           <button
             onClick={next}
-            className="inline-flex items-center gap-2 rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
+            className="inline-flex min-h-[48px] items-center gap-2 rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
           >
             {step < total - 1 ? "Weiter" : "Ermittlung starten"}
             <ArrowRight className="h-4 w-4" />
