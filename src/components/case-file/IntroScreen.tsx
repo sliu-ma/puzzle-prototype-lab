@@ -68,6 +68,7 @@ export function IntroScreen({
       etappeLabel: "Umschlag 1 · Alter Bahnhof",
       onConfirm: () => {
         markIntroSeen();
+        startGame();
         onDone();
       },
     });
