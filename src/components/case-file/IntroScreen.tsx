@@ -80,7 +80,7 @@ export function IntroScreen({
   };
 
   return (
-    <main className="relative min-h-screen overflow-hidden px-4 py-8 sm:py-14">
+    <main className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-4 py-8 sm:py-14">
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 opacity-[0.06]"
@@ -90,7 +90,8 @@ export function IntroScreen({
         }}
       />
 
-      <div className="relative mx-auto max-w-2xl">
+      <div className="relative mx-auto w-full max-w-2xl">
+
         <div className="mb-4 flex items-center justify-between">
           <p className="font-mono-typed text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
             Team {teamName} · Briefing
