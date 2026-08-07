@@ -174,7 +174,7 @@ export function IntroScreen({
                 Geplantes Gaskraftwerk
               </p>
               <p className="mt-1 font-mono-typed text-[11px] uppercase tracking-wider text-foreground/70">
-                Rodungsarbeiten beginnen nach Genehmigung
+                RODUNG BEGINNEN NACH GENEHMIGUNG
               </p>
             </div>
 
