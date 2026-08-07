@@ -2502,7 +2502,7 @@ type IntroStep =
 const INTRO_SEQUENCE: IntroStep[] = [
   {
     kind: "narration",
-    text: "Drinnen herrscht gedämpfte Stimmung. Der Gemeindepräsident steht am Rednerpult.",
+    text: "Im Gemeindesaal beginnt die Sitzung. Der Gemeindepräsident erhebt sich.",
   },
   {
     kind: "bubble",
@@ -2510,18 +2510,18 @@ const INTRO_SEQUENCE: IntroStep[] = [
     rolle: "Vorsitz",
     side: "right",
     tone: "stamp",
-    text: "„Dann kommen wir nun zur finalen Abstimmung über das Projekt Waldlichtung...“",
+    text: "„Wir kommen zur Abstimmung über das Bauprojekt auf der Waldlichtung.“",
   },
   {
     kind: "narration",
-    text: "Maja geht nach vorne.",
+    text: "Maja tritt nach vorne.",
   },
   {
     kind: "bubble",
     name: "Maja",
     side: "left",
     tone: "amber",
-    text: "„Entschuldigung, dürfen wir kurz das Wort ergreifen? Wir haben neue Daten, die für die Abstimmung relevant sind.“",
+    text: "„Entschuldigung. Wir haben neue Unterlagen, die für die Entscheidung wichtig sind.“",
   },
   {
     kind: "bubble",
@@ -2529,12 +2529,12 @@ const INTRO_SEQUENCE: IntroStep[] = [
     rolle: "Ressort Verkehr",
     side: "right",
     tone: "emerald",
-    lead: "Ein Ratsmitglied verschränkt die Arme.",
-    text: "„Das Verfahren läuft seit Monaten. Was soll das jetzt noch ändern?“",
+    lead: "Ein Ratsmitglied schaut skeptisch.",
+    text: "„Die Entscheidung ist gut vorbereitet. Was soll daran noch ändern?“",
   },
   {
     kind: "narration",
-    text: "Maja legt die Unterlagen auf den Tisch. Der Saal wird still. Reihum stellt jetzt jedes Ratsmitglied eine Frage. jede richtige Antwort bringt euch näher an eine Vertagung.",
+    text: "Maja legt Jakobs Notizen und die ergänzten Gutachten auf den Tisch. Jetzt liegt es an dir: Mit jeder richtigen Antwort überzeugst du den Gemeinderat, die neuen Erkenntnisse zu berücksichtigen.",
   },
 ];
 
