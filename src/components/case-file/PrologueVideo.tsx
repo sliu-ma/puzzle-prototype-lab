@@ -1,119 +1,98 @@
-import { useRef, useState } from "react";
-import { Film, Play } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
-  PROLOGUE_INTRO_TEXT,
+  PROLOGUE_INTRO_PLACE,
   PROLOGUE_OUTRO_TEXT,
-  PROLOGUE_SUBTITLE,
-  PROLOGUE_TITLE,
   PROLOGUE_VIDEO_URL,
+  prologueIntroDate,
 } from "@/lib/story";
-import { cn } from "@/lib/utils";
 
-type Phase = "idle" | "intro" | "video" | "outro";
+type Phase = "intro" | "video" | "outro" | "done";
 
-const INTRO_MS = 3200;
-const OUTRO_MS = 4200;
+const INTRO_MS = 4200;
+const OUTRO_MS = 4600;
 
 /**
- * Vorgeschichte als kleiner Film: Titeltafel, Video im Vollbild, Schlusstafel.
- * `onEnded` feuert genau einmal, nachdem die Schlusstafel gezeigt wurde.
+ * Vorgeschichte als Vollbild-Overlay: Titeltafel, Video, Schlusstafel.
+ * `onFinished` feuert genau einmal, nachdem die Schlusstafel gezeigt wurde.
  */
-export function PrologueVideo({
-  onEnded,
-  className,
-}: {
-  onEnded?: () => void;
-  className?: string;
-}) {
-  const ref = useRef<HTMLVideoElement>(null);
-  const [phase, setPhase] = useState<Phase>("idle");
+export function PrologueOverlay({ onFinished }: { onFinished: () => void }) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [phase, setPhase] = useState<Phase>("intro");
   const done = useRef(false);
-
-  const enterFullscreen = async () => {
-    const el = ref.current as
-      | (HTMLVideoElement & {
-          webkitEnterFullscreen?: () => void;
-          webkitRequestFullscreen?: () => Promise<void> | void;
-        })
-      | null;
-    if (!el) return;
-    try {
-      if (el.requestFullscreen) await el.requestFullscreen();
-      else if (el.webkitRequestFullscreen) await el.webkitRequestFullscreen();
-      else el.webkitEnterFullscreen?.();
-    } catch {
-      // Vollbild abgelehnt: normal weiterspielen.
-    }
-  };
-
-  // Nutzeraktion: Vollbild vorbereiten, Titeltafel zeigen, dann Video starten.
-  const start = () => {
-    if (phase !== "idle") return;
-    setPhase("intro");
-    void enterFullscreen();
-    window.setTimeout(() => {
-      setPhase("video");
-      const el = ref.current;
-      if (el) {
-        void enterFullscreen();
-        el.play().catch(() => undefined);
-      }
-    }, INTRO_MS);
-  };
+  const dateLabel = useMemo(() => prologueIntroDate(), []);
 
   const finish = () => {
     if (done.current) return;
     done.current = true;
-    setPhase("outro");
-    if (document.fullscreenElement) void document.exitFullscreen().catch(() => undefined);
-    window.setTimeout(() => onEnded?.(), OUTRO_MS);
+    setPhase("done");
+    onFinished();
   };
 
+  // Titeltafel -> Video
+  useEffect(() => {
+    if (phase !== "intro") return;
+    const t = window.setTimeout(() => setPhase("video"), INTRO_MS);
+    return () => window.clearTimeout(t);
+  }, [phase]);
+
+  // Video starten, sobald es sichtbar ist (Klick auf den Startknopf zählt als Nutzeraktion).
+  useEffect(() => {
+    if (phase !== "video") return;
+    videoRef.current?.play().catch(() => undefined);
+  }, [phase]);
+
+  // Schlusstafel -> fertig
+  useEffect(() => {
+    if (phase !== "outro") return;
+    const t = window.setTimeout(finish, OUTRO_MS);
+    return () => window.clearTimeout(t);
+  }, [phase]);
+
   return (
-    <div className={cn("rounded-sm border border-border bg-card p-3", className)}>
-      <p className="flex items-center gap-2 font-mono-typed text-[10px] uppercase tracking-[0.2em] text-stamp">
-        <Film className="h-3.5 w-3.5" />
-        {PROLOGUE_TITLE}
-      </p>
+    <div className="fixed inset-0 z-[90] flex items-center justify-center bg-[oklch(0.14_0.01_60)] prologue-grain">
+      <button
+        type="button"
+        onClick={() => (phase === "outro" ? finish() : setPhase("outro"))}
+        className="absolute right-4 top-4 z-10 rounded-sm border border-paper/30 px-3 py-2 font-mono-typed text-[10px] uppercase tracking-[0.2em] text-paper/70"
+      >
+        Überspringen
+      </button>
 
-      <div className="relative mt-2 overflow-hidden rounded-sm bg-black">
+      {phase === "video" ? (
         <video
-          ref={ref}
+          ref={videoRef}
           src={PROLOGUE_VIDEO_URL}
-          controls={phase === "video"}
-          playsInline={false}
-          preload="metadata"
-          onEnded={finish}
-          className="w-full bg-black"
+          controls
+          playsInline
+          preload="auto"
+          onEnded={() => setPhase("outro")}
+          className="max-h-full w-full animate-fade-in"
         />
-
-        {phase !== "video" && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-black/85 p-5 text-center">
-            {phase === "idle" && (
-              <button
-                type="button"
-                onClick={start}
-                className="flex min-h-[48px] items-center gap-2 rounded-sm bg-primary px-5 font-serif text-base font-semibold text-primary-foreground"
-              >
-                <Play className="h-4 w-4" />
-                Vorgeschichte abspielen
-              </button>
-            )}
-            {phase === "intro" && (
-              <p className="animate-prologue-fade font-serif text-lg leading-relaxed text-white/90 sm:text-2xl">
-                «{PROLOGUE_INTRO_TEXT}»
+      ) : (
+        <div className="w-full max-w-3xl px-8 text-center">
+          {phase === "intro" && (
+            <div className="animate-prologue-fade">
+              <span className="mx-auto block h-px w-24 bg-paper/30" />
+              <p className="mt-6 font-mono-typed text-xs uppercase tracking-[0.42em] text-kraft sm:text-sm">
+                {dateLabel}
               </p>
-            )}
-            {phase === "outro" && (
-              <p className="animate-prologue-fade font-serif text-lg leading-relaxed text-white/90 sm:text-2xl">
+              <p className="mt-5 font-serif text-2xl leading-snug text-paper sm:text-4xl">
+                {PROLOGUE_INTRO_PLACE}
+              </p>
+              <span className="mx-auto mt-7 block h-px w-24 bg-paper/30" />
+            </div>
+          )}
+          {(phase === "outro" || phase === "done") && (
+            <div className="animate-prologue-fade-slow">
+              <span className="mx-auto block h-px w-16 bg-paper/25" />
+              <p className="mt-7 font-serif text-xl leading-relaxed text-paper/90 sm:text-3xl">
                 {PROLOGUE_OUTRO_TEXT}
               </p>
-            )}
-          </div>
-        )}
-      </div>
-
-      <p className="mt-2 text-xs text-muted-foreground">{PROLOGUE_SUBTITLE}</p>
+              <span className="mx-auto mt-7 block h-px w-16 bg-paper/25" />
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
