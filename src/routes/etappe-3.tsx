@@ -197,32 +197,28 @@ function AktePage() {
         {step === "brief" && (
           <PaperCard rotate={-0.4}>
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-              Notiz 03 · Beobachtungsposten · Lichtung
+              Notiz 03 · Beobachtungsbuch · Forsthaus
             </p>
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-              „Rodung ab Montag."
+              „Die Zeit läuft."
             </h2>
             <p className="mt-1 font-mono-typed text-xs text-muted-foreground">
               [Aufgeschlagenes Beobachtungsbuch · {getFrozenClock("maya-clock-akte-003")} Uhr]
             </p>
             <blockquote className="mt-5 border-l-4 border-stamp pl-4 text-[15px] leading-relaxed">
-              Am Waldrand entdeckt Maja rote Bänder an den Bäumen und ein Schild:
-              „Baubeginn, Zutritt verboten. Rodung ab Montag.“ Montag ist
-              übermorgen.
+              Die Lichtung hat sich verändert. Zwischen den Bäumen hängen
+              Absperrbänder. Ein Schild warnt: Rodung beginnt in Kürze.
               <br />
               &nbsp;&nbsp;&nbsp;
               <br />
-              Die Hütte steht noch. Im Beobachtungsposten liegen Fotokarten von
-              Tieren und Elviras Beobachtungsbuch. Die letzten Einträge sind
-              auffällig kurz, einige Arten wurden seit Jahren nicht mehr
-              gesichtet.
+              Beim Forsthaus liegt Jakobs Notizbuch. Auf der letzten Seite
+              steht:
               <br />
               &nbsp;&nbsp;&nbsp;
               <br />
-              Auf der aufgeschlagenen Seite steht: „Manche dieser Tiere sind
-              noch sicher, andere stehen kurz vor dem Verschwinden. Trenne die
-              gefährdeten von den nicht gefährdeten Arten, um meinen Code zu
-              entschlüsseln.“
+              „Manche dieser Tiere sind hier noch sicher, andere stehen kurz vor
+              dem Verschwinden. Trenne die gefährdeten von den nicht
+              gefährdeten Arten, um das Türschloss zu öffnen.“
             </blockquote>
             <div className="mt-6 flex justify-end">
               <button
