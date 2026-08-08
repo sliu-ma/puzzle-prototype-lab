@@ -175,7 +175,7 @@ export function IntroScreen({
                 Geplantes Gaskraftwerk
               </p>
               <p className="mt-1 font-mono-typed text-[11px] uppercase tracking-wider text-foreground/70">
-                ABSTIMMUNG: HEUTE ABEND&nbsp;
+                ABSTIMMUNG: HEUTE&nbsp;
               </p>
             </div>
 
