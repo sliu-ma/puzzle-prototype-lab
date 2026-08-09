@@ -209,7 +209,7 @@ export function IntroScreen({
               dir rechnen darf.“ Der Mann atmet erleichtert aus. „Ich bin ein
               Freund deines Grossvaters. Bevor er starb, hat er mir diesen
               Umschlag für dich gegeben.“ „Aber es bleibt keine Zeit. In{" "}
-              <strong className="not-italic">90 Minuten</strong> entscheidet der
+              <strong className="not-italic">{budgetMin} Minuten</strong> entscheidet der
               Gemeinderat über das Gaskraftwerk hier, auf eurer Lichtung. Du
               musst dich beeilen.“
             </div>

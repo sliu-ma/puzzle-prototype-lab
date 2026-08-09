@@ -42,14 +42,14 @@ const HINTS_003: Hint[] = [
   {
     id: 0,
     unlockMin: 3,
-    label: "Tipp 1",
+    label: "Hinweis 1",
     title: "Schau dir die Unterlagen genau an",
     body: "Wo hat Jakob geschlafen, und von wo aus ist er am nächsten Morgen aufgebrochen?",
   },
   {
     id: 1,
     unlockMin: 6,
-    label: "Tipp 2",
+    label: "Hinweis 2",
     title: "Vergleiche nicht nur die Zeit",
     body: "Schau bei jeder Route die CO₂-Werte UND den realen Aufwand an. Spart der Flug wirklich Zeit, wenn du Anfahrt, Check-in und Umsteigen mitrechnest?",
   },

@@ -53,14 +53,14 @@ const HINTS_002: Hint[] = [
   {
     id: 0,
     unlockMin: 3,
-    label: "Tipp 1",
+    label: "Hinweis 1",
     title: "Sortier zuerst die Tiere",
-    body: "Lege die acht Polaroids vor dich. Welche dieser Tiere sind in der Schweiz bedroht? Tipp: Fünf davon sind in der Schweiz in irgendeiner Form gefährdet, drei sind nicht gefährdet.",
+    body: "Lege die acht Polaroids vor dich. Welche dieser Tiere sind in der Schweiz bedroht? Fünf davon sind in der Schweiz in irgendeiner Form gefährdet, drei sind nicht gefährdet.",
   },
   {
     id: 1,
     unlockMin: 6,
-    label: "Tipp 2",
+    label: "Hinweis 2",
     title: "Dreh die Karten um",
     body: "Hinter einer einzigen Karte verbergen sich gleich alle drei Zahlen des Codes. Such bei den bedrohten Arten weiter.",
   },

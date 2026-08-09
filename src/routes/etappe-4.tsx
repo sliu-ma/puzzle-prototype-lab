@@ -26,14 +26,14 @@ const HINTS_004: Hint[] = [
   {
     id: 0,
     unlockMin: 3,
-    label: "Tipp 1",
+    label: "Hinweis 1",
     title: "Grosse Posten zuerst",
     body: "Klick als Erstes auf Heizung/Raumtemperatur, Dusche und die Wäsche. Kleine Geräte wie Staubsauger oder Fernseher bringen nur wenige Punkte.",
   },
   {
     id: 1,
     unlockMin: 6,
-    label: "Tipp 2",
+    label: "Hinweis 2",
     title: "Gewohnheiten sind gratis, und stark",
     body: "18 °C heizen, kurz duschen, Wäsche aufhängen, Eco-Programme, Deckel auf den Topf, Kühlschrank auf 7 °C: alles kostet 0 CHF und bringt zusammen schon fast die 3'500 ESP.",
   },
