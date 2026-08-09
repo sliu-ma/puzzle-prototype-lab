@@ -41,14 +41,14 @@ const HINTS_005: Hint[] = [
   {
     id: 0,
     unlockMin: 3,
-    label: "Tipp 1",
+    label: "Hinweis 1",
     title: "Vergleich statt Bauch",
     body: "Lies jedes Gutachten Satz für Satz und halte die Aussagen gegen Marlenes Faktenkarte daneben. Insgesamt musst du genau 5 Aussagen markieren.",
   },
   {
     id: 1,
     unlockMin: 6,
-    label: "Tipp 2",
+    label: "Hinweis 2",
     title: "Wo Marlene stutzig wurde",
     body: 'Die falschen Aussagen verteilen sich über alle drei Gutachten (Gas, Kohle, Solar). Achte besonders auf konkrete Zahlen (CO₂, Wirkungsgrad, Volllaststunden) und auf Grundsatzbegriffe wie „erneuerbar" oder „nicht schutzwürdig".',
   },

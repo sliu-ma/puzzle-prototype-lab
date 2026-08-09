@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { Clock, ArrowRight } from "lucide-react";
-
-const TOTAL = 90 * 60; // Sekunden
+import { getBudgetMin } from "@/lib/progress";
 
 function fmt(sec: number) {
   const m = Math.floor(sec / 60);
@@ -11,13 +10,17 @@ function fmt(sec: number) {
 }
 
 export function StartTimerOverlay({ onConfirm }: { onConfirm: () => void }) {
-  const [left, setLeft] = useState(TOTAL);
+  const [left, setLeft] = useState<number | null>(null);
+  const [budget, setBudget] = useState(90);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
+    const min = getBudgetMin();
+    setBudget(min);
+    setLeft(min * 60);
     const id = window.setInterval(() => {
-      setLeft((v) => (v > 0 ? v - 1 : 0));
+      setLeft((v) => (v !== null && v > 0 ? v - 1 : 0));
     }, 1000);
     return () => window.clearInterval(id);
   }, []);
@@ -33,11 +36,11 @@ export function StartTimerOverlay({ onConfirm }: { onConfirm: () => void }) {
         </p>
 
         <p className="mt-5 font-mono-typed text-[19vw] font-bold leading-none tabular-nums text-foreground sm:text-8xl">
-          {fmt(left)}
+          {fmt(left ?? budget * 60)}
         </p>
 
         <p className="mt-6 text-[15px] leading-relaxed text-foreground/85">
-          In 90 Minuten entscheidet der Gemeinderat über das Gaskraftwerk.
+          In {budget} Minuten entscheidet der Gemeinderat über das Gaskraftwerk.
         </p>
 
         <button

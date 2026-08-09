@@ -35,26 +35,26 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Wo ist Maya?, Ein Escape-Room über Nachhaltigkeit" },
+      { title: "Speicher, Majas Ermittlung" },
       {
         name: "description",
         content:
-          "Maya ist verschwunden. Übernimm ihre Akte und finde heraus, was sie über nachhaltigen Konsum entdeckt hat. Bildungs-Escape-Room auf Deutsch.",
+          "Ein Bildungs-Escape-Room über Nachhaltigkeit. Fünf Etappen, ein Hearing, von Mobilität bis Energie.",
       },
-      { property: "og:title", content: "Wo ist Maya?, Ein Escape-Room über Nachhaltigkeit" },
+      { property: "og:title", content: "Speicher, Majas Ermittlung" },
       {
         property: "og:description",
         content:
-          "Maya ist verschwunden. Übernimm ihre Akte und finde heraus, was sie über nachhaltigen Konsum entdeckt hat.",
+          "Ein Bildungs-Escape-Room über Nachhaltigkeit. Fünf Etappen, ein Hearing, von Mobilität bis Energie.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Wo ist Maya?, Ein Escape-Room über Nachhaltigkeit" },
-      { name: "description", content: "Build interactive educational escape rooms with a canvas-based design tool." },
-      { property: "og:description", content: "Build interactive educational escape rooms with a canvas-based design tool." },
-      { name: "twitter:description", content: "Build interactive educational escape rooms with a canvas-based design tool." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/4eefa4b0-6f8f-44e7-9b17-554a31c22eaa/id-preview-d167bbf9--9bd6c632-68ea-4681-aaff-b71704dee477.lovable.app-1777560002209.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/4eefa4b0-6f8f-44e7-9b17-554a31c22eaa/id-preview-d167bbf9--9bd6c632-68ea-4681-aaff-b71704dee477.lovable.app-1777560002209.png" },
+      { name: "twitter:title", content: "Speicher, Majas Ermittlung" },
+      {
+        name: "twitter:description",
+        content:
+          "Ein Bildungs-Escape-Room über Nachhaltigkeit. Fünf Etappen, ein Hearing, von Mobilität bis Energie.",
+      },
     ],
     links: [
       { rel: "stylesheet", href: appCss },

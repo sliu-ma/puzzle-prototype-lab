@@ -11,6 +11,22 @@ import {
 const KEY_EVENTS = "maya-score-events";
 export const SCORE_CHANGED = "score:changed";
 
+/**
+ * Zeitbudget dieser Partie in Minuten. Wird direkt aus dem lokalen Speicher
+ * gelesen (gleicher Schlüssel wie in progress.ts), um Ring-Importe zu vermeiden.
+ */
+function budgetMin(): number {
+  if (typeof window === "undefined") return SCORE_BUDGET_MIN;
+  try {
+    const v = window.localStorage.getItem("maya-budget-min");
+    const n = v ? parseInt(v, 10) : NaN;
+    if (Number.isFinite(n) && n >= 15 && n <= 240) return n;
+  } catch {
+    /* ignore */
+  }
+  return SCORE_BUDGET_MIN;
+}
+
 export function readScoreEvents(): ScoreEvent[] {
   if (typeof window === "undefined") return [];
   try {
@@ -39,10 +55,10 @@ export function addScoreEvent(event: ScoreEvent) {
   if (typeof window === "undefined") return;
   const events = readScoreEvents();
   if (events.some((e) => e.id === event.id)) return;
-  const before = computeScore(events, SCORE_BUDGET_MIN).total;
+  const before = computeScore(events, budgetMin()).total;
   events.push(event);
   writeScoreEvents(events);
-  const after = computeScore(events, SCORE_BUDGET_MIN).total;
+  const after = computeScore(events, budgetMin()).total;
   void import("./round-client").then((m) => m.syncScoreEvents(events));
   window.dispatchEvent(
     new CustomEvent(SCORE_CHANGED, {
@@ -53,7 +69,7 @@ export function addScoreEvent(event: ScoreEvent) {
 
 
 export function getScore(): ScoreBreakdown {
-  return computeScore(readScoreEvents(), SCORE_BUDGET_MIN);
+  return computeScore(readScoreEvents(), budgetMin());
 }
 
 // ---- Bequeme Erzeuger -------------------------------------------------------
