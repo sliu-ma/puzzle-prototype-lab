@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Mail,
   ArrowRight,
@@ -11,7 +11,7 @@ import {
 import { PaperCard } from "@/components/case-file/PaperCard";
 import { Stamp } from "@/components/case-file/Stamp";
 import { PrologueOverlay } from "@/components/case-file/PrologueVideo";
-import { getHearingClock, startGame } from "@/lib/progress";
+import { getBudgetMin, getHearingClock, startGame } from "@/lib/progress";
 import { getRoundSession } from "@/lib/round-client";
 import { StartTimerOverlay } from "@/components/case-file/StartTimerOverlay";
 import { useScrollToTopOnChange } from "@/hooks/use-scroll-top";
@@ -48,6 +48,11 @@ export function IntroScreen({
   const [prologueOpen, setPrologueOpen] = useState(false);
   const [videoWatched, setVideoWatched] = useState(false);
   const [showStartTimer, setShowStartTimer] = useState(false);
+  const [budgetMin, setBudgetMin] = useState(90);
+
+  useEffect(() => {
+    setBudgetMin(getBudgetMin());
+  }, []);
   useScrollToTopOnChange(step);
 
   // In einer Klassenrunde zeigt die Lehrperson das Video am Beamer.
