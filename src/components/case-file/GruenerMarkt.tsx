@@ -265,7 +265,7 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
           </div>
           <button
             onClick={() => setCartOpen(false)}
-            aria-label="Warenkorb schließen"
+            aria-label="Warenkorb schliessen"
             className="rounded p-1.5 text-muted-foreground hover:bg-secondary"
           >
             ✕

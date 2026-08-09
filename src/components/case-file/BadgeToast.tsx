@@ -37,7 +37,7 @@ function makePieces(n: number): Piece[] {
 /**
  * Global gemountetes Overlay, das bei einem `badge:earned`-Event
  * eine pompöse Animation mit Badge-Grafik + Konfetti zeigt.
- * Kein Auto-Dismiss, nur Tap/Klick oder ESC schließt.
+ * Kein Auto-Dismiss, nur Tap/Klick oder ESC schliesst.
  */
 export function BadgeToast() {
   const [queue, setQueue] = useState<Badge[]>([]);
