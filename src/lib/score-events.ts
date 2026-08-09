@@ -55,10 +55,10 @@ export function addScoreEvent(event: ScoreEvent) {
   if (typeof window === "undefined") return;
   const events = readScoreEvents();
   if (events.some((e) => e.id === event.id)) return;
-  const before = computeScore(events, SCORE_BUDGET_MIN).total;
+  const before = computeScore(events, budgetMin()).total;
   events.push(event);
   writeScoreEvents(events);
-  const after = computeScore(events, SCORE_BUDGET_MIN).total;
+  const after = computeScore(events, budgetMin()).total;
   void import("./round-client").then((m) => m.syncScoreEvents(events));
   window.dispatchEvent(
     new CustomEvent(SCORE_CHANGED, {
@@ -69,7 +69,7 @@ export function addScoreEvent(event: ScoreEvent) {
 
 
 export function getScore(): ScoreBreakdown {
-  return computeScore(readScoreEvents(), SCORE_BUDGET_MIN);
+  return computeScore(readScoreEvents(), budgetMin());
 }
 
 // ---- Bequeme Erzeuger -------------------------------------------------------
