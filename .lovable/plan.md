@@ -1,42 +1,35 @@
-# Befund: Bugs, Lücken und Textfehler im Spiel
+# Fixes A, C, F und G umsetzen
 
-Ich habe das ganze Spiel durchgesehen (Fortschritt, Punkte, Badges, Hinweise, Timer, Klassenrunden, Texte, Mobile-UI). Es gibt drei echte Bugs, mehrere Inkonsistenzen und einige Textfehler.
+Ausgewählt aus dem Befund: Hinweis-Schlüssel, Zeitbudget, Texte, Touch-Ziele. Fix B (Hearing bei Zeitablauf), D (Reset/Runde) und E (Cheat-Code) bleiben bewusst offen.
 
-## Kritisch (echte Bugs)
+## Fix A — Hinweis-Speicher richtig zuordnen
 
-1. **Hinweis-Speicher von Etappe 1 und 3 vertauscht.**
-   Etappe 1 nutzt den Hinweis-Schlüssel von Etappe 3, Etappe 3 den von Etappe 2. Folgen: Etappe 3 übernimmt Timer und aufgedeckte Hinweise von Etappe 2 (Hinweise sind dort teils sofort offen), die Hinweis-Punktabzüge landen auf der falschen Etappe, die Anzeige „x Hinweise“ in der Übersicht ist falsch, und das Badge „Solo-Spurensicherung“ (ohne Hinweise gelöst) wird bei Etappe 1 und 3 **immer** vergeben.
+Etappe 1 schreibt heute in den Speicher von Etappe 3, Etappe 3 in den von Etappe 2. Das wird korrigiert:
 
-2. **Zeit abgelaufen mitten im Hearing = Sackgasse.**
-   Läuft die Zeit, während das Hearing läuft, blockiert das Vollbild-Overlay alles. Das Hearing kann nicht mehr abgeschlossen werden; einziger Ausweg ist ein Reset, der Punkte und Badges löscht.
+- `src/routes/etappe-1.tsx` (Zeile 434): `storageKey` → `akte-001-hints-start`
+- `src/routes/etappe-3.tsx` (Zeile 348): `storageKey` → `akte-003-hints-start`
 
-3. **Zeitbudget wird nur halb beachtet.**
-   Die Lehrperson kann 15–240 Minuten setzen. Das Start-Popup zeigt aber immer 90:00, der Brief sagt immer „In 90 Minuten“, und die Punkteberechnung rechnet fix mit 90 Minuten Referenz. Bei 60-Minuten-Runden ist beides falsch.
+Damit stimmen wieder: Hinweis-Timer pro Etappe (3/6/9 Minuten), Punktabzug pro Etappe, die Anzeige „x Hinweise“ in der Übersicht und das Badge „Solo-Spurensicherung“ (wird künftig nur noch bei echt hinweisfreier Lösung vergeben). Laufende Spiele starten bei diesen zwei Etappen mit frischem Hinweis-Timer — kein Datenverlust an Punkten oder Badges.
 
-## Wichtig (inkonsistente Zustände)
+## Fix C — Zeitbudget überall respektieren
 
-4. **Reset löscht die Klassenrunden-Bindung.** Ein Reset (auch der nach Zeitablauf) entfernt die Runden-Session, obwohl die Runde serverseitig weiterläuft — Wiederbeitritt kann Doppel-Teams erzeugen.
-5. **Cheat-Code KRXZMVBQ** schaltet alle Etappen frei, startet aber den Timer nie: Restzeit zeigt „–“, keine Punkte-Events, Finale gilt als „erledigt“ und ist trotzdem komplett neu spielbar. Zudem ist der Code an zwei Stellen doppelt hart codiert.
-6. **Hearing-Wiederholung streicht alle Hearing-Punkte** (nur das Badge bleibt). Vermutlich Absicht — bitte bestätigen, sonst mildern (z. B. 50 %).
+Die Lehrperson kann 15–240 Minuten setzen. Heute sind an drei Stellen 90 Minuten hart codiert:
 
-## Texte und Metadaten
+- `src/components/case-file/StartTimerOverlay.tsx`: Countdown startet beim tatsächlichen Budget statt fix 90:00, und der Satz nennt die reale Minutenzahl.
+- `src/components/case-file/IntroScreen.tsx` (Brief-Dialog): „In 90 Minuten entscheidet der Gemeinderat“ → dynamische Minutenzahl.
+- `src/lib/score-events.ts`: Punkteberechnung nutzt das Budget der Runde statt der Konstante `SCORE_BUDGET_MIN` (Budget wird lokal aus dem gespeicherten Rundenwert gelesen, um Ring-Importe zu vermeiden; Standard bleibt 90).
 
-7. **Alter Name „Maya“ und Vorlagen-Reste im Seitenkopf**: Titel „Wo ist Maya?“, englische Lovable-Beschreibung („Build interactive educational escape rooms…“), Platzhalter-Vorschaubild, sowie `lang="en"` auf einer rein deutschen Seite. Auch das Hinweis-Panel heisst „Mayas Hinweise“.
-8. **„ß“ statt „ss“** in drei Bedienelementen („Schließen“, „Warenkorb schließen“) und einem Kommentar.
-9. **Begriffe gemischt**: dieselbe Funktion heisst mal „Tipp“, mal „Hinweis“; „Akte“ wird sowohl für Gutachten A–C als auch in der 404-Meldung verwendet.
-10. **Kleinere UI-Punkte**: Menü-Icon-Buttons sind 36 px (unter der 44-px-Touch-Empfehlung), einzelne `whitespace-nowrap`-Labels können auf sehr schmalen Handys überlaufen; Etappen und Finale haben Titel und Beschreibung, aber kein eigenes Vorschaubild.
+## Fix F — Texte und Metadaten
 
-## Vorgeschlagene Umsetzung (in dieser Reihenfolge)
+- `src/routes/__root.tsx`: Titel „Wo ist Maya?“ → „Speicher, Majas Ermittlung“; englische Vorlagen-Beschreibungen und das Platzhalter-Vorschaubild entfernen; `lang="en"` → `lang="de-CH"`.
+- `src/components/case-file/HintSystem.tsx`: „Mayas Hinweise“ → „Majas Hinweise“, „Schließen“ → „Schliessen“, `aria-label` „Tipp-System“ → „Hinweis-System“, „Alle Tipps freigeschaltet“ → „Alle Hinweise freigeschaltet“.
+- Einheitlich „Hinweis“ statt „Tipp“: Labels „Tipp 1/Tipp 2“ → „Hinweis 1/Hinweis 2“ in `HintSystem.tsx` (Standardhinweise und Zeitleiste) sowie in `etappe-1.tsx` bis `etappe-5.tsx`. „Auflösung“ bleibt als dritte Stufe.
+- `src/components/case-file/GruenerMarkt.tsx`: „Warenkorb schließen“ → „schliessen“; `BadgeToast.tsx`-Kommentar „schließt“ → „schliesst“.
 
-- **Fix A:** Hinweis-Schlüssel korrigieren (Etappe 1 → `akte-001-…`, Etappe 3 → `akte-003-…`) und Badge-/Statistik-Lesepfad gegenprüfen. Bestehende laufende Spiele: alte Schlüssel einmalig migrieren oder ignorieren.
-- **Fix B:** Bei Zeitablauf ein laufendes Hearing zu Ende spielen lassen (Overlay auf `/finale` erst nach Abschluss zeigen, mit klarem Hinweis „Zeit ist um – Punkte für Zeit entfallen“).
-- **Fix C:** `getBudgetMin()` überall verwenden: Start-Popup-Countdown, Brieftext („In {Budget} Minuten“), Punkte-Referenz. Falls die fixe 90er-Referenz für Vergleichbarkeit gewollt ist, nur Anzeige-Texte anpassen.
-- **Fix D:** Runden-Session vom Reset ausnehmen.
-- **Fix E:** Cheat-Code: `startGame()` mitauslösen, Finale nicht als erledigt markieren, Konstante zentral exportieren.
-- **Fix F:** Texte: Seitenkopf auf „Speicher, Majas Ermittlung“ mit deutscher Beschreibung, `lang="de-CH"`, „Maya“ → „Maja“, „ß“ → „ss“, durchgehend „Hinweis“ statt „Tipp“.
-- **Fix G:** Touch-Ziele auf mind. 44 px, Überlauf-Labels entschärfen.
+## Fix G — Touch-Ziele und Überlauf
 
-## Rückfragen
+- `src/routes/index.tsx`: Menü-Icon-Button von 36 px auf 44 px (`h-11 w-11`).
+- Weitere Icon-Buttons unter 44 px in `HintSystem.tsx` und `GruenerMarkt.tsx` auf mindestens 44 px anheben (Schliessen-Buttons mit grösserer Trefffläche, Optik unverändert).
+- Schritt-Leisten der Etappen: bestehende horizontale Scrollfläche beibehalten, aber sicherstellen, dass keine Beschriftung aus dem Rahmen läuft.
 
-- Soll Fix 6 (Hearing-Wiederholung = 0 Punkte) so bleiben?
-- Soll ich alle Fixes umsetzen oder nur die kritischen (1–3)?
+Keine Änderungen an Punkteformeln, Badge-Kriterien, Storyline-Inhalten oder der Datenbank.
