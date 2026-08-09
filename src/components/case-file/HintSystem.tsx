@@ -16,14 +16,14 @@ const DEFAULT_HINTS: Hint[] = [
   {
     id: 0,
     unlockMin: 3,
-    label: "Tipp 1",
+    label: "Hinweis 1",
     title: "Schau dir den Warenkorb genau an",
     body: "Öffne den Warenkorb. Bei zwei Produkten lohnt sich ein zweiter Blick, woher kommen sie? Wachsen sie hier gerade?",
   },
   {
     id: 1,
     unlockMin: 6,
-    label: "Tipp 2",
+    label: "Hinweis 2",
     title: "Saisonal & regional vs. Import",
     body: "Erdbeeren wachsen in der Schweiz erst ab Mai/Juni. Eier mit „Bodenhaltung“ aus dem Ausland sagen nichts über Auslauf oder kurze Wege. Suche jeweils ein passendes Schweizer Produkt mit Siegel (z. B. Bio Suisse, IP-Suisse).",
   },
@@ -258,8 +258,8 @@ export function HintSystem({
               {/* Timeline-Grafik */}
               <ol className="mt-5 grid grid-cols-3 gap-2 text-center">
                 {[
-                  { icon: KeyRound, min: "3", label: "Tipp 1" },
-                  { icon: KeyRound, min: "6", label: "Tipp 2" },
+                  { icon: KeyRound, min: "3", label: "Hinweis 1" },
+                  { icon: KeyRound, min: "6", label: "Hinweis 2" },
                   { icon: Lock, min: "9", label: "Auflösung" },
                 ].map((s, i) => {
                   const Icon = s.icon;
@@ -343,7 +343,7 @@ export function HintSystem({
           />
           <aside
             role="dialog"
-            aria-label="Tipp-System"
+            aria-label="Hinweis-System"
             className="fixed inset-x-0 bottom-0 z-50 max-h-[85vh] overflow-y-auto rounded-t-lg border-t border-border bg-paper shadow-2xl sm:inset-x-auto sm:bottom-6 sm:right-6 sm:max-w-md sm:rounded-lg sm:border"
           >
             <div className="mx-auto mt-2 h-1.5 w-10 rounded-full bg-border sm:hidden" />
@@ -352,12 +352,12 @@ export function HintSystem({
                 <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
                   Unterstützung
                 </p>
-                <h3 className="font-serif text-lg font-bold">Mayas Hinweise</h3>
+                <h3 className="font-serif text-lg font-bold">Majas Hinweise</h3>
               </div>
               <button
                 onClick={() => setOpen(false)}
-                aria-label="Schließen"
-                className="rounded p-1.5 text-muted-foreground hover:bg-secondary"
+                aria-label="Schliessen"
+                className="flex h-11 w-11 items-center justify-center rounded text-muted-foreground hover:bg-secondary"
               >
                 ✕
               </button>
@@ -469,7 +469,7 @@ export function HintSystem({
               )}
               {!nextHint && (
                 <p className="mt-4 border-t border-dashed border-border pt-3 text-center font-mono-typed text-[11px] text-muted-foreground">
-                  Alle Tipps freigeschaltet.
+                  Alle Hinweise freigeschaltet.
                 </p>
               )}
             </div>

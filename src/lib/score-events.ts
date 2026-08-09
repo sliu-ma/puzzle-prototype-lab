@@ -11,6 +11,22 @@ import {
 const KEY_EVENTS = "maya-score-events";
 export const SCORE_CHANGED = "score:changed";
 
+/**
+ * Zeitbudget dieser Partie in Minuten. Wird direkt aus dem lokalen Speicher
+ * gelesen (gleicher Schlüssel wie in progress.ts), um Ring-Importe zu vermeiden.
+ */
+function budgetMin(): number {
+  if (typeof window === "undefined") return SCORE_BUDGET_MIN;
+  try {
+    const v = window.localStorage.getItem("maya-budget-min");
+    const n = v ? parseInt(v, 10) : NaN;
+    if (Number.isFinite(n) && n >= 15 && n <= 240) return n;
+  } catch {
+    /* ignore */
+  }
+  return SCORE_BUDGET_MIN;
+}
+
 export function readScoreEvents(): ScoreEvent[] {
   if (typeof window === "undefined") return [];
   try {
