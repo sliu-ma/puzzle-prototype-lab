@@ -1,55 +1,42 @@
-# Eigene Etappen-Reihenfolge pro Gruppe
+# Befund: Bugs, Lücken und Textfehler im Spiel
 
-Ziel: Die Reihenfolge bleibt fest vorgegeben (linear, kein Springen), aber jede Gruppe läuft eine andere Route. So stehen nicht alle Teams gleichzeitig am selben Ort.
+Ich habe das ganze Spiel durchgesehen (Fortschritt, Punkte, Badges, Hinweise, Timer, Klassenrunden, Texte, Mobile-UI). Es gibt drei echte Bugs, mehrere Inkonsistenzen und einige Textfehler.
 
-## Grundidee: Rotation statt Zufall
+## Kritisch (echte Bugs)
 
-Heute ist "Etappe 3" gleichzeitig die Position im Ablauf *und* das Rätsel (Wald-Lichtung, Biodiversität). Diese zwei Dinge werden getrennt:
+1. **Hinweis-Speicher von Etappe 1 und 3 vertauscht.**
+   Etappe 1 nutzt den Hinweis-Schlüssel von Etappe 3, Etappe 3 den von Etappe 2. Folgen: Etappe 3 übernimmt Timer und aufgedeckte Hinweise von Etappe 2 (Hinweise sind dort teils sofort offen), die Hinweis-Punktabzüge landen auf der falschen Etappe, die Anzeige „x Hinweise“ in der Übersicht ist falsch, und das Badge „Solo-Spurensicherung“ (ohne Hinweise gelöst) wird bei Etappe 1 und 3 **immer** vergeben.
 
-- **Position** 1–5: die wievielte Station ein Team löst.
-- **Station** 1–5: welches Rätsel/welcher Ort dahintersteht.
+2. **Zeit abgelaufen mitten im Hearing = Sackgasse.**
+   Läuft die Zeit, während das Hearing läuft, blockiert das Vollbild-Overlay alles. Das Hearing kann nicht mehr abgeschlossen werden; einziger Ausweg ist ein Reset, der Punkte und Badges löscht.
 
-Jedes Team bekommt beim Beitritt einen Startversatz. Team 1 startet bei Station 1, Team 2 bei Station 2 usw. – danach zyklisch weiter:
+3. **Zeitbudget wird nur halb beachtet.**
+   Die Lehrperson kann 15–240 Minuten setzen. Das Start-Popup zeigt aber immer 90:00, der Brief sagt immer „In 90 Minuten“, und die Punkteberechnung rechnet fix mit 90 Minuten Referenz. Bei 60-Minuten-Runden ist beides falsch.
 
-```text
-Team A: 1 -> 2 -> 3 -> 4 -> 5
-Team B: 2 -> 3 -> 4 -> 5 -> 1
-Team C: 3 -> 4 -> 5 -> 1 -> 2
-Team D: 4 -> 5 -> 1 -> 2 -> 3
-Team E: 5 -> 1 -> 2 -> 3 -> 4
-```
+## Wichtig (inkonsistente Zustände)
 
-Vorteil gegenüber Zufall: Bei bis zu 5 Teams ist garantiert **nie** ein Ort doppelt belegt. Ab 6 Teams wiederholt sich der Versatz, dann teilen sich jeweils zwei Teams eine Route – immer noch viel besser als heute, wo alle gleichzeitig starten. Das Finale (Gemeindesaal) bleibt für alle die letzte Station.
+4. **Reset löscht die Klassenrunden-Bindung.** Ein Reset (auch der nach Zeitablauf) entfernt die Runden-Session, obwohl die Runde serverseitig weiterläuft — Wiederbeitritt kann Doppel-Teams erzeugen.
+5. **Cheat-Code KRXZMVBQ** schaltet alle Etappen frei, startet aber den Timer nie: Restzeit zeigt „–“, keine Punkte-Events, Finale gilt als „erledigt“ und ist trotzdem komplett neu spielbar. Zudem ist der Code an zwei Stellen doppelt hart codiert.
+6. **Hearing-Wiederholung streicht alle Hearing-Punkte** (nur das Badge bleibt). Vermutlich Absicht — bitte bestätigen, sonst mildern (z. B. 50 %).
 
-## Was die Gruppen merken
+## Texte und Metadaten
 
-- Die Übersicht zeigt "Station 1 von 5" nach der eigenen Route, nicht mehr die feste Nummer des Rätsels.
-- Der Umschlag-Hinweis am Ende einer Etappe nennt den **nächsten Ort der eigenen Route**, also bei jedem Team einen anderen.
-- Jede Gruppe braucht ihre Route auch am Anfang: nach dem Briefing wird der erste Ort genannt.
-- Die Sperre bleibt: nur die aktuelle Station ist offen, gelöste bleiben als Rückblick sichtbar.
+7. **Alter Name „Maya“ und Vorlagen-Reste im Seitenkopf**: Titel „Wo ist Maya?“, englische Lovable-Beschreibung („Build interactive educational escape rooms…“), Platzhalter-Vorschaubild, sowie `lang="en"` auf einer rein deutschen Seite. Auch das Hinweis-Panel heisst „Mayas Hinweise“.
+8. **„ß“ statt „ss“** in drei Bedienelementen („Schließen“, „Warenkorb schließen“) und einem Kommentar.
+9. **Begriffe gemischt**: dieselbe Funktion heisst mal „Tipp“, mal „Hinweis“; „Akte“ wird sowohl für Gutachten A–C als auch in der 404-Meldung verwendet.
+10. **Kleinere UI-Punkte**: Menü-Icon-Buttons sind 36 px (unter der 44-px-Touch-Empfehlung), einzelne `whitespace-nowrap`-Labels können auf sehr schmalen Handys überlaufen; Etappen und Finale haben Titel und Beschreibung, aber kein eigenes Vorschaubild.
 
-## Was die Lehrperson braucht
+## Vorgeschlagene Umsetzung (in dieser Reihenfolge)
 
-- In der Lobby/Runde: pro Team die zugeteilte Route sichtbar (z. B. "B → C → D → E → A"), damit man beim Verteilen der QR-Codes und beim Nachfragen den Überblick hat.
-- Ein Schalter pro Runde: Reihenfolge **fix** (wie heute, alle gleich) oder **rotiert**. So bleibt der Einzelspieler- und Testbetrieb unverändert.
-- Auswertung: Zeiten weiter pro Rätsel vergleichbar (Station 3 = Biodiversität bei allen), zusätzlich die Position in der eigenen Route.
+- **Fix A:** Hinweis-Schlüssel korrigieren (Etappe 1 → `akte-001-…`, Etappe 3 → `akte-003-…`) und Badge-/Statistik-Lesepfad gegenprüfen. Bestehende laufende Spiele: alte Schlüssel einmalig migrieren oder ignorieren.
+- **Fix B:** Bei Zeitablauf ein laufendes Hearing zu Ende spielen lassen (Overlay auf `/finale` erst nach Abschluss zeigen, mit klarem Hinweis „Zeit ist um – Punkte für Zeit entfallen“).
+- **Fix C:** `getBudgetMin()` überall verwenden: Start-Popup-Countdown, Brieftext („In {Budget} Minuten“), Punkte-Referenz. Falls die fixe 90er-Referenz für Vergleichbarkeit gewollt ist, nur Anzeige-Texte anpassen.
+- **Fix D:** Runden-Session vom Reset ausnehmen.
+- **Fix E:** Cheat-Code: `startGame()` mitauslösen, Finale nicht als erledigt markieren, Konstante zentral exportieren.
+- **Fix F:** Texte: Seitenkopf auf „Speicher, Majas Ermittlung“ mit deutscher Beschreibung, `lang="de-CH"`, „Maya“ → „Maja“, „ß“ → „ss“, durchgehend „Hinweis“ statt „Tipp“.
+- **Fix G:** Touch-Ziele auf mind. 44 px, Überlauf-Labels entschärfen.
 
-## Fairness und Punkte
+## Rückfragen
 
-- Punkte, Hinweise und Badges hängen weiter am **Rätsel**, nicht an der Position – so bleibt die Rangliste vergleichbar.
-- Badges, die "das erste Rätsel" oder "auf Anhieb" prüfen, werden auf "erste Station der eigenen Route" umgestellt.
-- Zeitbudget (90 Minuten) und Timer bleiben unverändert für alle gleich.
-
-## Umsetzung (technisch)
-
-1. **Datenbank**: `rounds.stage_mode` (`fixed` | `rotate`) und `teams.stage_order` (jsonb, z. B. `[3,4,5,1,2]`). `round_join` vergibt den Versatz deterministisch nach Beitrittsreihenfolge und gibt `stage_order` zurück; `round_state`, `teacher_list_rounds` und `teacher_round_report` liefern es mit aus. Neue Spalten mit Default, damit laufende Runden weiterlaufen.
-2. **Client-Zustand**: `stage_order` in `round-client.ts` / `progress.ts` ablegen. Neue Helfer: `getStageOrder()`, `getStationForPosition(pos)`, `getPositionForStation(station)`; Fallback `[1,2,3,4,5]` für Einzelspieler.
-3. **Fortschritt**: `KEY_STAGE` zählt künftig die **Position**. `completeStage(station)` schreibt Ereignisse weiter mit der Stationsnummer, erhöht aber die Position. `StageGate` prüft, ob die Station der aktuellen Position entspricht (statt `current < stage`).
-4. **UI**: Übersicht (`index.tsx`), `NextStepCard`, `EnvelopeDialog`, `StageScoreRecap` und `SuccessBurst` beziehen Reihenfolge und Ortsnamen aus der Team-Route.
-5. **Lehreransicht**: `LobbyPanel` zeigt die Route pro Team, `ReportPanel` ergänzt die Routenspalte.
-6. **Migration-Reihenfolge**: erst SQL (Spalten + Funktionen), danach der Code, der die neuen Felder liest.
-
-## Offene Punkte für später
-
-- Ob bei mehr als 5 Teams zusätzlich ein Zeitversatz beim Start (z. B. 60 Sekunden) gewünscht ist.
-- Ob die Lehrperson Routen manuell überschreiben darf.
+- Soll Fix 6 (Hearing-Wiederholung = 0 Punkte) so bleiben?
+- Soll ich alle Fixes umsetzen oder nur die kritischen (1–3)?
