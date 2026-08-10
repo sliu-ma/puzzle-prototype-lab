@@ -238,7 +238,8 @@ export function IntroScreen({
                   Unser Ort ist in Gefahr. Ich habe Hinweise gesammelt, die
                   zeigen: Man darf diesen Wald nicht roden. Ich konnte die Arbeit
                   nicht mehr zu Ende bringen. Das musst jetzt du tun. Folge
-                  meinen Spuren. Und halte unser Versprechen.
+                  meinen Spuren, sammle die Hinweise und überzeuge den
+                  Gemeinderat, die Rodung zu verhindern.
                 </p>
                 <p className="mt-4 text-right italic text-foreground/70">
                   Dein Opa Jakob
