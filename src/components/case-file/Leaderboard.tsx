@@ -291,7 +291,7 @@ export function Leaderboard({
           <dl className="space-y-1.5 border-t border-border px-3 py-3 text-sm">
             <Line
               label={`Etappen (${score.stages.length} gelöst)`}
-              value={score.stagePoints}
+              value={score.stageRawPoints}
             />
             {score.hintPenalty > 0 && (
               <Line
