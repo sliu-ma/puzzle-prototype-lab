@@ -72,6 +72,11 @@ export function getScore(): ScoreBreakdown {
   return computeScore(readScoreEvents(), budgetMin());
 }
 
+/** Zeitbudget dieser Partie (für Berechnungen ausserhalb dieses Moduls). */
+export function getScoreBudgetMin(): number {
+  return budgetMin();
+}
+
 // ---- Bequeme Erzeuger -------------------------------------------------------
 
 export function recordStageSolved(stage: number, durationSec: number) {
