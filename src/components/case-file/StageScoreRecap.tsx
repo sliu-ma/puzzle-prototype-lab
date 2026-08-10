@@ -3,7 +3,12 @@ import { Trophy, ArrowUp } from "lucide-react";
 import { getTeam } from "@/lib/progress";
 import { getRoundSession } from "@/lib/round-client";
 import { getRoundLeaderboard } from "@/lib/rounds.functions";
-import { getScore, readScoreEvents } from "@/lib/score-events";
+import {
+  getScore,
+  getScoreBudgetMin,
+  readScoreEvents,
+} from "@/lib/score-events";
+import { computeScore } from "@/lib/score";
 import { BADGE_OVERLAY, isBadgeOverlayOpen } from "@/lib/overlay-bus";
 import { Rank, Status } from "./Leaderboard";
 import { cn } from "@/lib/utils";
