@@ -123,23 +123,24 @@ export function StageScoreRecap({ stage }: { stage: number }) {
   const stageEntry = score?.stages.find((s) => s.stage === stage);
   const solvedAt =
     events.find((e) => e.type === "stage_solved" && e.stage === stage)?.at ?? 0;
-  const prevSolvedAt = events
-    .filter((e) => e.type === "stage_solved" && e.stage < stage)
-    .reduce((m, e) => Math.max(m, e.at), 0);
 
-  const stageBadges = events.filter(
-    (e): e is Extract<typeof e, { type: "badge_earned" }> =>
-      e.type === "badge_earned" && e.at >= prevSolvedAt && e.at <= solvedAt + 60_000,
-  );
-  const stageBadgePoints = stageBadges.reduce(
-    (s, b) =>
-      s + (score?.badges.find((x) => x.badgeId === b.badgeId)?.points ?? 0),
-    0,
-  );
+  // Stand vor dieser Etappe: alle Ereignisse, die vor dem Lösen entstanden sind
+  // (ohne das Lösen selbst). Die Differenz ist damit exakt der Zugewinn.
+  const before = visible
+    ? computeScore(
+        events.filter(
+          (e) =>
+            e.at < solvedAt && !(e.type === "stage_solved" && e.stage === stage),
+        ),
+        getScoreBudgetMin(),
+      )
+    : null;
 
   const total = score?.total ?? 0;
-  const gain = (stageEntry?.points ?? 0) + stageBadgePoints;
-  const oldTotal = Math.max(0, total - gain);
+  const oldTotal = before?.total ?? total;
+  const gain = Math.max(0, total - oldTotal);
+  const stageGain = stageEntry?.points ?? 0;
+  const badgeGain = Math.max(0, gain - stageGain);
   const shown = useCountUp(total, oldTotal, visible && runCount);
 
   const team = typeof window !== "undefined" ? getTeam() : null;
