@@ -140,6 +140,7 @@ export function computeScore(
     total,
     stages,
     stagePoints,
+    stageRawPoints: stages.reduce((s, x) => s + x.rawPoints, 0),
     hintPenalty,
     badges,
     badgePoints,
