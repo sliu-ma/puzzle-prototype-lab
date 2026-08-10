@@ -19,6 +19,7 @@ const EMPTY: ScoreBreakdown = {
   total: 0,
   stages: [],
   stagePoints: 0,
+  stageRawPoints: 0,
   hintPenalty: 0,
   badges: [],
   badgePoints: 0,
