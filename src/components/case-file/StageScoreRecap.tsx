@@ -249,12 +249,19 @@ export function StageScoreRecap({ stage }: { stage: number }) {
             Punkte total
           </p>
           {gain > 0 && (
-            <p
-              className="mt-1 font-mono-typed text-sm font-bold text-emerald-700 animate-fade-in"
+            <div
+              className="mt-1 text-center animate-fade-in"
               style={{ animationDelay: "0.3s", animationFillMode: "backwards" }}
             >
-              +{gain} in dieser Etappe
-            </p>
+              <p className="font-mono-typed text-sm font-bold text-emerald-700">
+                +{gain} in dieser Etappe
+              </p>
+              {badgeGain > 0 && (
+                <p className="mt-0.5 font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+                  Etappe +{stageGain} · Abzeichen +{badgeGain}
+                </p>
+              )}
+            </div>
           )}
         </div>
 
