@@ -3,7 +3,12 @@ import { Trophy, ArrowUp } from "lucide-react";
 import { getTeam } from "@/lib/progress";
 import { getRoundSession } from "@/lib/round-client";
 import { getRoundLeaderboard } from "@/lib/rounds.functions";
-import { getScore, readScoreEvents } from "@/lib/score-events";
+import {
+  getScore,
+  getScoreBudgetMin,
+  readScoreEvents,
+} from "@/lib/score-events";
+import { computeScore } from "@/lib/score";
 import { BADGE_OVERLAY, isBadgeOverlayOpen } from "@/lib/overlay-bus";
 import { Rank, Status } from "./Leaderboard";
 import { cn } from "@/lib/utils";
@@ -123,23 +128,24 @@ export function StageScoreRecap({ stage }: { stage: number }) {
   const stageEntry = score?.stages.find((s) => s.stage === stage);
   const solvedAt =
     events.find((e) => e.type === "stage_solved" && e.stage === stage)?.at ?? 0;
-  const prevSolvedAt = events
-    .filter((e) => e.type === "stage_solved" && e.stage < stage)
-    .reduce((m, e) => Math.max(m, e.at), 0);
 
-  const stageBadges = events.filter(
-    (e): e is Extract<typeof e, { type: "badge_earned" }> =>
-      e.type === "badge_earned" && e.at >= prevSolvedAt && e.at <= solvedAt + 60_000,
-  );
-  const stageBadgePoints = stageBadges.reduce(
-    (s, b) =>
-      s + (score?.badges.find((x) => x.badgeId === b.badgeId)?.points ?? 0),
-    0,
-  );
+  // Stand vor dieser Etappe: alle Ereignisse, die vor dem Lösen entstanden sind
+  // (ohne das Lösen selbst). Die Differenz ist damit exakt der Zugewinn.
+  const before = visible
+    ? computeScore(
+        events.filter(
+          (e) =>
+            e.at < solvedAt && !(e.type === "stage_solved" && e.stage === stage),
+        ),
+        getScoreBudgetMin(),
+      )
+    : null;
 
   const total = score?.total ?? 0;
-  const gain = (stageEntry?.points ?? 0) + stageBadgePoints;
-  const oldTotal = Math.max(0, total - gain);
+  const oldTotal = before?.total ?? total;
+  const gain = Math.max(0, total - oldTotal);
+  const stageGain = stageEntry?.points ?? 0;
+  const badgeGain = Math.max(0, gain - stageGain);
   const shown = useCountUp(total, oldTotal, visible && runCount);
 
   const team = typeof window !== "undefined" ? getTeam() : null;
@@ -243,12 +249,19 @@ export function StageScoreRecap({ stage }: { stage: number }) {
             Punkte total
           </p>
           {gain > 0 && (
-            <p
-              className="mt-1 font-mono-typed text-sm font-bold text-emerald-700 animate-fade-in"
+            <div
+              className="mt-1 text-center animate-fade-in"
               style={{ animationDelay: "0.3s", animationFillMode: "backwards" }}
             >
-              +{gain} in dieser Etappe
-            </p>
+              <p className="font-mono-typed text-sm font-bold text-emerald-700">
+                +{gain} in dieser Etappe
+              </p>
+              {badgeGain > 0 && (
+                <p className="mt-0.5 font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+                  Etappe +{stageGain} · Abzeichen +{badgeGain}
+                </p>
+              )}
+            </div>
           )}
         </div>
 

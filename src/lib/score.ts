@@ -55,6 +55,8 @@ export type ScoreBreakdown = {
     durationSec: number;
   }[];
   stagePoints: number;
+  /** Etappenpunkte vor Hinweis-Abzug (Summe der Rohpunkte). */
+  stageRawPoints: number;
   hintPenalty: number;
   badges: { badgeId: string; points: number }[];
   badgePoints: number;
@@ -138,6 +140,7 @@ export function computeScore(
     total,
     stages,
     stagePoints,
+    stageRawPoints: stages.reduce((s, x) => s + x.rawPoints, 0),
     hintPenalty,
     badges,
     badgePoints,
