@@ -114,7 +114,7 @@ export function ScoreCounter() {
                 d.value >= 0 ? "text-emerald-700" : "text-destructive",
               )}
             >
-              {d.value >= 0 ? `+${d.value}` : `,${Math.abs(d.value)}`}
+              {d.value >= 0 ? `+${d.value}` : `\u2212${Math.abs(d.value)}`}
             </span>
           ))}
         </div>
