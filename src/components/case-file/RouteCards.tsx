@@ -34,7 +34,7 @@ export function RouteCards({ onSelect }: Props) {
                 <h4 className="truncate font-serif text-lg font-bold">{r.titel}</h4>
               </div>
               <p className="mt-0.5 font-mono-typed text-xs text-muted-foreground">
-                {r.dauer} · {r.preis} · ca. {r.co2Kg} kg CO₂
+                {r.dauer} · {r.preis}
               </p>
             </div>
           </div>
