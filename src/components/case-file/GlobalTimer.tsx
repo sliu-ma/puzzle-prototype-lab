@@ -14,6 +14,9 @@ import {
   formatClock,
   getHearingClock,
 } from "@/lib/progress";
+import { getRoundSession } from "@/lib/round-client";
+import { getRoundState } from "@/lib/rounds.functions";
+import { setBudgetMin } from "@/lib/progress";
 import { cn } from "@/lib/utils";
 import { TimeUpOverlay } from "./TimeUpOverlay";
 import { IconStamp } from "./IconStamp";
@@ -98,6 +101,7 @@ export function GlobalTimer() {
   const [endTs, setEndTs] = useState<number | null>(null);
   const [now, setNow] = useState(() => Date.now());
   const [popup, setPopup] = useState<MajaBeat | null>(null);
+  const [bonusMin, setBonusMin] = useState<number | null>(null);
 
   useEffect(() => {
     const sync = () => {
@@ -112,6 +116,33 @@ export function GlobalTimer() {
       window.removeEventListener("storage", sync);
     };
   }, []);
+
+  // Die Lehrperson kann während der Runde Zeit nachgeben. Dafür fragen wir
+  // regelmässig das Zeitbudget der Runde ab und melden Zuwachs per Pop-up.
+  useEffect(() => {
+    if (!startTs || endTs) return;
+    const session = getRoundSession();
+    if (!session) return;
+    let alive = true;
+    const check = () => {
+      void getRoundState({ data: { code: session.code } })
+        .then((res) => {
+          if (!alive || !res.found) return;
+          const local = getBudgetMin();
+          if (res.budgetMin > local) {
+            setBudgetMin(res.budgetMin);
+            setBonusMin(res.budgetMin - local);
+          }
+        })
+        .catch(() => undefined);
+    };
+    check();
+    const id = window.setInterval(check, 15_000);
+    return () => {
+      alive = false;
+      window.clearInterval(id);
+    };
+  }, [startTs, endTs]);
 
   useEffect(() => {
     if (!startTs || endTs) return;
@@ -173,6 +204,27 @@ export function GlobalTimer() {
         {isFinished && <span className="text-xs font-serif">· Fertig</span>}
       </div>
 
+
+      <Dialog open={bonusMin !== null} onOpenChange={(o) => !o && setBonusMin(null)}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <IconStamp icon={Clock} tone="neutral" rotate={-5} className="mb-2" />
+            <DialogTitle className="text-center font-serif">
+              +{bonusMin ?? 0} Minuten mehr Zeit
+            </DialogTitle>
+            <DialogDescription className="pt-3 font-serif text-base italic leading-relaxed text-foreground/85">
+              „Gute Nachricht: Die Gemeindeversammlung beginnt später. Ihr habt{" "}
+              {bonusMin ?? 0} Minuten zusätzlich. Nutzt sie gut."
+            </DialogDescription>
+          </DialogHeader>
+          <button
+            onClick={() => setBonusMin(null)}
+            className="mt-2 w-full rounded-sm bg-primary px-4 py-2 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
+          >
+            Weiter →
+          </button>
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={!!popup} onOpenChange={(o) => !o && setPopup(null)}>
         <DialogContent className="max-w-sm">

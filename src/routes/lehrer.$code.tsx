@@ -9,6 +9,7 @@ import {
   Lock,
   LogOut,
   Pencil,
+  Timer as TimerReset,
   Trash2,
   Unlock,
 } from "lucide-react";
@@ -402,12 +403,45 @@ function RoundPage() {
         />
       )}
       {step === "live" && (
-        <LiveBoard
-          password={password}
-          code={round.code}
-          budgetMin={round.budget_min}
-          startedAt={round.started_at}
-        />
+        <>
+          <div className="mt-4 rounded-sm border border-border bg-secondary/40 p-3">
+            <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+              Zeit nachgeben · aktuell {round.budget_min} min
+            </p>
+            <div className="mt-2 flex gap-2">
+              {[5, 10].map((plus) => (
+                <button
+                  key={plus}
+                  type="button"
+                  disabled={busy || round.budget_min + plus > 240}
+                  onClick={() =>
+                    void run(() =>
+                      teacherUpdateRound({
+                        data: {
+                          password,
+                          code: round.code,
+                          budgetMin: round.budget_min + plus,
+                        },
+                      }),
+                    )
+                  }
+                  className="flex min-h-[48px] flex-1 items-center justify-center gap-2 rounded-sm bg-primary px-3 font-serif font-semibold text-primary-foreground disabled:opacity-60"
+                >
+                  <TimerReset className="h-4 w-4" />+{plus} Minuten
+                </button>
+              ))}
+            </div>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Alle Gruppen erhalten innert Sekunden ein Pop-up mit der neuen Restzeit.
+            </p>
+          </div>
+          <LiveBoard
+            password={password}
+            code={round.code}
+            budgetMin={round.budget_min}
+            startedAt={round.started_at}
+          />
+        </>
       )}
       {step === "report" && (
         <ReportPanel password={password} code={round.code} budgetMin={round.budget_min} />
