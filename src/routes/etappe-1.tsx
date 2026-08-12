@@ -319,7 +319,7 @@ function AktePage() {
                 Genf <span className="text-muted-foreground">›</span> Speicher
               </h2>
               <p className="mt-1 text-sm text-foreground/70">
-                Drei Routen stehen zur Auswahl. Tippe eine an, um Karte, Verbindung und CO₂-Werte im Detail zu sehen.
+                Drei Routen stehen zur Auswahl. Tippe eine an, um Karte und Verbindung im Detail zu sehen.
               </p>
               <div className="mt-5">
                 <RouteCards onSelect={(id) => setSelectedRouteId(id)} />
