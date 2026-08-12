@@ -9,6 +9,7 @@ import {
   Lock,
   LogOut,
   Pencil,
+  Timer as TimerReset,
   Trash2,
   Unlock,
 } from "lucide-react";
