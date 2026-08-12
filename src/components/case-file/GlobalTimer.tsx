@@ -213,8 +213,8 @@ export function GlobalTimer() {
               +{bonusMin ?? 0} Minuten mehr Zeit
             </DialogTitle>
             <DialogDescription className="pt-3 font-serif text-base italic leading-relaxed text-foreground/85">
-              „Gute Nachricht: Die Gemeindeversammlung beginnt später. Ihr habe{"n"}{" "}
-              {bonusMin ?? 0} Minuten zusätzlich. Nutzt sie."
+              „Gute Nachricht: Die Gemeindeversammlung beginnt später. Ihr habt{" "}
+              {bonusMin ?? 0} Minuten zusätzlich. Nutzt sie gut."
             </DialogDescription>
           </DialogHeader>
           <button
