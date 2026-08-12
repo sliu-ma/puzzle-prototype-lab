@@ -263,7 +263,7 @@ function AktePage() {
         {step === "input" && (
           <InputCarousel
             kicker="Fachlicher Input · Biodiversität"
-            title="Warum Vielfalt zählt"
+            title="Wie Biodiversität wirkt"
             intro="Die Schweiz gehört in Europa zu den Ländern mit dem grössten Anteil bedrohter Arten. Drei Informationen, die du für den Rat brauchst:"
             cards={[
               {

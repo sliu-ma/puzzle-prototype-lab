@@ -362,7 +362,7 @@ function AktePage() {
         {step === "input" && (
           <InputCarousel
             kicker="Fachlicher Input · Nachhaltige Mobilität"
-            title="Wie wir reisen, formt das Klima"
+            title="Wie Mobilität wirkt"
             intro="Der Verkehr verursacht in der Schweiz rund ein Drittel aller Treibhausgase. Drei Karten, die du für das Hearing brauchst:"
             cards={[
               {
