@@ -139,9 +139,9 @@ export function AnteilErneuerbarChart() {
   );
 }
 
-/** Karte 3: Importabhängigkeit, 70 % Import, 30 % Inland. */
+/** Karte 3: Importabhängigkeit, 68 % Import, 32 % Inland. */
 export function ImportabhaengigkeitChart() {
-  const importAnteil = 70;
+  const importAnteil = 68;
   const inland = 100 - importAnteil;
 
   return (

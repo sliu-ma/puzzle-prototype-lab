@@ -246,7 +246,7 @@ function AktePage() {
               },
               {
                 title: "Abhängigkeit von Importen",
-                body: "Mehr als 70 Prozent des Schweizer Energiebedarfs werden importiert. Solar- und Windenergie machen die Schweiz unabhängiger von diesen Importen, die vor allem in Krisenzeiten stark schwanken können.",
+                body: "2024 war die Schweiz energetisch zu 68 Prozent vom Ausland abhängig. Solar- und Windenergie machen die Schweiz unabhängiger von diesen Importen, die vor allem in Krisenzeiten stark schwanken können.",
                 visual: <ImportabhaengigkeitChart />,
               },
             ]}
