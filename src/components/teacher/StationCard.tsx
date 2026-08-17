@@ -19,8 +19,8 @@ type Props = {
   className?: string;
 };
 
-function osmDirectionsUrl(lat: number, lng: number): string {
-  return `https://www.openstreetmap.org/directions?from=&to=${lat}%2C${lng}`;
+function googleMapsUrl(lat: number, lng: number): string {
+  return `https://www.google.com/maps/search/?api=1&query=${lat}%2C${lng}`;
 }
 
 function latLngToTileXY(lat: number, lng: number, zoom: number): { x: number; y: number } {
