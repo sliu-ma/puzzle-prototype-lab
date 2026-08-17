@@ -19,6 +19,7 @@ import { Route as Etappe1RouteImport } from './routes/etappe-1'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as LehrerIndexRouteImport } from './routes/lehrer.index'
 import { Route as LehrerCodeRouteImport } from './routes/lehrer.$code'
+import { Route as LehrerCodeKartenRouteImport } from './routes/lehrer.$code.karten'
 
 const LobbyRoute = LobbyRouteImport.update({
   id: '/lobby',
@@ -70,6 +71,11 @@ const LehrerCodeRoute = LehrerCodeRouteImport.update({
   path: '/lehrer/$code',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LehrerCodeKartenRoute = LehrerCodeKartenRouteImport.update({
+  id: '/karten',
+  path: '/karten',
+  getParentRoute: () => LehrerCodeRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -80,8 +86,9 @@ export interface FileRoutesByFullPath {
   '/etappe-5': typeof Etappe5Route
   '/finale': typeof FinaleRoute
   '/lobby': typeof LobbyRoute
-  '/lehrer/$code': typeof LehrerCodeRoute
+  '/lehrer/$code': typeof LehrerCodeRouteWithChildren
   '/lehrer/': typeof LehrerIndexRoute
+  '/lehrer/$code/karten': typeof LehrerCodeKartenRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -92,8 +99,9 @@ export interface FileRoutesByTo {
   '/etappe-5': typeof Etappe5Route
   '/finale': typeof FinaleRoute
   '/lobby': typeof LobbyRoute
-  '/lehrer/$code': typeof LehrerCodeRoute
+  '/lehrer/$code': typeof LehrerCodeRouteWithChildren
   '/lehrer': typeof LehrerIndexRoute
+  '/lehrer/$code/karten': typeof LehrerCodeKartenRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -105,8 +113,9 @@ export interface FileRoutesById {
   '/etappe-5': typeof Etappe5Route
   '/finale': typeof FinaleRoute
   '/lobby': typeof LobbyRoute
-  '/lehrer/$code': typeof LehrerCodeRoute
+  '/lehrer/$code': typeof LehrerCodeRouteWithChildren
   '/lehrer/': typeof LehrerIndexRoute
+  '/lehrer/$code/karten': typeof LehrerCodeKartenRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -121,6 +130,7 @@ export interface FileRouteTypes {
     | '/lobby'
     | '/lehrer/$code'
     | '/lehrer/'
+    | '/lehrer/$code/karten'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -133,6 +143,7 @@ export interface FileRouteTypes {
     | '/lobby'
     | '/lehrer/$code'
     | '/lehrer'
+    | '/lehrer/$code/karten'
   id:
     | '__root__'
     | '/'
@@ -145,6 +156,7 @@ export interface FileRouteTypes {
     | '/lobby'
     | '/lehrer/$code'
     | '/lehrer/'
+    | '/lehrer/$code/karten'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -156,7 +168,7 @@ export interface RootRouteChildren {
   Etappe5Route: typeof Etappe5Route
   FinaleRoute: typeof FinaleRoute
   LobbyRoute: typeof LobbyRoute
-  LehrerCodeRoute: typeof LehrerCodeRoute
+  LehrerCodeRoute: typeof LehrerCodeRouteWithChildren
   LehrerIndexRoute: typeof LehrerIndexRoute
 }
 
@@ -232,8 +244,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LehrerCodeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/lehrer/$code/karten': {
+      id: '/lehrer/$code/karten'
+      path: '/karten'
+      fullPath: '/lehrer/$code/karten'
+      preLoaderRoute: typeof LehrerCodeKartenRouteImport
+      parentRoute: typeof LehrerCodeRoute
+    }
   }
 }
+
+interface LehrerCodeRouteChildren {
+  LehrerCodeKartenRoute: typeof LehrerCodeKartenRoute
+}
+
+const LehrerCodeRouteChildren: LehrerCodeRouteChildren = {
+  LehrerCodeKartenRoute: LehrerCodeKartenRoute,
+}
+
+const LehrerCodeRouteWithChildren = LehrerCodeRoute._addFileChildren(
+  LehrerCodeRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -244,7 +275,7 @@ const rootRouteChildren: RootRouteChildren = {
   Etappe5Route: Etappe5Route,
   FinaleRoute: FinaleRoute,
   LobbyRoute: LobbyRoute,
-  LehrerCodeRoute: LehrerCodeRoute,
+  LehrerCodeRoute: LehrerCodeRouteWithChildren,
   LehrerIndexRoute: LehrerIndexRoute,
 }
 export const routeTree = rootRouteImport
