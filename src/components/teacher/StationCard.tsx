@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import QRCode from "qrcode";
 import { MapPin } from "lucide-react";
+import "leaflet/dist/leaflet.css";
 
 export type StationCardData = {
   stageNr: number;
@@ -23,76 +24,51 @@ function googleMapsUrl(lat: number, lng: number): string {
   return `https://www.google.com/maps/search/?api=1&query=${lat}%2C${lng}`;
 }
 
-function latLngToTileXY(lat: number, lng: number, zoom: number): { x: number; y: number } {
-  const n = Math.pow(2, zoom);
-  const x = n * ((lng + 180) / 360);
-  const latRad = (lat * Math.PI) / 180;
-  const y = n * (1 - Math.log(Math.tan(latRad) + 1 / Math.cos(latRad)) / Math.PI) / 2;
-  return { x, y };
-}
+function StationMap({ lat, lng }: { lat: number; lng: number }) {
+  const [Lib, setLib] = useState<any>(null);
 
-function tileUrl(z: number, x: number, y: number): string {
-  return `https://tile.openstreetmap.org/${z}/${x}/${y}.png`;
-}
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      const mod = await import("react-leaflet");
+      if (mounted) setLib(mod);
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
-function TileMap({
-  lat,
-  lng,
-  width,
-  height,
-}: {
-  lat: number;
-  lng: number;
-  width: number;
-  height: number;
-}) {
-  const zoom = 16;
-  const tileSize = 256;
-  const { x, y } = useMemo(() => latLngToTileXY(lat, lng, zoom), [lat, lng]);
-  const baseX = Math.floor(x);
-  const baseY = Math.floor(y);
-  const offsetX = (x - baseX) * tileSize;
-  const offsetY = (y - baseY) * tileSize;
+  if (!Lib) {
+    return (
+      <div className="flex aspect-[4/3] w-full items-center justify-center rounded-sm border border-[#c9b591] bg-[#f5ecd7]/50 text-xs text-[#6b4e2c]">
+        Karte lädt …
+      </div>
+    );
+  }
 
-  const gridLeft = width / 2 - offsetX;
-  const gridTop = height / 2 - offsetY;
+  const { MapContainer, TileLayer, Marker, Popup } = Lib;
 
   return (
     <div className="relative aspect-[4/3] w-full overflow-hidden rounded-sm border border-[#c9b591]">
-      <div
-        className="absolute"
-        style={{
-          left: gridLeft,
-          top: gridTop,
-          width: tileSize * 2,
-          height: tileSize * 2,
-        }}
+      <MapContainer
+        center={[lat, lng]}
+        zoom={16}
+        scrollWheelZoom={false}
+        dragging={false}
+        doubleClickZoom={false}
+        zoomControl={false}
+        attributionControl={false}
+        style={{ height: "100%", width: "100%", background: "#f5f1e8" }}
       >
-        {[0, 1].map((dy) =>
-          [0, 1].map((dx) => (
-            <img
-              key={`${dx}-${dy}`}
-              src={tileUrl(zoom, baseX + dx, baseY + dy)}
-              alt=""
-              className="absolute h-[256px] w-[256px]"
-              style={{
-                left: dx * tileSize,
-                top: dy * tileSize,
-              }}
-              loading="lazy"
-            />
-          )),
-        )}
-      </div>
-      {/* Marker */}
-      <div
-        className="absolute z-10 -translate-x-1/2 -translate-y-full"
-        style={{ left: width / 2, top: height / 2 }}
-      >
-        <MapPin className="h-8 w-8 text-[#9c2b2b] drop-shadow" fill="#f5ecd7" />
-      </div>
-      {/* Attribution */}
-      <div className="absolute bottom-1 right-1 z-10 rounded-sm bg-[#f5ecd7]/90 px-1 py-0.5 text-[7px] text-[#6b4e2c]">
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+        <Marker position={[lat, lng]}>
+          <Popup>{`${lat.toFixed(5)}, ${lng.toFixed(5)}`}</Popup>
+        </Marker>
+      </MapContainer>
+      <div className="absolute bottom-1 right-1 z-[500] rounded-sm bg-[#f5ecd7]/90 px-1 py-0.5 text-[7px] text-[#6b4e2c]">
         © OSM
       </div>
     </div>
@@ -152,7 +128,7 @@ export function StationCard({ station, className = "" }: Props) {
         </div>
       </header>
 
-      <div className="relative p-3 space-y-3">
+      <div className="relative space-y-3 p-3">
         {/* Text */}
         <p className="font-serif text-sm leading-snug">
           Ihr habt das Rätsel gelöst! Begebt euch zum nächsten Ort, dort wartet eure nächste
@@ -161,7 +137,7 @@ export function StationCard({ station, className = "" }: Props) {
 
         {/* Karte */}
         {hasLocation ? (
-          <TileMap lat={station.lat!} lng={station.lng!} width={400} height={300} />
+          <StationMap lat={station.lat!} lng={station.lng!} />
         ) : (
           <div className="flex aspect-[4/3] w-full items-center justify-center rounded-sm border border-dashed border-[#c9b591] bg-[#f5ecd7]/50">
             <p className="text-center text-xs text-[#6b4e2c]">Noch keine Karte hinterlegt</p>
