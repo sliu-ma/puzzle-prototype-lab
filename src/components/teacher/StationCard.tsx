@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import QRCode from "qrcode";
 import { MapPin } from "lucide-react";
 
@@ -21,6 +21,82 @@ type Props = {
 
 function osmDirectionsUrl(lat: number, lng: number): string {
   return `https://www.openstreetmap.org/directions?from=&to=${lat}%2C${lng}`;
+}
+
+function latLngToTileXY(lat: number, lng: number, zoom: number): { x: number; y: number } {
+  const n = Math.pow(2, zoom);
+  const x = n * ((lng + 180) / 360);
+  const latRad = (lat * Math.PI) / 180;
+  const y = n * (1 - Math.log(Math.tan(latRad) + 1 / Math.cos(latRad)) / Math.PI) / 2;
+  return { x, y };
+}
+
+function tileUrl(z: number, x: number, y: number): string {
+  return `https://tile.openstreetmap.org/${z}/${x}/${y}.png`;
+}
+
+function TileMap({
+  lat,
+  lng,
+  width,
+  height,
+}: {
+  lat: number;
+  lng: number;
+  width: number;
+  height: number;
+}) {
+  const zoom = 16;
+  const tileSize = 256;
+  const { x, y } = useMemo(() => latLngToTileXY(lat, lng, zoom), [lat, lng]);
+  const baseX = Math.floor(x);
+  const baseY = Math.floor(y);
+  const offsetX = (x - baseX) * tileSize;
+  const offsetY = (y - baseY) * tileSize;
+
+  const gridLeft = width / 2 - offsetX;
+  const gridTop = height / 2 - offsetY;
+
+  return (
+    <div className="relative aspect-[4/3] w-full overflow-hidden rounded-sm border border-[#c9b591]">
+      <div
+        className="absolute"
+        style={{
+          left: gridLeft,
+          top: gridTop,
+          width: tileSize * 2,
+          height: tileSize * 2,
+        }}
+      >
+        {[0, 1].map((dy) =>
+          [0, 1].map((dx) => (
+            <img
+              key={`${dx}-${dy}`}
+              src={tileUrl(zoom, baseX + dx, baseY + dy)}
+              alt=""
+              className="absolute h-[256px] w-[256px]"
+              style={{
+                left: dx * tileSize,
+                top: dy * tileSize,
+              }}
+              loading="lazy"
+            />
+          )),
+        )}
+      </div>
+      {/* Marker */}
+      <div
+        className="absolute z-10 -translate-x-1/2 -translate-y-full"
+        style={{ left: width / 2, top: height / 2 }}
+      >
+        <MapPin className="h-8 w-8 text-[#9c2b2b] drop-shadow" fill="#f5ecd7" />
+      </div>
+      {/* Attribution */}
+      <div className="absolute bottom-1 right-1 z-10 rounded-sm bg-[#f5ecd7]/90 px-1 py-0.5 text-[7px] text-[#6b4e2c]">
+        © OSM
+      </div>
+    </div>
+  );
 }
 
 export function StationCard({ station, className = "" }: Props) {
@@ -84,17 +160,8 @@ export function StationCard({ station, className = "" }: Props) {
         </p>
 
         {/* Karte */}
-        {hasLocation && station.mapUrl ? (
-          <div className="relative aspect-[4/3] w-full overflow-hidden rounded-sm border border-[#c9b591]">
-            <img
-              src={station.mapUrl}
-              alt={`Karte: ${station.placeName}`}
-              className="h-full w-full object-cover"
-            />
-            <div className="absolute bottom-1 right-1 rounded-sm bg-[#f5ecd7]/90 px-1 py-0.5 text-[7px] text-[#6b4e2c]">
-              © OSM
-            </div>
-          </div>
+        {hasLocation ? (
+          <TileMap lat={station.lat!} lng={station.lng!} width={400} height={300} />
         ) : (
           <div className="flex aspect-[4/3] w-full items-center justify-center rounded-sm border border-dashed border-[#c9b591] bg-[#f5ecd7]/50">
             <p className="text-center text-xs text-[#6b4e2c]">Noch keine Karte hinterlegt</p>
