@@ -109,7 +109,7 @@ function PrintCardsPage() {
         </section>
 
         <footer className="mt-8 text-center text-xs text-muted-foreground print:hidden">
-          <p>Die QR-Codes führen zu OpenStreetMap-Routen für die jeweiligen Orte.</p>
+          <p>Die QR-Codes führen zu Google Maps für die jeweiligen Orte.</p>
           <p className="mt-1">
             Druck-Tipp: In den Druckdialog kannst du „Hintergrundgrafiken“ aktivieren, damit die Papier-Optik
             sichtbar bleibt.
