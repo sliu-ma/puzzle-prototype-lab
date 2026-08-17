@@ -9,7 +9,6 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as TestKartenRouteImport } from './routes/test-karten'
 import { Route as LobbyRouteImport } from './routes/lobby'
 import { Route as FinaleRouteImport } from './routes/finale'
 import { Route as Etappe5RouteImport } from './routes/etappe-5'
@@ -22,11 +21,6 @@ import { Route as LehrerIndexRouteImport } from './routes/lehrer.index'
 import { Route as LehrerCodeRouteImport } from './routes/lehrer.$code'
 import { Route as LehrerCodeKartenRouteImport } from './routes/lehrer.$code.karten'
 
-const TestKartenRoute = TestKartenRouteImport.update({
-  id: '/test-karten',
-  path: '/test-karten',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const LobbyRoute = LobbyRouteImport.update({
   id: '/lobby',
   path: '/lobby',
@@ -92,7 +86,6 @@ export interface FileRoutesByFullPath {
   '/etappe-5': typeof Etappe5Route
   '/finale': typeof FinaleRoute
   '/lobby': typeof LobbyRoute
-  '/test-karten': typeof TestKartenRoute
   '/lehrer/$code': typeof LehrerCodeRouteWithChildren
   '/lehrer/': typeof LehrerIndexRoute
   '/lehrer/$code/karten': typeof LehrerCodeKartenRoute
@@ -106,7 +99,6 @@ export interface FileRoutesByTo {
   '/etappe-5': typeof Etappe5Route
   '/finale': typeof FinaleRoute
   '/lobby': typeof LobbyRoute
-  '/test-karten': typeof TestKartenRoute
   '/lehrer/$code': typeof LehrerCodeRouteWithChildren
   '/lehrer': typeof LehrerIndexRoute
   '/lehrer/$code/karten': typeof LehrerCodeKartenRoute
@@ -121,7 +113,6 @@ export interface FileRoutesById {
   '/etappe-5': typeof Etappe5Route
   '/finale': typeof FinaleRoute
   '/lobby': typeof LobbyRoute
-  '/test-karten': typeof TestKartenRoute
   '/lehrer/$code': typeof LehrerCodeRouteWithChildren
   '/lehrer/': typeof LehrerIndexRoute
   '/lehrer/$code/karten': typeof LehrerCodeKartenRoute
@@ -137,7 +128,6 @@ export interface FileRouteTypes {
     | '/etappe-5'
     | '/finale'
     | '/lobby'
-    | '/test-karten'
     | '/lehrer/$code'
     | '/lehrer/'
     | '/lehrer/$code/karten'
@@ -151,7 +141,6 @@ export interface FileRouteTypes {
     | '/etappe-5'
     | '/finale'
     | '/lobby'
-    | '/test-karten'
     | '/lehrer/$code'
     | '/lehrer'
     | '/lehrer/$code/karten'
@@ -165,7 +154,6 @@ export interface FileRouteTypes {
     | '/etappe-5'
     | '/finale'
     | '/lobby'
-    | '/test-karten'
     | '/lehrer/$code'
     | '/lehrer/'
     | '/lehrer/$code/karten'
@@ -180,20 +168,12 @@ export interface RootRouteChildren {
   Etappe5Route: typeof Etappe5Route
   FinaleRoute: typeof FinaleRoute
   LobbyRoute: typeof LobbyRoute
-  TestKartenRoute: typeof TestKartenRoute
   LehrerCodeRoute: typeof LehrerCodeRouteWithChildren
   LehrerIndexRoute: typeof LehrerIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/test-karten': {
-      id: '/test-karten'
-      path: '/test-karten'
-      fullPath: '/test-karten'
-      preLoaderRoute: typeof TestKartenRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/lobby': {
       id: '/lobby'
       path: '/lobby'
@@ -295,7 +275,6 @@ const rootRouteChildren: RootRouteChildren = {
   Etappe5Route: Etappe5Route,
   FinaleRoute: FinaleRoute,
   LobbyRoute: LobbyRoute,
-  TestKartenRoute: TestKartenRoute,
   LehrerCodeRoute: LehrerCodeRouteWithChildren,
   LehrerIndexRoute: LehrerIndexRoute,
 }
