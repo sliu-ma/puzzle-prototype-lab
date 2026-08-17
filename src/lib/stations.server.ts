@@ -26,11 +26,7 @@ export type StationRow = {
 };
 
 export function mapUrlFromCoords(lat: number, lng: number): string {
-  // OpenStreetMap Static Map (kostenlos, Attribution erforderlich).
-  const zoom = 16;
-  const width = 400;
-  const height = 260;
-  return `https://staticmap.openstreetmap.de/staticmap.php?center=${lat},${lng}&zoom=${zoom}&size=${width}x${height}&markers=${lat},${lng},ol-marker`;
+  return `https://www.google.com/maps/search/?api=1&query=${lat}%2C${lng}`;
 }
 
 export function osmSearchUrl(address: string): string {
