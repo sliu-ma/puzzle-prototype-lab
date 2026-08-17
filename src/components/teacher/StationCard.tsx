@@ -105,7 +105,7 @@ export function StationCard({ station, className = "" }: Props) {
   useEffect(() => {
     if (!station.lat || !station.lng) return;
     let cancelled = false;
-    QRCode.toDataURL(osmDirectionsUrl(station.lat, station.lng), {
+    QRCode.toDataURL(googleMapsUrl(station.lat, station.lng), {
       width: 140,
       margin: 1,
       color: { dark: "#2d1f12", light: "#f5ecd7" },
