@@ -29,8 +29,10 @@ import {
 import { LobbyPanel } from "@/components/teacher/LobbyPanel";
 import { LiveBoard } from "@/components/teacher/LiveBoard";
 import { ReportPanel } from "@/components/teacher/ReportPanel";
+import { StationsPanel } from "@/components/teacher/StationsPanel";
 import type { RoundItem } from "./lehrer.index";
 import { cn } from "@/lib/utils";
+
 
 export const Route = createFileRoute("/lehrer/$code")({
   ssr: false,
@@ -57,14 +59,16 @@ export const Route = createFileRoute("/lehrer/$code")({
 const inputBase =
   "w-full min-h-[48px] rounded-sm border border-border bg-paper px-3 py-3 text-[16px] focus:border-stamp focus:outline-none focus:ring-2 focus:ring-stamp/25";
 
-type Step = "prepare" | "lobby" | "live" | "report";
+type Step = "prepare" | "posten" | "lobby" | "live" | "report";
 
 const STEPS: [Step, string][] = [
   ["prepare", "Vorbereiten"],
+  ["posten", "Posten"],
   ["lobby", "Lobby"],
   ["live", "Live"],
   ["report", "Auswertung"],
 ];
+
 
 function RoundPage() {
   const { code } = Route.useParams();
@@ -244,7 +248,7 @@ function RoundPage() {
         </div>
       </div>
 
-      <nav className="mt-5 grid grid-cols-4 gap-1.5">
+      <nav className="mt-5 grid grid-cols-5 gap-1.5">
         {STEPS.map(([key, label]) => (
           <button
             key={key}
@@ -259,6 +263,7 @@ function RoundPage() {
           </button>
         ))}
       </nav>
+
 
       {error && (
         <p className="mt-3 rounded-sm border border-destructive/40 bg-destructive/10 p-2 text-xs text-destructive">
@@ -388,7 +393,18 @@ function RoundPage() {
         </section>
       )}
 
+      {step === "posten" && (
+        <StationsPanel
+          password={password}
+          code={round.code}
+          onPrint={() => {
+            void navigate({ to: "/lehrer/$code/karten", params: { code: round.code } });
+          }}
+        />
+      )}
+
       {step === "lobby" && (
+
         <LobbyPanel
           password={password}
           code={round.code}
