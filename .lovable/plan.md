@@ -32,16 +32,17 @@ Knopf «Karten drucken»: öffnet eine reine Druckansicht mit allen erfassten Ka
 
 ## Technische Umsetzung
 
-**Google Maps Platform**: Verbindung muss zuerst eingerichtet werden (Connector-Karte im Chat). Genutzt werden Geocoding (Adresse → Koordinaten) und die Static Maps API, beide serverseitig über das Connector-Gateway; Aufrufe passieren nur beim Speichern einer Adresse bzw. beim Rendern der Druckansicht und werden pro Ort in der Datenbank zwischengespeichert, damit keine unnötigen Abfragen entstehen.
+**Karten-API: OpenStreetMap / Nominatim** (kein API-Key nötig, kostenlos, Attribution erforderlich). Geocoding via `https://nominatim.openstreetmap.org/search?format=jsonv2&q=...` mit `User-Agent` und Adressen-Limitierung. Statische Kartenansicht via `https://staticmap.openstreetmap.de/` (OpenStreetMap Static Map) oder direkt OSM-Tiles mit einem geeigneten Zoom/Pin. Die Karte wird als Bild-URL in der Datenbank zwischengespeichert, damit keine wiederholten externen Anfragen entstehen.
 
-**Datenbank (Migration)**: neue Tabelle `public.round_stations` (`round_id`, `stage_nr`, `place_name`, `address`, `lat`, `lng`, `note`, `photo_path`, `map_cache`), mit GRANTs, RLS und Zugriff ausschliesslich über SECURITY-DEFINER-Funktionen mit Lehrer-Passwort-Hash (`teacher_list_stations`, `teacher_upsert_station`, `teacher_delete_station`) – gleiches Muster wie die bestehenden `teacher_*`-Funktionen. Fotos in einen neuen Storage-Bucket `station-photos` (öffentlich lesbar, Upload über eine Server-Funktion nach Passwortprüfung).
+**Datenbank (Migration)**: neue Tabelle `public.round_stations` (`round_id`, `stage_nr`, `place_name`, `address`, `lat`, `lng`, `note`, `photo_path`, `map_url`), mit GRANTs, RLS und Zugriff ausschliesslich über SECURITY-DEFINER-Funktionen mit Lehrer-Passwort-Hash (`teacher_list_stations`, `teacher_upsert_station`, `teacher_delete_station`) – gleiches Muster wie die bestehenden `teacher_*`-Funktionen. Fotos in einen neuen Storage-Bucket `station-photos` (öffentlich lesbar, Upload über eine Server-Funktion nach Passwortprüfung).
 
 **Frontend**:
-- `src/lib/stations.functions.ts`: Server-Funktionen für Liste, Speichern (inkl. Geocoding), Foto-Upload und Static-Map-Abruf.
+- `src/lib/stations.functions.ts`: Server-Funktionen für Liste, Speichern (inkl. Geocoding via Nominatim), Foto-Upload und Map-URL-Generierung.
 - `src/components/teacher/StationsPanel.tsx`: Formularliste je Etappe mit Foto-Upload und Statusanzeige.
 - `src/components/teacher/StationCard.tsx`: Kartenlayout im Aktenstil, wiederverwendet in Vorschau und Druck.
 - Neue Route `src/routes/lehrer.$code.karten.tsx`: Druckansicht mit `@media print`-Regeln (A6-Raster, Seitenumbrüche, keine Navigation).
 - `src/routes/lehrer.$code.tsx`: fünfter Schritt «Postenkarten» plus Knopf zur Druckansicht.
-- QR-Codes werden lokal erzeugt (kleine `qrcode`-Bibliothek) und zeigen auf `https://www.google.com/maps/search/?api=1&query=<lat>,<lng>`.
+- QR-Codes werden lokal erzeugt (kleine `qrcode`-Bibliothek) und zeigen auf `https://www.openstreetmap.org/?mlat=<lat>&mlon=<lng>`.
+- OSM-Attribution wird auf der Druckansicht und in der Vorschau klein dargestellt (`© OpenStreetMap-Mitwirkende`).
 
 Am Spiel selbst (Etappen, Umschläge, Punkte) ändert sich nichts.
