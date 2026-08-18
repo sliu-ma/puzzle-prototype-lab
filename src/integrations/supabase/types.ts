@@ -35,6 +35,59 @@ export type Database = {
         }
         Relationships: []
       }
+      round_stations: {
+        Row: {
+          address: string
+          created_at: string
+          id: string
+          lat: number | null
+          lng: number | null
+          map_url: string | null
+          note: string
+          photo_path: string | null
+          place_name: string
+          round_id: string
+          stage_nr: number
+          updated_at: string
+        }
+        Insert: {
+          address?: string
+          created_at?: string
+          id?: string
+          lat?: number | null
+          lng?: number | null
+          map_url?: string | null
+          note?: string
+          photo_path?: string | null
+          place_name?: string
+          round_id: string
+          stage_nr: number
+          updated_at?: string
+        }
+        Update: {
+          address?: string
+          created_at?: string
+          id?: string
+          lat?: number | null
+          lng?: number | null
+          map_url?: string | null
+          note?: string
+          photo_path?: string | null
+          place_name?: string
+          round_id?: string
+          stage_nr?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "round_stations_round_id_fkey"
+            columns: ["round_id"]
+            isOneToOne: false
+            referencedRelation: "rounds"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       rounds: {
         Row: {
           budget_min: number
@@ -206,6 +259,10 @@ export type Database = {
         Args: { p_code: string; p_password_hash: string }
         Returns: boolean
       }
+      teacher_delete_station: {
+        Args: { p_code: string; p_password_hash: string; p_stage_nr: number }
+        Returns: boolean
+      }
       teacher_delete_team: {
         Args: { p_password_hash: string; p_team_id: string }
         Returns: boolean
@@ -220,6 +277,19 @@ export type Database = {
           status: string
           team_count: number
           title: string
+        }[]
+      }
+      teacher_list_stations: {
+        Args: { p_code: string; p_password_hash: string }
+        Returns: {
+          address: string
+          lat: number
+          lng: number
+          map_url: string
+          note: string
+          photo_path: string
+          place_name: string
+          stage_nr: number
         }[]
       }
       teacher_round_report: {
@@ -242,6 +312,30 @@ export type Database = {
           p_title: string
         }
         Returns: boolean
+      }
+      teacher_upsert_station: {
+        Args: {
+          p_address: string
+          p_code: string
+          p_lat: number
+          p_lng: number
+          p_map_url: string
+          p_note: string
+          p_password_hash: string
+          p_photo_path: string
+          p_place_name: string
+          p_stage_nr: number
+        }
+        Returns: {
+          address: string
+          lat: number
+          lng: number
+          map_url: string
+          note: string
+          photo_path: string
+          place_name: string
+          stage_nr: number
+        }[]
       }
     }
     Enums: {
