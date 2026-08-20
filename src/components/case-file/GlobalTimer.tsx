@@ -268,6 +268,13 @@ export function GlobalTimer() {
               „{popupBody}"
             </DialogDescription>
           </DialogHeader>
+          <div
+            key={popup?.at ?? "none"}
+            className="mt-4 h-1 w-full overflow-hidden rounded-full bg-border"
+            aria-hidden="true"
+          >
+            <div className="h-full w-full origin-left animate-[shrink-x_60s_linear_forwards] rounded-full bg-primary" />
+          </div>
           <button
             onClick={() => setPopup(null)}
             className="mt-2 w-full rounded-sm bg-primary px-4 py-2 font-serif text-sm font-semibold text-primary-foreground hover:-translate-y-0.5 hover:shadow-md transition-all"
