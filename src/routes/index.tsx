@@ -233,8 +233,13 @@ function ProgressPanel({
   const [showSticky, setShowSticky] = useState(false);
   const ctaRef = useRef<HTMLDivElement | null>(null);
 
+  const [timeUp, setTimeUp] = useState(false);
+
   useEffect(() => {
-    const tick = () => setRemaining(getRemainingMs());
+    const tick = () => {
+      setRemaining(getRemainingMs());
+      setTimeUp(isTimeUp());
+    };
     tick();
     const id = window.setInterval(tick, 1000);
     return () => window.clearInterval(id);
