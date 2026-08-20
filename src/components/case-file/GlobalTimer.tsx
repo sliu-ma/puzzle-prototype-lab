@@ -102,6 +102,7 @@ export function GlobalTimer() {
   const [now, setNow] = useState(() => Date.now());
   const [popup, setPopup] = useState<MajaBeat | null>(null);
   const [bonusMin, setBonusMin] = useState<number | null>(null);
+  const popupTimer = useRef<number | null>(null);
 
   useEffect(() => {
     const sync = () => {
