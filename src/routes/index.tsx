@@ -406,7 +406,11 @@ function ProgressPanel({
       <ol className="relative space-y-1.5">
         {stageStations.map((s, i) => {
           const status =
-            currentStage > s.nr ? "done" : currentStage === s.nr ? "current" : "locked";
+            currentStage > s.nr
+              ? "done"
+              : currentStage === s.nr && !timeUp
+                ? "current"
+                : "locked";
           const isLast = i === stageStations.length - 1;
           const dauer = status === "done" ? getStageDurationMin(s.nr) : null;
           const hints = status === "done" ? getStageHintsUsed(s.nr) : null;
@@ -473,7 +477,7 @@ function ProgressPanel({
 
         {/* Finale */}
         <li>
-          {currentStage >= 6 ? (
+          {currentStage >= 6 && (!timeUp || finished) ? (
             <Link
               to="/finale"
               className="block rounded-sm px-2 transition-colors hover:bg-secondary/50"
@@ -522,7 +526,7 @@ function ProgressPanel({
       <BadgeShelf />
 
       {/* Sticky-CTA auf dem Handy */}
-      {showSticky && !finished && (
+      {showSticky && !finished && !timeUp && (
         <div className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-paper/95 p-3 backdrop-blur-sm sm:hidden">
           <button
             type="button"
@@ -536,7 +540,7 @@ function ProgressPanel({
           </button>
         </div>
       )}
-      {showSticky && !finished && <div aria-hidden className="h-16 sm:hidden" />}
+      {showSticky && !finished && !timeUp && <div aria-hidden className="h-16 sm:hidden" />}
     </div>
   );
 }
