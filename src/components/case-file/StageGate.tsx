@@ -3,7 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { Lock } from "lucide-react";
 import { PaperCard } from "./PaperCard";
 import { Stamp } from "./Stamp";
-import { getCurrentStage, getTeam, STAGES } from "@/lib/progress";
+import { getCurrentStage, getTeam, isTimeUp, STAGES } from "@/lib/progress";
 
 type Props = {
   stage: number; // 1..6
