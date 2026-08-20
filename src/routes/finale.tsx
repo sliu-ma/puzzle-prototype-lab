@@ -2146,25 +2146,6 @@ function OutroScreen() {
   const totalSteps = 3;
   useScrollToTopOnChange(step);
 
-  // Benötigte Zeit einmalig beim Mount einfrieren.
-  const elapsedLabel = useState(() => {
-    const start = getStartTs();
-    if (!start) return "...";
-    const ms = Math.max(0, (getEndTs() ?? Date.now()) - start);
-    const totalSec = Math.floor(ms / 1000);
-    const h = Math.floor(totalSec / 3600);
-    const m = Math.floor((totalSec % 3600) / 60);
-    const s = totalSec % 60;
-    if (h > 0) return `${h} h ${String(m).padStart(2, "0")} min`;
-    return `${m} min ${String(s).padStart(2, "0")} s`;
-  })[0];
-
-  const hintsUsed = useState(() => getTotalRevealedHints())[0];
-
-  // Punktestand einmalig einfrieren, damit der Abschluss stabil bleibt.
-  const score = useState(() => getScore())[0];
-  const teamName = useState(() => getTeam()?.name?.trim() || "Mein Team")[0];
-  const shownPoints = useCountUp(step === 2 ? score.total : 0);
 
 
 
