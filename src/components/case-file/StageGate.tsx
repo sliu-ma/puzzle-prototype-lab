@@ -19,17 +19,21 @@ export function StageGate({ stage, children }: Props) {
   const [ready, setReady] = useState(false);
   const [current, setCurrent] = useState(0);
   const [hasTeam, setHasTeam] = useState(false);
+  const [timeUp, setTimeUp] = useState(false);
 
   useEffect(() => {
     const sync = () => {
       setCurrent(getCurrentStage());
       setHasTeam(!!getTeam());
+      setTimeUp(isTimeUp());
     };
     sync();
     setReady(true);
+    const id = window.setInterval(sync, 5000);
     window.addEventListener("maya-progress", sync);
     window.addEventListener("storage", sync);
     return () => {
+      window.clearInterval(id);
       window.removeEventListener("maya-progress", sync);
       window.removeEventListener("storage", sync);
     };
