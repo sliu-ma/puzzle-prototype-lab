@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Clock, AlertTriangle, CheckCircle2, Mail } from "lucide-react";
 import {
   Dialog,
@@ -102,6 +102,7 @@ export function GlobalTimer() {
   const [now, setNow] = useState(() => Date.now());
   const [popup, setPopup] = useState<MajaBeat | null>(null);
   const [bonusMin, setBonusMin] = useState<number | null>(null);
+  const popupTimer = useRef<number | null>(null);
 
   useEffect(() => {
     const sync = () => {
@@ -155,11 +156,31 @@ export function GlobalTimer() {
     const elapsedMin = (now - startTs) / 60000;
     const shown = getShown();
     const due = BEATS.find((b) => elapsedMin >= b.at && !shown.has(b.at));
-    if (due && !popup) {
+    if (due) {
       markShown(due.at);
       setPopup(due);
     }
-  }, [now, startTs, endTs, popup]);
+  }, [now, startTs, endTs]);
+
+  // Zeitmeldungen schliessen sich nach 60 Sekunden von selbst. Eine neue
+  // Meldung überschreibt die laufende, daher räumen wir den alten Timer
+  // immer auf, bevor ein neuer startet.
+  useEffect(() => {
+    if (popupTimer.current) {
+      window.clearTimeout(popupTimer.current);
+      popupTimer.current = null;
+    }
+    if (!popup) return;
+    popupTimer.current = window.setTimeout(() => {
+      setPopup(null);
+    }, 60_000);
+    return () => {
+      if (popupTimer.current) {
+        window.clearTimeout(popupTimer.current);
+        popupTimer.current = null;
+      }
+    };
+  }, [popup]);
 
   if (!startTs) return null;
 
@@ -247,6 +268,13 @@ export function GlobalTimer() {
               „{popupBody}"
             </DialogDescription>
           </DialogHeader>
+          <div
+            key={popup?.at ?? "none"}
+            className="mt-4 h-1 w-full overflow-hidden rounded-full bg-border"
+            aria-hidden="true"
+          >
+            <div className="animate-shrink-x h-full w-full origin-left rounded-full bg-primary" />
+          </div>
           <button
             onClick={() => setPopup(null)}
             className="mt-2 w-full rounded-sm bg-primary px-4 py-2 font-serif text-sm font-semibold text-primary-foreground hover:-translate-y-0.5 hover:shadow-md transition-all"

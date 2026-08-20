@@ -282,3 +282,13 @@ input, textarea, select {
 @utility animate-letter-unfold {
   animation: letter-unfold 800ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
+
+/* Fortschrittsbalken für selbstschliessende Maja-Zeitmeldungen. */
+@keyframes shrink-x {
+  0% { transform: scaleX(1); }
+  100% { transform: scaleX(0); }
+}
+
+@utility animate-shrink-x {
+  animation: shrink-x 60s linear forwards;
+}
