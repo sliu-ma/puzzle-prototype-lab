@@ -14,6 +14,7 @@ import {
   getRemainingMs,
   formatRemaining,
   getStageDurationMin,
+  isTimeUp,
 } from "@/lib/progress";
 import { getStageHintsUsed } from "@/lib/badges";
 import { NextStepCard } from "@/components/case-file/NextStepCard";
