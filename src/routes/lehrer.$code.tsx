@@ -36,16 +36,16 @@ export const Route = createFileRoute("/lehrer/$code")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "Runde führen, Lobby, Live und Auswertung" },
+      { title: "Runde führen, Lobby, Live und Auswertung | Majas Mission - Escape Game zu Nachhaltigkeit" },
       {
         name: "description",
         content:
-          "Eine Klassenrunde von der Vorbereitung über die Lobby und den gemeinsamen Start bis zur Auswertung führen.",
+          "Eine Klassenrunde von der Vorbereitung über die Lobby und den gemeinsamen Start bis zur Auswertung führen. – Majas Mission ist ein mobiler Bildungs Escape Game zum Thema Nachhaltigkeit: Schulklassen lösen reale Rätsel zu Mobilität, Konsum, Energie & mehr",
       },
-      { property: "og:title", content: "Runde führen, Lobby, Live und Auswertung" },
+      { property: "og:title", content: "Runde führen, Lobby, Live und Auswertung | Majas Mission - Escape Game zu Nachhaltigkeit" },
       {
         property: "og:description",
-        content: "Teams prüfen, gemeinsam starten und die Kennzahlen der Klasse ansehen.",
+        content: "Eine Klassenrunde von der Vorbereitung über die Lobby und den gemeinsamen Start bis zur Auswertung führen. – Majas Mission ist ein mobiler Bildungs Escape Game zum Thema Nachhaltigkeit: Schulklassen lösen reale Rätsel zu Mobilität, Konsum, Energie & mehr",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

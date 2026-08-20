@@ -28,11 +28,11 @@ import { StageScoreRecap } from "@/components/case-file/StageScoreRecap";
 export const Route = createFileRoute("/etappe-2")({
   head: () => ({
     meta: [
-      { title: "Etappe 2, Dorfladen Berger" },
+      { title: "Etappe 2, Dorfladen Berger | Majas Mission - Escape Game zu Nachhaltigkeit" },
       {
         name: "description",
         content:
-          "Etappe 2: Im alten Dorfladen wartet ein gepackter Einkaufskorb. Zwei Produkte stimmen nicht, finde sie und tausche sie aus.",
+          "Etappe 2: Im alten Dorfladen wartet ein gepackter Einkaufskorb. Zwei Produkte stimmen nicht, finde sie und tausche sie aus. – Majas Mission ist ein mobiler Bildungs Escape Game zum Thema Nachhaltigkeit: Schulklassen lösen reale Rätsel zu Mobilität, Konsum, Energie & mehr",
       },
     ],
   }),
