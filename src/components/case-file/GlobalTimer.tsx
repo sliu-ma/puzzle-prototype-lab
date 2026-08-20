@@ -198,7 +198,7 @@ export function GlobalTimer() {
 
   return (
     <>
-      {isOver && <TimeUpOverlay />}
+      {isOver && !onSummary && <TimeUpOverlay />}
       <div
         className={cn(
           "flex items-center gap-2 rounded-sm border bg-card/95 px-3 py-1.5 font-mono-typed text-sm shadow-md backdrop-blur",
