@@ -273,7 +273,7 @@ export function GlobalTimer() {
             className="mt-4 h-1 w-full overflow-hidden rounded-full bg-border"
             aria-hidden="true"
           >
-            <div className="h-full w-full origin-left animate-[shrink-x_60s_linear_forwards] rounded-full bg-primary" />
+            <div className="animate-shrink-x h-full w-full origin-left rounded-full bg-primary" />
           </div>
           <button
             onClick={() => setPopup(null)}
