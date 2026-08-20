@@ -1,12 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { CheckCircle2, XCircle, Gauge, RefreshCw, ArrowUp, ArrowDown, Sparkles, Clock, Lightbulb, Scale, AlertTriangle } from "lucide-react";
+import { CheckCircle2, XCircle, Gauge, RefreshCw, ArrowUp, ArrowDown, Sparkles, Scale, AlertTriangle } from "lucide-react";
 import { PaperCard } from "@/components/case-file/PaperCard";
 import { Stamp } from "@/components/case-file/Stamp";
 import { StageGate } from "@/components/case-file/StageGate";
 
-import { completeStage, finishGame, getHearingClock, getStartTs, getEndTs, getTeam, getBudgetMin } from "@/lib/progress";
+import { completeStage, finishGame, getHearingClock, getStartTs, getEndTs, getBudgetMin } from "@/lib/progress";
 import { awardBadge } from "@/lib/badges";
 import { recordHearingAnswer } from "@/lib/score-events";
 import { FinalSummary } from "@/components/case-file/FinalSummary";
