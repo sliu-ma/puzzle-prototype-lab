@@ -15,16 +15,16 @@ export const Route = createFileRoute("/lobby")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "Wartezimmer, Klassenrunde startet gleich" },
+      { title: "Wartezimmer, Klassenrunde startet gleich | Majas Mission - Escape Game zu Nachhaltigkeit" },
       {
         name: "description",
         content:
-          "Euer Team ist angemeldet. Sobald die Lehrperson die Runde startet, beginnt die Ermittlung für alle gleichzeitig.",
+          "Euer Team ist angemeldet. Sobald die Lehrperson die Runde startet, beginnt die Ermittlung für alle gleichzeitig. – Majas Mission ist ein mobiler Bildungs Escape Game zum Thema Nachhaltigkeit: Schulklassen lösen reale Rätsel zu Mobilität, Konsum, Energie & mehr",
       },
-      { property: "og:title", content: "Wartezimmer, Klassenrunde startet gleich" },
+      { property: "og:title", content: "Wartezimmer, Klassenrunde startet gleich | Majas Mission - Escape Game zu Nachhaltigkeit" },
       {
         property: "og:description",
-        content: "Angemeldete Teams der Runde und gemeinsamer Start durch die Lehrperson.",
+        content: "Euer Team ist angemeldet. Sobald die Lehrperson die Runde startet, beginnt die Ermittlung für alle gleichzeitig. – Majas Mission ist ein mobiler Bildungs Escape Game zum Thema Nachhaltigkeit: Schulklassen lösen reale Rätsel zu Mobilität, Konsum, Energie & mehr",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

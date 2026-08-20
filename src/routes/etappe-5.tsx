@@ -24,11 +24,11 @@ import { useScrollToTopOnChange } from "@/hooks/use-scroll-top";
 export const Route = createFileRoute("/etappe-5")({
   head: () => ({
     meta: [
-      { title: "Etappe 5, Altes Wasserkraftwerk" },
+      { title: "Etappe 5, Altes Wasserkraftwerk | Majas Mission - Escape Game zu Nachhaltigkeit" },
       {
         name: "description",
         content:
-          "Etappe 5: Marlene Vogt vom Umweltamt zeigt dir drei Gutachten. Finde die fünf falschen Aussagen, bevor im Gemeindesaal abgestimmt wird.",
+          "Etappe 5: Marlene Vogt vom Umweltamt zeigt dir drei Gutachten. Finde die fünf falschen Aussagen, bevor im Gemeindesaal abgestimmt wird. – Majas Mission ist ein mobiler Bildungs Escape Game zum Thema Nachhaltigkeit: Schulklassen lösen reale Rätsel zu Mobilität, Konsum, Energie & mehr",
       },
     ],
   }),

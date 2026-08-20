@@ -25,11 +25,11 @@ import { StageScoreRecap } from "@/components/case-file/StageScoreRecap";
 export const Route = createFileRoute("/etappe-1")({
   head: () => ({
     meta: [
-      { title: "Etappe 1, Bahnhof Speicher" },
+      { title: "Etappe 1, Bahnhof Speicher | Majas Mission - Escape Game zu Nachhaltigkeit" },
       {
         name: "description",
         content:
-          "Etappe 1: Auf dem Bahnhof liegt Jakobs altes Reiseticket. Welchen Weg hat er wirklich gewählt?",
+          "Etappe 1: Auf dem Bahnhof liegt Jakobs altes Reiseticket. Welchen Weg hat er wirklich gewählt? – Majas Mission ist ein mobiler Bildungs Escape Game zum Thema Nachhaltigkeit: Schulklassen lösen reale Rätsel zu Mobilität, Konsum, Energie & mehr",
       },
     ],
   }),

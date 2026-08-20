@@ -26,11 +26,11 @@ import waschmaschineE from "@/assets/waschmaschine-klasse-e.png.asset.json";
 export const Route = createFileRoute("/finale")({
   head: () => ({
     meta: [
-      { title: "Finale: Hearing im Gemeindesaal" },
+      { title: "Finale: Hearing im Gemeindesaal | Majas Mission - Escape Game zu Nachhaltigkeit" },
       {
         name: "description",
         content:
-          "Das Hearing: Überzeuge den Gemeinderat mit Fakten aus allen fünf Etappen.",
+          "Das Hearing: Überzeuge den Gemeinderat mit Fakten aus allen fünf Etappen. – Majas Mission ist ein mobiler Bildungs Escape Game zum Thema Nachhaltigkeit: Schulklassen lösen reale Rätsel zu Mobilität, Konsum, Energie & mehr",
       },
     ],
   }),

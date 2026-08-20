@@ -49,11 +49,11 @@ const HINTS_004: Hint[] = [
 export const Route = createFileRoute("/etappe-4")({
   head: () => ({
     meta: [
-      { title: "Etappe 4, Jakobs Haus" },
+      { title: "Etappe 4, Jakobs Haus | Majas Mission - Escape Game zu Nachhaltigkeit" },
       {
         name: "description",
         content:
-          "Etappe 4: Eine Zeichnung von Jakobs Haus, alte Rechnungen, und das Ziel: Energiesparpunkte sammeln.",
+          "Etappe 4: Eine Zeichnung von Jakobs Haus, alte Rechnungen, und das Ziel: Energiesparpunkte sammeln. – Majas Mission ist ein mobiler Bildungs Escape Game zum Thema Nachhaltigkeit: Schulklassen lösen reale Rätsel zu Mobilität, Konsum, Energie & mehr",
       },
     ],
   }),

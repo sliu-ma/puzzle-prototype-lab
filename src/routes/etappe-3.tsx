@@ -35,11 +35,11 @@ import {
 export const Route = createFileRoute("/etappe-3")({
   head: () => ({
     meta: [
-      { title: "Etappe 3, Wald-Lichtung" },
+      { title: "Etappe 3, Wald-Lichtung | Majas Mission - Escape Game zu Nachhaltigkeit" },
       {
         name: "description",
         content:
-          "Etappe 3: Beim Forsthaus liegt Jakobs Notizbuch. Sortiere die Tiere und entschlüssele den Code des Türschlosses.",
+          "Etappe 3: Beim Forsthaus liegt Jakobs Notizbuch. Sortiere die Tiere und entschlüssele den Code des Türschlosses. – Majas Mission ist ein mobiler Bildungs Escape Game zum Thema Nachhaltigkeit: Schulklassen lösen reale Rätsel zu Mobilität, Konsum, Energie & mehr",
       },
     ],
   }),

@@ -35,25 +35,25 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Speicher, Majas Ermittlung" },
+      { title: "Majas Mission - Escape Game zu Nachhaltigkeit" },
       {
         name: "description",
         content:
-          "Ein Bildungs-Escape-Room über Nachhaltigkeit. Fünf Etappen, ein Hearing, von Mobilität bis Energie.",
+          "Majas Mission ist ein mobiler Bildungs Escape Game zum Thema Nachhaltigkeit: Schulklassen lösen reale Rätsel zu Mobilität, Konsum, Energie & mehr",
       },
-      { property: "og:title", content: "Speicher, Majas Ermittlung" },
+      { property: "og:title", content: "Majas Mission - Escape Game zu Nachhaltigkeit" },
       {
         property: "og:description",
         content:
-          "Ein Bildungs-Escape-Room über Nachhaltigkeit. Fünf Etappen, ein Hearing, von Mobilität bis Energie.",
+          "Majas Mission ist ein mobiler Bildungs Escape Game zum Thema Nachhaltigkeit: Schulklassen lösen reale Rätsel zu Mobilität, Konsum, Energie & mehr",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Speicher, Majas Ermittlung" },
+      { name: "twitter:title", content: "Majas Mission - Escape Game zu Nachhaltigkeit" },
       {
         name: "twitter:description",
         content:
-          "Ein Bildungs-Escape-Room über Nachhaltigkeit. Fünf Etappen, ein Hearing, von Mobilität bis Energie.",
+          "Majas Mission ist ein mobiler Bildungs Escape Game zum Thema Nachhaltigkeit: Schulklassen lösen reale Rätsel zu Mobilität, Konsum, Energie & mehr",
       },
     ],
     links: [
