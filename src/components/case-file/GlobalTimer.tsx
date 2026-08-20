@@ -156,11 +156,31 @@ export function GlobalTimer() {
     const elapsedMin = (now - startTs) / 60000;
     const shown = getShown();
     const due = BEATS.find((b) => elapsedMin >= b.at && !shown.has(b.at));
-    if (due && !popup) {
+    if (due) {
       markShown(due.at);
       setPopup(due);
     }
-  }, [now, startTs, endTs, popup]);
+  }, [now, startTs, endTs]);
+
+  // Zeitmeldungen schliessen sich nach 60 Sekunden von selbst. Eine neue
+  // Meldung überschreibt die laufende, daher räumen wir den alten Timer
+  // immer auf, bevor ein neuer startet.
+  useEffect(() => {
+    if (popupTimer.current) {
+      window.clearTimeout(popupTimer.current);
+      popupTimer.current = null;
+    }
+    if (!popup) return;
+    popupTimer.current = window.setTimeout(() => {
+      setPopup(null);
+    }, 60_000);
+    return () => {
+      if (popupTimer.current) {
+        window.clearTimeout(popupTimer.current);
+        popupTimer.current = null;
+      }
+    };
+  }, [popup]);
 
   if (!startTs) return null;
 
