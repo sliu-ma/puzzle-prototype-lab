@@ -5,13 +5,13 @@ import { CheckCircle2, XCircle, Gauge, RefreshCw, ArrowUp, ArrowDown, Sparkles, 
 import { PaperCard } from "@/components/case-file/PaperCard";
 import { Stamp } from "@/components/case-file/Stamp";
 import { StageGate } from "@/components/case-file/StageGate";
-import { getTotalRevealedHints } from "@/components/case-file/HintSystem";
+
 import { completeStage, finishGame, getHearingClock, getStartTs, getEndTs, getTeam, getBudgetMin } from "@/lib/progress";
 import { awardBadge } from "@/lib/badges";
-import { recordHearingAnswer, getScore } from "@/lib/score-events";
-import { Leaderboard } from "@/components/case-file/Leaderboard";
+import { recordHearingAnswer } from "@/lib/score-events";
+import { FinalSummary } from "@/components/case-file/FinalSummary";
 import { markRoundFinished } from "@/lib/round-client";
-import { BadgeShowcase } from "@/components/case-file/BadgeShowcase";
+
 import { usePersistentState } from "@/lib/persist";
 import { cn } from "@/lib/utils";
 import { useScrollToTopOnChange } from "@/hooks/use-scroll-top";
