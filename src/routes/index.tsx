@@ -358,7 +358,25 @@ function ProgressPanel({
 
       {/* Nächster Schritt */}
       <div ref={ctaRef}>
-        {finished ? (
+        {timeUp && !finished ? (
+          <div className="rounded-sm border border-stamp/60 bg-secondary/40 p-4">
+            <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
+              Zeit abgelaufen
+            </p>
+            <p className="mt-1 font-serif text-lg font-bold leading-tight">
+              Die Ermittlung ist beendet
+            </p>
+            <p className="mt-2 text-[14px] leading-relaxed text-foreground/80">
+              Neue Etappen und das Hearing lassen sich nicht mehr starten.
+            </p>
+            <Link
+              to="/abschluss"
+              className="mt-4 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-sm bg-primary px-5 py-3 font-serif text-base font-semibold text-primary-foreground"
+            >
+              Zum Abschluss <span aria-hidden>→</span>
+            </Link>
+          </div>
+        ) : finished ? (
           <NextStepCard
             nr={6}
             ort={finale.ort}
