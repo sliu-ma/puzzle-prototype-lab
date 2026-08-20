@@ -14,6 +14,7 @@ import {
   getRemainingMs,
   formatRemaining,
   getStageDurationMin,
+  isTimeUp,
 } from "@/lib/progress";
 import { getStageHintsUsed } from "@/lib/badges";
 import { NextStepCard } from "@/components/case-file/NextStepCard";
@@ -233,8 +234,13 @@ function ProgressPanel({
   const [showSticky, setShowSticky] = useState(false);
   const ctaRef = useRef<HTMLDivElement | null>(null);
 
+  const [timeUp, setTimeUp] = useState(false);
+
   useEffect(() => {
-    const tick = () => setRemaining(getRemainingMs());
+    const tick = () => {
+      setRemaining(getRemainingMs());
+      setTimeUp(isTimeUp());
+    };
     tick();
     const id = window.setInterval(tick, 1000);
     return () => window.clearInterval(id);
@@ -352,7 +358,25 @@ function ProgressPanel({
 
       {/* Nächster Schritt */}
       <div ref={ctaRef}>
-        {finished ? (
+        {timeUp && !finished ? (
+          <div className="rounded-sm border border-stamp/60 bg-secondary/40 p-4">
+            <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
+              Zeit abgelaufen
+            </p>
+            <p className="mt-1 font-serif text-lg font-bold leading-tight">
+              Die Ermittlung ist beendet
+            </p>
+            <p className="mt-2 text-[14px] leading-relaxed text-foreground/80">
+              Neue Etappen und das Hearing lassen sich nicht mehr starten.
+            </p>
+            <Link
+              to="/abschluss"
+              className="mt-4 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-sm bg-primary px-5 py-3 font-serif text-base font-semibold text-primary-foreground"
+            >
+              Zum Abschluss <span aria-hidden>→</span>
+            </Link>
+          </div>
+        ) : finished ? (
           <NextStepCard
             nr={6}
             ort={finale.ort}
@@ -382,7 +406,11 @@ function ProgressPanel({
       <ol className="relative space-y-1.5">
         {stageStations.map((s, i) => {
           const status =
-            currentStage > s.nr ? "done" : currentStage === s.nr ? "current" : "locked";
+            currentStage > s.nr
+              ? "done"
+              : currentStage === s.nr && !timeUp
+                ? "current"
+                : "locked";
           const isLast = i === stageStations.length - 1;
           const dauer = status === "done" ? getStageDurationMin(s.nr) : null;
           const hints = status === "done" ? getStageHintsUsed(s.nr) : null;
@@ -449,7 +477,7 @@ function ProgressPanel({
 
         {/* Finale */}
         <li>
-          {currentStage >= 6 ? (
+          {currentStage >= 6 && (!timeUp || finished) ? (
             <Link
               to="/finale"
               className="block rounded-sm px-2 transition-colors hover:bg-secondary/50"
@@ -498,7 +526,7 @@ function ProgressPanel({
       <BadgeShelf />
 
       {/* Sticky-CTA auf dem Handy */}
-      {showSticky && !finished && (
+      {showSticky && !finished && !timeUp && (
         <div className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-paper/95 p-3 backdrop-blur-sm sm:hidden">
           <button
             type="button"
@@ -512,7 +540,7 @@ function ProgressPanel({
           </button>
         </div>
       )}
-      {showSticky && !finished && <div aria-hidden className="h-16 sm:hidden" />}
+      {showSticky && !finished && !timeUp && <div aria-hidden className="h-16 sm:hidden" />}
     </div>
   );
 }

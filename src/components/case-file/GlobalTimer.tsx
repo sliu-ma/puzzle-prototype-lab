@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useRouterState } from "@tanstack/react-router";
 import { Clock, AlertTriangle, CheckCircle2, Mail } from "lucide-react";
 import {
   Dialog,
@@ -97,6 +98,9 @@ function format(ms: number) {
 }
 
 export function GlobalTimer() {
+  const onSummary = useRouterState({
+    select: (s) => s.location.pathname.startsWith("/abschluss"),
+  });
   const [startTs, setStartTs] = useState<number | null>(null);
   const [endTs, setEndTs] = useState<number | null>(null);
   const [now, setNow] = useState(() => Date.now());
@@ -198,7 +202,7 @@ export function GlobalTimer() {
 
   return (
     <>
-      {isOver && <TimeUpOverlay />}
+      {isOver && !onSummary && <TimeUpOverlay />}
       <div
         className={cn(
           "flex items-center gap-2 rounded-sm border bg-card/95 px-3 py-1.5 font-mono-typed text-sm shadow-md backdrop-blur",
