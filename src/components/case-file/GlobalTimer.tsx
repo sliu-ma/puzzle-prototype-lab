@@ -97,6 +97,9 @@ function format(ms: number) {
 }
 
 export function GlobalTimer() {
+  const onSummary = useRouterState({
+    select: (s) => s.location.pathname.startsWith("/abschluss"),
+  });
   const [startTs, setStartTs] = useState<number | null>(null);
   const [endTs, setEndTs] = useState<number | null>(null);
   const [now, setNow] = useState(() => Date.now());
