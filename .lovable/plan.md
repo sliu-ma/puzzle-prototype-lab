@@ -1,49 +1,14 @@
-# Umstellung von Speicher (AR) auf Widnau (SG)
+# Spiel am Schluss zurücksetzen können
 
-Widnau hat keinen eigenen Bahnhof. Vorgeschlagene Standardannahmen: Etappe 1 endet am **Bahnhof Heerbrugg** (Fussweg nach Widnau), Etappe 3 spielt im **Widnauer Riet / Rheinauen**, Etappe 5 am **alten Pumpwerk am Rhein**, Dorfladen und Gemeindesaal bleiben generisch («Dorfladen Berger», «Gemeindesaal Widnau»).
+Auf dem Schlussscreen (nach gewonnenem Hearing und nach Zeitablauf) gibt es heute nur „Zurück zum Start“. Der Spielstand bleibt gespeichert, dadurch landet man wieder im Abschluss und kommt nicht raus.
 
-## Liste der Änderungen
+## Neues Verhalten
 
-### 1. Reiseroute Etappe 1 (grösster Block)
-`src/lib/mobility-data.ts`
-- Zielkoordinate `SPEICHER` → Heerbrugg/Widnau (47.406, 9.639).
-- Zwischenhalte `S21_STOPS` (Appenzeller Bahn St. Gallen → Speicher, inkl. «Schützengarten») ersetzen durch die Strecke St. Gallen → Heerbrugg (S-Bahn S3/S4 über Rorschach bzw. Rheintal) plus optional Bus nach Widnau.
-- Linienbezeichnung `S21` → neue Linie (z. B. `S4`), Farben/Polylines bleiben.
-- `VALID_ZIEL` von `["speicher", …]` auf `["widnau", "widnau sg", "heerbrugg"]`.
-- Routenbeschreibungen, `to:`-Felder und `direction` (Autoroute «… → St. Gallen → Speicher») auf das neue Ziel umschreiben; Flugroute (Zürich → …) analog.
-- Kartenmarker-Labels «Speicher» → «Widnau».
+- Unter dem Button „Zurück zum Start“ kommt ein zweiter, dezenter Button **„Neue Ermittlung starten (alles zurücksetzen)“**.
+- Ein Klick fragt kurz nach („Wirklich alles löschen? Punkte, Abzeichen und Fortschritt gehen verloren.“). Nach Bestätigung wird der komplette Spielstand gelöscht und die Startseite geöffnet, sodass eine neue Runde von vorn beginnt.
+- Beide Abschluss-Situationen (Hearing gewonnen und Zeit abgelaufen) erhalten den Button, da sie dieselbe Karte nutzen.
 
-### 2. Etappe 1 (Seite)
-`src/routes/etappe-1.tsx`
-- Seitentitel/Meta: «Bahnhof Speicher» → «Bahnhof Heerbrugg».
-- QR-Gate-Text «QR-Code am Bahnhof Speicher».
-- Notizkopf «Notiz 01, Bahnhof Speicher, Bank am Gleis 1».
-- Routenzeile «Genf › Speicher».
-- Auflösungstext im Hinweis 3 («Start: Genf, Ziel: Speicher (AR) …»).
-- Fusszeile «ETAPPE 1 · BAHNHOF SPEICHER».
+## Technisch
 
-### 3. Routendetail
-`src/components/case-file/RouteDetail.tsx`
-- Kopfzeile «Genève › Speicher».
-
-### 4. Übersicht / Dashboard
-`src/routes/index.tsx`
-- «Vertraulich · Speicher», «Samstag · Uhrzeit · Speicher, Dorfstrasse 4» (neue Adresse in Widnau), Fusszeile «Speicher · v3 · Linearer Ablauf».
-
-### 5. Finale / Hearing
-`src/routes/finale.tsx`
-- «Gemeindesaal Speicher» → «Gemeindesaal Widnau». Restliche Gemeindesaal-Texte bleiben.
-
-### 6. Etappe 3 (Wald)
-`src/routes/etappe-3.tsx`
-- Ortsbezeichnungen «Forsthaus / Lichtung» auf den Widnauer Schauplatz anpassen (Riet/Rheinauen), inkl. Meta-Beschreibung und QR-Gate-Text.
-
-### 7. Etappe 5 (Wasserkraftwerk)
-`src/routes/etappe-5.tsx` und Verweis in `src/routes/etappe-4.tsx`
-- «Altes Wasserkraftwerk» → neuer Schauplatz (Pumpwerk am Rhein) in Titel, Meta, QR-Gate, Notizkopf, Etappenlabel und Umschlag-Dialog.
-
-### 8. Nicht betroffen
-Punktesystem, Badges, Rätsel-Logik, Datenbank, Hinweis-Timer, Prolog-Video (keine Ortsnennung), `src/lib/story.ts`.
-
-## Offene Punkte
-Bestätige oder ersetze die drei Ortsannahmen (Heerbrugg, Riet, Pumpwerk) und die neue Adresse in Widnau; danach ist die Umsetzung reine Text- und Datenarbeit.
+- `src/components/case-file/FinalSummary.tsx`: zweiten Button im Footer-Bereich ergänzen, der `resetAll()` aus `@/lib/progress` aufruft und anschliessend auf `/` navigiert (harter Reload, damit alle Anzeigen leer starten). Bestätigung über den bestehenden AlertDialog aus `@/components/ui/alert-dialog`.
+- Keine Änderungen an Punktelogik, Badges oder Datenbank.
