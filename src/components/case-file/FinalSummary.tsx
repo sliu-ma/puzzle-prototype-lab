@@ -1,13 +1,24 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Clock, Lightbulb, Sparkles } from "lucide-react";
+import { Clock, Lightbulb, RotateCcw, Sparkles } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { PaperCard } from "./PaperCard";
 import { Stamp } from "./Stamp";
 import { Leaderboard } from "./Leaderboard";
 import { BadgeShowcase } from "./BadgeShowcase";
 import { getTotalRevealedHints } from "./HintSystem";
 import { getScore } from "@/lib/score-events";
-import { getStartTs, getEndTs, getTeam } from "@/lib/progress";
+import { getStartTs, getEndTs, getTeam, resetAll } from "@/lib/progress";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -95,7 +106,7 @@ export function FinalSummary({ reason = "won" }: Props) {
 
       <BadgeShowcase />
 
-      <div className="mt-8 flex justify-center">
+      <div className="mt-8 flex flex-col items-center gap-3">
         <Link
           to="/"
           className="group inline-flex w-full items-center justify-center gap-2 rounded-sm bg-primary px-6 py-3.5 font-serif text-base font-semibold text-primary-foreground shadow-lg transition-all hover:-translate-y-0.5 hover:shadow-xl animate-fade-in sm:w-auto"
@@ -103,6 +114,38 @@ export function FinalSummary({ reason = "won" }: Props) {
           <Sparkles className="h-4 w-4 animate-pulse" />
           Zurück zum Start
         </Link>
+
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <button
+              type="button"
+              className="inline-flex items-center gap-2 rounded-sm border border-border bg-card/70 px-4 py-2.5 font-mono-typed text-[11px] uppercase tracking-[0.15em] text-muted-foreground transition-colors hover:text-foreground"
+            >
+              <RotateCcw className="h-3.5 w-3.5" />
+              Neue Ermittlung starten (alles zurücksetzen)
+            </button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Wirklich alles löschen?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Punkte, Abzeichen und der gesamte Fortschritt gehen verloren.
+                Danach beginnt eine neue Ermittlung von vorne.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Abbrechen</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={() => {
+                  resetAll();
+                  window.location.href = "/";
+                }}
+              >
+                Zurücksetzen
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </PaperCard>
   );
