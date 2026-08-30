@@ -522,7 +522,7 @@ function FinalePage() {
               Finale · Hearing
             </h1>
             <p className="mt-0.5 font-serif italic text-sm text-foreground/70 sm:text-base">
-              Gemeindesaal Speicher · {getHearingClock() ?? "19:00"} Uhr
+              Gemeindesaal Widnau · {getHearingClock() ?? "19:00"} Uhr
             </p>
           </div>
           <Stamp rotate={-6}>Live</Stamp>

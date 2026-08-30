@@ -119,7 +119,7 @@ function CoverPage() {
       <div className="relative mx-auto flex max-w-3xl flex-col items-center">
         <div className="relative w-full">
           <div className="absolute -top-4 left-8 z-10 rounded-t-md bg-secondary px-5 py-2 font-mono-typed text-[11px] uppercase tracking-[0.2em] text-foreground/70 shadow-sm">
-            Vertraulich · Speicher
+            Vertraulich · Widnau
           </div>
 
           <article
@@ -133,7 +133,7 @@ function CoverPage() {
             </div>
 
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
-              Samstag · {getNowClock()} Uhr · Speicher, Dorfstrasse 4
+              Samstag · {getNowClock()} Uhr · Widnau, Gässelistrasse 2
             </p>
 
             <h1 className="mt-5 font-serif text-4xl font-bold leading-[0.95] text-foreground sm:text-7xl">
@@ -200,7 +200,7 @@ function CoverPage() {
         </div>
 
         <p className="mt-12 font-mono-typed text-[11px] uppercase tracking-[0.25em] text-muted-foreground">
-          Speicher · v3 · Linearer Ablauf
+          Widnau · v3 · Linearer Ablauf
         </p>
 
       </div>

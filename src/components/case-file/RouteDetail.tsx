@@ -74,7 +74,7 @@ export function RouteDetail({ routeId, onBack, onChoose, errorText }: Props) {
             <div>
               <h3 className="font-serif text-2xl font-bold leading-tight">{route.titel}</h3>
               <p className="mt-0.5 font-mono-typed text-xs text-muted-foreground">
-                Genève <span className="px-1">›</span> Speicher
+                Genève <span className="px-1">›</span> Heerbrugg
               </p>
             </div>
           </div>
