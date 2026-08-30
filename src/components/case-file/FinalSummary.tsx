@@ -18,7 +18,7 @@ import { Leaderboard } from "./Leaderboard";
 import { BadgeShowcase } from "./BadgeShowcase";
 import { getTotalRevealedHints } from "./HintSystem";
 import { getScore } from "@/lib/score-events";
-import { getStartTs, getEndTs, getTeam } from "@/lib/progress";
+import { getStartTs, getEndTs, getTeam, resetAll } from "@/lib/progress";
 import { cn } from "@/lib/utils";
 
 type Props = {
