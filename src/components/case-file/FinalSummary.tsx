@@ -1,6 +1,17 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Clock, Lightbulb, Sparkles } from "lucide-react";
+import { Clock, Lightbulb, RotateCcw, Sparkles } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { PaperCard } from "./PaperCard";
 import { Stamp } from "./Stamp";
 import { Leaderboard } from "./Leaderboard";
