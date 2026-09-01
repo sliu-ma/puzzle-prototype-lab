@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { RefreshCw, Trash2, Play, Users } from "lucide-react";
 import { PrologueOverlay } from "@/components/case-file/PrologueVideo";
+import { JoinCodeCard } from "@/components/teacher/JoinCodeCard";
+
 import { teacherRoundReport, teacherDeleteTeam } from "@/lib/rounds.functions";
 import { cn } from "@/lib/utils";
 
