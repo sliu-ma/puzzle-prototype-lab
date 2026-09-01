@@ -4,6 +4,27 @@ import { PrologueOverlay } from "@/components/case-file/PrologueVideo";
 import { teacherRoundReport, teacherDeleteTeam } from "@/lib/rounds.functions";
 import { cn } from "@/lib/utils";
 
+/** Spiegelt `ReportStage` aus rounds.server.ts (dort nicht importierbar). */
+export type ReportStage = {
+  stage: number;
+  minutes: number;
+  travelMin: number | null;
+  hintLevel: 0 | 1 | 2 | 3;
+  solvedAt: string;
+};
+
+export type ReportEvent = {
+  type: string;
+  at: string;
+  stage: number | null;
+  level: number | null;
+  question: number | null;
+  correct: boolean | null;
+  attempt: number | null;
+  badgeId: string | null;
+  durationSec: number | null;
+};
+
 export type ReportTeam = {
   teamId: string;
   name: string;
@@ -18,6 +39,13 @@ export type ReportTeam = {
   hearingWrong: number;
   totalMin: number | null;
   stageMinutes: { stage: number; minutes: number }[];
+  stages: ReportStage[];
+  hintsByStage: { stage: number; maxLevel: number; count: number }[];
+  currentStage: number;
+  lastSolvedAt: string | null;
+  lastEventAt: string | null;
+  hearingAttempts: { question: number; correct: boolean; attempt: number }[];
+  events: ReportEvent[];
 };
 
 export type Report = {
@@ -33,19 +61,29 @@ export type Report = {
 export function useRoundReport(password: string, code: string, intervalMs = 6000) {
   const [report, setReport] = useState<Report | null>(null);
   const [loading, setLoading] = useState(true);
+  const [updatedAt, setUpdatedAt] = useState<number | null>(null);
   const [tick, setTick] = useState(0);
 
   useEffect(() => {
     let alive = true;
+    let first = true;
     const load = () => {
-      setLoading(true);
+      // Der Ladehinweis erscheint nur beim ersten Abruf, damit das
+      // Dashboard beim Aktualisieren nicht dauernd flackert.
+      if (first) setLoading(true);
       teacherRoundReport({ data: { password, code } })
         .then((res) => {
-          if (alive && res.found) setReport(res as Report);
+          if (alive && res.found) {
+            setReport(res as Report);
+            setUpdatedAt(Date.now());
+          }
         })
         .catch(() => undefined)
         .finally(() => {
-          if (alive) setLoading(false);
+          if (alive && first) {
+            first = false;
+            setLoading(false);
+          }
         });
     };
     load();
@@ -56,8 +94,9 @@ export function useRoundReport(password: string, code: string, intervalMs = 6000
     };
   }, [password, code, intervalMs, tick]);
 
-  return { report, loading, reload: () => setTick((t) => t + 1) };
+  return { report, loading, updatedAt, reload: () => setTick((t) => t + 1) };
 }
+
 
 export function fmtTime(iso: string) {
   return new Date(iso).toLocaleTimeString("de-CH", {
