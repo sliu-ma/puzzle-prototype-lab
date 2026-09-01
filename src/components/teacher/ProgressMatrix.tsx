@@ -198,7 +198,7 @@ function PhaseBar({ s }: { s: TeamStatus }) {
           <span className={seg(!scanned)} title={travelLabel}>
             <Footprints aria-hidden className="h-3 w-3" />
             {travelMin === null ? "…" : `${travelMin}′`}
-            <span className="hidden xs:inline">{s.currentStage === 1 ? "Schulweg" : "Weg"}</span>
+            <span className="hidden sm:inline">{s.currentStage === 1 ? "Schulweg" : "Weg"}</span>
           </span>
           <span
             className={cn(
