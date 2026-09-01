@@ -900,8 +900,7 @@ export function ReportPanel({
   const [openTeam, setOpenTeam] = useState<string | null>(null);
   const [openStage, setOpenStage] = useState<number | null>(null);
   const [exportOpen, setExportOpen] = useState(false);
-  const [sel, setSel] = useState({ teams: true, stages: true, hearing: true, events: false });
-  const nothingSelected = !sel.teams && !sel.stages && !sel.hearing && !sel.events;
+
 
   
 
@@ -1060,22 +1059,24 @@ export function ReportPanel({
     return [head, ...rows];
   };
 
-  /** Setzt die gewählten Blöcke zusammen und lädt sie herunter. */
-  const runExport = () => {
-    const blocks: (string | number)[][] = [];
-    if (sel.teams) blocks.push(...buildTeamRows());
-    if (sel.stages) blocks.push(...(blocks.length ? [[]] : []), ...buildStageRows());
-    if (sel.hearing) blocks.push(...(blocks.length ? [[]] : []), ...buildHearingRows());
-    if (blocks.length) {
-      blocks.push(
-        [],
-        ["Runde", code, "Budget_min", budgetMin, "Teams", teams.length, "fertig", finished.length],
-      );
-      csvDownload(`auswertung-${code}.csv`, blocks);
+  /** Meta-Zeile am Ende jeder Datei. */
+  const metaRows = (): (string | number)[][] => [
+    [],
+    ["Runde", code, "Budget_min", budgetMin, "Teams", teams.length, "fertig", finished.length],
+  ];
+
+  const exportOne = (kind: "teams" | "stages" | "hearing" | "events") => {
+    if (kind === "events") {
+      csvDownload(`auswertung-ereignisse-${code}.csv`, buildEventRows());
+    } else if (kind === "teams") {
+      csvDownload(`auswertung-teams-${code}.csv`, [...buildTeamRows(), ...metaRows()]);
+    } else if (kind === "stages") {
+      csvDownload(`auswertung-etappen-${code}.csv`, [...buildStageRows(), ...metaRows()]);
+    } else {
+      csvDownload(`auswertung-hearing-${code}.csv`, [...buildHearingRows(), ...metaRows()]);
     }
-    if (sel.events) csvDownload(`auswertung-ereignisse-${code}.csv`, buildEventRows());
-    setExportOpen(false);
   };
+
 
 
   return (
@@ -1216,24 +1217,21 @@ export function ReportPanel({
                 ["teams", "Übersicht pro Team", "Eine Zeile je Gruppe: Punkte, Zeiten, Hinweise, Hearing, Abzeichen."],
                 ["stages", "Etappen-Zusammenfassung", "Median-, Min- und Max-Zeiten, Hinweise, Einschätzung pro Etappe."],
                 ["hearing", "Hearing pro Frage", "Antworten, falsche Antworten und Fehlerquote je Frage."],
-                ["events", "Rohdaten pro Ereignis", "Langformat mit Zeitstempel – separate Datei für Pivot, SPSS oder R."],
+                ["events", "Rohdaten pro Ereignis", "Langformat mit Zeitstempel – für Pivot, SPSS oder R."],
               ] as const
             ).map(([key, title, desc]) => (
-              <label
+              <button
                 key={key}
-                className="flex items-start gap-2 rounded-sm border border-border bg-card p-2.5 text-xs"
+                type="button"
+                onClick={() => exportOne(key)}
+                className="flex w-full items-start gap-2 rounded-sm border border-border bg-card p-2.5 text-left text-xs transition-colors hover:bg-muted"
               >
-                <input
-                  type="checkbox"
-                  checked={sel[key]}
-                  onChange={(e) => setSel((s) => ({ ...s, [key]: e.target.checked }))}
-                  className="mt-0.5 h-4 w-4"
-                />
+                <Download className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
                 <span>
                   <span className="font-semibold">{title}</span>
                   <span className="block text-muted-foreground">{desc}</span>
                 </span>
-              </label>
+              </button>
             ))}
           </div>
 
@@ -1255,24 +1253,14 @@ export function ReportPanel({
             </span>
           </label>
 
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={() => setExportOpen(false)}
-              className="min-h-[44px] flex-1 rounded-sm border border-border px-4 font-serif font-semibold"
-            >
-              Abbrechen
-            </button>
-            <button
-              type="button"
-              onClick={runExport}
-              disabled={nothingSelected}
-              className="flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-sm bg-primary px-4 font-serif font-semibold text-primary-foreground disabled:opacity-50"
-            >
-              <Download className="h-4 w-4" />
-              CSV herunterladen
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={() => setExportOpen(false)}
+            className="min-h-[44px] w-full rounded-sm border border-border px-4 font-serif font-semibold"
+          >
+            Schliessen
+          </button>
+
         </DialogContent>
       </Dialog>
     </div>
