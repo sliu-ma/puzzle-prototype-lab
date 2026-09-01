@@ -32,11 +32,12 @@ import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/")({
   // Beitritts-Link der Lehrperson: /?r=RUNDENCODE
-  validateSearch: (search: Record<string, unknown>) => {
+  validateSearch: (search: Record<string, unknown>): { r?: string } => {
     const raw = search["r"];
     const code = typeof raw === "string" ? raw.trim().slice(0, 12).toUpperCase() : "";
-    return { r: code || undefined };
+    return code ? { r: code } : {};
   },
+
   head: () => ({
     meta: [
       { title: "Majas Mission - Escape Game zu Nachhaltigkeit" },
