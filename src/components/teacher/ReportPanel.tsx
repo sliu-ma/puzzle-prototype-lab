@@ -922,10 +922,6 @@ export function ReportPanel({
     .filter((q) => q.teamsAnswered > 0)
     .sort((a, b) => b.firstWrong / b.teamsAnswered - a.firstWrong / a.teamsAnswered)[0];
 
-  
-
-
-  const hasTravelData = travelSum.n > 0;
 
   // Mediane pro Etappe für den Vergleich im Team-Popup.
   const medianPuzzle = new Map<number, number | null>(
@@ -1068,14 +1064,23 @@ export function ReportPanel({
       </div>
 
       <h3 className="mt-3 font-serif text-lg font-bold">Klasse gesamt</h3>
-      <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3">
+      <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
+        <Metric
+          label="Abgeschlossen"
+          value={`${finished.length}/${teams.length}`}
+          hint={
+            teams.length === 0
+              ? "noch keine Gruppen"
+              : `${teams.length - finished.length} noch offen`
+          }
+        />
         <Metric
           label="Punkte"
           value={fmt(points.med)}
           hint={`Median · Ø ${fmt(points.avg)}`}
         />
         <Metric
-          label="Gesamtzeit"
+          label="Spielzeit"
           value={fmt(totals.med, "min")}
           hint={
             totals.n === 0
@@ -1083,61 +1088,13 @@ export function ReportPanel({
               : `Median · ${totals.min}–${totals.max} min`
           }
         />
-        <Metric label="Hinweise" value={fmt(hints.med)} hint={`Median · Ø ${fmt(hints.avg)}`} />
+        <Metric
+          label="Hinweise"
+          value={fmt(hints.med)}
+          hint={`Median · Ø ${fmt(hints.avg)}`}
+        />
       </div>
 
-      {/* Punkte pro Team als Balken – ein Blick zeigt Spitze und Feld. */}
-      {teams.length > 0 && (
-        <div className="mt-3 rounded-sm border border-border bg-card p-3">
-          <div className="flex items-baseline justify-between gap-2">
-            <p className="font-serif text-sm font-bold">Punkte pro Team</p>
-            <span className="font-mono-typed text-[10px] text-muted-foreground">
-              Median {fmt(points.med)} Pkt
-            </span>
-          </div>
-          <ul className="mt-1 divide-y divide-border/60">
-            {teamsByPoints.map((t) => (
-              <BarRow
-                key={t.teamId}
-                label={t.name}
-                primary={t.points}
-                max={Math.max(1, points.max ?? 1)}
-                value={`${t.points} Pkt`}
-                sub={`${t.stagesSolved}/5 Etappen · ${t.hintsUsed} Hinweise`}
-              />
-            ))}
-          </ul>
-        </div>
-      )}
-
-      {/* Zeitaufteilung: wie viel Zeit ging an den Posten weg, wie viel dazwischen. */}
-      {puzzleSum.sum + travelSum.sum > 0 && (
-        <div className="mt-2 rounded-sm border border-border bg-card p-3">
-          <p className="font-serif text-sm font-bold">Zeitaufteilung der Klasse</p>
-          <div className="mt-2 flex h-5 w-full overflow-hidden rounded-full bg-muted">
-            <span
-              aria-hidden
-              className="h-full bg-primary"
-              style={{
-                width: `${Math.round(
-                  (puzzleSum.sum / (puzzleSum.sum + travelSum.sum)) * 100,
-                )}%`,
-              }}
-            />
-            <span aria-hidden className="h-full flex-1 bg-primary/30" />
-          </div>
-          <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1">
-            <LegendDot className="bg-primary">
-              {`Rätselzeit ${100 - (travelShare ?? 0)} % · Median ${fmt(puzzleSum.med, "min")}`}
-            </LegendDot>
-            <LegendDot className="bg-primary/30">
-              {hasTravelData
-                ? `Zeit dazwischen (Weg, Pause) ${travelShare ?? 0} % · Median ${fmt(travelSum.med, "min")}`
-                : "Zeit dazwischen – erst ab neuer Runde erfasst"}
-            </LegendDot>
-          </div>
-        </div>
-      )}
 
 
       <h3 className="mt-5 font-serif text-lg font-bold">Pro Team</h3>
