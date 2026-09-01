@@ -386,6 +386,11 @@ export const teacherRoundReport = createServerFn({ method: "POST" })
       status: p.status ?? "lobby",
       budgetMin: p.budgetMin ?? 90,
       startedAt: p.startedAt ?? null,
-      teams: buildReport(p.teams ?? [], p.events ?? [], p.budgetMin ?? 90),
+      teams: buildReport(
+        p.teams ?? [],
+        p.events ?? [],
+        p.budgetMin ?? 90,
+        p.startedAt ?? null,
+      ),
     };
   });
