@@ -259,7 +259,6 @@ export function IntroScreen({
           </button>
         </div>
       </div>
-      {showStartTimer && <StartTimerOverlay onConfirm={confirmStart} />}
     </main>
   );
 }
