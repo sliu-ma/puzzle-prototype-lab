@@ -403,6 +403,7 @@ export function ReportPanel({
 }) {
   const { report, loading, updatedAt } = useRoundReport(password, code, 20_000);
   const [anon, setAnon] = useState(true);
+  const [openTeam, setOpenTeam] = useState<string | null>(null);
 
   const teams = [...(report?.teams ?? [])].sort((a, b) =>
     a.name.localeCompare(b.name, "de-CH"),
