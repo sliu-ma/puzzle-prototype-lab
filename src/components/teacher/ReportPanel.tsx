@@ -4,6 +4,7 @@ import {
   ChevronDown,
   ChevronRight,
   Download,
+  Info,
   RefreshCw,
   ShieldCheck,
 } from "lucide-react";
@@ -11,8 +12,36 @@ import { useRoundReport, fmtTime, type ReportTeam } from "./LobbyPanel";
 import { COL_NAME } from "./ProgressMatrix";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { BADGES } from "@/lib/badges";
+
+/**
+ * Kleines „i" – tippen öffnet eine kurze Erklärung als Popover. Ersetzt die
+ * fixen Erklärtexte unter den Sektionen, damit das Dashboard aufgeräumt bleibt.
+ */
+function InfoHint({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <button
+          type="button"
+          aria-label={`Erklärung: ${label}`}
+          className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-border bg-card text-muted-foreground transition-colors hover:text-foreground"
+        >
+          <Info className="h-3.5 w-3.5" />
+          <span className="sr-only">{label}</span>
+        </button>
+      </PopoverTrigger>
+      <PopoverContent align="start" sideOffset={6} className="w-72 text-xs leading-relaxed">
+        <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+          {label}
+        </p>
+        <div className="mt-1 text-foreground">{children}</div>
+      </PopoverContent>
+    </Popover>
+  );
+}
 
 const STAGES = [1, 2, 3, 4, 5];
 
