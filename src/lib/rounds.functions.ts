@@ -91,7 +91,7 @@ export const pushScoreEvents = createServerFn({ method: "POST" })
       .object({
         teamId: z.string().uuid(),
         token: z.string().min(10).max(200),
-        events: z.array(eventSchema).max(200),
+        events: z.array(eventSchema).max(400),
       })
       .parse(d),
   )
