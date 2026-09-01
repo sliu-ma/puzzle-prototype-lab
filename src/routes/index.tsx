@@ -31,6 +31,12 @@ import { useEnvelopePrompt } from "@/components/case-file/EnvelopeDialog";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/")({
+  // Beitritts-Link der Lehrperson: /?r=RUNDENCODE
+  validateSearch: (search: Record<string, unknown>) => {
+    const raw = search["r"];
+    const code = typeof raw === "string" ? raw.trim().slice(0, 12).toUpperCase() : "";
+    return { r: code || undefined };
+  },
   head: () => ({
     meta: [
       { title: "Majas Mission - Escape Game zu Nachhaltigkeit" },
@@ -43,6 +49,7 @@ export const Route = createFileRoute("/")({
   }),
   component: CoverPage,
 });
+
 
 function CoverPage() {
   const [ready, setReady] = useState(false);
