@@ -156,6 +156,31 @@ export function buildLeaderboard(
   return rows;
 }
 
+/** Eine gelöste Etappe mit getrennter Rätsel- und Wegzeit. */
+export type ReportStage = {
+  stage: number;
+  /** Reine Rätselzeit ab dem QR-Scan, in Minuten. */
+  minutes: number;
+  /** Wegzeit vom Lösen der Vor-Etappe bis zum Scan, in Minuten. */
+  travelMin: number | null;
+  /** Höchste auf dieser Etappe genutzte Hinweisstufe (0 = keine). */
+  hintLevel: 0 | 1 | 2 | 3;
+  solvedAt: string;
+};
+
+/** Ein einzelnes Ereignis im Langformat – Rohdaten für die Statistik. */
+export type ReportEvent = {
+  type: string;
+  at: string;
+  stage: number | null;
+  level: number | null;
+  question: number | null;
+  correct: boolean | null;
+  attempt: number | null;
+  badgeId: string | null;
+  durationSec: number | null;
+};
+
 export type ReportTeam = {
   teamId: string;
   name: string;
@@ -170,7 +195,71 @@ export type ReportTeam = {
   hearingWrong: number;
   totalMin: number | null;
   stageMinutes: { stage: number; minutes: number }[];
+  /** Detaillierte Etappenwerte inklusive Wegzeit und Hinweisstufe. */
+  stages: ReportStage[];
+  /** Hinweise pro Etappe – auch für Etappen, die noch nicht gelöst sind. */
+  hintsByStage: { stage: number; maxLevel: number; count: number }[];
+  /** Etappe, an der das Team gerade arbeitet (6 = Hearing). */
+  currentStage: number;
+  /** Zeitpunkt der letzten gelösten Etappe (Grundlage für „hängt fest"). */
+  lastSolvedAt: string | null;
+  /** Letztes Lebenszeichen irgendeiner Art. */
+  lastEventAt: string | null;
+  /** Alle Hearing-Antworten über alle Versuche. */
+  hearingAttempts: { question: number; correct: boolean; attempt: number }[];
+  /** Rohereignisse im Langformat für den Datenexport. */
+  events: ReportEvent[];
 };
+
+export function buildLeaderboard(
+  teams: { id: string; name: string; finished_at: string | null }[],
+  events: { team_id: string; event_id: string; type: string; payload: unknown }[],
+  budgetMin: number,
+): LeaderboardRow[] {
+  const byTeam = new Map<string, typeof events>();
+  for (const e of events) {
+    const list = byTeam.get(e.team_id) ?? [];
+    list.push(e);
+    byTeam.set(e.team_id, list);
+  }
+  const rows = teams.map((t) => {
+    const raw = byTeam.get(t.id) ?? [];
+    const score = computeScore(rowsToEvents(raw), budgetMin);
+    return {
+      teamId: t.id,
+      name: t.name,
+      points: score.total,
+      stagesSolved: score.stages.length,
+      hintsUsed: raw.filter((e) => e.type === "hint_revealed").length,
+      finished: !!t.finished_at,
+    };
+  });
+  rows.sort((a, b) => b.points - a.points || a.name.localeCompare(b.name));
+  return rows;
+}
+
+type RawEvent = {
+  team_id: string;
+  event_id: string;
+  type: string;
+  payload: unknown;
+  created_at: string;
+};
+
+/**
+ * Zeitpunkt eines Ereignisses in Millisekunden. Bevorzugt wird die im Gerät
+ * gesetzte Zeit (`at`), weil Differenzen innerhalb eines Teams damit exakt
+ * sind; fehlt sie, greift die Serverzeit.
+ */
+function eventMs(e: RawEvent): number {
+  const p = (e.payload ?? {}) as Record<string, unknown>;
+  const at = Number(p["at"]);
+  if (Number.isFinite(at) && at > 1e12) return at;
+  const server = Date.parse(e.created_at);
+  return Number.isFinite(server) ? server : 0;
+}
+
+const toMin = (ms: number) => Math.round(ms / 60_000);
 
 /** Auswertung pro Team für die Lehreransicht. */
 export function buildReport(
@@ -181,16 +270,10 @@ export function buildReport(
     created_at: string;
     finished_at: string | null;
   }[],
-  events: {
-    team_id: string;
-    event_id: string;
-    type: string;
-    payload: unknown;
-    created_at: string;
-  }[],
+  events: RawEvent[],
   budgetMin: number,
 ): ReportTeam[] {
-  const byTeam = new Map<string, typeof events>();
+  const byTeam = new Map<string, RawEvent[]>();
   for (const e of events) {
     const list = byTeam.get(e.team_id) ?? [];
     list.push(e);
@@ -200,19 +283,73 @@ export function buildReport(
   const rows = teams.map((t) => {
     const raw = byTeam.get(t.id) ?? [];
     const score = computeScore(rowsToEvents(raw), budgetMin);
-    const stageMinutes = raw
-      .filter((e) => e.type === "stage_solved")
-      .map((e) => {
-        const p = (e.payload ?? {}) as Record<string, unknown>;
+    const payloadOf = (e: RawEvent) => (e.payload ?? {}) as Record<string, unknown>;
+
+    // Höchste Hinweisstufe und Anzahl pro Etappe – auch für offene Etappen.
+    const hintMap = new Map<number, { maxLevel: number; count: number }>();
+    for (const e of raw) {
+      if (e.type !== "hint_revealed") continue;
+      const stage = Number(payloadOf(e)["stage"]) || 0;
+      const level = Number(payloadOf(e)["level"]) || 1;
+      const cur = hintMap.get(stage) ?? { maxLevel: 0, count: 0 };
+      hintMap.set(stage, {
+        maxLevel: Math.max(cur.maxLevel, level),
+        count: cur.count + 1,
+      });
+    }
+
+    // Scan- und Lösungszeitpunkte pro Etappe.
+    const scanAt = new Map<number, number>();
+    for (const e of raw) {
+      if (e.type !== "stage_scanned") continue;
+      const stage = Number(payloadOf(e)["stage"]) || 0;
+      const ms = eventMs(e);
+      if (!scanAt.has(stage) || ms < scanAt.get(stage)!) scanAt.set(stage, ms);
+    }
+    const solvedAt = new Map<number, number>();
+    const durations = new Map<number, number>();
+    for (const e of raw) {
+      if (e.type !== "stage_solved") continue;
+      const stage = Number(payloadOf(e)["stage"]) || 0;
+      solvedAt.set(stage, eventMs(e));
+      durations.set(stage, Number(payloadOf(e)["durationSec"]) || 0);
+    }
+
+    const stages: ReportStage[] = [...solvedAt.keys()]
+      .sort((a, b) => a - b)
+      .map((stage) => {
+        const scan = scanAt.get(stage) ?? null;
+        const prevSolved = stage > 1 ? (solvedAt.get(stage - 1) ?? null) : null;
+        // Wegzeit nur, wenn beide Marken vorhanden und plausibel sind.
+        let travelMin: number | null = null;
+        if (scan !== null && prevSolved !== null && scan > prevSolved) {
+          const min = toMin(scan - prevSolved);
+          if (min <= 240) travelMin = min;
+        }
         return {
-          stage: Number(p["stage"]) || 0,
-          minutes: Math.max(1, Math.round((Number(p["durationSec"]) || 0) / 60)),
+          stage,
+          minutes: Math.max(1, Math.round((durations.get(stage) ?? 0) / 60)),
+          travelMin,
+          hintLevel: (hintMap.get(stage)?.maxLevel ?? 0) as 0 | 1 | 2 | 3,
+          solvedAt: new Date(solvedAt.get(stage)!).toISOString(),
         };
-      })
-      .sort((a, b) => a.stage - b.stage);
+      });
+
+    const hearingAttempts = raw
+      .filter((e) => e.type === "hearing_attempt")
+      .map((e) => ({
+        question: Number(payloadOf(e)["question"]) || 0,
+        correct: payloadOf(e)["correct"] === true,
+        attempt: Number(payloadOf(e)["attempt"]) || 1,
+      }));
+
     const hearing = raw.filter((e) => e.type === "hearing_answer");
     const firstEvent = raw.reduce<string | null>(
       (min, e) => (min === null || e.created_at < min ? e.created_at : min),
+      null,
+    );
+    const lastEvent = raw.reduce<string | null>(
+      (max, e) => (max === null || e.created_at > max ? e.created_at : max),
       null,
     );
     const startRef = firstEvent ?? t.created_at;
@@ -224,6 +361,29 @@ export function buildReport(
           ),
         )
       : null;
+
+    const solvedStages = stages.map((s) => s.stage).filter((s) => s >= 1 && s <= 5);
+    const highestSolved = solvedStages.length > 0 ? Math.max(...solvedStages) : 0;
+    const lastSolvedMs = solvedStages.length > 0 ? solvedAt.get(highestSolved)! : null;
+
+    const exportEvents: ReportEvent[] = raw
+      .slice()
+      .sort((a, b) => eventMs(a) - eventMs(b))
+      .map((e) => {
+        const p = payloadOf(e);
+        const num = (k: string) => (p[k] === undefined ? null : Number(p[k]));
+        return {
+          type: e.type,
+          at: new Date(eventMs(e)).toISOString(),
+          stage: num("stage"),
+          level: num("level"),
+          question: num("question"),
+          correct: p["correct"] === undefined ? null : p["correct"] === true,
+          attempt: num("attempt"),
+          badgeId: p["badgeId"] === undefined ? null : String(p["badgeId"]),
+          durationSec: num("durationSec"),
+        };
+      });
 
     return {
       teamId: t.id,
@@ -238,18 +398,24 @@ export function buildReport(
       hintsUsed: raw.filter((e) => e.type === "hint_revealed").length,
       badges: raw
         .filter((e) => e.type === "badge_earned")
-        .map((e) => String(((e.payload ?? {}) as Record<string, unknown>)["badgeId"] ?? "")),
-      hearingCorrect: hearing.filter(
-        (e) => ((e.payload ?? {}) as Record<string, unknown>)["correct"] === true,
-      ).length,
-      hearingWrong: hearing.filter(
-        (e) => ((e.payload ?? {}) as Record<string, unknown>)["correct"] !== true,
-      ).length,
+        .map((e) => String(payloadOf(e)["badgeId"] ?? "")),
+      hearingCorrect: hearing.filter((e) => payloadOf(e)["correct"] === true).length,
+      hearingWrong: hearing.filter((e) => payloadOf(e)["correct"] !== true).length,
       totalMin,
-      stageMinutes,
+      stageMinutes: stages.map((s) => ({ stage: s.stage, minutes: s.minutes })),
+      stages,
+      hintsByStage: [...hintMap.entries()]
+        .map(([stage, v]) => ({ stage, maxLevel: v.maxLevel, count: v.count }))
+        .sort((a, b) => a.stage - b.stage),
+      currentStage: Math.min(6, highestSolved + 1),
+      lastSolvedAt: lastSolvedMs === null ? null : new Date(lastSolvedMs).toISOString(),
+      lastEventAt: lastEvent,
+      hearingAttempts,
+      events: exportEvents,
     } satisfies ReportTeam;
   });
 
   rows.sort((a, b) => b.points - a.points || a.name.localeCompare(b.name));
   return rows;
 }
+
