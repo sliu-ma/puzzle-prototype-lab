@@ -14,7 +14,7 @@ import {
   getRemainingMs,
   formatRemaining,
   getStageDurationMin,
-  isTimeUp,
+  isRoundOver,
 } from "@/lib/progress";
 import { getStageHintsUsed } from "@/lib/badges";
 import { NextStepCard } from "@/components/case-file/NextStepCard";
@@ -251,7 +251,7 @@ function ProgressPanel({
   useEffect(() => {
     const tick = () => {
       setRemaining(getRemainingMs());
-      setTimeUp(isTimeUp());
+      setTimeUp(isRoundOver());
     };
     tick();
     const id = window.setInterval(tick, 1000);

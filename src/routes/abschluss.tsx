@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { PaperCard } from "@/components/case-file/PaperCard";
 import { Stamp } from "@/components/case-file/Stamp";
 import { FinalSummary } from "@/components/case-file/FinalSummary";
-import { getTeam } from "@/lib/progress";
+import { getTeam, isRoundClosed } from "@/lib/progress";
 
 export const Route = createFileRoute("/abschluss")({
   head: () => ({
@@ -33,9 +33,11 @@ export const Route = createFileRoute("/abschluss")({
 function AbschlussPage() {
   const [ready, setReady] = useState(false);
   const [hasTeam, setHasTeam] = useState(false);
+  const [closed, setClosed] = useState(false);
 
   useEffect(() => {
     setHasTeam(!!getTeam());
+    setClosed(isRoundClosed());
     setReady(true);
   }, []);
 
@@ -47,7 +49,7 @@ function AbschlussPage() {
             Lade …
           </p>
         ) : hasTeam ? (
-          <FinalSummary reason="timeout" />
+          <FinalSummary reason={closed ? "closed" : "timeout"} />
         ) : (
           <PaperCard rotate={-0.4} tape="top">
             <Stamp rotate={8}>Kein Spielstand</Stamp>
