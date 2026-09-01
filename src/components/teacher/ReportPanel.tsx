@@ -706,90 +706,129 @@ function StageReportDialog({
   );
 }
 
-/** Detail-Popup pro Hearing-Frage: wer hat richtig, wer falsch geantwortet. */
-function QuestionReportDialog({
-  analysis,
+/**
+ * Einfache Hearing-Matrix: Zeilen = Teams, Spalten = F1–F10,
+ * Zellen = ✓ / ✗ (gewertet = letzter Versuch). Horizontal scrollbar,
+ * Teamspalte sticky. Kein Pop-up, kein Balken.
+ */
+function HearingMatrix({
   teams,
-  onClose,
+  nameOf,
 }: {
-  analysis: QuestionAnalysis | null;
   teams: ReportTeam[];
-  onClose: () => void;
+  nameOf: (t: ReportTeam) => string;
 }) {
-  const q = analysis;
-  const rows = q
-    ? teams.map((t) => ({
-        t,
-        a: teamAnswers(t).find((x) => x.question === q.question) ?? null,
-      }))
-    : [];
+  const QUESTIONS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+  const rows = teams.map((t) => ({ t, answers: teamAnswers(t) }));
+
+  // Pro Frage: wie viele Teams am Ende richtig.
+  const correctCount = (q: number) =>
+    rows.reduce((n, { answers }) => {
+      const a = answers.find((x) => x.question === q);
+      return n + (a && a.last ? 1 : 0);
+    }, 0);
+
+  if (rows.length === 0 || rows.every(({ answers }) => answers.length === 0)) {
+    return (
+      <p className="mt-2 text-xs text-muted-foreground">
+        Noch keine Hearing-Antworten erfasst.
+      </p>
+    );
+  }
 
   return (
-    <Dialog open={q !== null} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-md">
-        {q && (
-          <>
-            <DialogHeader>
-              <DialogTitle className="font-serif text-base">
-                F{q.question + 1} · {QUESTION_LABEL[q.question] ?? "Frage"}
-              </DialogTitle>
-            </DialogHeader>
-
-            <div className="divide-y divide-border rounded-sm border border-border px-2.5 py-1">
-              <Fact
-                label="Fehlerquote 1. Versuch"
-                value={
-                  q.teamsAnswered === 0
-                    ? "–"
-                    : `${Math.round((q.firstWrong / q.teamsAnswered) * 100)} % (${q.firstWrong}/${q.teamsAnswered})`
-                }
-              />
-              <Fact label="Am Ende noch falsch" value={`${q.lastWrong} von ${q.teamsAnswered}`} />
-              <Fact label="Antworten total" value={`${q.answers} · davon ${q.wrong} falsch`} />
-            </div>
-
-            <div>
-              <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
-                Pro Gruppe
-              </p>
-              <ul className="mt-1 divide-y divide-border rounded-sm border border-border">
-                {rows.map(({ t, a }) => (
-                  <li
-                    key={t.teamId}
-                    className={cn(
-                      "flex items-center gap-2 px-2.5 py-1.5 text-[11px]",
-                      !a && "text-muted-foreground/60",
-                    )}
-                  >
-                    <span className="min-w-0 flex-1 truncate font-serif">{t.name}</span>
-                    {a ? (
-                      <>
+    <div className="mt-2">
+      <div className="overflow-x-auto rounded-sm border border-border">
+        <table className="w-full border-collapse text-[11px]">
+          <thead>
+            <tr className="bg-muted/40">
+              <th
+                scope="col"
+                className="sticky left-0 z-10 bg-muted/40 px-2 py-1.5 text-left font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground"
+              >
+                Team
+              </th>
+              {QUESTIONS.map((q) => (
+                <th
+                  key={q}
+                  scope="col"
+                  className="px-1.5 py-1 text-center font-mono-typed font-bold"
+                  title={QUESTION_LABEL[q] ?? "Frage"}
+                >
+                  F{q + 1}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-border/60">
+            {rows.map(({ t, answers }) => (
+              <tr key={t.teamId}>
+                <th
+                  scope="row"
+                  className="sticky left-0 z-10 bg-card px-2 py-1 text-left font-serif text-[11px] font-semibold"
+                >
+                  <span className="block max-w-[7rem] truncate">{nameOf(t)}</span>
+                </th>
+                {QUESTIONS.map((q) => {
+                  const a = answers.find((x) => x.question === q);
+                  const tries = a?.tries.length ?? 0;
+                  return (
+                    <td key={q} className="px-1.5 py-1 text-center">
+                      {!a ? (
+                        <span className="font-mono-typed text-muted-foreground">–</span>
+                      ) : (
                         <span
                           className={cn(
-                            "font-mono-typed shrink-0 font-bold",
+                            "font-mono-typed font-bold",
                             a.last ? "text-primary" : "text-stamp",
                           )}
                         >
-                          {a.last ? "richtig" : "falsch"}
+                          {a.last ? "✓" : "✗"}
+                          {tries > 1 && (
+                            <sup className="ml-0.5 text-[8px] font-normal text-muted-foreground">
+                              {tries}
+                            </sup>
+                          )}
                         </span>
-                        <span className="font-mono-typed w-28 shrink-0 text-right tabular-nums text-muted-foreground">
-                          {a.tries.map((x) => `V${x.attempt} ${x.correct ? "✓" : "✗"}`).join(" · ")}
-                        </span>
-                      </>
-                    ) : (
-                      <span className="font-mono-typed shrink-0">keine Antwort</span>
-                    )}
-                  </li>
-                ))}
-              </ul>
-              <p className="mt-1 text-[10px] text-muted-foreground">
-                Gewertet wird der letzte Versuch; V zeigt jeden Durchgang einzeln.
-              </p>
-            </div>
-          </>
-        )}
-      </DialogContent>
-    </Dialog>
+                      )}
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+          <tfoot>
+            <tr className="border-t border-border bg-muted/30">
+              <th
+                scope="row"
+                className="sticky left-0 z-10 bg-muted/30 px-2 py-1.5 text-left font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground"
+              >
+                Richtig
+              </th>
+              {QUESTIONS.map((q) => (
+                <td
+                  key={q}
+                  className="px-1.5 py-1.5 text-center font-mono-typed text-[11px] font-bold tabular-nums"
+                >
+                  {correctCount(q)}
+                  <span className="text-muted-foreground">/{rows.length}</span>
+                </td>
+              ))}
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+      <p className="mt-1 text-[10px] text-muted-foreground">
+        ✓ richtig · ✗ falsch (gewertet = letzter Versuch) · – keine Antwort.
+        Hochgestellte Zahl = nötige Versuche.{" "}
+        {(() => {
+          const short = QUESTION_LABEL;
+          return Object.entries(short)
+            .map(([k, v]) => `F${Number(k) + 1} ${v}`)
+            .join(" · ");
+        })()}
+      </p>
+    </div>
   );
 }
 
@@ -806,7 +845,7 @@ export function ReportPanel({
   const [anon, setAnon] = useState(true);
   const [openTeam, setOpenTeam] = useState<string | null>(null);
   const [openStage, setOpenStage] = useState<number | null>(null);
-  const [openQuestion, setOpenQuestion] = useState<number | null>(null);
+  
 
   const teams = [...(report?.teams ?? [])].sort((a, b) => a.name.localeCompare(b.name, "de-CH"));
 
@@ -829,9 +868,6 @@ export function ReportPanel({
   const hardest = [...withData].sort((a, b) => (b.puzzle.med ?? 0) - (a.puzzle.med ?? 0))[0];
   const easiest = [...withData].sort((a, b) => (a.puzzle.med ?? 0) - (b.puzzle.med ?? 0))[0];
   const questions = analyseQuestions(teams);
-  const hardestQuestion = [...questions]
-    .filter((q) => q.teamsAnswered > 0)
-    .sort((a, b) => b.firstWrong / b.teamsAnswered - a.firstWrong / a.teamsAnswered)[0];
 
   // Mediane pro Etappe für den Vergleich im Team-Popup.
   const medianPuzzle = new Map<number, number | null>(analyses.map((a) => [a.stage, a.puzzle.med]));
@@ -1064,63 +1100,8 @@ export function ReportPanel({
       />
 
       <Section title="Hearing pro Frage">
-        {questions.length === 0 ? (
-          <p className="mt-2 text-xs text-muted-foreground">
-            Noch keine Hearing-Antworten erfasst.
-          </p>
-        ) : (
-          <>
-            <div className="mt-2 rounded-sm border border-border bg-card p-3">
-              <p className="text-[11px] text-muted-foreground">
-                Balkenlänge = Anteil der Gruppen, die im ersten Versuch falsch lagen.
-              </p>
-              <ul className="mt-2 divide-y divide-border/60">
-                {[...questions]
-                  .filter((q) => q.teamsAnswered > 0)
-                  .sort((a, b) => b.firstWrong / b.teamsAnswered - a.firstWrong / a.teamsAnswered)
-                  .map((q) => {
-                    const share = Math.round((q.firstWrong / q.teamsAnswered) * 100);
-                    return (
-                      <BarRow
-                        key={q.question}
-                        label={`F${q.question + 1} · ${QUESTION_LABEL[q.question] ?? "Frage"}`}
-                        primary={share}
-                        max={100}
-                        highlight={q.question === hardestQuestion?.question}
-                        value={`${share} %`}
-                        sub={`${q.firstWrong} von ${q.teamsAnswered} Gruppen falsch · am Ende noch ${q.lastWrong} falsch`}
-                      />
-                    );
-                  })}
-              </ul>
-            </div>
-            <ul className="mt-2 space-y-1.5">
-              {[...questions]
-                .filter((q) => q.teamsAnswered > 0)
-                .map((q) => (
-                  <ClickRow
-                    key={q.question}
-                    title={`F${q.question + 1} · ${QUESTION_LABEL[q.question] ?? "Frage"}`}
-                    sub={`${q.teamsAnswered - q.firstWrong} im 1. Versuch richtig · ${q.lastWrong} am Ende falsch`}
-                    value={`${Math.round((q.firstWrong / q.teamsAnswered) * 100)} %`}
-                    highlight={q.question === hardestQuestion?.question}
-                    onOpen={() => setOpenQuestion(q.question)}
-                  />
-                ))}
-            </ul>
-            <p className="mt-1.5 text-[10px] text-muted-foreground">
-              Tippe auf eine Frage, um zu sehen, welche Gruppe sie richtig oder falsch beantwortet
-              hat – inklusive Zweitversuch.
-            </p>
-          </>
-        )}
+        <HearingMatrix teams={teams} nameOf={nameOf} />
       </Section>
-
-      <QuestionReportDialog
-        analysis={questions.find((q) => q.question === openQuestion) ?? null}
-        teams={teams}
-        onClose={() => setOpenQuestion(null)}
-      />
 
       <label className="mt-4 flex items-start gap-2 rounded-sm border border-border bg-card p-2.5 text-xs">
         <input
