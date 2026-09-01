@@ -168,6 +168,33 @@ export function finishGame() {
   }
 }
 
+const KEY_ROUND_CLOSED = "maya-round-closed";
+
+/**
+ * Die Lehrperson hat die Runde abgeschlossen: Zeit einfrieren und ab jetzt
+ * gleich behandeln wie einen Zeitablauf.
+ */
+export function markRoundClosed() {
+  try {
+    if (!localStorage.getItem(KEY_ROUND_CLOSED)) {
+      localStorage.setItem(KEY_ROUND_CLOSED, String(Date.now()));
+    }
+    finishGame();
+    window.dispatchEvent(new Event("maya-progress"));
+  } catch {
+    /* ignore */
+  }
+}
+
+export function isRoundClosed(): boolean {
+  try {
+    return !!localStorage.getItem(KEY_ROUND_CLOSED);
+  } catch {
+    return false;
+  }
+}
+
+
 
 // ---- Adaptive Zeit-Helfer ---------------------------------------------------
 export function formatClock(d: Date): string {
