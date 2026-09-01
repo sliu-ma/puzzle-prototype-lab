@@ -370,8 +370,18 @@ export function buildReport(
     // unterwegs (Posten noch nicht gefunden), mit Scan sitzt es am Rätsel.
     const currentStage = Math.min(6, highestSolved + 1);
     const currentScan = scanAt.get(currentStage) ?? null;
-    const phase: "travel" | "puzzle" = currentScan !== null ? "puzzle" : "travel";
-    const phaseSinceMs = currentScan ?? lastSolvedMs;
+    // Weg zum aktuellen Posten beginnt beim Lösen der Vor-Etappe bzw. – vor
+    // Etappe 1 – beim Rundenstart in der Schule.
+    const travelSinceMs = lastSolvedMs ?? originMs;
+    // Beim Hearing gibt es keinen Posten: ab Etappe 5 gelöst zählt es als Rätsel.
+    const phase: "travel" | "puzzle" =
+      currentStage === 6 || currentScan !== null ? "puzzle" : "travel";
+    const phaseSinceMs =
+      currentStage === 6 ? (currentScan ?? lastSolvedMs) : (currentScan ?? travelSinceMs);
+    const travelDoneMin =
+      currentScan !== null && travelSinceMs !== null && currentScan > travelSinceMs
+        ? toMin(currentScan - travelSinceMs)
+        : null;
 
     const exportEvents: ReportEvent[] = raw
       .slice()
