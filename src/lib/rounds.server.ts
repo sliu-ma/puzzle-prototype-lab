@@ -429,6 +429,8 @@ export function buildReport(
       phase,
       phaseSince: phaseSinceMs === null ? null : new Date(phaseSinceMs).toISOString(),
       currentScanAt: currentScan === null ? null : new Date(currentScan).toISOString(),
+      travelDoneMin,
+      travelSince: travelSinceMs === null ? null : new Date(travelSinceMs).toISOString(),
       lastEventAt: lastEvent,
       hearingAttempts,
       events: exportEvents,
