@@ -834,105 +834,137 @@ export function ReportPanel({
       />
 
       <Section title="Etappen im Vergleich">
-      <ul className="mt-2 space-y-2">
-        {analyses.map((a) => (
-          <li key={a.stage} className="rounded-sm border border-border bg-card p-2.5">
-            <div className="flex items-baseline justify-between gap-2">
-              <span className="font-serif font-semibold">
-                E{a.stage} · {COL_NAME[a.stage]}
-              </span>
-              <span className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
-                {a.solvedBy}/{teams.length} gelöst
-              </span>
-            </div>
-            <div className="mt-1.5 grid grid-cols-2 gap-x-3 gap-y-1 font-mono-typed text-[11px] tabular-nums sm:grid-cols-4">
-              <span>
-                <span className="text-muted-foreground">Rätsel </span>
-                {fmt(a.puzzle.med, "min")}
-              </span>
-              <span className="text-muted-foreground">
-                {a.puzzle.n > 0 ? `${a.puzzle.min}–${a.puzzle.max} min` : "–"}
-              </span>
-              <span>
-                <span className="text-muted-foreground">dazwischen </span>
-                {a.travel.n > 0 ? fmt(a.travel.med, "min") : "–"}
-              </span>
-              <span>
-                <span className="text-muted-foreground">Hinweis </span>
-                {pct(a.withHint, a.solvedBy)}
-              </span>
-            </div>
-            <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-muted">
-              <div
-                aria-hidden
-                className="h-full bg-primary/70"
-                style={{
-                  width: `${Math.min(
-                    100,
-                    ((a.puzzle.med ?? 0) / Math.max(1, hardest?.puzzle.med ?? 1)) * 100,
-                  )}%`,
-                }}
-              />
-            </div>
-            <p className="mt-1.5 text-xs">
-              <span className="font-semibold">{a.verdict}</span>
-              {a.withSolution > 0 && (
-                <span className="text-muted-foreground">
-                  {" "}
-                  · {a.withSolution}× Auflösung
-                </span>
-              )}
-            </p>
-          </li>
-        ))}
-      </ul>
-      {hardest && easiest && hardest.stage !== easiest.stage && (
-        <p className="mt-2 text-xs text-muted-foreground">
-          Zäheste Etappe: E{hardest.stage} ({COL_NAME[hardest.stage]}) mit Median{" "}
-          {hardest.puzzle.med} min · schnellste: E{easiest.stage} (
-          {COL_NAME[easiest.stage]}) mit Median {easiest.puzzle.med} min
-        </p>
-      )}
-      </Section>
-
-      <Section title="Hearing pro Frage">
-      {questions.length === 0 ? (
-        <p className="mt-1 text-xs text-muted-foreground">
-          Noch keine Hearing-Antworten erfasst.
-        </p>
-      ) : (
-        <>
-          <ul className="mt-2 space-y-1">
-            {questions.map((q) => {
-              const share = q.answers === 0 ? 0 : q.wrong / q.answers;
+        <div className="mt-2 rounded-sm border border-border bg-card p-3">
+          <p className="text-[11px] text-muted-foreground">
+            Balkenlänge = Minuten (Median der Klasse). Der Balken zeigt zuerst die
+            Zeit am Rätsel, dann den Weg dorthin.
+          </p>
+          <div className="mt-1.5 flex flex-wrap gap-x-4 gap-y-1">
+            <LegendDot className="bg-primary">Rätselzeit</LegendDot>
+            <LegendDot className="bg-primary/30">Weg zur Etappe</LegendDot>
+            <LegendDot className="bg-foreground/25">
+              Spannweite schnellste–langsamste Gruppe
+            </LegendDot>
+          </div>
+          <ul className="mt-2 divide-y divide-border/60">
+            {analyses.map((a) => {
+              const p = a.puzzle.med ?? 0;
+              const tr = a.travel.n > 0 ? (a.travel.med ?? 0) : 0;
+              const hard = a.stage === hardest?.stage && withData.length > 1;
               return (
-                <li key={q.question} className="flex items-center gap-2">
-                  <span className="font-mono-typed w-8 text-[10px] uppercase text-muted-foreground">
-                    F{q.question + 1}
-                  </span>
-                  <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-muted">
-                    <div
-                      aria-hidden
-                      className={cn("h-full", share >= 0.5 ? "bg-stamp" : "bg-primary/60")}
-                      style={{ width: `${Math.round(share * 100)}%` }}
-                    />
-                  </div>
-                  <span className="font-mono-typed w-20 text-right text-[10px] tabular-nums text-muted-foreground">
-                    {q.wrong}/{q.answers} falsch
-                  </span>
-                </li>
+                <BarRow
+                  key={a.stage}
+                  label={`E${a.stage} · ${COL_NAME[a.stage]}`}
+                  primary={p}
+                  secondary={tr}
+                  max={stageMax}
+                  highlight={hard}
+                  spread={
+                    a.puzzle.n > 1
+                      ? { min: a.puzzle.min ?? 0, max: a.puzzle.max ?? 0 }
+                      : null
+                  }
+                  value={
+                    a.solvedBy === 0
+                      ? "–"
+                      : tr > 0
+                        ? `${p} min + ${tr} min Weg`
+                        : `${p} min`
+                  }
+                  sub={
+                    <>
+                      {a.solvedBy}/{teams.length} gelöst · {a.withHint} mit Hinweis
+                      {a.withSolution > 0 && ` · ${a.withSolution} mit Auflösung`}
+                      {" · "}
+                      <span className={cn(a.verdict !== "passend" && "text-stamp")}>
+                        {a.verdict}
+                      </span>
+                    </>
+                  }
+                />
               );
             })}
           </ul>
-          {worstQuestion && worstQuestion.wrong > 0 && (
+          {hardest && easiest && hardest.stage !== easiest.stage && (
             <p className="mt-2 text-xs text-muted-foreground">
-              Schwerste Frage: F{worstQuestion.question + 1} mit{" "}
-              {pct(worstQuestion.wrong, worstQuestion.answers)} Fehlern.
+              Zäheste Etappe: E{hardest.stage} ({COL_NAME[hardest.stage]}) mit Median{" "}
+              {hardest.puzzle.med} min · schnellste: E{easiest.stage} (
+              {COL_NAME[easiest.stage]}) mit Median {easiest.puzzle.med} min
             </p>
           )}
-        </>
-      )}
+        </div>
       </Section>
+
+      <Section title="Hearing pro Frage">
+        {questions.length === 0 ? (
+          <p className="mt-2 text-xs text-muted-foreground">
+            Noch keine Hearing-Antworten erfasst.
+          </p>
+        ) : (
+          <div className="mt-2 rounded-sm border border-border bg-card p-3">
+            <p className="text-[11px] text-muted-foreground">
+              Balkenlänge = Anteil falscher Antworten, absteigend sortiert.
+            </p>
+            <ul className="mt-2 divide-y divide-border/60">
+              {[...questions]
+                .filter((q) => q.answers > 0)
+                .sort((a, b) => b.wrong / b.answers - a.wrong / a.answers)
+                .map((q) => {
+                  const share = Math.round((q.wrong / q.answers) * 100);
+                  return (
+                    <BarRow
+                      key={q.question}
+                      label={`F${q.question + 1} · ${QUESTION_LABEL[q.question] ?? "Frage"}`}
+                      primary={share}
+                      max={100}
+                      highlight={share >= 50}
+                      value={`${share} %`}
+                      sub={`${q.wrong} von ${q.answers} Antworten falsch`}
+                    />
+                  );
+                })}
+            </ul>
+          </div>
+        )}
+      </Section>
+
+      <Section title="Abzeichen der Klasse">
+        <div className="mt-2 rounded-sm border border-border bg-card p-3">
+          <p className="text-[11px] text-muted-foreground">
+            Wie viele Gruppen haben das jeweilige Abzeichen geholt?
+          </p>
+          <div className="mt-2 grid grid-cols-4 gap-1.5">
+            {BADGES.map((b) => {
+              const n = teams.filter((t) => t.badges.includes(b.id)).length;
+              return (
+                <BadgeTile
+                  key={b.id}
+                  title={b.title}
+                  imageUrl={b.imageUrl}
+                  earned={n > 0}
+                  caption={`${n}/${teams.length}`}
+                />
+              );
+            })}
+          </div>
+          <ul className="mt-2 divide-y divide-border/60">
+            {BADGES.map((b) => {
+              const n = teams.filter((t) => t.badges.includes(b.id)).length;
+              return (
+                <BarRow
+                  key={b.id}
+                  label={b.title}
+                  primary={n}
+                  max={Math.max(1, teams.length)}
+                  value={`${n}/${teams.length}`}
+                  sub={b.criteria.replace("{budget}", String(budgetMin))}
+                />
+              );
+            })}
+          </ul>
+        </div>
+      </Section>
+
 
       <label className="mt-4 flex items-start gap-2 rounded-sm border border-border bg-card p-2.5 text-xs">
         <input
