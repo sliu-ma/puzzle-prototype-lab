@@ -18,9 +18,10 @@ import {
 } from "@/lib/progress";
 import { getRoundSession } from "@/lib/round-client";
 import { getRoundState } from "@/lib/rounds.functions";
-import { setBudgetMin } from "@/lib/progress";
+import { setBudgetMin, setStartTs, isRoundClosed, markRoundClosed } from "@/lib/progress";
 import { cn } from "@/lib/utils";
 import { TimeUpOverlay } from "./TimeUpOverlay";
+import { RoundClosedOverlay } from "./RoundClosedOverlay";
 import { IconStamp } from "./IconStamp";
 
 // Marker (Minuten seit Start), bei denen ein Maja-Popup erscheint.
@@ -137,6 +138,7 @@ export function GlobalTimer() {
   const [popup, setPopup] = useState<MajaBeat | null>(null);
   const [bonusMin, setBonusMin] = useState<number | null>(null);
   const [budget, setBudget] = useState(TIMER_DURATION_MIN);
+  const [closed, setClosed] = useState(false);
   const popupTimer = useRef<number | null>(null);
 
   const beats = useMemo(() => buildBeats(budget), [budget]);
@@ -146,6 +148,7 @@ export function GlobalTimer() {
       setStartTs(getStartTs());
       setEndTs(getEndTs());
       setBudget(getBudgetMin());
+      setClosed(isRoundClosed());
     };
     sync();
     window.addEventListener("maya-progress", sync);
@@ -245,7 +248,8 @@ export function GlobalTimer() {
 
   return (
     <>
-      {isOver && !onSummary && <TimeUpOverlay />}
+      {closed && !onSummary && <RoundClosedOverlay />}
+      {isOver && !closed && !onSummary && <TimeUpOverlay />}
       <div
         className={cn(
           "flex items-center gap-2 rounded-sm border bg-card/95 px-3 py-1.5 font-mono-typed text-sm shadow-md backdrop-blur",
@@ -269,7 +273,11 @@ export function GlobalTimer() {
         <span className="tabular-nums font-semibold">
           {isOver ? "00:00" : format(remaining)}
         </span>
-        {isFinished && <span className="text-xs font-serif">· Fertig</span>}
+        {isFinished && (
+          <span className="text-xs font-serif">
+            {closed ? "· Runde beendet" : "· Fertig"}
+          </span>
+        )}
       </div>
 
 
