@@ -562,9 +562,14 @@ function TeamReportDialog({
             </div>
 
             <div>
-              <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
-                Abzeichen ({t.badges.length} von {BADGES.length})
-              </p>
+              <div className="flex items-center gap-1.5">
+                <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+                  Abzeichen ({t.badges.length} von {BADGES.length})
+                </p>
+                <InfoHint label="Abzeichen">
+                  Ausgegraute Abzeichen wurden von dieser Gruppe nicht erreicht.
+                </InfoHint>
+              </div>
               <div className="mt-1.5 grid grid-cols-4 gap-1.5">
                 {BADGES.map((b) => (
                   <BadgeTile
@@ -575,7 +580,6 @@ function TeamReportDialog({
                   />
                 ))}
               </div>
-              <p className="mt-1 text-[10px] text-muted-foreground">Ausgegraut = nicht erreicht.</p>
             </div>
 
             <p className="font-mono-typed text-[10px] text-muted-foreground">
