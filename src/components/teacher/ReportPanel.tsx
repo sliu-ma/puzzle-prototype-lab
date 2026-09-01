@@ -9,17 +9,8 @@ import {
 } from "lucide-react";
 import { useRoundReport, fmtTime, type ReportTeam } from "./LobbyPanel";
 import { COL_NAME } from "./ProgressMatrix";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
 import { BADGES } from "@/lib/badges";
 
@@ -52,8 +43,7 @@ function stats(values: number[]): Stats {
   };
 }
 
-const fmt = (v: number | null, unit = "") =>
-  v === null ? "–" : `${v}${unit ? ` ${unit}` : ""}`;
+const fmt = (v: number | null, unit = "") => (v === null ? "–" : `${v}${unit ? ` ${unit}` : ""}`);
 
 type StageAnalysis = {
   stage: number;
@@ -95,44 +85,91 @@ function analyseStage(teams: ReportTeam[], stage: number): StageAnalysis {
   return { stage, puzzle, travel, solvedBy: n, withHint, withSolution, verdict };
 }
 
-type QuestionAnalysis = { question: number; answers: number; wrong: number };
+type Try = { attempt: number; correct: boolean };
+type TeamAnswer = {
+  question: number;
+  tries: Try[];
+  first: boolean;
+  last: boolean;
+};
 
 /**
- * Hearing-Fehler pro Frage über alle Teams und Versuche. Bevorzugt werden die
- * Einzelversuche; bei älteren Runden ohne diese Daten greift die Auswertung
- * auf die verbuchten Antworten des bestandenen Versuchs zurück.
+ * Alle Hearing-Antworten eines Teams, pro Frage nach Versuch geordnet.
+ * Altrunden ohne Versuchsnummer werden als erster Versuch behandelt.
  */
-function analyseQuestions(teams: ReportTeam[]): QuestionAnalysis[] {
-  const map = new Map<number, { answers: number; wrong: number }>();
-  for (const t of teams) {
-    const src =
-      t.hearingAttempts.length > 0
-        ? t.hearingAttempts
-        : t.events
-            .filter((e) => e.type === "hearing_answer")
-            .map((e) => ({ question: e.question ?? 0, correct: e.correct === true }));
-    for (const a of src) {
-      const cur = map.get(a.question) ?? { answers: 0, wrong: 0 };
-      map.set(a.question, {
-        answers: cur.answers + 1,
-        wrong: cur.wrong + (a.correct ? 0 : 1),
-      });
-    }
+function teamAnswers(t: ReportTeam): TeamAnswer[] {
+  const raw =
+    t.hearingAttempts.length > 0
+      ? t.hearingAttempts
+      : t.events
+          .filter((e) => e.type === "hearing_answer")
+          .map((e) => ({
+            question: e.question ?? 0,
+            correct: e.correct === true,
+            attempt: e.attempt ?? 1,
+          }));
+
+  const map = new Map<number, Try[]>();
+  for (const a of raw) {
+    const list = map.get(a.question) ?? [];
+    list.push({ attempt: a.attempt, correct: a.correct });
+    map.set(a.question, list);
   }
   return [...map.entries()]
-    .map(([question, v]) => ({ question, ...v }))
+    .map(([question, tries]) => {
+      const sorted = [...tries].sort((a, b) => a.attempt - b.attempt);
+      return {
+        question,
+        tries: sorted,
+        first: sorted[0]!.correct,
+        last: sorted[sorted.length - 1]!.correct,
+      };
+    })
     .sort((a, b) => a.question - b.question);
 }
 
-function Metric({
-  label,
-  value,
-  hint,
-}: {
-  label: string;
-  value: string;
-  hint?: string;
-}) {
+type QuestionAnalysis = {
+  question: number;
+  /** Teams mit mindestens einer Antwort auf diese Frage. */
+  teamsAnswered: number;
+  /** Teams, die im ersten Versuch falsch lagen. */
+  firstWrong: number;
+  /** Teams, die auch im letzten Versuch falsch lagen. */
+  lastWrong: number;
+  /** Alle Antworten über alle Versuche. */
+  answers: number;
+  wrong: number;
+};
+
+/** Hearing-Fehler pro Frage über alle Teams und Versuche. */
+function analyseQuestions(teams: ReportTeam[]): QuestionAnalysis[] {
+  const map = new Map<number, QuestionAnalysis>();
+  for (const t of teams) {
+    for (const a of teamAnswers(t)) {
+      const cur =
+        map.get(a.question) ??
+        ({
+          question: a.question,
+          teamsAnswered: 0,
+          firstWrong: 0,
+          lastWrong: 0,
+          answers: 0,
+          wrong: 0,
+        } satisfies QuestionAnalysis);
+      map.set(a.question, {
+        question: a.question,
+        teamsAnswered: cur.teamsAnswered + 1,
+        firstWrong: cur.firstWrong + (a.first ? 0 : 1),
+        lastWrong: cur.lastWrong + (a.last ? 0 : 1),
+        answers: cur.answers + a.tries.length,
+        wrong: cur.wrong + a.tries.filter((x) => !x.correct).length,
+      });
+    }
+  }
+  return [...map.values()].sort((a, b) => a.question - b.question);
+}
+
+function Metric({ label, value, hint }: { label: string; value: string; hint?: string }) {
   return (
     <div className="rounded-sm border border-border bg-card p-2.5">
       <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
@@ -158,13 +195,14 @@ const QUESTION_LABEL: Record<number, string> = {
   9: "Energie · Anteil im Mix",
 };
 
-/** Legenden-Punkt für die Diagramme. */
-function LegendDot({ className, children }: { className: string; children: string }) {
+/** Kleine Kennzahl-Zeile für die Detail-Popups. */
+
+function Fact({ label, value }: { label: string; value: string }) {
   return (
-    <span className="font-mono-typed flex items-center gap-1 text-[10px] text-muted-foreground">
-      <span aria-hidden className={cn("h-2 w-2 rounded-full", className)} />
-      {children}
-    </span>
+    <div className="flex items-baseline justify-between gap-2 py-1 text-[11px]">
+      <span className="text-muted-foreground">{label}</span>
+      <span className="font-mono-typed shrink-0 font-bold tabular-nums">{value}</span>
+    </div>
   );
 }
 
@@ -195,9 +233,7 @@ function BarRow({
   return (
     <li className="py-1.5">
       <div className="flex items-baseline justify-between gap-2">
-        <span className="min-w-0 truncate font-serif text-[13px] font-semibold">
-          {label}
-        </span>
+        <span className="min-w-0 truncate font-serif text-[13px] font-semibold">{label}</span>
         <span
           className={cn(
             "font-mono-typed shrink-0 text-[11px] font-bold tabular-nums",
@@ -224,10 +260,7 @@ function BarRow({
             style={{ width: scale(primary) }}
           />
           {secondary > 0 && (
-            <span
-              className="h-full bg-primary/30"
-              style={{ width: scale(secondary) }}
-            />
+            <span className="h-full bg-primary/30" style={{ width: scale(secondary) }} />
           )}
         </div>
       </div>
@@ -258,14 +291,11 @@ function BadgeTile({
       <img src={imageUrl} alt="" aria-hidden className="h-12 w-12" />
       <p className="font-serif text-[10px] font-semibold leading-tight">{title}</p>
       {caption && (
-        <p className="font-mono-typed text-[9px] tabular-nums text-muted-foreground">
-          {caption}
-        </p>
+        <p className="font-mono-typed text-[9px] tabular-nums text-muted-foreground">{caption}</p>
       )}
     </div>
   );
 }
-
 
 function csvDownload(name: string, rows: (string | number)[][]) {
   const csv = rows
@@ -308,28 +338,19 @@ function TeamRow({
       >
         <span className="min-w-0 flex-1">
           <span className="flex items-center gap-1.5">
-            {flagged && (
-              <AlertTriangle aria-hidden className="h-3 w-3 shrink-0 text-stamp" />
-            )}
+            {flagged && <AlertTriangle aria-hidden className="h-3 w-3 shrink-0 text-stamp" />}
             <span className="truncate font-serif text-sm font-semibold">{name}</span>
           </span>
           <span className="font-mono-typed mt-0.5 block truncate text-[11px] text-muted-foreground">
             {t.stagesSolved}/5 Etappen ·{" "}
-            {t.totalMin === null ? "noch am Spielen" : `${t.totalMin} min`} ·{" "}
-            {t.hintsUsed} Hinweise
+            {t.totalMin === null ? "noch am Spielen" : `${t.totalMin} min`} · {t.hintsUsed} Hinweise
           </span>
           {t.badges.length > 0 && (
             <span className="mt-1 flex items-center gap-0.5">
               {BADGES.filter((b) => t.badges.includes(b.id))
                 .slice(0, 3)
                 .map((b) => (
-                  <img
-                    key={b.id}
-                    src={b.imageUrl}
-                    alt=""
-                    aria-hidden
-                    className="h-5 w-5"
-                  />
+                  <img key={b.id} src={b.imageUrl} alt="" aria-hidden className="h-5 w-5" />
                 ))}
               {t.badges.length > 3 && (
                 <span className="font-mono-typed text-[10px] text-muted-foreground">
@@ -340,9 +361,7 @@ function TeamRow({
           )}
         </span>
 
-        <span className="font-mono-typed shrink-0 text-sm font-bold tabular-nums">
-          {t.points}
-        </span>
+        <span className="font-mono-typed shrink-0 text-sm font-bold tabular-nums">{t.points}</span>
         <ChevronRight aria-hidden className="h-4 w-4 shrink-0 text-muted-foreground" />
       </button>
     </li>
@@ -366,17 +385,11 @@ function TeamReportDialog({
   const t = team;
   const puzzle = t ? t.stages.reduce((s, x) => s + x.minutes, 0) : 0;
   const travel = t ? t.stages.reduce((s, x) => s + (x.betweenMin ?? 0), 0) : 0;
-  const attempts =
-    t && t.hearingAttempts.length
-      ? Math.max(...t.hearingAttempts.map((a) => a.attempt))
-      : 0;
-  const wrongQuestions = t
-    ? [
-        ...new Set(
-          t.hearingAttempts.filter((a) => !a.correct).map((a) => a.question + 1),
-        ),
-      ].sort((a, b) => a - b)
-    : [];
+  const answers = t ? teamAnswers(t) : [];
+  const attempts = answers.length
+    ? Math.max(...answers.flatMap((a) => a.tries.map((x) => x.attempt)))
+    : 0;
+  const stillWrong = answers.filter((a) => !a.last).length;
 
   return (
     <Dialog open={t !== null} onOpenChange={(o) => !o && onClose()}>
@@ -431,12 +444,8 @@ function TeamReportDialog({
                         !s && "text-muted-foreground/60",
                       )}
                     >
-                      <span className="font-mono-typed w-6 shrink-0 font-bold">
-                        E{stage}
-                      </span>
-                      <span className="min-w-0 flex-1 truncate font-serif">
-                        {COL_NAME[stage]}
-                      </span>
+                      <span className="font-mono-typed w-6 shrink-0 font-bold">E{stage}</span>
+                      <span className="min-w-0 flex-1 truncate font-serif">{COL_NAME[stage]}</span>
                       <span className="font-mono-typed shrink-0 tabular-nums text-muted-foreground">
                         {s
                           ? `${s.betweenMin === null ? "–" : `${s.betweenMin}′`} Weg · ${s.minutes}′ Rätsel`
@@ -448,7 +457,13 @@ function TeamReportDialog({
                           diff !== null && diff > 0 ? "text-stamp" : "text-muted-foreground",
                         )}
                       >
-                        {diff === null ? "" : diff === 0 ? "±0" : diff > 0 ? `+${diff}′` : `${diff}′`}
+                        {diff === null
+                          ? ""
+                          : diff === 0
+                            ? "±0"
+                            : diff > 0
+                              ? `+${diff}′`
+                              : `${diff}′`}
                       </span>
                       <span
                         className={cn(
@@ -468,17 +483,48 @@ function TeamReportDialog({
             </div>
 
             <div className="rounded-sm border border-border p-2.5">
-              <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
-                Hearing
-              </p>
-              <p className="font-mono-typed mt-1 text-[11px]">
-                {t.hearingCorrect}✓ / {t.hearingWrong}✗
-                {attempts > 0 && ` · ${attempts} Versuch${attempts === 1 ? "" : "e"}`}
-              </p>
-              {wrongQuestions.length > 0 && (
-                <p className="mt-0.5 text-[11px] text-muted-foreground">
-                  Falsch beantwortet: F{wrongQuestions.join(", F")}
+              <div className="flex items-baseline justify-between gap-2">
+                <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+                  Hearing
                 </p>
+                <p className="font-mono-typed text-[11px] tabular-nums">
+                  {t.hearingCorrect}✓ / {t.hearingWrong}✗
+                  {attempts > 0 && ` · ${attempts} Versuch${attempts === 1 ? "" : "e"}`}
+                </p>
+              </div>
+              {answers.length === 0 ? (
+                <p className="mt-1 text-[11px] text-muted-foreground">
+                  Noch keine Antworten erfasst.
+                </p>
+              ) : (
+                <>
+                  <ul className="mt-1.5 divide-y divide-border/60">
+                    {answers.map((a) => (
+                      <li key={a.question} className="flex items-start gap-2 py-1 text-[11px]">
+                        <span className="font-mono-typed w-6 shrink-0 font-bold">
+                          F{a.question + 1}
+                        </span>
+                        <span className="min-w-0 flex-1 font-serif leading-tight">
+                          {QUESTION_LABEL[a.question] ?? "Frage"}
+                        </span>
+                        <span
+                          className={cn(
+                            "font-mono-typed shrink-0 tabular-nums",
+                            a.last ? "text-muted-foreground" : "font-bold text-stamp",
+                          )}
+                        >
+                          {a.tries.map((x) => `V${x.attempt} ${x.correct ? "✓" : "✗"}`).join(" · ")}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="mt-1 text-[10px] text-muted-foreground">
+                    V = Versuch.{" "}
+                    {stillWrong === 0
+                      ? "Am Ende alle Fragen richtig."
+                      : `${stillWrong} Frage${stillWrong === 1 ? "" : "n"} blieb${stillWrong === 1 ? "" : "en"} falsch.`}
+                  </p>
+                </>
               )}
             </div>
 
@@ -496,11 +542,8 @@ function TeamReportDialog({
                   />
                 ))}
               </div>
-              <p className="mt-1 text-[10px] text-muted-foreground">
-                Ausgegraut = nicht erreicht.
-              </p>
+              <p className="mt-1 text-[10px] text-muted-foreground">Ausgegraut = nicht erreicht.</p>
             </div>
-
 
             <p className="font-mono-typed text-[10px] text-muted-foreground">
               Beigetreten {fmtTime(t.joinedAt)}
@@ -514,13 +557,7 @@ function TeamReportDialog({
 }
 
 /** Aufklappbarer Abschnitt – Details stören die Übersicht nicht. */
-function Section({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <Collapsible className="mt-5">
       <CollapsibleTrigger className="group flex min-h-12 w-full items-center justify-between gap-2 rounded-sm border border-border bg-card px-3 py-2 text-left">
@@ -532,6 +569,227 @@ function Section({
       </CollapsibleTrigger>
       <CollapsibleContent>{children}</CollapsibleContent>
     </Collapsible>
+  );
+}
+
+/** Eine antippbare Zeile – Kopf links, Kennzahl rechts. */
+function ClickRow({
+  title,
+  sub,
+  value,
+  highlight,
+  onOpen,
+}: {
+  title: string;
+  sub: string;
+  value: string;
+  highlight?: boolean;
+  onOpen: () => void;
+}) {
+  return (
+    <li>
+      <button
+        type="button"
+        onClick={onOpen}
+        className="flex min-h-12 w-full items-center gap-2 rounded-sm border border-border bg-card px-3 py-2 text-left transition-colors hover:bg-secondary/60"
+      >
+        <span className="min-w-0 flex-1">
+          <span className="block truncate font-serif text-sm font-semibold">{title}</span>
+          <span className="font-mono-typed mt-0.5 block truncate text-[11px] text-muted-foreground">
+            {sub}
+          </span>
+        </span>
+        <span
+          className={cn(
+            "font-mono-typed shrink-0 text-sm font-bold tabular-nums",
+            highlight && "text-stamp",
+          )}
+        >
+          {value}
+        </span>
+        <ChevronRight aria-hidden className="h-4 w-4 shrink-0 text-muted-foreground" />
+      </button>
+    </li>
+  );
+}
+
+/** Detail-Popup pro Etappe: Zeiten, Hinweise und alle Gruppen im Vergleich. */
+function StageReportDialog({
+  analysis,
+  teams,
+  onClose,
+}: {
+  analysis: StageAnalysis | null;
+  teams: ReportTeam[];
+  onClose: () => void;
+}) {
+  const a = analysis;
+  const rows = a
+    ? teams
+        .map((t) => ({ t, s: t.stages.find((x) => x.stage === a.stage) ?? null }))
+        .sort((x, y) => (x.s?.minutes ?? 9999) - (y.s?.minutes ?? 9999))
+    : [];
+  const hintCount = (level: number) =>
+    a
+      ? teams.filter((t) => t.stages.find((x) => x.stage === a.stage)?.hintLevel === level).length
+      : 0;
+
+  return (
+    <Dialog open={a !== null} onOpenChange={(o) => !o && onClose()}>
+      <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-md">
+        {a && (
+          <>
+            <DialogHeader>
+              <DialogTitle className="font-serif text-base">
+                E{a.stage} · {COL_NAME[a.stage]}
+              </DialogTitle>
+            </DialogHeader>
+
+            <div className="font-mono-typed rounded-sm border border-border bg-secondary/50 px-2.5 py-2 text-[11px]">
+              {a.solvedBy} von {teams.length} Gruppen gelöst ·{" "}
+              <span className={cn(a.verdict !== "passend" && "text-stamp")}>{a.verdict}</span>
+            </div>
+
+            <div className="divide-y divide-border rounded-sm border border-border px-2.5 py-1">
+              <Fact label="Rätselzeit Median" value={fmt(a.puzzle.med, "min")} />
+              <Fact label="Rätselzeit Ø" value={fmt(a.puzzle.avg, "min")} />
+              <Fact
+                label="Schnellste – langsamste"
+                value={a.puzzle.n > 0 ? `${a.puzzle.min}–${a.puzzle.max} min` : "–"}
+              />
+              <Fact
+                label="Weg zur Etappe (Median)"
+                value={a.travel.n > 0 ? fmt(a.travel.med, "min") : "–"}
+              />
+              <Fact label="Ohne Hinweis gelöst" value={`${a.solvedBy - a.withHint}`} />
+              <Fact
+                label="Mit Hinweis"
+                value={`${a.withHint} (H1 ${hintCount(1)} · H2 ${hintCount(2)} · Auflösung ${a.withSolution})`}
+              />
+            </div>
+
+            <div>
+              <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+                Gruppen (nach Rätselzeit)
+              </p>
+              <ul className="mt-1 divide-y divide-border rounded-sm border border-border">
+                {rows.map(({ t, s }) => (
+                  <li
+                    key={t.teamId}
+                    className={cn(
+                      "flex items-center gap-2 px-2.5 py-1.5 text-[11px]",
+                      !s && "text-muted-foreground/60",
+                    )}
+                  >
+                    <span className="min-w-0 flex-1 truncate font-serif">{t.name}</span>
+                    <span className="font-mono-typed shrink-0 tabular-nums text-muted-foreground">
+                      {s
+                        ? `${s.betweenMin === null ? "–" : `${s.betweenMin}′`} Weg · ${s.minutes}′ Rätsel`
+                        : "nicht gelöst"}
+                    </span>
+                    <span
+                      className={cn(
+                        "font-mono-typed w-6 shrink-0 text-right",
+                        s?.hintLevel === 3 && "font-bold text-stamp",
+                      )}
+                    >
+                      {s && s.hintLevel > 0 ? `H${s.hintLevel}` : "–"}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+/** Detail-Popup pro Hearing-Frage: wer hat richtig, wer falsch geantwortet. */
+function QuestionReportDialog({
+  analysis,
+  teams,
+  onClose,
+}: {
+  analysis: QuestionAnalysis | null;
+  teams: ReportTeam[];
+  onClose: () => void;
+}) {
+  const q = analysis;
+  const rows = q
+    ? teams.map((t) => ({
+        t,
+        a: teamAnswers(t).find((x) => x.question === q.question) ?? null,
+      }))
+    : [];
+
+  return (
+    <Dialog open={q !== null} onOpenChange={(o) => !o && onClose()}>
+      <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-md">
+        {q && (
+          <>
+            <DialogHeader>
+              <DialogTitle className="font-serif text-base">
+                F{q.question + 1} · {QUESTION_LABEL[q.question] ?? "Frage"}
+              </DialogTitle>
+            </DialogHeader>
+
+            <div className="divide-y divide-border rounded-sm border border-border px-2.5 py-1">
+              <Fact
+                label="Fehlerquote 1. Versuch"
+                value={
+                  q.teamsAnswered === 0
+                    ? "–"
+                    : `${Math.round((q.firstWrong / q.teamsAnswered) * 100)} % (${q.firstWrong}/${q.teamsAnswered})`
+                }
+              />
+              <Fact label="Am Ende noch falsch" value={`${q.lastWrong} von ${q.teamsAnswered}`} />
+              <Fact label="Antworten total" value={`${q.answers} · davon ${q.wrong} falsch`} />
+            </div>
+
+            <div>
+              <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+                Pro Gruppe
+              </p>
+              <ul className="mt-1 divide-y divide-border rounded-sm border border-border">
+                {rows.map(({ t, a }) => (
+                  <li
+                    key={t.teamId}
+                    className={cn(
+                      "flex items-center gap-2 px-2.5 py-1.5 text-[11px]",
+                      !a && "text-muted-foreground/60",
+                    )}
+                  >
+                    <span className="min-w-0 flex-1 truncate font-serif">{t.name}</span>
+                    {a ? (
+                      <>
+                        <span
+                          className={cn(
+                            "font-mono-typed shrink-0 font-bold",
+                            a.last ? "text-primary" : "text-stamp",
+                          )}
+                        >
+                          {a.last ? "richtig" : "falsch"}
+                        </span>
+                        <span className="font-mono-typed w-28 shrink-0 text-right tabular-nums text-muted-foreground">
+                          {a.tries.map((x) => `V${x.attempt} ${x.correct ? "✓" : "✗"}`).join(" · ")}
+                        </span>
+                      </>
+                    ) : (
+                      <span className="font-mono-typed shrink-0">keine Antwort</span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-1 text-[10px] text-muted-foreground">
+                Gewertet wird der letzte Versuch; V zeigt jeden Durchgang einzeln.
+              </p>
+            </div>
+          </>
+        )}
+      </DialogContent>
+    </Dialog>
   );
 }
 
@@ -547,10 +805,10 @@ export function ReportPanel({
   const { report, loading, updatedAt } = useRoundReport(password, code, 20_000);
   const [anon, setAnon] = useState(true);
   const [openTeam, setOpenTeam] = useState<string | null>(null);
+  const [openStage, setOpenStage] = useState<number | null>(null);
+  const [openQuestion, setOpenQuestion] = useState<number | null>(null);
 
-  const teams = [...(report?.teams ?? [])].sort((a, b) =>
-    a.name.localeCompare(b.name, "de-CH"),
-  );
+  const teams = [...(report?.teams ?? [])].sort((a, b) => a.name.localeCompare(b.name, "de-CH"));
 
   // Pseudonyme für die Weiterverarbeitung: Personendaten bleiben draussen.
   const alias = new Map<string, string>();
@@ -565,41 +823,18 @@ export function ReportPanel({
   );
   const hints = stats(teams.map((t) => t.hintsUsed));
 
-  // Rätselzeit gegen Zeit zwischen den Rätseln: wie viel Zeit ging ausserhalb
-  // der Posten weg (Weg, Notizen, Pausen).
-  const puzzleTotals = teams.map((t) => t.stages.reduce((s, x) => s + x.minutes, 0));
-  const travelTotals = teams.map((t) =>
-    t.stages.reduce((s, x) => s + (x.betweenMin ?? 0), 0),
-  );
-  const puzzleSum = stats(puzzleTotals.filter((v) => v > 0));
-  const travelSum = stats(travelTotals.filter((v) => v > 0));
-  const travelShare =
-    puzzleSum.sum + travelSum.sum > 0
-      ? Math.round((travelSum.sum / (puzzleSum.sum + travelSum.sum)) * 100)
-      : null;
-
   const analyses = STAGES.map((s) => analyseStage(teams, s));
   const withData = analyses.filter((a) => a.solvedBy > 0);
-  // Gemeinsame Skala für alle Etappen-Balken: Rätselzeit plus Weg.
-  const stageMax = Math.max(
-    1,
-    ...analyses.map(
-      (a) => (a.puzzle.med ?? 0) + (a.travel.n > 0 ? (a.travel.med ?? 0) : 0),
-    ),
-  );
 
   const hardest = [...withData].sort((a, b) => (b.puzzle.med ?? 0) - (a.puzzle.med ?? 0))[0];
   const easiest = [...withData].sort((a, b) => (a.puzzle.med ?? 0) - (b.puzzle.med ?? 0))[0];
   const questions = analyseQuestions(teams);
-  
-
-
-  const hasTravelData = travelSum.n > 0;
+  const hardestQuestion = [...questions]
+    .filter((q) => q.teamsAnswered > 0)
+    .sort((a, b) => b.firstWrong / b.teamsAnswered - a.firstWrong / a.teamsAnswered)[0];
 
   // Mediane pro Etappe für den Vergleich im Team-Popup.
-  const medianPuzzle = new Map<number, number | null>(
-    analyses.map((a) => [a.stage, a.puzzle.med]),
-  );
+  const medianPuzzle = new Map<number, number | null>(analyses.map((a) => [a.stage, a.puzzle.med]));
   const teamsByPoints = [...teams].sort(
     (a, b) => b.points - a.points || a.name.localeCompare(b.name, "de-CH"),
   );
@@ -615,11 +850,7 @@ export function ReportPanel({
       "Gesamtzeit_min",
       "Raetselzeit_total_min",
       "Zeit_zwischen_Raetseln_total_min",
-      ...STAGES.flatMap((s) => [
-        `E${s}_raetsel_min`,
-        `E${s}_weg_min`,
-        `E${s}_hinweisstufe`,
-      ]),
+      ...STAGES.flatMap((s) => [`E${s}_raetsel_min`, `E${s}_weg_min`, `E${s}_hinweisstufe`]),
       "Abzeichen_anzahl",
       "Abzeichen",
       "Hearing_richtig",
@@ -656,7 +887,18 @@ export function ReportPanel({
     });
     const stageSummary = [
       [],
-      ["Etappe", "Name", "geloest_von", "Median_raetsel_min", "Min", "Max", "Median_weg_min", "mit_Hinweis", "mit_Aufloesung", "Einschaetzung"],
+      [
+        "Etappe",
+        "Name",
+        "geloest_von",
+        "Median_raetsel_min",
+        "Min",
+        "Max",
+        "Median_weg_min",
+        "mit_Hinweis",
+        "mit_Aufloesung",
+        "Einschaetzung",
+      ],
       ...analyses.map((a) => [
         `E${a.stage}`,
         COL_NAME[a.stage] ?? "",
@@ -737,77 +979,24 @@ export function ReportPanel({
       </div>
 
       <h3 className="mt-3 font-serif text-lg font-bold">Klasse gesamt</h3>
-      <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3">
+      <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
         <Metric
-          label="Punkte"
-          value={fmt(points.med)}
-          hint={`Median · Ø ${fmt(points.avg)}`}
-        />
-        <Metric
-          label="Gesamtzeit"
-          value={fmt(totals.med, "min")}
+          label="Abgeschlossen"
+          value={`${finished.length}/${teams.length}`}
           hint={
-            totals.n === 0
-              ? "noch niemand fertig"
-              : `Median · ${totals.min}–${totals.max} min`
+            teams.length === 0
+              ? "noch keine Gruppen"
+              : `${teams.length - finished.length} noch offen`
           }
+        />
+        <Metric label="Punkte" value={fmt(points.med)} hint={`Median · Ø ${fmt(points.avg)}`} />
+        <Metric
+          label="Spielzeit"
+          value={fmt(totals.med, "min")}
+          hint={totals.n === 0 ? "noch niemand fertig" : `Median · ${totals.min}–${totals.max} min`}
         />
         <Metric label="Hinweise" value={fmt(hints.med)} hint={`Median · Ø ${fmt(hints.avg)}`} />
       </div>
-
-      {/* Punkte pro Team als Balken – ein Blick zeigt Spitze und Feld. */}
-      {teams.length > 0 && (
-        <div className="mt-3 rounded-sm border border-border bg-card p-3">
-          <div className="flex items-baseline justify-between gap-2">
-            <p className="font-serif text-sm font-bold">Punkte pro Team</p>
-            <span className="font-mono-typed text-[10px] text-muted-foreground">
-              Median {fmt(points.med)} Pkt
-            </span>
-          </div>
-          <ul className="mt-1 divide-y divide-border/60">
-            {teamsByPoints.map((t) => (
-              <BarRow
-                key={t.teamId}
-                label={t.name}
-                primary={t.points}
-                max={Math.max(1, points.max ?? 1)}
-                value={`${t.points} Pkt`}
-                sub={`${t.stagesSolved}/5 Etappen · ${t.hintsUsed} Hinweise`}
-              />
-            ))}
-          </ul>
-        </div>
-      )}
-
-      {/* Zeitaufteilung: wie viel Zeit ging an den Posten weg, wie viel dazwischen. */}
-      {puzzleSum.sum + travelSum.sum > 0 && (
-        <div className="mt-2 rounded-sm border border-border bg-card p-3">
-          <p className="font-serif text-sm font-bold">Zeitaufteilung der Klasse</p>
-          <div className="mt-2 flex h-5 w-full overflow-hidden rounded-full bg-muted">
-            <span
-              aria-hidden
-              className="h-full bg-primary"
-              style={{
-                width: `${Math.round(
-                  (puzzleSum.sum / (puzzleSum.sum + travelSum.sum)) * 100,
-                )}%`,
-              }}
-            />
-            <span aria-hidden className="h-full flex-1 bg-primary/30" />
-          </div>
-          <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1">
-            <LegendDot className="bg-primary">
-              {`Rätselzeit ${100 - (travelShare ?? 0)} % · Median ${fmt(puzzleSum.med, "min")}`}
-            </LegendDot>
-            <LegendDot className="bg-primary/30">
-              {hasTravelData
-                ? `Zeit dazwischen (Weg, Pause) ${travelShare ?? 0} % · Median ${fmt(travelSum.med, "min")}`
-                : "Zeit dazwischen – erst ab neuer Runde erfasst"}
-            </LegendDot>
-          </div>
-        </div>
-      )}
-
 
       <h3 className="mt-5 font-serif text-lg font-bold">Pro Team</h3>
       <ul className="mt-2 space-y-1.5">
@@ -839,66 +1028,40 @@ export function ReportPanel({
       />
 
       <Section title="Etappen im Vergleich">
-        <div className="mt-2 rounded-sm border border-border bg-card p-3">
-          <p className="text-[11px] text-muted-foreground">
-            Balkenlänge = Minuten (Median der Klasse). Der Balken zeigt zuerst die
-            Zeit am Rätsel, dann den Weg dorthin.
-          </p>
-          <div className="mt-1.5 flex flex-wrap gap-x-4 gap-y-1">
-            <LegendDot className="bg-primary">Rätselzeit</LegendDot>
-            <LegendDot className="bg-primary/30">Weg zur Etappe</LegendDot>
-            <LegendDot className="bg-foreground/25">
-              Spannweite schnellste–langsamste Gruppe
-            </LegendDot>
-          </div>
-          <ul className="mt-2 divide-y divide-border/60">
-            {analyses.map((a) => {
-              const p = a.puzzle.med ?? 0;
-              const tr = a.travel.n > 0 ? (a.travel.med ?? 0) : 0;
-              const hard = a.stage === hardest?.stage && withData.length > 1;
-              return (
-                <BarRow
-                  key={a.stage}
-                  label={`E${a.stage} · ${COL_NAME[a.stage]}`}
-                  primary={p}
-                  secondary={tr}
-                  max={stageMax}
-                  highlight={hard}
-                  spread={
-                    a.puzzle.n > 1
-                      ? { min: a.puzzle.min ?? 0, max: a.puzzle.max ?? 0 }
-                      : null
-                  }
-                  value={
-                    a.solvedBy === 0
-                      ? "–"
-                      : tr > 0
-                        ? `${p} min + ${tr} min Weg`
-                        : `${p} min`
-                  }
-                  sub={
-                    <>
-                      {a.solvedBy}/{teams.length} gelöst · {a.withHint} mit Hinweis
-                      {a.withSolution > 0 && ` · ${a.withSolution} mit Auflösung`}
-                      {" · "}
-                      <span className={cn(a.verdict !== "passend" && "text-stamp")}>
-                        {a.verdict}
-                      </span>
-                    </>
-                  }
-                />
-              );
-            })}
-          </ul>
+        <ul className="mt-2 space-y-1.5">
+          {analyses.map((a) => {
+            const hard = a.stage === hardest?.stage && withData.length > 1;
+            return (
+              <ClickRow
+                key={a.stage}
+                title={`E${a.stage} · ${COL_NAME[a.stage]}`}
+                sub={`${a.solvedBy}/${teams.length} gelöst · ${a.withHint} mit Hinweis${
+                  a.withSolution > 0 ? ` · ${a.withSolution} mit Auflösung` : ""
+                } · ${a.verdict}`}
+                value={a.solvedBy === 0 ? "–" : `${a.puzzle.med} min`}
+                highlight={hard}
+                onOpen={() => setOpenStage(a.stage)}
+              />
+            );
+          })}
+        </ul>
+        <p className="mt-1.5 text-[10px] text-muted-foreground">
+          Wert = Median der Rätselzeit. Tippe für Zeiten, Hinweise und alle Gruppen.
           {hardest && easiest && hardest.stage !== easiest.stage && (
-            <p className="mt-2 text-xs text-muted-foreground">
-              Zäheste Etappe: E{hardest.stage} ({COL_NAME[hardest.stage]}) mit Median{" "}
-              {hardest.puzzle.med} min · schnellste: E{easiest.stage} (
-              {COL_NAME[easiest.stage]}) mit Median {easiest.puzzle.med} min
-            </p>
+            <>
+              {" "}
+              Zäheste Etappe: E{hardest.stage} ({COL_NAME[hardest.stage]}) · schnellste: E
+              {easiest.stage} ({COL_NAME[easiest.stage]}).
+            </>
           )}
-        </div>
+        </p>
       </Section>
+
+      <StageReportDialog
+        analysis={analyses.find((a) => a.stage === openStage) ?? null}
+        teams={teams}
+        onClose={() => setOpenStage(null)}
+      />
 
       <Section title="Hearing pro Frage">
         {questions.length === 0 ? (
@@ -906,70 +1069,58 @@ export function ReportPanel({
             Noch keine Hearing-Antworten erfasst.
           </p>
         ) : (
-          <div className="mt-2 rounded-sm border border-border bg-card p-3">
-            <p className="text-[11px] text-muted-foreground">
-              Balkenlänge = Anteil falscher Antworten, absteigend sortiert.
-            </p>
-            <ul className="mt-2 divide-y divide-border/60">
+          <>
+            <div className="mt-2 rounded-sm border border-border bg-card p-3">
+              <p className="text-[11px] text-muted-foreground">
+                Balkenlänge = Anteil der Gruppen, die im ersten Versuch falsch lagen.
+              </p>
+              <ul className="mt-2 divide-y divide-border/60">
+                {[...questions]
+                  .filter((q) => q.teamsAnswered > 0)
+                  .sort((a, b) => b.firstWrong / b.teamsAnswered - a.firstWrong / a.teamsAnswered)
+                  .map((q) => {
+                    const share = Math.round((q.firstWrong / q.teamsAnswered) * 100);
+                    return (
+                      <BarRow
+                        key={q.question}
+                        label={`F${q.question + 1} · ${QUESTION_LABEL[q.question] ?? "Frage"}`}
+                        primary={share}
+                        max={100}
+                        highlight={q.question === hardestQuestion?.question}
+                        value={`${share} %`}
+                        sub={`${q.firstWrong} von ${q.teamsAnswered} Gruppen falsch · am Ende noch ${q.lastWrong} falsch`}
+                      />
+                    );
+                  })}
+              </ul>
+            </div>
+            <ul className="mt-2 space-y-1.5">
               {[...questions]
-                .filter((q) => q.answers > 0)
-                .sort((a, b) => b.wrong / b.answers - a.wrong / a.answers)
-                .map((q) => {
-                  const share = Math.round((q.wrong / q.answers) * 100);
-                  return (
-                    <BarRow
-                      key={q.question}
-                      label={`F${q.question + 1} · ${QUESTION_LABEL[q.question] ?? "Frage"}`}
-                      primary={share}
-                      max={100}
-                      highlight={share >= 50}
-                      value={`${share} %`}
-                      sub={`${q.wrong} von ${q.answers} Antworten falsch`}
-                    />
-                  );
-                })}
+                .filter((q) => q.teamsAnswered > 0)
+                .map((q) => (
+                  <ClickRow
+                    key={q.question}
+                    title={`F${q.question + 1} · ${QUESTION_LABEL[q.question] ?? "Frage"}`}
+                    sub={`${q.teamsAnswered - q.firstWrong} im 1. Versuch richtig · ${q.lastWrong} am Ende falsch`}
+                    value={`${Math.round((q.firstWrong / q.teamsAnswered) * 100)} %`}
+                    highlight={q.question === hardestQuestion?.question}
+                    onOpen={() => setOpenQuestion(q.question)}
+                  />
+                ))}
             </ul>
-          </div>
+            <p className="mt-1.5 text-[10px] text-muted-foreground">
+              Tippe auf eine Frage, um zu sehen, welche Gruppe sie richtig oder falsch beantwortet
+              hat – inklusive Zweitversuch.
+            </p>
+          </>
         )}
       </Section>
 
-      <Section title="Abzeichen der Klasse">
-        <div className="mt-2 rounded-sm border border-border bg-card p-3">
-          <p className="text-[11px] text-muted-foreground">
-            Wie viele Gruppen haben das jeweilige Abzeichen geholt?
-          </p>
-          <div className="mt-2 grid grid-cols-4 gap-1.5">
-            {BADGES.map((b) => {
-              const n = teams.filter((t) => t.badges.includes(b.id)).length;
-              return (
-                <BadgeTile
-                  key={b.id}
-                  title={b.title}
-                  imageUrl={b.imageUrl}
-                  earned={n > 0}
-                  caption={`${n}/${teams.length}`}
-                />
-              );
-            })}
-          </div>
-          <ul className="mt-2 divide-y divide-border/60">
-            {BADGES.map((b) => {
-              const n = teams.filter((t) => t.badges.includes(b.id)).length;
-              return (
-                <BarRow
-                  key={b.id}
-                  label={b.title}
-                  primary={n}
-                  max={Math.max(1, teams.length)}
-                  value={`${n}/${teams.length}`}
-                  sub={b.criteria.replace("{budget}", String(budgetMin))}
-                />
-              );
-            })}
-          </ul>
-        </div>
-      </Section>
-
+      <QuestionReportDialog
+        analysis={questions.find((q) => q.question === openQuestion) ?? null}
+        teams={teams}
+        onClose={() => setOpenQuestion(null)}
+      />
 
       <label className="mt-4 flex items-start gap-2 rounded-sm border border-border bg-card p-2.5 text-xs">
         <input
@@ -984,8 +1135,8 @@ export function ReportPanel({
             Export ohne Namen
           </span>
           <span className="text-muted-foreground">
-            Teamnamen werden zu Team-01, Team-02 … und die Mitgliedernamen bleiben leer.
-            Für eine Masterarbeit in der Regel Voraussetzung.
+            Teamnamen werden zu Team-01, Team-02 … und die Mitgliedernamen bleiben leer. Für eine
+            Masterarbeit in der Regel Voraussetzung.
           </span>
         </span>
       </label>
@@ -1011,8 +1162,8 @@ export function ReportPanel({
         </button>
       </div>
       <p className="mt-1.5 text-[10px] leading-relaxed text-muted-foreground">
-        Die Rohdaten enthalten eine Zeile pro Ereignis mit Sekunde seit Rundenstart –
-        das Langformat für Pivot-Tabellen, SPSS oder R.
+        Die Rohdaten enthalten eine Zeile pro Ereignis mit Sekunde seit Rundenstart – das Langformat
+        für Pivot-Tabellen, SPSS oder R.
       </p>
     </div>
   );
