@@ -582,6 +582,14 @@ export function ReportPanel({
 
   const analyses = STAGES.map((s) => analyseStage(teams, s));
   const withData = analyses.filter((a) => a.solvedBy > 0);
+  // Gemeinsame Skala für alle Etappen-Balken: Rätselzeit plus Weg.
+  const stageMax = Math.max(
+    1,
+    ...analyses.map(
+      (a) => (a.puzzle.med ?? 0) + (a.travel.n > 0 ? (a.travel.med ?? 0) : 0),
+    ),
+  );
+
   const hardest = [...withData].sort((a, b) => (b.puzzle.med ?? 0) - (a.puzzle.med ?? 0))[0];
   const easiest = [...withData].sort((a, b) => (a.puzzle.med ?? 0) - (b.puzzle.med ?? 0))[0];
   const questions = analyseQuestions(teams);
