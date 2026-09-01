@@ -215,6 +215,13 @@ export type ReportTeam = {
   phaseSince: string | null;
   /** QR-Scan der aktuellen Etappe, falls schon erfolgt. */
   currentScanAt: string | null;
+  /**
+   * Bereits abgeschlossene Wegzeit zum aktuellen Posten (Start des Abschnitts
+   * bis QR-Scan). Null, solange das Team noch unterwegs ist.
+   */
+  travelDoneMin: number | null;
+  /** Beginn des Wegs zum aktuellen Posten (Vor-Etappe gelöst bzw. Rundenstart). */
+  travelSince: string | null;
   /** Letztes Lebenszeichen irgendeiner Art. */
   lastEventAt: string | null;
   /** Alle Hearing-Antworten über alle Versuche. */
