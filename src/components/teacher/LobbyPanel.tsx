@@ -48,6 +48,8 @@ export type ReportTeam = {
   phase: "travel" | "puzzle";
   phaseSince: string | null;
   currentScanAt: string | null;
+  travelDoneMin: number | null;
+  travelSince: string | null;
   lastEventAt: string | null;
   hearingAttempts: { question: number; correct: boolean; attempt: number }[];
   events: ReportEvent[];
