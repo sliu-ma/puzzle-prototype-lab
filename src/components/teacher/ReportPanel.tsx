@@ -671,10 +671,16 @@ function ClickRow({
 function StageReportDialog({
   analysis,
   teams,
+  hardest,
+  easiest,
+  withDataLen,
   onClose,
 }: {
   analysis: StageAnalysis | null;
   teams: ReportTeam[];
+  hardest?: StageAnalysis;
+  easiest?: StageAnalysis;
+  withDataLen: number;
   onClose: () => void;
 }) {
   const a = analysis;
