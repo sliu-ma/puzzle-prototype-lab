@@ -157,6 +157,241 @@ function csvDownload(name: string, rows: (string | number)[][]) {
   URL.revokeObjectURL(url);
 }
 
+/** Fällt die Gruppe auf? Auflösung genutzt oder deutlich über dem Median. */
+function isFlagged(t: ReportTeam, medianPuzzle: Map<number, number | null>): boolean {
+  return t.stages.some((s) => {
+    const med = medianPuzzle.get(s.stage) ?? null;
+    return s.hintLevel === 3 || (med !== null && med > 0 && s.minutes >= med * 2);
+  });
+}
+
+/** Eine kompakte Zeile pro Gruppe – Details erst im Popup. */
+function TeamRow({
+  t,
+  name,
+  flagged,
+  onOpen,
+}: {
+  t: ReportTeam;
+  name: string;
+  flagged: boolean;
+  onOpen: () => void;
+}) {
+  return (
+    <li>
+      <button
+        type="button"
+        onClick={onOpen}
+        className="flex min-h-12 w-full items-center gap-2 rounded-sm border border-border bg-card px-3 py-2 text-left transition-colors hover:bg-secondary/60"
+      >
+        <span className="min-w-0 flex-1">
+          <span className="flex items-center gap-1.5">
+            {flagged && (
+              <AlertTriangle aria-hidden className="h-3 w-3 shrink-0 text-stamp" />
+            )}
+            <span className="truncate font-serif text-sm font-semibold">{name}</span>
+          </span>
+          <span className="font-mono-typed mt-0.5 block truncate text-[11px] text-muted-foreground">
+            {t.stagesSolved}/5 Etappen ·{" "}
+            {t.totalMin === null ? "noch am Spielen" : `${t.totalMin} min`} ·{" "}
+            {t.hintsUsed} Hinweise
+          </span>
+        </span>
+        <span className="font-mono-typed shrink-0 text-sm font-bold tabular-nums">
+          {t.points}
+        </span>
+        <ChevronRight aria-hidden className="h-4 w-4 shrink-0 text-muted-foreground" />
+      </button>
+    </li>
+  );
+}
+
+/** Detail-Popup: alle Zahlen einer Gruppe an einem Ort. */
+function TeamReportDialog({
+  team,
+  name,
+  showMembers,
+  medianPuzzle,
+  onClose,
+}: {
+  team: ReportTeam | null;
+  name: string;
+  showMembers: boolean;
+  medianPuzzle: Map<number, number | null>;
+  onClose: () => void;
+}) {
+  const t = team;
+  const puzzle = t ? t.stages.reduce((s, x) => s + x.minutes, 0) : 0;
+  const travel = t ? t.stages.reduce((s, x) => s + (x.betweenMin ?? 0), 0) : 0;
+  const attempts =
+    t && t.hearingAttempts.length
+      ? Math.max(...t.hearingAttempts.map((a) => a.attempt))
+      : 0;
+  const wrongQuestions = t
+    ? [
+        ...new Set(
+          t.hearingAttempts.filter((a) => !a.correct).map((a) => a.question + 1),
+        ),
+      ].sort((a, b) => a - b)
+    : [];
+
+  return (
+    <Dialog open={t !== null} onOpenChange={(o) => !o && onClose()}>
+      <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-md">
+        {t && (
+          <>
+            <DialogHeader>
+              <DialogTitle className="font-serif text-base">{name}</DialogTitle>
+            </DialogHeader>
+
+            {showMembers && t.members.length > 0 && (
+              <p className="text-xs text-muted-foreground">{t.members.join(", ")}</p>
+            )}
+
+            <div className="font-mono-typed flex items-center justify-between gap-2 rounded-sm border border-border bg-secondary/50 px-2.5 py-2 text-[11px]">
+              <span>
+                {t.finishedAt
+                  ? `Fertig ${fmtTime(t.finishedAt)}`
+                  : `${t.stagesSolved}/5 Etappen · nicht abgeschlossen`}
+              </span>
+              <span className="text-sm font-bold tabular-nums">{t.points} Pkt</span>
+            </div>
+
+            <div className="grid grid-cols-3 gap-2">
+              <Metric label="Gesamt" value={fmt(t.totalMin, "min")} />
+              <Metric label="Rätsel" value={`${puzzle} min`} />
+              <Metric
+                label="Dazwischen"
+                value={travel > 0 ? `${travel} min` : "–"}
+                hint={
+                  puzzle + travel > 0
+                    ? `${Math.round((travel / (puzzle + travel)) * 100)} % der Zeit`
+                    : undefined
+                }
+              />
+            </div>
+
+            <div>
+              <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+                Etappen
+              </p>
+              <ul className="mt-1 divide-y divide-border rounded-sm border border-border">
+                {STAGES.map((stage) => {
+                  const s = t.stages.find((x) => x.stage === stage);
+                  const med = medianPuzzle.get(stage) ?? null;
+                  const diff = s && med !== null ? Math.round(s.minutes - med) : null;
+                  return (
+                    <li
+                      key={stage}
+                      className={cn(
+                        "flex items-center gap-2 px-2.5 py-1.5 text-[11px]",
+                        !s && "text-muted-foreground/60",
+                      )}
+                    >
+                      <span className="font-mono-typed w-6 shrink-0 font-bold">
+                        E{stage}
+                      </span>
+                      <span className="min-w-0 flex-1 truncate font-serif">
+                        {COL_NAME[stage]}
+                      </span>
+                      <span className="font-mono-typed shrink-0 tabular-nums text-muted-foreground">
+                        {s
+                          ? `${s.betweenMin === null ? "–" : `${s.betweenMin}′`} Weg · ${s.minutes}′ Rätsel`
+                          : "offen"}
+                      </span>
+                      <span
+                        className={cn(
+                          "font-mono-typed w-12 shrink-0 text-right tabular-nums",
+                          diff !== null && diff > 0 ? "text-stamp" : "text-muted-foreground",
+                        )}
+                      >
+                        {diff === null ? "" : diff === 0 ? "±0" : diff > 0 ? `+${diff}′` : `${diff}′`}
+                      </span>
+                      <span
+                        className={cn(
+                          "font-mono-typed w-6 shrink-0 text-right",
+                          s?.hintLevel === 3 && "font-bold text-stamp",
+                        )}
+                      >
+                        {s && s.hintLevel > 0 ? `H${s.hintLevel}` : "–"}
+                      </span>
+                    </li>
+                  );
+                })}
+              </ul>
+              <p className="mt-1 text-[10px] text-muted-foreground">
+                Rechte Spalte: Abweichung der Rätselzeit vom Klassenmedian.
+              </p>
+            </div>
+
+            <div className="rounded-sm border border-border p-2.5">
+              <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+                Hearing
+              </p>
+              <p className="font-mono-typed mt-1 text-[11px]">
+                {t.hearingCorrect}✓ / {t.hearingWrong}✗
+                {attempts > 0 && ` · ${attempts} Versuch${attempts === 1 ? "" : "e"}`}
+              </p>
+              {wrongQuestions.length > 0 && (
+                <p className="mt-0.5 text-[11px] text-muted-foreground">
+                  Falsch beantwortet: F{wrongQuestions.join(", F")}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+                Abzeichen ({t.badges.length})
+              </p>
+              {t.badges.length === 0 ? (
+                <p className="mt-1 text-[11px] text-muted-foreground">keine</p>
+              ) : (
+                <div className="mt-1 flex flex-wrap gap-1">
+                  {t.badges.map((b) => (
+                    <span
+                      key={b}
+                      className="font-mono-typed rounded-sm bg-secondary px-1.5 py-0.5 text-[10px]"
+                    >
+                      {b}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <p className="font-mono-typed text-[10px] text-muted-foreground">
+              Beigetreten {fmtTime(t.joinedAt)}
+              {t.finishedAt && ` · fertig ${fmtTime(t.finishedAt)}`}
+            </p>
+          </>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+/** Aufklappbarer Abschnitt – Details stören die Übersicht nicht. */
+function Section({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <Collapsible className="mt-5">
+      <CollapsibleTrigger className="group flex min-h-12 w-full items-center justify-between gap-2 rounded-sm border border-border bg-card px-3 py-2 text-left">
+        <span className="font-serif text-base font-bold">{title}</span>
+        <ChevronDown
+          aria-hidden
+          className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-data-[state=open]:rotate-180"
+        />
+      </CollapsibleTrigger>
+      <CollapsibleContent>{children}</CollapsibleContent>
+    </Collapsible>
+  );
+}
+
 export function ReportPanel({
   password,
   code,
