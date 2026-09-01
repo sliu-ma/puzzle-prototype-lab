@@ -465,23 +465,23 @@ function TeamReportDialog({
 
             <div>
               <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
-                Abzeichen ({t.badges.length})
+                Abzeichen ({t.badges.length} von {BADGES.length})
               </p>
-              {t.badges.length === 0 ? (
-                <p className="mt-1 text-[11px] text-muted-foreground">keine</p>
-              ) : (
-                <div className="mt-1 flex flex-wrap gap-1">
-                  {t.badges.map((b) => (
-                    <span
-                      key={b}
-                      className="font-mono-typed rounded-sm bg-secondary px-1.5 py-0.5 text-[10px]"
-                    >
-                      {b}
-                    </span>
-                  ))}
-                </div>
-              )}
+              <div className="mt-1.5 grid grid-cols-4 gap-1.5">
+                {BADGES.map((b) => (
+                  <BadgeTile
+                    key={b.id}
+                    title={b.title}
+                    imageUrl={b.imageUrl}
+                    earned={t.badges.includes(b.id)}
+                  />
+                ))}
+              </div>
+              <p className="mt-1 text-[10px] text-muted-foreground">
+                Ausgegraut = nicht erreicht.
+              </p>
             </div>
+
 
             <p className="font-mono-typed text-[10px] text-muted-foreground">
               Beigetreten {fmtTime(t.joinedAt)}
