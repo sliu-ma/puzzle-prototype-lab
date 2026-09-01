@@ -11,8 +11,6 @@ import {
 import { PaperCard } from "@/components/case-file/PaperCard";
 import { Stamp } from "@/components/case-file/Stamp";
 import { PrologueOverlay } from "@/components/case-file/PrologueVideo";
-import { getBudgetMin, getHearingClock, startGame } from "@/lib/progress";
-import { getRoundSession } from "@/lib/round-client";
 import { StartTimerOverlay } from "@/components/case-file/StartTimerOverlay";
 import { useScrollToTopOnChange } from "@/hooks/use-scroll-top";
 
