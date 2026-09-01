@@ -514,9 +514,6 @@ function TeamReportDialog({
                   );
                 })}
               </ul>
-              <p className="mt-1 text-[10px] text-muted-foreground">
-                Rechte Spalte: Abweichung der Rätselzeit vom Klassenmedian.
-              </p>
             </div>
 
             <div className="rounded-sm border border-border p-2.5">
