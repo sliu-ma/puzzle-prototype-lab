@@ -180,7 +180,9 @@ function CoverPage() {
               />
             ) : (
               <StartForm
+                initialCode={joinCode}
                 onStart={(name, code, members) => {
+
                   resetAll();
                   registerTeam(name, code, members);
                   if (code.toUpperCase() === CHEAT_CODE) {
