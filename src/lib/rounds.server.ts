@@ -161,8 +161,11 @@ export type ReportStage = {
   stage: number;
   /** Reine Rätselzeit ab dem QR-Scan, in Minuten. */
   minutes: number;
-  /** Wegzeit vom Lösen der Vor-Etappe bis zum Scan, in Minuten. */
-  travelMin: number | null;
+  /**
+   * Zeit zwischen den Rätseln: vom Lösen der Vor-Etappe bis zum Scan dieses
+   * Postens, in Minuten. Enthält Weg, Notizen und Pausen.
+   */
+  betweenMin: number | null;
   /** Höchste auf dieser Etappe genutzte Hinweisstufe (0 = keine). */
   hintLevel: 0 | 1 | 2 | 3;
   solvedAt: string;
@@ -203,6 +206,15 @@ export type ReportTeam = {
   currentStage: number;
   /** Zeitpunkt der letzten gelösten Etappe (Grundlage für „hängt fest"). */
   lastSolvedAt: string | null;
+  /**
+   * Aktueller Abschnitt: `travel` = zwischen zwei Rätseln (Posten noch nicht
+   * gescannt), `puzzle` = am Rätsel (ab QR-Scan).
+   */
+  phase: "travel" | "puzzle";
+  /** Beginn des aktuellen Abschnitts (null = unbekannt, z. B. vor dem Start). */
+  phaseSince: string | null;
+  /** QR-Scan der aktuellen Etappe, falls schon erfolgt. */
+  currentScanAt: string | null;
   /** Letztes Lebenszeichen irgendeiner Art. */
   lastEventAt: string | null;
   /** Alle Hearing-Antworten über alle Versuche. */
@@ -294,16 +306,16 @@ export function buildReport(
       .map((stage) => {
         const scan = scanAt.get(stage) ?? null;
         const prevSolved = stage > 1 ? (solvedAt.get(stage - 1) ?? null) : null;
-        // Wegzeit nur, wenn beide Marken vorhanden und plausibel sind.
-        let travelMin: number | null = null;
+        // Zwischenzeit nur, wenn beide Marken vorhanden und plausibel sind.
+        let betweenMin: number | null = null;
         if (scan !== null && prevSolved !== null && scan > prevSolved) {
           const min = toMin(scan - prevSolved);
-          if (min <= 240) travelMin = min;
+          if (min <= 240) betweenMin = min;
         }
         return {
           stage,
           minutes: Math.max(1, Math.round((durations.get(stage) ?? 0) / 60)),
-          travelMin,
+          betweenMin,
           hintLevel: (hintMap.get(stage)?.maxLevel ?? 0) as 0 | 1 | 2 | 3,
           solvedAt: new Date(solvedAt.get(stage)!).toISOString(),
         };
@@ -339,6 +351,13 @@ export function buildReport(
     const solvedStages = stages.map((s) => s.stage).filter((s) => s >= 1 && s <= 5);
     const highestSolved = solvedStages.length > 0 ? Math.max(...solvedStages) : 0;
     const lastSolvedMs = solvedStages.length > 0 ? solvedAt.get(highestSolved)! : null;
+
+    // Aktueller Abschnitt: ohne Scan der aktuellen Etappe ist das Team
+    // unterwegs (Posten noch nicht gefunden), mit Scan sitzt es am Rätsel.
+    const currentStage = Math.min(6, highestSolved + 1);
+    const currentScan = scanAt.get(currentStage) ?? null;
+    const phase: "travel" | "puzzle" = currentScan !== null ? "puzzle" : "travel";
+    const phaseSinceMs = currentScan ?? lastSolvedMs;
 
     const exportEvents: ReportEvent[] = raw
       .slice()
@@ -381,8 +400,11 @@ export function buildReport(
       hintsByStage: [...hintMap.entries()]
         .map(([stage, v]) => ({ stage, maxLevel: v.maxLevel, count: v.count }))
         .sort((a, b) => a.stage - b.stage),
-      currentStage: Math.min(6, highestSolved + 1),
+      currentStage,
       lastSolvedAt: lastSolvedMs === null ? null : new Date(lastSolvedMs).toISOString(),
+      phase,
+      phaseSince: phaseSinceMs === null ? null : new Date(phaseSinceMs).toISOString(),
+      currentScanAt: currentScan === null ? null : new Date(currentScan).toISOString(),
       lastEventAt: lastEvent,
       hearingAttempts,
       events: exportEvents,
