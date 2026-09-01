@@ -136,12 +136,16 @@ export function GlobalTimer() {
   const [now, setNow] = useState(() => Date.now());
   const [popup, setPopup] = useState<MajaBeat | null>(null);
   const [bonusMin, setBonusMin] = useState<number | null>(null);
+  const [budget, setBudget] = useState(TIMER_DURATION_MIN);
   const popupTimer = useRef<number | null>(null);
+
+  const beats = useMemo(() => buildBeats(budget), [budget]);
 
   useEffect(() => {
     const sync = () => {
       setStartTs(getStartTs());
       setEndTs(getEndTs());
+      setBudget(getBudgetMin());
     };
     sync();
     window.addEventListener("maya-progress", sync);
