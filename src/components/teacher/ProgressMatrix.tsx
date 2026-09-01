@@ -146,12 +146,13 @@ export function assessTeams(
 }
 
 /** Klartext-Status einer Gruppe – das Einzige, was in der Liste steht. */
-function statusLabel(s: TeamStatus): string {
+function statusLabel(s: TeamStatus, roundOver = false): string {
   if (s.finished) {
     return s.team.totalMin === null ? "Fertig" : `Fertig · ${s.team.totalMin} min`;
   }
   const min = s.minutesInPhase;
-  const seit = min === null ? "" : ` · seit ${min} min`;
+  const suffix = roundOver ? " (bei Rundenende)" : "";
+  const seit = min === null ? "" : ` · seit ${min} min${suffix}`;
   if (s.currentStage === 6) return `Am Hearing${seit}`;
   if (s.phase === "puzzle") return `Am Rätsel ${COL_LABEL[s.currentStage]}${seit}`;
   if (s.currentStage === 1) return `Unterwegs von der Schule zu Posten 1${seit}`;
