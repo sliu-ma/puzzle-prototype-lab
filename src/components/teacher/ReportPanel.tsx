@@ -1186,6 +1186,20 @@ export function ReportPanel({
         </span>
       </label>
 
+      <div className="mt-4 flex items-center gap-1.5">
+        <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+          Daten exportieren
+        </p>
+        <InfoHint label="Daten exportieren">
+          <span className="font-semibold">Übersicht pro Team:</span> eine Zeile
+          je Gruppe mit Punkten, Etappenzeiten, Hinweisstufen, Hearing und
+          Abzeichen.
+          <br />
+          <span className="font-semibold">Rohdaten pro Ereignis:</span> eine
+          Zeile je Ereignis mit Sekunde seit Rundenstart – das Langformat für
+          Pivot-Tabellen, SPSS oder R.
+        </InfoHint>
+      </div>
       <div className="mt-2 grid gap-2 sm:grid-cols-2">
         <button
           type="button"
@@ -1206,10 +1220,6 @@ export function ReportPanel({
           Rohdaten pro Ereignis (CSV)
         </button>
       </div>
-      <p className="mt-1.5 text-[10px] leading-relaxed text-muted-foreground">
-        Die Rohdaten enthalten eine Zeile pro Ereignis mit Sekunde seit Rundenstart – das Langformat
-        für Pivot-Tabellen, SPSS oder R.
-      </p>
     </div>
   );
 }
