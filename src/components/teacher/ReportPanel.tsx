@@ -1112,9 +1112,6 @@ export function ReportPanel({
           />
         ))}
       </ul>
-      <p className="mt-1.5 text-[10px] text-muted-foreground">
-        Tippe auf eine Gruppe für Zeiten pro Etappe, Hearing und Abzeichen.
-      </p>
 
       <TeamReportDialog
         team={teams.find((t) => t.teamId === openTeam) ?? null}
