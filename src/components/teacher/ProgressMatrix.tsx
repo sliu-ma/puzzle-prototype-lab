@@ -341,12 +341,13 @@ export function ProgressMatrix({
           <div
             key={s.team.teamId}
             className={cn(
-              "flex items-center gap-1 rounded-sm border px-1.5 py-1.5",
+              "rounded-sm border px-1.5 py-1.5",
               s.severity === "alarm"
                 ? "border-stamp/60 bg-stamp/5"
                 : "border-border bg-card/70",
             )}
           >
+            <div className="flex items-center gap-1">
             <span className="min-w-0 flex-1 truncate font-serif text-sm font-semibold">
               {s.finished && <Flag className="mr-1 inline h-3 w-3 text-stamp" />}
               {s.team.name}
