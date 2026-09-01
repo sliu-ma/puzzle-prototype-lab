@@ -65,7 +65,11 @@ export function LiveBoard({
       <div className="flex items-center justify-between gap-2 rounded-sm border border-border bg-card p-3">
         <div>
           <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
-            {remainingMs === null ? "Runde noch nicht gestartet" : "Restzeit"}
+            {remainingMs === null
+              ? "Runde noch nicht gestartet"
+              : roundOver
+                ? "Runde beendet"
+                : "Restzeit"}
           </p>
           <p
             className={cn(
@@ -77,7 +81,8 @@ export function LiveBoard({
           </p>
           {elapsedMs !== null && (
             <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
-              läuft seit {Math.floor(elapsedMs / 60_000)} min von {budgetMin}
+              {roundOver ? "Dauer" : "läuft seit"} {Math.floor(elapsedMs / 60_000)} min von{" "}
+              {budgetMin}
             </p>
           )}
         </div>
@@ -101,7 +106,12 @@ export function LiveBoard({
         </div>
       </div>
 
-      <ProgressMatrix teams={teams} startedAt={startedAt} now={now} />
+      <ProgressMatrix
+        teams={teams}
+        startedAt={startedAt}
+        now={effectiveNow}
+        roundOver={roundOver}
+      />
     </div>
   );
 }
