@@ -3,7 +3,15 @@ import { z } from "zod";
 
 const eventSchema = z.object({
   id: z.string().min(1).max(120),
-  type: z.enum(["stage_solved", "badge_earned", "hint_revealed", "hearing_answer"]),
+  type: z.enum([
+    "stage_solved",
+    "badge_earned",
+    "hint_revealed",
+    "hearing_answer",
+    // Reine Erhebungsereignisse für die Auswertung (ohne Punkte-Einfluss).
+    "stage_scanned",
+    "hearing_attempt",
+  ]),
   at: z.number().int().nonnegative().optional(),
   stage: z.number().int().min(0).max(10).optional(),
   durationSec: z.number().int().min(0).max(86_400).optional(),
@@ -13,6 +21,7 @@ const eventSchema = z.object({
   correct: z.boolean().optional(),
   attempt: z.number().int().min(1).max(20).optional(),
 });
+
 
 /** Prüft, ob ein eingegebener Code zu einer offenen Klassen-Runde gehört. */
 export const lookupRound = createServerFn({ method: "POST" })

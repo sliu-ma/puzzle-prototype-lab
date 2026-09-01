@@ -109,6 +109,20 @@ export function recordHintRevealed(stage: number, level: 1 | 2 | 3) {
 }
 
 /**
+ * QR-Scan einer Etappe. Reines Erhebungsereignis: es verändert die Punkte
+ * nicht, macht aber die Wegzeit zwischen zwei Posten auswertbar
+ * (Wegzeit = Scan der Etappe n − Lösung der Etappe n−1).
+ */
+export function recordStageScanned(stage: number) {
+  addScoreEvent({
+    id: `stage_scanned:${stage}`,
+    type: "stage_scanned",
+    at: Date.now(),
+    stage,
+  });
+}
+
+/**
  * Verbucht eine Hearing-Antwort. Wird erst nach bestandenem Hearing
  * aufgerufen; `attempt` hält die Ereignis-IDs pro Versuch eindeutig.
  */
@@ -126,3 +140,24 @@ export function recordHearingAnswer(
     attempt,
   });
 }
+
+/**
+ * Protokolliert jede einzelne Hearing-Antwort sofort – auch in einem
+ * Versuch, der später scheitert. Reines Erhebungsereignis ohne Punkte,
+ * damit für die Auswertung sichtbar wird, welche Frage Mühe macht.
+ */
+export function recordHearingAttempt(
+  question: number,
+  correct: boolean,
+  attempt: number,
+) {
+  addScoreEvent({
+    id: `hearing_attempt:${attempt}:${question}`,
+    type: "hearing_attempt",
+    at: Date.now(),
+    question,
+    correct,
+    attempt,
+  });
+}
+

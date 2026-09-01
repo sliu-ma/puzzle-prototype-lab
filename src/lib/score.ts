@@ -13,7 +13,27 @@ export type ScoreEvent =
       correct: boolean;
       /** Versuchsnummer des bestandenen Hearings (1 = erster Anlauf). */
       attempt?: number;
+    }
+  // --- Reine Erhebungsereignisse: ohne Einfluss auf die Punkte ------------
+  /**
+   * QR-Scan einer Etappe. Markiert die Ankunft am Posten und macht damit die
+   * Wegzeit zwischen zwei Etappen auswertbar.
+   */
+  | { id: string; type: "stage_scanned"; at: number; stage: number }
+  /**
+   * Einzelne Hearing-Antwort, protokolliert bei JEDEM Versuch – auch bei
+   * einem gescheiterten. Für die Punkte zählt weiterhin nur
+   * `hearing_answer` des bestandenen Versuchs.
+   */
+  | {
+      id: string;
+      type: "hearing_attempt";
+      at: number;
+      question: number;
+      correct: boolean;
+      attempt: number;
     };
+
 
 /** Zeitbudget, auf das der Zeitfaktor bezogen wird (Minuten). */
 export const SCORE_BUDGET_MIN = 90;
