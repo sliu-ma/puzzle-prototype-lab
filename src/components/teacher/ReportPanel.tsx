@@ -145,6 +145,129 @@ function Metric({
   );
 }
 
+/** Kurzlabels der zehn Hearing-Fragen für die Diagramm-Achse. */
+const QUESTION_LABEL: Record<number, string> = {
+  0: "Mobilität · Kosten pro km",
+  1: "Mobilität · kurze Autofahrten",
+  2: "Konsum · Labels zuordnen",
+  3: "Konsum · Saisongemüse",
+  4: "Biodiversität · Ursachen",
+  5: "Biodiversität · Rote Liste",
+  6: "Wohnen · 1 °C weniger",
+  7: "Wohnen · Waschmaschine",
+  8: "Energie · erneuerbar?",
+  9: "Energie · Anteil im Mix",
+};
+
+/** Legenden-Punkt für die Diagramme. */
+function LegendDot({ className, children }: { className: string; children: string }) {
+  return (
+    <span className="font-mono-typed flex items-center gap-1 text-[10px] text-muted-foreground">
+      <span aria-hidden className={cn("h-2 w-2 rounded-full", className)} />
+      {children}
+    </span>
+  );
+}
+
+/**
+ * Horizontaler Balken mit Beschriftung links und Wert rechts. Optional ein
+ * zweites Segment (gestapelt) und eine Spannweite als dünne Linie dahinter.
+ */
+function BarRow({
+  label,
+  sub,
+  primary,
+  secondary = 0,
+  max,
+  value,
+  spread,
+  highlight,
+}: {
+  label: React.ReactNode;
+  sub?: React.ReactNode;
+  primary: number;
+  secondary?: number;
+  max: number;
+  value: string;
+  spread?: { min: number; max: number } | null;
+  highlight?: boolean;
+}) {
+  const scale = (v: number) => `${Math.min(100, (v / Math.max(1, max)) * 100)}%`;
+  return (
+    <li className="py-1.5">
+      <div className="flex items-baseline justify-between gap-2">
+        <span className="min-w-0 truncate font-serif text-[13px] font-semibold">
+          {label}
+        </span>
+        <span
+          className={cn(
+            "font-mono-typed shrink-0 text-[11px] font-bold tabular-nums",
+            highlight && "text-stamp",
+          )}
+        >
+          {value}
+        </span>
+      </div>
+      <div className="relative mt-1 h-3 w-full rounded-full bg-muted">
+        {spread && spread.max > spread.min && (
+          <span
+            aria-hidden
+            className="absolute top-1/2 h-px -translate-y-1/2 bg-foreground/25"
+            style={{
+              left: scale(spread.min),
+              width: `calc(${scale(spread.max)} - ${scale(spread.min)})`,
+            }}
+          />
+        )}
+        <div aria-hidden className="absolute inset-0 flex overflow-hidden rounded-full">
+          <span
+            className={cn("h-full", highlight ? "bg-stamp" : "bg-primary")}
+            style={{ width: scale(primary) }}
+          />
+          {secondary > 0 && (
+            <span
+              className="h-full bg-primary/30"
+              style={{ width: scale(secondary) }}
+            />
+          )}
+        </div>
+      </div>
+      {sub && <p className="mt-1 text-[10px] text-muted-foreground">{sub}</p>}
+    </li>
+  );
+}
+
+/** Abzeichen als Bild-Kachel, nicht erreichte ausgegraut. */
+function BadgeTile({
+  title,
+  imageUrl,
+  earned,
+  caption,
+}: {
+  title: string;
+  imageUrl: string;
+  earned: boolean;
+  caption?: string;
+}) {
+  return (
+    <div
+      className={cn(
+        "flex flex-col items-center gap-1 rounded-sm border border-border bg-card p-2 text-center",
+        !earned && "opacity-40 grayscale",
+      )}
+    >
+      <img src={imageUrl} alt="" aria-hidden className="h-12 w-12" />
+      <p className="font-serif text-[10px] font-semibold leading-tight">{title}</p>
+      {caption && (
+        <p className="font-mono-typed text-[9px] tabular-nums text-muted-foreground">
+          {caption}
+        </p>
+      )}
+    </div>
+  );
+}
+
+
 function csvDownload(name: string, rows: (string | number)[][]) {
   const csv = rows
     .map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(";"))
