@@ -8,7 +8,7 @@
 //   6 = Finale (Hearing)
 //   7 = Finale abgeschlossen
 
-import { recordStageSolved } from "./score-events";
+import { recordStageSolved, recordStageScanned } from "./score-events";
 
 export const START_CODE = "OEKOLOGIE";
 
@@ -214,11 +214,15 @@ export function recordStageScan(n: number) {
   try {
     if (!localStorage.getItem(stageScanKey(n))) {
       localStorage.setItem(stageScanKey(n), String(Date.now()));
+      // Für die Klassenauswertung mitmelden: erst damit ist die Wegzeit
+      // zwischen den Posten berechenbar. Idempotent über die Ereignis-ID.
+      if (n >= 1 && n <= 5) recordStageScanned(n);
     }
   } catch {
     /* ignore */
   }
 }
+
 
 export function getStageScanTs(n: number): number | null {
   try {
