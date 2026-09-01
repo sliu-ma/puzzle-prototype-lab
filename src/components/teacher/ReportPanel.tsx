@@ -845,7 +845,7 @@ export function ReportPanel({
   const [anon, setAnon] = useState(true);
   const [openTeam, setOpenTeam] = useState<string | null>(null);
   const [openStage, setOpenStage] = useState<number | null>(null);
-  const [openQuestion, setOpenQuestion] = useState<number | null>(null);
+  
 
   const teams = [...(report?.teams ?? [])].sort((a, b) => a.name.localeCompare(b.name, "de-CH"));
 
