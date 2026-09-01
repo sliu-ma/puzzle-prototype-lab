@@ -1,58 +1,100 @@
-# Lehrerdashboard verbessern
+# Lehrerdashboard: Überblick, Support-Erkennung, Forschungsdaten
 
-Geprüft: `src/routes/lehrer.index.tsx`, `src/routes/lehrer.$code.tsx`, `src/components/teacher/LobbyPanel.tsx`, `LiveBoard.tsx`, `ReportPanel.tsx` sowie die Report-Datenstruktur in `src/lib/rounds.server.ts`.
+Drei Ziele: (A) grafischer Überblick, wo die Gruppen stehen, (B) erkennen, wer Mühe hat, (C) verwertbare Daten für die Masterarbeit.
 
-Das Dashboard ist funktional vollständig (Vorbereiten → Lobby → Live → Auswertung). Die folgenden Punkte sind konkrete, im Code belegte Schwachstellen — geordnet nach Nutzen für die Lehrperson im Unterricht.
+## Was heute tatsächlich in der Datenbank landet
 
-## 1. Live-Ansicht zeigt nicht, wer feststeckt (grösster Nutzen)
+Geprüft in `score_events` (zwei bestehende Runden, `X8FDT` und `ZVQLB`):
 
-**Ist:** `LiveBoard.tsx:40-66` zeigt pro Team nur Rang, Name, `stagesSolved/5`, Anzahl Hinweise und Punkte. Eine Lehrperson sieht damit *nicht*, welches Team seit 20 Minuten an derselben Etappe hängt — genau die Information, die sie zum gezielten Helfen braucht.
+| Ereignis | Nutzlast | vorhanden |
+|---|---|---|
+| `stage_solved` | `stage`, `durationSec`, `at` | ja |
+| `hint_revealed` | `stage`, `level` (1–3), `at` | ja |
+| `badge_earned` | `badgeId`, `at` | ja |
+| `hearing_answer` | `question`, `correct`, `at` | ja, aber nur bei bestandenem Hearing |
 
-**Neu:** Pro Team eine Spalte „seit X min an E3". Die Daten liegen bereits vor: `ReportTeam.stageMinutes` (abgeschlossene Etappen) plus `joinedAt`/`startedAt` — die Zeit in der aktuellen Etappe ist die verstrichene Rundenzeit minus der Summe der abgeschlossenen Etappenzeiten. Teams über einem Schwellwert (z. B. 15 min in derselben Etappe) werden farblich markiert (`stamp`-Rahmen + Warnsymbol), damit sie ins Auge springen.
+Jedes Ereignis hat zusätzlich `created_at` auf dem Server.
 
-## 2. Restzeit in der Live-Ansicht springt nur alle 8 Sekunden
+**Drei Lücken, die die Masterarbeit direkt betreffen:**
 
-**Ist:** `LiveBoard.tsx:19-23` berechnet `elapsedMin`/`remainingMin` aus `Date.now()`, aber es gibt keinen eigenen Sekunden-Ticker — die Anzeige aktualisiert sich nur, wenn der 8-Sekunden-Poll ein Re-Render auslöst. Zudem ist die Angabe minutengenau und klein gesetzt.
+1. **Wegzeit fehlt komplett.** `durationSec` misst nur die reine Rätselzeit ab dem QR-Scan (`completeStage` in `src/lib/progress.ts` nutzt `getStageScanTs`). Der Scan-Zeitstempel selbst wird ausschliesslich lokal gespeichert (`recordStageScan`) und **nie an den Server geschickt**. Damit lässt sich „viel zu viel Wegzeit" heute nicht belegen.
+2. **Fehlversuche im Hearing gehen verloren.** `src/routes/finale.tsx:425-431` verbucht die Antworten erst, wenn das Hearing bestanden ist. Die Antworten eines gescheiterten Versuchs erreichen den Server nie — genau die interessanten Fehldaten fehlen.
+3. **Zeitstempel werden nicht ausgeliefert.** `buildReport` (`src/lib/rounds.server.ts:176-255`) reduziert die Ereignisse auf Dauern und Zählwerte. Wann eine Etappe gelöst wurde, kommt im Frontend nicht an — deshalb ist „hängt seit 20 Minuten" aktuell nicht berechenbar.
 
-**Neu:** Eigener 1-Sekunden-Ticker und eine gut lesbare `MM:SS`-Restzeit oben in der Live-Ansicht, damit die Lehrperson den Stand auf einen Blick am Beamer/Handy sieht.
+## A. Grafischer Überblick (Live)
 
-## 3. Lade-Spinner dreht permanent
+**Fortschritts-Matrix** als neue Hauptansicht im Live-Schritt: Zeilen = Teams, Spalten = E1–E5 + Hearing. Jede Zelle farbcodiert:
 
-**Ist:** `useRoundReport` (`LobbyPanel.tsx:38-50`) setzt bei *jedem* Poll `setLoading(true)`. Da Lobby alle 4 s, Live alle 8 s und Auswertung alle 20 s pollen, rotiert das `RefreshCw`-Icon quasi dauernd und signalisiert fälschlich „lädt gerade".
+```text
+Team          E1    E2    E3    E4    E5    HEARING
+Adler        ████  ████  ████  ▓▓▓▓  ░░░░  ░░░░
+Füchse       ████  ████  ▓▓▓▓  ░░░░  ░░░░  ░░░░
+Murmeltiere  ████  ▓▓▓▓! ░░░░  ░░░░  ░░░░  ░░░░
+```
 
-**Neu:** `loading` nur beim allerersten Laden setzen; für Folge-Polls stattdessen einen dezenten „zuletzt aktualisiert HH:MM:SS"-Zeitstempel anzeigen. Zusätzlich einen manuellen Aktualisieren-Button (die `reload`-Funktion existiert bereits, wird in `LiveBoard`/`ReportPanel` aber nicht genutzt).
+- `████` gelöst (mit Minutenzahl in der Zelle)
+- `▓▓▓▓` aktuell dran, `!` = Warnsignal (siehe B)
+- `░░░░` noch nicht erreicht
 
-## 4. Jede Aktion lädt alle Runden
+Darunter ein **Klassen-Balken** „wo steht die Klasse": wie viele Teams sind bei welcher Etappe. Damit siehst du auf einen Blick, ob die Klasse auseinanderläuft.
 
-**Ist:** `lehrer.$code.tsx:83-96`: `load()` ruft `teacherListRounds` (alle Runden der Lehrperson) und filtert clientseitig auf den einen Code. `run()` (Zeile 130-141) ruft `load()` nach *jeder* Aktion — Titel speichern, +5 Minuten, Status ändern. Mit vielen Runden wird das unnötig langsam und überträgt fremde Rundendaten.
+**Restzeit** gross und sekundengenau oben (heute nur minutengenau und sie aktualisiert sich nur alle 8 Sekunden, weil `LiveBoard.tsx:19-23` keinen eigenen Ticker hat).
 
-**Neu:** Der bereits vorhandene Report-Aufruf `teacherRoundReport` liefert `code`, `title`, `status`, `budgetMin`, `startedAt` für genau diese Runde. Die Rundenseite kann ihre Kopfdaten daraus beziehen, statt die ganze Liste zu holen. `teamCount` ergibt sich aus `teams.length`.
+## B. Support-Erkennung: wer hat Mühe?
 
-## 5. Zeit lässt sich nur nachgeben, nicht kürzen
+Drei Signale pro Team, kombiniert zu einer Ampel:
 
-**Ist:** `lehrer.$code.tsx:412-432` bietet nur `+5` und `+10`. Wenn die Lehrperson sich vertippt hat oder die Lektion früher endet, gibt es keinen Weg zurück.
+1. **Verweildauer in der aktuellen Etappe** = jetzt minus Zeitstempel der letzten gelösten Etappe. Ab 15 Minuten gelb, ab 25 Minuten rot.
+2. **Hinweis-Stufe**: Stufe 3 ist die Auflösung. Wer sie zieht, kam nicht weiter — starkes Signal, heute nur als Gesamtzahl sichtbar.
+3. **Rückstand zur Klasse**: mehr als eine Etappe hinter dem Median.
 
-**Neu:** `−5` ergänzen (mit Untergrenze: nicht unter die bereits verstrichene Zeit + 5 min, damit keine Runde rückwirkend beendet wird). Hinweis ergänzen, dass Kürzen nur nach oben korrigierte Zeit zurücknimmt.
+Rote Teams stehen oben in einer eigenen Liste „Braucht evtl. Hilfe" mit Etappe, Dauer und gezogenen Hinweisen — damit du gezielt hingehen kannst statt zu raten.
 
-## 6. Rundenliste wird mit der Zeit unübersichtlich
+## C. Datenauswertung für die Masterarbeit
 
-**Ist:** `lehrer.index.tsx:219-249` listet alle Runden ungefiltert in Ladereihenfolge. Nach einem Schuljahr sind das dutzende Einträge, abgeschlossene und aktive gemischt.
+### C1. Wegzeit messbar machen (neues Ereignis)
 
-**Neu:** Gruppierung nach Status (aktiv/Lobby zuoberst, abgeschlossene eingeklappt darunter) und Anzeige des Erstelldatums (`created_at` ist bereits im `RoundItem`, wird aber nirgends dargestellt).
+Neues Ereignis `stage_scanned` mit `stage` und `at`, ausgelöst beim QR-Scan. Dann gilt pro Etappe:
 
-## 7. Kleinere Korrekturen
+- **Rätselzeit** = `durationSec` (wie heute)
+- **Wegzeit** = `stage_scanned(n)` − `stage_solved(n−1)`
 
-- **Schritt folgt dem Status nicht nach:** `lehrer.$code.tsx:108-113` setzt den Schritt nur einmal (`step !== null`-Guard). Wechselt der Status später (z. B. Runde abgeschlossen), bleibt die Ansicht stehen. Vorschlag: beim Statuswechsel dezent auf den passenden Schritt hinweisen statt hart umzuschalten.
-- **Abzeichen fehlen live:** `ReportTeam.badges` wird in der Live-Ansicht nicht genutzt, obwohl es motivierend wäre, sie am Beamer zu zeigen.
+Damit ist „viel zu viel Wegzeit" mit Zahlen belegbar, getrennt pro Streckenabschnitt.
+
+### C2. Hearing-Fehlversuche erfassen
+
+Neues Ereignis `hearing_attempt` (`question`, `correct`, `attempt`), das bei **jedem** Versuch geschrieben wird. Die Punktelogik bleibt unverändert, weil sie weiterhin nur `hearing_answer` auswertet. So siehst du pro Frage, wie oft falsch geantwortet wurde — die Grundlage für „Frage 7 war zu schwer".
+
+### C3. Auswertungsansicht erweitern
+
+Heute zeigt `ReportPanel.tsx` nur Mittelwerte. Ergänzt wird pro Etappe:
+
+- **Median, Minimum, Maximum** neben dem Mittelwert (bei kleinen Klassen ist der Median belastbarer)
+- **Rätselzeit vs. Wegzeit** getrennt
+- **Hinweisquote**: Anteil der Teams, die auf dieser Etappe Stufe 1 / 2 / 3 gezogen haben
+- **Schwierigkeits-Einordnung** in Klartext: „E3 zu schwer — 80 % brauchten die Auflösung", „E4 zu leicht — Ø 4 min, keine Hinweise"
+
+Pro Hearing-Frage eine Zeile mit Fehlerquote über alle Teams und Versuche.
+
+### C4. Zwei Exporte statt einem
+
+1. **Team-CSV** (wie heute, erweitert um Wegzeiten, Median-Vergleich, Hinweisstufen).
+2. **Ereignis-CSV** neu: eine Zeile pro Ereignis mit `team`, `typ`, `etappe`, `stufe`, `richtig`, `zeitstempel`, `sekunden`. Das ist das Rohdatenformat für SPSS, R oder Excel-Pivot — ohne dieses Long-Format ist keine seriöse statistische Auswertung möglich.
+
+Beide Exporte mit Option **„ohne Namen"**: Teilnehmendennamen sind Personendaten. Statt Klarnamen dann `Team-01`, `Team-02` — für eine Masterarbeit in der Regel Voraussetzung.
 
 ## Technische Details
 
-- `src/components/teacher/LiveBoard.tsx`: Sekunden-Ticker via `useState`/`useInterval`, Berechnung „Minuten in aktueller Etappe" aus `stageMinutes` + `startedAt`, Hervorhebung ab Schwellwert, optional Badge-Anzeige.
-- `src/components/teacher/LobbyPanel.tsx`: `useRoundReport` um `firstLoad`-Flag und `lastUpdated`-Zeitstempel erweitern; `reload` in Live/Report durchreichen.
-- `src/routes/lehrer.$code.tsx`: Kopfdaten aus `teacherRoundReport` statt `teacherListRounds`; `−5`-Button mit Untergrenze; Statuswechsel-Hinweis.
-- `src/routes/lehrer.index.tsx`: Gruppierung nach Status, `created_at` anzeigen.
-- Keine Änderungen an Datenbank, RPC-Funktionen, Punktelogik oder am Spielablauf der Schülerinnen und Schüler.
+**Migration (nötig):** `round_push_events` hat eine feste Typenliste (`'stage_solved','badge_earned','hint_revealed','hearing_answer'`). Neue Typen würden stillschweigend verworfen. Die Funktion wird um `'stage_scanned'` und `'hearing_attempt'` erweitert. Keine Schemaänderung an Tabellen, keine bestehenden Daten betroffen.
 
-## Umfang
+**Server:** `src/lib/rounds.server.ts` — `buildReport` liefert pro Etappe zusätzlich `solvedAt`, `scannedAt`, `travelMin` sowie `hintLevels`, `lastEventAt` und die Rohereignisse für den Long-Export. `computeScore` bleibt unverändert (ignoriert die neuen Typen).
 
-Die Punkte sind unabhängig voneinander. 1–3 bringen im Unterricht am meisten und sind zusammen der kleinste sinnvolle Schritt; 4–7 sind Aufräumarbeiten.
+**Client-Ereignisse:** `src/lib/score-events.ts` erhält `recordStageScanned` und `recordHearingAttempt`; Aufrufe in `src/lib/progress.ts` (`recordStageScan`) und `src/routes/finale.tsx`.
+
+**Frontend:** neue Komponente `src/components/teacher/ProgressMatrix.tsx` (Matrix + Klassenbalken + Ampel); `LiveBoard.tsx` nutzt sie, plus Sekundenticker; `ReportPanel.tsx` um Median/Wegzeit/Hinweisquote/Frageanalyse und zweiten Export erweitert; `useRoundReport` setzt `loading` nur beim ersten Laden (dreht heute dauernd).
+
+**Unverändert:** Punkteberechnung, Badges, Timer, Spielablauf der Schülerinnen und Schüler.
+
+## Wichtig zur Datenlage
+
+Die neuen Ereignisse werden erst ab der nächsten gespielten Runde erhoben. Die zwei bestehenden Runden liefern Wegzeit und Hearing-Fehlversuche rückwirkend nicht. Wenn du für die Masterarbeit Daten erheben willst, sollte das vor dem ersten Klassendurchgang stehen.
