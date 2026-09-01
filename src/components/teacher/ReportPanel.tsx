@@ -21,6 +21,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
+import { BADGES } from "@/lib/badges";
 
 const STAGES = [1, 2, 3, 4, 5];
 
