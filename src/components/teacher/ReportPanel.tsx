@@ -4,6 +4,7 @@ import {
   ChevronDown,
   ChevronRight,
   Download,
+  Info,
   RefreshCw,
   ShieldCheck,
 } from "lucide-react";
@@ -11,8 +12,36 @@ import { useRoundReport, fmtTime, type ReportTeam } from "./LobbyPanel";
 import { COL_NAME } from "./ProgressMatrix";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { BADGES } from "@/lib/badges";
+
+/**
+ * Kleines „i" – tippen öffnet eine kurze Erklärung als Popover. Ersetzt die
+ * fixen Erklärtexte unter den Sektionen, damit das Dashboard aufgeräumt bleibt.
+ */
+function InfoHint({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <button
+          type="button"
+          aria-label={`Erklärung: ${label}`}
+          className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-border bg-card text-muted-foreground transition-colors hover:text-foreground"
+        >
+          <Info className="h-3.5 w-3.5" />
+          <span className="sr-only">{label}</span>
+        </button>
+      </PopoverTrigger>
+      <PopoverContent align="start" sideOffset={6} className="w-72 text-xs leading-relaxed">
+        <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+          {label}
+        </p>
+        <div className="mt-1 text-foreground">{children}</div>
+      </PopoverContent>
+    </Popover>
+  );
+}
 
 const STAGES = [1, 2, 3, 4, 5];
 
@@ -389,7 +418,6 @@ function TeamReportDialog({
   const attempts = answers.length
     ? Math.max(...answers.flatMap((a) => a.tries.map((x) => x.attempt)))
     : 0;
-  const stillWrong = answers.filter((a) => !a.last).length;
 
   return (
     <Dialog open={t !== null} onOpenChange={(o) => !o && onClose()}>
@@ -428,9 +456,17 @@ function TeamReportDialog({
             </div>
 
             <div>
-              <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
-                Etappen
-              </p>
+              <div className="flex items-center gap-1.5">
+                <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+                  Etappen
+                </p>
+                <InfoHint label="Etappen">
+                  Pro Etappe: Wegzeit (′) und reine Rätselzeit (′).
+                  Rechte Spalte = Abweichung der Rätselzeit vom Klassenmedian
+                  (+ = langsamer). Letzte Spalte = höchste genutzte Hinweisstufe
+                  (H1–H3, H3 = Auflösung).
+                </InfoHint>
+              </div>
               <ul className="mt-1 divide-y divide-border rounded-sm border border-border">
                 {STAGES.map((stage) => {
                   const s = t.stages.find((x) => x.stage === stage);
@@ -477,16 +513,19 @@ function TeamReportDialog({
                   );
                 })}
               </ul>
-              <p className="mt-1 text-[10px] text-muted-foreground">
-                Rechte Spalte: Abweichung der Rätselzeit vom Klassenmedian.
-              </p>
             </div>
 
             <div className="rounded-sm border border-border p-2.5">
               <div className="flex items-baseline justify-between gap-2">
-                <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
-                  Hearing
-                </p>
+                <div className="flex items-center gap-1.5">
+                  <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+                    Hearing
+                  </p>
+                  <InfoHint label="Hearing">
+                    V = Versuch. ✓ richtig, ✗ falsch. Gewertet wird der letzte
+                    Versuch je Frage. Am Ende sollten alle Fragen richtig sein.
+                  </InfoHint>
+                </div>
                 <p className="font-mono-typed text-[11px] tabular-nums">
                   {t.hearingCorrect}✓ / {t.hearingWrong}✗
                   {attempts > 0 && ` · ${attempts} Versuch${attempts === 1 ? "" : "e"}`}
@@ -518,20 +557,19 @@ function TeamReportDialog({
                       </li>
                     ))}
                   </ul>
-                  <p className="mt-1 text-[10px] text-muted-foreground">
-                    V = Versuch.{" "}
-                    {stillWrong === 0
-                      ? "Am Ende alle Fragen richtig."
-                      : `${stillWrong} Frage${stillWrong === 1 ? "" : "n"} blieb${stillWrong === 1 ? "" : "en"} falsch.`}
-                  </p>
                 </>
               )}
             </div>
 
             <div>
-              <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
-                Abzeichen ({t.badges.length} von {BADGES.length})
-              </p>
+              <div className="flex items-center gap-1.5">
+                <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+                  Abzeichen ({t.badges.length} von {BADGES.length})
+                </p>
+                <InfoHint label="Abzeichen">
+                  Ausgegraute Abzeichen wurden von dieser Gruppe nicht erreicht.
+                </InfoHint>
+              </div>
               <div className="mt-1.5 grid grid-cols-4 gap-1.5">
                 {BADGES.map((b) => (
                   <BadgeTile
@@ -542,7 +580,6 @@ function TeamReportDialog({
                   />
                 ))}
               </div>
-              <p className="mt-1 text-[10px] text-muted-foreground">Ausgegraut = nicht erreicht.</p>
             </div>
 
             <p className="font-mono-typed text-[10px] text-muted-foreground">
@@ -557,7 +594,17 @@ function TeamReportDialog({
 }
 
 /** Aufklappbarer Abschnitt – Details stören die Übersicht nicht. */
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+function Section({
+  title,
+  hint,
+  hintLabel,
+  children,
+}: {
+  title: string;
+  hint?: React.ReactNode;
+  hintLabel?: string;
+  children: React.ReactNode;
+}) {
   return (
     <Collapsible className="mt-5">
       <CollapsibleTrigger className="group flex min-h-12 w-full items-center justify-between gap-2 rounded-sm border border-border bg-card px-3 py-2 text-left">
@@ -567,7 +614,14 @@ function Section({ title, children }: { title: string; children: React.ReactNode
           className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-data-[state=open]:rotate-180"
         />
       </CollapsibleTrigger>
-      <CollapsibleContent>{children}</CollapsibleContent>
+      <CollapsibleContent>
+        {hint && (
+          <div className="flex justify-end pt-1.5">
+            <InfoHint label={hintLabel ?? title}>{hint}</InfoHint>
+          </div>
+        )}
+        {children}
+      </CollapsibleContent>
     </Collapsible>
   );
 }
@@ -738,6 +792,16 @@ function HearingMatrix({
 
   return (
     <div className="mt-2">
+      <div className="mb-1 flex justify-end">
+        <InfoHint label="Hearing-Matrix">
+          ✓ richtig · ✗ falsch (gewertet = letzter Versuch) · – keine Antwort.
+          Hochgestellte Zahl = nötige Versuche. Spalten F1–F10:
+          {" "}
+          {Object.entries(QUESTION_LABEL)
+            .map(([k, v]) => `F${Number(k) + 1} ${v}`)
+            .join(" · ")}
+        </InfoHint>
+      </div>
       <div className="overflow-x-auto rounded-sm border border-border">
         <table className="w-full border-collapse text-[11px]">
           <thead>
@@ -818,16 +882,6 @@ function HearingMatrix({
           </tfoot>
         </table>
       </div>
-      <p className="mt-1 text-[10px] text-muted-foreground">
-        ✓ richtig · ✗ falsch (gewertet = letzter Versuch) · – keine Antwort.
-        Hochgestellte Zahl = nötige Versuche.{" "}
-        {(() => {
-          const short = QUESTION_LABEL;
-          return Object.entries(short)
-            .map(([k, v]) => `F${Number(k) + 1} ${v}`)
-            .join(" · ");
-        })()}
-      </p>
     </div>
   );
 }
@@ -1034,7 +1088,14 @@ export function ReportPanel({
         <Metric label="Hinweise" value={fmt(hints.med)} hint={`Median · Ø ${fmt(hints.avg)}`} />
       </div>
 
-      <h3 className="mt-5 font-serif text-lg font-bold">Pro Team</h3>
+      <h3 className="mt-5 flex items-center gap-1.5 font-serif text-lg font-bold">
+        Pro Team
+        <InfoHint label="Pro Team">
+          Tippe auf eine Gruppe für Zeiten pro Etappe, Hearing und Abzeichen.
+          Das Warn-Symbol zeigt Gruppen, die deutlich über dem Klassenmedian
+          liegen oder die Auflösung genutzt haben.
+        </InfoHint>
+      </h3>
       <ul className="mt-2 space-y-1.5">
         {teams.length === 0 && (
           <li className="rounded-sm border border-dashed border-border p-3 text-sm text-muted-foreground">
@@ -1051,9 +1112,6 @@ export function ReportPanel({
           />
         ))}
       </ul>
-      <p className="mt-1.5 text-[10px] text-muted-foreground">
-        Tippe auf eine Gruppe für Zeiten pro Etappe, Hearing und Abzeichen.
-      </p>
 
       <TeamReportDialog
         team={teams.find((t) => t.teamId === openTeam) ?? null}
@@ -1063,7 +1121,23 @@ export function ReportPanel({
         onClose={() => setOpenTeam(null)}
       />
 
-      <Section title="Etappen im Vergleich">
+      <Section
+        title="Etappen im Vergleich"
+        hintLabel="Etappen im Vergleich"
+        hint={
+          <>
+            Wert = Median der Rätselzeit. Tippe für Zeiten, Hinweise und alle
+            Gruppen.
+            {hardest && easiest && hardest.stage !== easiest.stage && (
+              <>
+                {" "}
+                Zäheste Etappe: E{hardest.stage} ({COL_NAME[hardest.stage]}) ·
+                schnellste: E{easiest.stage} ({COL_NAME[easiest.stage]}).
+              </>
+            )}
+          </>
+        }
+      >
         <ul className="mt-2 space-y-1.5">
           {analyses.map((a) => {
             const hard = a.stage === hardest?.stage && withData.length > 1;
@@ -1081,16 +1155,6 @@ export function ReportPanel({
             );
           })}
         </ul>
-        <p className="mt-1.5 text-[10px] text-muted-foreground">
-          Wert = Median der Rätselzeit. Tippe für Zeiten, Hinweise und alle Gruppen.
-          {hardest && easiest && hardest.stage !== easiest.stage && (
-            <>
-              {" "}
-              Zäheste Etappe: E{hardest.stage} ({COL_NAME[hardest.stage]}) · schnellste: E
-              {easiest.stage} ({COL_NAME[easiest.stage]}).
-            </>
-          )}
-        </p>
       </Section>
 
       <StageReportDialog
@@ -1122,6 +1186,20 @@ export function ReportPanel({
         </span>
       </label>
 
+      <div className="mt-4 flex items-center gap-1.5">
+        <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+          Daten exportieren
+        </p>
+        <InfoHint label="Daten exportieren">
+          <span className="font-semibold">Übersicht pro Team:</span> eine Zeile
+          je Gruppe mit Punkten, Etappenzeiten, Hinweisstufen, Hearing und
+          Abzeichen.
+          <br />
+          <span className="font-semibold">Rohdaten pro Ereignis:</span> eine
+          Zeile je Ereignis mit Sekunde seit Rundenstart – das Langformat für
+          Pivot-Tabellen, SPSS oder R.
+        </InfoHint>
+      </div>
       <div className="mt-2 grid gap-2 sm:grid-cols-2">
         <button
           type="button"
@@ -1142,10 +1220,6 @@ export function ReportPanel({
           Rohdaten pro Ereignis (CSV)
         </button>
       </div>
-      <p className="mt-1.5 text-[10px] leading-relaxed text-muted-foreground">
-        Die Rohdaten enthalten eine Zeile pro Ereignis mit Sekunde seit Rundenstart – das Langformat
-        für Pivot-Tabellen, SPSS oder R.
-      </p>
     </div>
   );
 }
