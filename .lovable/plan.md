@@ -1,55 +1,37 @@
-# Vorschläge zur Spielverbesserung
+# Zeitbudget anpassen (4 km Velo + 5 Etappen + Finale)
 
-Basierend auf Durchsicht aller Etappen, des Finals, der Punkte-/Badge-Logik, des Timers und der Styles. Konkrete Schwachstellen, geordnet nach Wirkung. Du kannst alle umsetzen oder eine Auswahl treffen.
+## Befund
 
-## 1. Etappe-3-Code «123» ist zu leicht zu erraten (höchste Priorität)
+Das Standard-Zeitbudget beträgt 90 Minuten (`src/lib/progress.ts:23`, `TIMER_DURATION_MIN = 90`). Für 9.-Klässler mit 4 km Velo-Weg zwischen den QR-Standorten ist das zu knapp:
 
-**Problem:** Das ganze Biodiversitäts-Rätsel (Tiere sortieren, bedrohte Arten identifizieren, Zahlen im Gedicht lesen) mündet darin, den Code `123` in das CodeLock einzutippen (`src/routes/etappe-3.tsx:50`, `EXPECTED_CODE = "123"`). Das ist die trivialste Zahlfolge überhaupt — Schülerinnen und Schüler können sie erraten, ohne das Rätsel zu lösen, und überspringen damit die gesamte Etappe.
+- 5 Etappen, Hinweise frei ab 3/6/9 Min → realistisch 8–12 Min pro Etappe = ~50 Min
+- Finale (10-Fragen-Quiz + Zuordnen + Barometer) = ~12–15 Min
+- 4 km Velo zwischen 5+ Standorten (Fahren + Orientieren + QR scannen + Abstellen) = ~25–30 Min
+- Puffer (Fehler, Koordination, Übergänge) = ~10 Min
+- **Total realistisch: ~95–105 Min** → 90 Min ist zu eng.
 
-**Vorschlag:** Code durch eine weniger offensichtliche, aber aus dem Rätsel ableitbare Folge ersetzen (z. B. `246` oder `427`), die nur Sinn ergibt, wenn man die bedrohte Tierkarte umdreht. Hinweis- und Auflösungstexte entsprechend anpassen.
+**Bug:** Die Maja-Timer-Pop-ups (`BEATS` in `src/components/case-file/GlobalTimer.tsx:29`) sind fest auf 90 Min kodiert ("Halbzeit … die Hälfte der 90 Minuten", Endspurt bei 75/80/85). Eine Lehrperson kann zwar pro Runde ein abweichendes Budget setzen (`getBudgetMin`), dann feuern die Endspurt-Pop-ups aber zu früh und der Halbzeit-Text stimmt nicht. Das konfigurierbare Budget funktioniert so nicht sauber.
 
-## 2. PWA / Offline-Fähigkeit für den Aussen-Einsatz
+## Vorschlag
 
-**Problem:** Das Spiel wird draussen auf dem Handy gespielt, an Bahnhöfen, im Wald, am Kraftwerk — Orte mit schlechtem Mobilfunk. Aktuell gibt es keinen Service Worker und kein Web-App-Manifest: ohne Netz lädt die App nach Schliessen des Browsers nicht mehr zuverlässig, und sie ist nicht «zum Home-Bildschirm hinzufügbar».
+1. **Standard-Budget anheben** auf 110 Minuten (`TIMER_DURATION_MIN` in `src/lib/progress.ts`). Damit sind 4 km Velo + 5 Etappen + Finale realistisch machbar, mit Luft für Fehler. Lehrer können pro Runde weiterhin ein eigenes Budget setzen.
 
-**Vorschlag:** 
-- `public/manifest.webmanifest` mit Name, Icons (144/512), Theme-Farbe (Stamp-Rot), Start-URL.
-- `<link rel="manifest">` in `__root.tsx` head.
-- Service Worker (vorgefertigtes Cache-First für gebündelte Assets + Offline-Fallback-Seite) via `vite-plugin-pwa` oder einem kleinen Hand-SW unter `public/sw.js`.
-- So wird die App nach erstem Aufruf offline-fähig und installierbar — wichtig für Schul-iPads/-Handys im Feld.
+2. **Timer-Pop-ups budget-relativ machen**, statt fest auf 90:
+   - Halbzeit-Pop-up bei `budget / 2` (Text: "Halbzeit. Die Hälfte der Zeit ist weg." statt "…der 90 Minuten").
+   - "Letzte 15 Minuten"-Endspurt: Pop-ups bei `budget − 15`, `budget − 10`, `budget − 5` (statt fest 75/80/85).
+   - Viertelstunden-Takte (15/30/60) bleiben als frühe Orientierungspunkte, Texte leicht neutralisieren ("Eine Viertelstunde rum", "Eine halbe Stunde", "Eine Stunde").
+   - So stimmen die Pop-ups für jedes Budget, nicht nur 90.
 
-## 3. `lang="en"` → `lang="de"` (Barrierefreiheit & SEO)
-
-**Problem:** In `src/routes/__root.tsx:76` steht `<html lang="en">`, das gesamte Spiel ist aber auf Deutsch. Screenreader stellen sich auf englische Aussprache ein, Suchmaschinen ordnen falsch ein.
-
-**Vorschlag:** `lang="de"` (oder `lang="de-CH"`).
-
-## 4. Markenkonsistenz: «Grossvaters letzte Spur» vs. «Majas Mission»
-
-**Problem:** Die Startseite trägt die Schlagzeile «Grossvaters letzte Spur» (`src/routes/index.tsx:140`), während Titel, Metadaten, Footer und Lehreransicht durchgehend «Majas Mission» nennen. Für Aussenstehende wirkt das wie zwei verschiedene Spiele.
-
-**Vorschlag:** Entweder «Majas Mission» als alleinigen Markennamen beibehalten und den Cover-Untertitel konsistent halten (z. B. Titel «Majas Mission», Untertitel «Grossvaters letzte Spur»), oder umgekehrt — aber bewusst und überall gleich.
-
-## 5. Fehlende OG-Metadaten auf den Etappen-Routen
-
-**Problem:** `index.tsx` und die fünf Etappen-Routen haben zwar `<title>` und `description`, aber keine `og:title`/`og:description`/`og:image`/`twitter:card`. Wird ein Etappen-Link geteilt (z. B. im Schul-Chat), fehlt die Vorschau. `abschluss.tsx` und `lehrer.index.tsx` haben diese bereits.
-
-**Vorschlag:** Pro Etappe und `index.tsx` die fehlenden OG-/Twitter-Tags ergänzen, analog zu `abschluss.tsx`.
-
----
-
-## Was ich **nicht** ändern würde
-
-- **Etappen 2–5 in Widnau verankern:** Du hast bewusst entschieden, diese ortsneutral zu lassen — sie funktionieren so. Kein Re-Proposal.
-- **Punkte-/Badge-/Timer-Logik:** Durchdacht und ausbalanciert; kein Eingriff nötig.
-- **Storyline / Jakob:** Konsistent und stimmig umgesetzt.
+3. **StartTimerOverlay** (`src/components/case-file/StartTimerOverlay.tsx:14,43`): Default `budget` von 90 auf 110, Text "In {budget} Minuten …" greift bereits korrekt — nur den Default-Wert anpassen.
 
 ## Technische Details
 
-- Änderung 1: reine Text/Konstanten-Ersätze in `etappe-3.tsx`.
-- Änderung 2: neue Dateien `public/manifest.webmanifest`, ggf. `public/sw.js`, plus `<link>` in `__root.tsx`; ggf. `vite-plugin-pwa` als Abhängigkeit.
-- Änderung 3: ein Zeichen in `__root.tsx`.
-- Änderung 4: Textanpassung in `index.tsx`.
-- Änderung 5: Ergänzung von `meta`-Einträgen in `index.tsx` und fünf Etappen-Dateien.
+- `src/lib/progress.ts`: `TIMER_DURATION_MIN` 90 → 110; Kommentare ("90 Minuten") aktualisieren.
+- `src/components/case-file/GlobalTimer.tsx`: `BEATS` von festen Minuten auf relative Berechnung (`budget/2`, `budget-15` usw.) umstellen; `getBudgetMin()` statt Konstante. Halbzeit-Text generalisieren.
+- `src/components/case-file/StartTimerOverlay.tsx`: Default `budget` 90 → 110.
+- Keine Änderungen an Punkte-, Badge- oder Etappen-Logik; Hinweis-Taktung (3/6/9 Min pro Etappe) bleibt unverändert — sie ist pro Etappe, nicht pro Gesamtzeit.
 
-Keine Änderungen an Punkte-, Badge-, Timer- oder Datenbanklogik.
+## Optional (nur bei Bedarf)
+
+- Lehrer-Dashboard: sichtbaren Hinweis, dass 110 Min der Default sind und für längere Velorouten mehr Zeit sinnvoll ist.
+- Falls 4 km Velo *zusätzlich* zur reinen Etappen-Zeit kommen sollen, ggf. 120 Min Default.
