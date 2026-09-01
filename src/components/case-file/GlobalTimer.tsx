@@ -18,7 +18,12 @@ import {
 } from "@/lib/progress";
 import { getRoundSession } from "@/lib/round-client";
 import { getRoundState } from "@/lib/rounds.functions";
-import { setBudgetMin, setStartTs, isRoundClosed, markRoundClosed } from "@/lib/progress";
+import {
+  setBudgetMin,
+  setStartTs as persistStartTs,
+  isRoundClosed,
+  markRoundClosed,
+} from "@/lib/progress";
 import { cn } from "@/lib/utils";
 import { TimeUpOverlay } from "./TimeUpOverlay";
 import { RoundClosedOverlay } from "./RoundClosedOverlay";
@@ -172,7 +177,7 @@ export function GlobalTimer() {
           if (!alive || !res.found) return;
           if (res.startedAt) {
             const ms = Date.parse(res.startedAt);
-            if (Number.isFinite(ms)) setStartTs(ms);
+            if (Number.isFinite(ms)) persistStartTs(ms);
           }
           const local = getBudgetMin();
           if (res.budgetMin > local) {
