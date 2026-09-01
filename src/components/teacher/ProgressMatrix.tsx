@@ -29,16 +29,24 @@ export type TeamStatus = {
   team: ReportTeam;
   /** Etappe, an der gerade gearbeitet wird (6 = Hearing). */
   currentStage: number;
-  /** Minuten an der aktuellen Etappe, inklusive Weg dorthin. */
-  minutesOnCurrent: number | null;
+  /**
+   * Abschnitt: `travel` = zwischen zwei Rätseln (Posten noch nicht gescannt),
+   * `puzzle` = am Rätsel (ab QR-Scan).
+   */
+  phase: "travel" | "puzzle";
+  /** Minuten im aktuellen Abschnitt (nicht seit der Vor-Etappe). */
+  minutesInPhase: number | null;
   severity: Severity;
   reasons: string[];
   finished: boolean;
 };
 
-/** Ab dieser Verweildauer (Minuten) an einer Etappe wird gewarnt. */
-export const WARN_MIN = 15;
-export const ALARM_MIN = 25;
+/** Am Rätsel (ab QR-Scan): ab hier deutet es auf Mühe mit dem Rätsel hin. */
+export const PUZZLE_WARN_MIN = 10;
+export const PUZZLE_ALARM_MIN = 15;
+/** Zwischen den Rätseln: ab hier wurde der Posten vermutlich nicht gefunden. */
+export const TRAVEL_WARN_MIN = 12;
+export const TRAVEL_ALARM_MIN = 20;
 
 function median(values: number[]): number | null {
   if (values.length === 0) return null;
@@ -48,9 +56,9 @@ function median(values: number[]): number | null {
 }
 
 /**
- * Bewertet jedes Team: wo steht es, wie lange schon, und gibt es Anzeichen
- * für Mühe? Kombiniert Verweildauer, genutzte Hinweisstufe und den Abstand
- * zum Rest der Klasse.
+ * Bewertet jedes Team: wo steht es, in welchem Abschnitt und wie lange schon.
+ * Die Uhr für den Abschnitt startet einheitlich beim QR-Scan (Rätsel) bzw.
+ * beim Lösen der Vor-Etappe (unterwegs) – nicht vermischt.
  */
 export function assessTeams(
   teams: ReportTeam[],
@@ -63,12 +71,13 @@ export function assessTeams(
 
   return teams.map((team) => {
     const finished = team.finishedAt !== null;
-    const refIso = team.lastSolvedAt;
-    const refMs = refIso ? Date.parse(refIso) : startMs;
-    const minutesOnCurrent =
-      finished || refMs === null || !Number.isFinite(refMs)
+    const phase = team.phase ?? "travel";
+    const sinceIso = team.phaseSince;
+    const sinceMs = sinceIso ? Date.parse(sinceIso) : startMs;
+    const minutesInPhase =
+      finished || sinceMs === null || !Number.isFinite(sinceMs)
         ? null
-        : Math.max(0, Math.floor((now - refMs) / 60_000));
+        : Math.max(0, Math.floor((now - sinceMs) / 60_000));
 
     const reasons: string[] = [];
     let severity: Severity = "ok";
@@ -77,12 +86,15 @@ export function assessTeams(
     };
 
     if (!finished) {
-      if (minutesOnCurrent !== null && minutesOnCurrent >= ALARM_MIN) {
-        reasons.push(`${minutesOnCurrent} min an ${COL_LABEL[team.currentStage]}`);
-        raise("alarm");
-      } else if (minutesOnCurrent !== null && minutesOnCurrent >= WARN_MIN) {
-        reasons.push(`${minutesOnCurrent} min an ${COL_LABEL[team.currentStage]}`);
-        raise("warn");
+      const warnAt = phase === "puzzle" ? PUZZLE_WARN_MIN : TRAVEL_WARN_MIN;
+      const alarmAt = phase === "puzzle" ? PUZZLE_ALARM_MIN : TRAVEL_ALARM_MIN;
+      if (minutesInPhase !== null && minutesInPhase >= warnAt) {
+        reasons.push(
+          phase === "puzzle"
+            ? `${minutesInPhase} min am Rätsel ${COL_LABEL[team.currentStage]} – Mühe mit der Aufgabe`
+            : `${minutesInPhase} min unterwegs zu ${COL_LABEL[team.currentStage]} – Posten evtl. nicht gefunden`,
+        );
+        raise(minutesInPhase >= alarmAt ? "alarm" : "warn");
       }
 
       const hintHere = team.hintsByStage.find((h) => h.stage === team.currentStage);
@@ -100,9 +112,18 @@ export function assessTeams(
       }
     }
 
-    return { team, currentStage: team.currentStage, minutesOnCurrent, severity, reasons, finished };
+    return {
+      team,
+      currentStage: team.currentStage,
+      phase,
+      minutesInPhase,
+      severity,
+      reasons,
+      finished,
+    };
   });
 }
+
 
 function Cell({
   state,
