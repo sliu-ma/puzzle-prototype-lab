@@ -222,6 +222,15 @@ export function isTimeUp(): boolean {
 }
 
 /**
+ * True, wenn die Runde vorbei ist: Zeit abgelaufen oder von der Lehrperson
+ * abgeschlossen. Grundlage für alle Sperren im Spiel.
+ */
+export function isRoundOver(): boolean {
+  return isTimeUp() || isRoundClosed();
+}
+
+
+/**
  * Einmalig eingefrorene Uhrzeit pro Schlüssel (localStorage).
  * Beim ersten Aufruf wird die aktuelle Zeit gespeichert und
  * bei weiteren Aufrufen zurückgegeben, so bleibt ein Zeitstempel
