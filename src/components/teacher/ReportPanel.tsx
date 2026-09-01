@@ -1183,6 +1183,9 @@ export function ReportPanel({
       <StageReportDialog
         analysis={analyses.find((a) => a.stage === openStage) ?? null}
         teams={teams}
+        hardest={hardest}
+        easiest={easiest}
+        withDataLen={withData.length}
         onClose={() => setOpenStage(null)}
       />
 
