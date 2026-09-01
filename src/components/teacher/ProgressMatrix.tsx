@@ -93,8 +93,12 @@ export function assessTeams(
       if (minutesInPhase !== null && minutesInPhase >= warnAt) {
         reasons.push(
           phase === "puzzle"
-            ? `${minutesInPhase} min am Rätsel ${COL_LABEL[team.currentStage]} – Mühe mit der Aufgabe`
-            : `${minutesInPhase} min unterwegs zu ${COL_LABEL[team.currentStage]} – Posten evtl. nicht gefunden`,
+            ? team.currentStage === 6
+              ? `${minutesInPhase} min am Hearing – Mühe mit den Fragen`
+              : `${minutesInPhase} min am Rätsel ${COL_LABEL[team.currentStage]} – Mühe mit der Aufgabe`
+            : team.currentStage === 1
+              ? `${minutesInPhase} min unterwegs von der Schule zu Posten 1 – noch nicht angekommen`
+              : `${minutesInPhase} min unterwegs zu ${COL_LABEL[team.currentStage]} – Posten evtl. nicht gefunden`,
         );
         raise(minutesInPhase >= alarmAt ? "alarm" : "warn");
       }
