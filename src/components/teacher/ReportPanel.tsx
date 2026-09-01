@@ -504,7 +504,10 @@ export function ReportPanel({
                       )}
                     >
                       E{s.stage}: {s.minutes}′
-                      {s.betweenMin !== null && ` (+${s.betweenMin}′ dazwischen)`}
+                      {s.betweenMin !== null &&
+                        (s.stage === 1
+                          ? ` (+${s.betweenMin}′ Schulweg → Posten 1)`
+                          : ` (+${s.betweenMin}′ dazwischen)`)}
                       {s.hintLevel > 0 && ` · H${s.hintLevel}`}
                     </span>
                   ))}

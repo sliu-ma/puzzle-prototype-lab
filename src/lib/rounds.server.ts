@@ -215,6 +215,13 @@ export type ReportTeam = {
   phaseSince: string | null;
   /** QR-Scan der aktuellen Etappe, falls schon erfolgt. */
   currentScanAt: string | null;
+  /**
+   * Bereits abgeschlossene Wegzeit zum aktuellen Posten (Start des Abschnitts
+   * bis QR-Scan). Null, solange das Team noch unterwegs ist.
+   */
+  travelDoneMin: number | null;
+  /** Beginn des Wegs zum aktuellen Posten (Vor-Etappe gelöst bzw. Rundenstart). */
+  travelSince: string | null;
   /** Letztes Lebenszeichen irgendeiner Art. */
   lastEventAt: string | null;
   /** Alle Hearing-Antworten über alle Versuche. */
@@ -258,7 +265,9 @@ export function buildReport(
   }[],
   events: RawEvent[],
   budgetMin: number,
+  startedAt?: string | null,
 ): ReportTeam[] {
+  const roundStartMs = startedAt ? Date.parse(startedAt) : NaN;
   const byTeam = new Map<string, RawEvent[]>();
   for (const e of events) {
     const list = byTeam.get(e.team_id) ?? [];
@@ -301,11 +310,16 @@ export function buildReport(
       durations.set(stage, Number(payloadOf(e)["durationSec"]) || 0);
     }
 
+    // Startpunkt des Teams: Rundenstart (Schule) oder – falls unbekannt – das
+    // erste Ereignis. Damit zählt auch der Weg von der Schule zu Posten 1.
+    const firstEventMs = raw.length > 0 ? Math.min(...raw.map(eventMs)) : null;
+    const originMs = Number.isFinite(roundStartMs) ? roundStartMs : firstEventMs;
+
     const stages: ReportStage[] = [...solvedAt.keys()]
       .sort((a, b) => a - b)
       .map((stage) => {
         const scan = scanAt.get(stage) ?? null;
-        const prevSolved = stage > 1 ? (solvedAt.get(stage - 1) ?? null) : null;
+        const prevSolved = stage > 1 ? (solvedAt.get(stage - 1) ?? null) : originMs;
         // Zwischenzeit nur, wenn beide Marken vorhanden und plausibel sind.
         let betweenMin: number | null = null;
         if (scan !== null && prevSolved !== null && scan > prevSolved) {
@@ -356,8 +370,18 @@ export function buildReport(
     // unterwegs (Posten noch nicht gefunden), mit Scan sitzt es am Rätsel.
     const currentStage = Math.min(6, highestSolved + 1);
     const currentScan = scanAt.get(currentStage) ?? null;
-    const phase: "travel" | "puzzle" = currentScan !== null ? "puzzle" : "travel";
-    const phaseSinceMs = currentScan ?? lastSolvedMs;
+    // Weg zum aktuellen Posten beginnt beim Lösen der Vor-Etappe bzw. – vor
+    // Etappe 1 – beim Rundenstart in der Schule.
+    const travelSinceMs = lastSolvedMs ?? originMs;
+    // Beim Hearing gibt es keinen Posten: ab Etappe 5 gelöst zählt es als Rätsel.
+    const phase: "travel" | "puzzle" =
+      currentStage === 6 || currentScan !== null ? "puzzle" : "travel";
+    const phaseSinceMs =
+      currentStage === 6 ? (currentScan ?? lastSolvedMs) : (currentScan ?? travelSinceMs);
+    const travelDoneMin =
+      currentScan !== null && travelSinceMs !== null && currentScan > travelSinceMs
+        ? toMin(currentScan - travelSinceMs)
+        : null;
 
     const exportEvents: ReportEvent[] = raw
       .slice()
@@ -405,6 +429,8 @@ export function buildReport(
       phase,
       phaseSince: phaseSinceMs === null ? null : new Date(phaseSinceMs).toISOString(),
       currentScanAt: currentScan === null ? null : new Date(currentScan).toISOString(),
+      travelDoneMin,
+      travelSince: travelSinceMs === null ? null : new Date(travelSinceMs).toISOString(),
       lastEventAt: lastEvent,
       hearingAttempts,
       events: exportEvents,

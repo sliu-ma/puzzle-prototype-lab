@@ -1,4 +1,4 @@
-import { AlertTriangle, Flag } from "lucide-react";
+import { AlertTriangle, Flag, Footprints, QrCode, Search } from "lucide-react";
 import type { ReportTeam } from "./LobbyPanel";
 import { cn } from "@/lib/utils";
 
@@ -39,6 +39,8 @@ export type TeamStatus = {
   severity: Severity;
   reasons: string[];
   finished: boolean;
+  /** Abgeschlossene Wegzeit zum aktuellen Posten (bis QR-Scan). */
+  travelDoneMin: number | null;
 };
 
 /** Am Rätsel (ab QR-Scan): ab hier deutet es auf Mühe mit dem Rätsel hin. */
@@ -91,8 +93,12 @@ export function assessTeams(
       if (minutesInPhase !== null && minutesInPhase >= warnAt) {
         reasons.push(
           phase === "puzzle"
-            ? `${minutesInPhase} min am Rätsel ${COL_LABEL[team.currentStage]} – Mühe mit der Aufgabe`
-            : `${minutesInPhase} min unterwegs zu ${COL_LABEL[team.currentStage]} – Posten evtl. nicht gefunden`,
+            ? team.currentStage === 6
+              ? `${minutesInPhase} min am Hearing – Mühe mit den Fragen`
+              : `${minutesInPhase} min am Rätsel ${COL_LABEL[team.currentStage]} – Mühe mit der Aufgabe`
+            : team.currentStage === 1
+              ? `${minutesInPhase} min unterwegs von der Schule zu Posten 1 – noch nicht angekommen`
+              : `${minutesInPhase} min unterwegs zu ${COL_LABEL[team.currentStage]} – Posten evtl. nicht gefunden`,
         );
         raise(minutesInPhase >= alarmAt ? "alarm" : "warn");
       }
@@ -120,6 +126,7 @@ export function assessTeams(
       severity,
       reasons,
       finished,
+      travelDoneMin: team.travelDoneMin ?? null,
     };
   });
 }
@@ -130,17 +137,19 @@ function Cell({
   value,
   severity,
   label,
+  icon,
 }: {
   state: "solved" | "active" | "open";
   value: string;
   severity: Severity;
   label: string;
+  icon?: "travel" | "puzzle";
 }) {
   return (
     <div
       title={label}
       className={cn(
-        "font-mono-typed flex h-7 items-center justify-center rounded-sm text-[10px] font-bold tabular-nums",
+        "font-mono-typed flex h-7 flex-col items-center justify-center rounded-sm text-[10px] font-bold leading-none tabular-nums",
         state === "solved" && "bg-primary text-primary-foreground",
         state === "active" &&
           "border-2 border-dashed border-primary/60 bg-secondary text-foreground",
@@ -151,7 +160,70 @@ function Cell({
         state === "open" && "bg-muted/60 text-muted-foreground",
       )}
     >
-      {value}
+      {icon === "travel" && <Footprints aria-hidden className="h-2.5 w-2.5" />}
+      {icon === "puzzle" && <Search aria-hidden className="h-2.5 w-2.5" />}
+      <span>{value}</span>
+    </div>
+  );
+}
+
+/**
+ * Weg-/Rätsel-Leiste für ein Team: zuerst die Zeit unterwegs, dann die
+ * QR-Marke, sobald der Posten gescannt wurde, danach die Rätselzeit.
+ */
+function PhaseBar({ s }: { s: TeamStatus }) {
+  const scanned = s.phase === "puzzle";
+  const hearing = s.currentStage === 6;
+  const travelMin = scanned ? s.travelDoneMin : s.minutesInPhase;
+  const puzzleMin = scanned ? s.minutesInPhase : null;
+  const travelLabel =
+    s.currentStage === 1 ? "Schule → Posten 1" : `unterwegs zu ${COL_LABEL[s.currentStage]}`;
+
+  const seg = (active: boolean) =>
+    cn(
+      "font-mono-typed flex items-center gap-1 rounded-sm px-1.5 py-0.5 text-[10px] tabular-nums",
+      active
+        ? s.severity === "alarm"
+          ? "bg-stamp/15 font-bold text-stamp"
+          : s.severity === "warn"
+            ? "bg-stamp/10 font-bold text-stamp"
+            : "bg-secondary font-bold text-foreground"
+        : "bg-muted/60 text-muted-foreground",
+    );
+
+  return (
+    <div className="mt-1 flex flex-wrap items-center gap-1">
+      {!hearing && (
+        <>
+          <span className={seg(!scanned)} title={travelLabel}>
+            <Footprints aria-hidden className="h-3 w-3" />
+            {travelMin === null ? "…" : `${travelMin}′`}
+            <span className="hidden sm:inline">{s.currentStage === 1 ? "Schulweg" : "Weg"}</span>
+          </span>
+          <span
+            className={cn(
+              "flex items-center",
+              scanned ? "text-primary" : "text-muted-foreground/40",
+            )}
+            title={scanned ? "QR-Code am Posten gescannt" : "Posten noch nicht gescannt"}
+          >
+            <span aria-hidden className="mx-0.5 h-px w-2 bg-current" />
+            <QrCode className="h-3.5 w-3.5" />
+            <span aria-hidden className="mx-0.5 h-px w-2 bg-current" />
+          </span>
+        </>
+      )}
+      {scanned ? (
+        <span className={seg(true)} title={hearing ? "am Hearing" : "am Rätsel"}>
+          <Search aria-hidden className="h-3 w-3" />
+          {puzzleMin === null ? "…" : `${puzzleMin}′`} {hearing ? "Hearing" : COL_NAME[s.currentStage]}
+        </span>
+      ) : (
+        <span className={seg(false)}>
+          <Search aria-hidden className="h-3 w-3" />
+          {COL_NAME[s.currentStage]}
+        </span>
+      )}
     </div>
   );
 }
@@ -269,12 +341,13 @@ export function ProgressMatrix({
           <div
             key={s.team.teamId}
             className={cn(
-              "flex items-center gap-1 rounded-sm border px-1.5 py-1.5",
+              "rounded-sm border px-1.5 py-1.5",
               s.severity === "alarm"
                 ? "border-stamp/60 bg-stamp/5"
                 : "border-border bg-card/70",
             )}
           >
+            <div className="flex items-center gap-1">
             <span className="min-w-0 flex-1 truncate font-serif text-sm font-semibold">
               {s.finished && <Flag className="mr-1 inline h-3 w-3 text-stamp" />}
               {s.team.name}
@@ -306,6 +379,7 @@ export function ProgressMatrix({
                     <Cell
                       state="active"
                       severity={s.severity}
+                      icon={s.phase === "puzzle" ? "puzzle" : "travel"}
                       value={s.minutesInPhase === null ? "…" : String(s.minutesInPhase)}
                       label={`${COL_NAME[stage]} – ${
                         s.phase === "puzzle" ? "am Rätsel" : "unterwegs"
@@ -323,15 +397,17 @@ export function ProgressMatrix({
             <span className="font-mono-typed w-10 text-right text-sm font-bold tabular-nums">
               {s.team.points}
             </span>
+            </div>
+            {!s.finished && <PhaseBar s={s} />}
           </div>
         ))}
       </div>
 
       <p className="mt-2 text-[10px] leading-relaxed text-muted-foreground">
-        Zahl in der Zelle = Minuten im aktuellen Abschnitt. Dunkel ausgefüllt: gelöst.
-        Gestrichelt: gerade dran – die Uhr startet beim QR-Scan (am Rätsel) bzw. beim
-        Lösen der Vor-Etappe (unterwegs). Warnung ab {PUZZLE_WARN_MIN} min am Rätsel
-        bzw. {TRAVEL_WARN_MIN} min unterwegs, rot ab {PUZZLE_ALARM_MIN} bzw.{" "}
+        Leiste pro Gruppe: erst die Zeit unterwegs (Fussspuren – bei Etappe 1 der Weg
+        von der Schule), dann der QR-Scan am Posten, danach die Zeit am Rätsel (Lupe).
+        Zahlen in der Matrix: gelöste Etappen in Minuten. Warnung ab {PUZZLE_WARN_MIN} min
+        am Rätsel bzw. {TRAVEL_WARN_MIN} min unterwegs, rot ab {PUZZLE_ALARM_MIN} bzw.{" "}
         {TRAVEL_ALARM_MIN} min, bei genutzter Auflösung oder deutlich hinter der Klasse.
       </p>
     </div>
