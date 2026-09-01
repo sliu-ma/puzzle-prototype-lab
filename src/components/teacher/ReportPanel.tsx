@@ -930,7 +930,7 @@ export function ReportPanel({
   );
 
   /** Übersicht pro Team – eine Zeile je Gruppe. */
-  const exportTeamCsv = () => {
+  const buildTeamRows = (): (string | number)[][] => {
     const head = [
       "Team",
       "Mitglieder",
@@ -975,48 +975,50 @@ export function ReportPanel({
         t.finishedAt ? fmtTime(t.finishedAt) : "",
       ];
     });
-    const stageSummary = [
-      [],
-      [
-        "Etappe",
-        "Name",
-        "geloest_von",
-        "Median_raetsel_min",
-        "Min",
-        "Max",
-        "Median_weg_min",
-        "mit_Hinweis",
-        "mit_Aufloesung",
-        "Einschaetzung",
-      ],
-      ...analyses.map((a) => [
-        `E${a.stage}`,
-        COL_NAME[a.stage] ?? "",
-        a.solvedBy,
-        a.puzzle.med ?? "",
-        a.puzzle.min ?? "",
-        a.puzzle.max ?? "",
-        a.travel.med ?? "",
-        a.withHint,
-        a.withSolution,
-        a.verdict,
-      ]),
-      [],
-      ["Hearing_Frage", "Antworten", "falsch", "Fehlerquote_%"],
-      ...questions.map((q) => [
-        `F${q.question + 1}`,
-        q.answers,
-        q.wrong,
-        q.answers === 0 ? "" : Math.round((q.wrong / q.answers) * 100),
-      ]),
-      [],
-      ["Runde", code, "Budget_min", budgetMin, "Teams", teams.length, "fertig", finished.length],
-    ];
-    csvDownload(`auswertung-teams-${code}.csv`, [head, ...rows, ...stageSummary]);
+    return [head, ...rows];
   };
 
+  /** Zusammenfassung pro Etappe. */
+  const buildStageRows = (): (string | number)[][] => [
+    [
+      "Etappe",
+      "Name",
+      "geloest_von",
+      "Median_raetsel_min",
+      "Min",
+      "Max",
+      "Median_weg_min",
+      "mit_Hinweis",
+      "mit_Aufloesung",
+      "Einschaetzung",
+    ],
+    ...analyses.map((a) => [
+      `E${a.stage}`,
+      COL_NAME[a.stage] ?? "",
+      a.solvedBy,
+      a.puzzle.med ?? "",
+      a.puzzle.min ?? "",
+      a.puzzle.max ?? "",
+      a.travel.med ?? "",
+      a.withHint,
+      a.withSolution,
+      a.verdict,
+    ]),
+  ];
+
+  /** Hearing – eine Zeile pro Frage. */
+  const buildHearingRows = (): (string | number)[][] => [
+    ["Hearing_Frage", "Antworten", "falsch", "Fehlerquote_%"],
+    ...questions.map((q) => [
+      `F${q.question + 1}`,
+      q.answers,
+      q.wrong,
+      q.answers === 0 ? "" : Math.round((q.wrong / q.answers) * 100),
+    ]),
+  ];
+
   /** Langformat: eine Zeile pro Ereignis – Rohdaten für SPSS, R oder Pivot. */
-  const exportEventCsv = () => {
+  const buildEventRows = (): (string | number)[][] => {
     const head = [
       "Team",
       "Zeitstempel",
@@ -1051,8 +1053,26 @@ export function ReportPanel({
         ];
       }),
     );
-    csvDownload(`auswertung-ereignisse-${code}.csv`, [head, ...rows]);
+    return [head, ...rows];
   };
+
+  /** Setzt die gewählten Blöcke zusammen und lädt sie herunter. */
+  const runExport = () => {
+    const blocks: (string | number)[][] = [];
+    if (sel.teams) blocks.push(...buildTeamRows());
+    if (sel.stages) blocks.push(...(blocks.length ? [[]] : []), ...buildStageRows());
+    if (sel.hearing) blocks.push(...(blocks.length ? [[]] : []), ...buildHearingRows());
+    if (blocks.length) {
+      blocks.push(
+        [],
+        ["Runde", code, "Budget_min", budgetMin, "Teams", teams.length, "fertig", finished.length],
+      );
+      csvDownload(`auswertung-${code}.csv`, blocks);
+    }
+    if (sel.events) csvDownload(`auswertung-ereignisse-${code}.csv`, buildEventRows());
+    setExportOpen(false);
+  };
+
 
   return (
     <div className="mt-4">
