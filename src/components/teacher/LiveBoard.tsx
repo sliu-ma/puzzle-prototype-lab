@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { RefreshCw } from "lucide-react";
 import { useRoundReport } from "./LobbyPanel";
 import { ProgressMatrix } from "./ProgressMatrix";
+import { LiveLeaderboard } from "./LiveLeaderboard";
 import { cn } from "@/lib/utils";
 
 function fmtMmSs(ms: number) {
@@ -112,6 +113,8 @@ export function LiveBoard({
         now={effectiveNow}
         roundOver={roundOver}
       />
+
+      <LiveLeaderboard teams={teams} />
     </div>
   );
 }
