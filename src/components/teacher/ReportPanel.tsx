@@ -225,6 +225,17 @@ function LegendDot({ className, children }: { className: string; children: strin
   );
 }
 
+/** Kleine Kennzahl-Zeile für die Detail-Popups. */
+function Fact({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex items-baseline justify-between gap-2 py-1 text-[11px]">
+      <span className="text-muted-foreground">{label}</span>
+      <span className="font-mono-typed shrink-0 font-bold tabular-nums">{value}</span>
+    </div>
+  );
+}
+
+
 /**
  * Horizontaler Balken mit Beschriftung links und Wert rechts. Optional ein
  * zweites Segment (gestapelt) und eine Spannweite als dünne Linie dahinter.
@@ -423,17 +434,12 @@ function TeamReportDialog({
   const t = team;
   const puzzle = t ? t.stages.reduce((s, x) => s + x.minutes, 0) : 0;
   const travel = t ? t.stages.reduce((s, x) => s + (x.betweenMin ?? 0), 0) : 0;
-  const attempts =
-    t && t.hearingAttempts.length
-      ? Math.max(...t.hearingAttempts.map((a) => a.attempt))
-      : 0;
-  const wrongQuestions = t
-    ? [
-        ...new Set(
-          t.hearingAttempts.filter((a) => !a.correct).map((a) => a.question + 1),
-        ),
-      ].sort((a, b) => a - b)
-    : [];
+  const answers = t ? teamAnswers(t) : [];
+  const attempts = answers.length
+    ? Math.max(...answers.flatMap((a) => a.tries.map((x) => x.attempt)))
+    : 0;
+  const stillWrong = answers.filter((a) => !a.last).length;
+
 
   return (
     <Dialog open={t !== null} onOpenChange={(o) => !o && onClose()}>
