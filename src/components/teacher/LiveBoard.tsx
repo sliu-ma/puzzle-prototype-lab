@@ -16,11 +16,13 @@ export function LiveBoard({
   code,
   budgetMin,
   startedAt,
+  status,
 }: {
   password: string;
   code: string;
   budgetMin: number;
   startedAt: string | null;
+  status?: string;
 }) {
   const { report, loading, updatedAt } = useRoundReport(password, code, 8000);
   const teams = report?.teams ?? [];
