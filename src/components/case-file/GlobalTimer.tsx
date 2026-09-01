@@ -193,12 +193,12 @@ export function GlobalTimer() {
     if (!startTs || endTs) return;
     const elapsedMin = (now - startTs) / 60000;
     const shown = getShown();
-    const due = BEATS.find((b) => elapsedMin >= b.at && !shown.has(b.at));
+    const due = beats.find((b) => elapsedMin >= b.at && !shown.has(b.at));
     if (due) {
       markShown(due.at);
       setPopup(due);
     }
-  }, [now, startTs, endTs]);
+  }, [now, startTs, endTs, beats]);
 
   // Zeitmeldungen schliessen sich nach 60 Sekunden von selbst. Eine neue
   // Meldung überschreibt die laufende, daher räumen wir den alten Timer
