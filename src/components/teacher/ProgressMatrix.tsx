@@ -160,7 +160,70 @@ function Cell({
         state === "open" && "bg-muted/60 text-muted-foreground",
       )}
     >
-      {value}
+      {icon === "travel" && <Footprints aria-hidden className="h-2.5 w-2.5" />}
+      {icon === "puzzle" && <Search aria-hidden className="h-2.5 w-2.5" />}
+      <span>{value}</span>
+    </div>
+  );
+}
+
+/**
+ * Weg-/Rätsel-Leiste für ein Team: zuerst die Zeit unterwegs, dann die
+ * QR-Marke, sobald der Posten gescannt wurde, danach die Rätselzeit.
+ */
+function PhaseBar({ s }: { s: TeamStatus }) {
+  const scanned = s.phase === "puzzle";
+  const hearing = s.currentStage === 6;
+  const travelMin = scanned ? s.travelDoneMin : s.minutesInPhase;
+  const puzzleMin = scanned ? s.minutesInPhase : null;
+  const travelLabel =
+    s.currentStage === 1 ? "Schule → Posten 1" : `unterwegs zu ${COL_LABEL[s.currentStage]}`;
+
+  const seg = (active: boolean) =>
+    cn(
+      "font-mono-typed flex items-center gap-1 rounded-sm px-1.5 py-0.5 text-[10px] tabular-nums",
+      active
+        ? s.severity === "alarm"
+          ? "bg-stamp/15 font-bold text-stamp"
+          : s.severity === "warn"
+            ? "bg-stamp/10 font-bold text-stamp"
+            : "bg-secondary font-bold text-foreground"
+        : "bg-muted/60 text-muted-foreground",
+    );
+
+  return (
+    <div className="mt-1 flex flex-wrap items-center gap-1">
+      {!hearing && (
+        <>
+          <span className={seg(!scanned)} title={travelLabel}>
+            <Footprints aria-hidden className="h-3 w-3" />
+            {travelMin === null ? "…" : `${travelMin}′`}
+            <span className="hidden xs:inline">{s.currentStage === 1 ? "Schulweg" : "Weg"}</span>
+          </span>
+          <span
+            className={cn(
+              "flex items-center",
+              scanned ? "text-primary" : "text-muted-foreground/40",
+            )}
+            title={scanned ? "QR-Code am Posten gescannt" : "Posten noch nicht gescannt"}
+          >
+            <span aria-hidden className="mx-0.5 h-px w-2 bg-current" />
+            <QrCode className="h-3.5 w-3.5" />
+            <span aria-hidden className="mx-0.5 h-px w-2 bg-current" />
+          </span>
+        </>
+      )}
+      {scanned ? (
+        <span className={seg(true)} title={hearing ? "am Hearing" : "am Rätsel"}>
+          <Search aria-hidden className="h-3 w-3" />
+          {puzzleMin === null ? "…" : `${puzzleMin}′`} {hearing ? "Hearing" : COL_NAME[s.currentStage]}
+        </span>
+      ) : (
+        <span className={seg(false)}>
+          <Search aria-hidden className="h-3 w-3" />
+          {COL_NAME[s.currentStage]}
+        </span>
+      )}
     </div>
   );
 }
