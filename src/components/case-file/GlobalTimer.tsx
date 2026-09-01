@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouterState } from "@tanstack/react-router";
 import { Clock, AlertTriangle, CheckCircle2, Mail } from "lucide-react";
 import {
@@ -14,6 +14,7 @@ import {
   getBudgetMin,
   formatClock,
   getHearingClock,
+  TIMER_DURATION_MIN,
 } from "@/lib/progress";
 import { getRoundSession } from "@/lib/round-client";
 import { getRoundState } from "@/lib/rounds.functions";
@@ -23,49 +24,78 @@ import { TimeUpOverlay } from "./TimeUpOverlay";
 import { IconStamp } from "./IconStamp";
 
 // Marker (Minuten seit Start), bei denen ein Maja-Popup erscheint.
-// Erste 75 Min: alle 15 Min. Letzte 15 Min: alle 5 Min.
+// Die Marker richten sich nach dem Zeitbudget der Runde, nicht nach einer
+// festen 90-Minuten-Annahme: Viertelstunden-Takt bis zum Endspurt, Halbzeit
+// bei der Hälfte, danach die letzten 15 Minuten alle 5 Minuten.
 type MajaBeat = { at: number; body: (hearing: string) => string; urgent?: boolean };
 
-const BEATS: MajaBeat[] = [
-  {
-    at: 15,
-    body: () =>
-      "Erste Viertelstunde rum. Ich bin unterwegs, alles ruhig. Bleibt dran, jede Spur zählt.",
-  },
-  {
-    at: 30,
-    body: (h) =>
-      `Eine halbe Stunde. Jakobs Notizen ergeben langsam Sinn. Die Sitzung ist um ${h}, wir haben Zeit, aber nicht ewig.`,
-  },
-  {
-    at: 45,
-    body: () =>
-      "Halbzeit. Die Hälfte der 90 Minuten ist weg. Wenn ihr feststeckt: lest die Hinweise noch einmal in Ruhe.",
-  },
-  {
-    at: 60,
-    body: () =>
-      "Eine Stunde. Im Gemeindesaal stellen sie schon die Stühle. Wir müssen die Argumente bis dahin zusammen haben.",
-  },
-  {
-    at: 75,
-    body: () =>
-      "Noch 15 Minuten. Ab jetzt melde ich mich häufiger. Konzentriert euch auf das Wesentliche.",
-    urgent: true,
-  },
-  {
-    at: 80,
-    body: () =>
-      "10 Minuten. Vetterli wartet nicht. Falls die Lösung nahe ist, jetzt durchziehen.",
-    urgent: true,
-  },
-  {
-    at: 85,
-    body: () =>
-      "Nur noch 5 Minuten! Wenn ihr beim Hearing seid: gebt euer Bestes. Wenn nicht: macht den letzten Schritt jetzt.",
-    urgent: true,
-  },
-];
+/** Text für einen Viertelstunden-Marker (ohne Endspurt/Halbzeit). */
+function quarterBody(at: number): (hearing: string) => string {
+  if (at === 15) {
+    return () =>
+      "Erste Viertelstunde rum. Ich bin unterwegs, alles ruhig. Bleibt dran, jede Spur zählt.";
+  }
+  if (at === 30) {
+    return (h) =>
+      `Eine halbe Stunde. Jakobs Notizen ergeben langsam Sinn. Die Sitzung ist um ${h}, wir haben Zeit, aber nicht ewig.`;
+  }
+  if (at === 60) {
+    return () =>
+      "Eine Stunde. Im Gemeindesaal stellen sie schon die Stühle. Wir müssen die Argumente bis dahin zusammen haben.";
+  }
+  if (at % 60 === 0) {
+    const std = at / 60;
+    return (h) =>
+      `${std} Stunden sind um. Die Sitzung ist um ${h}. Bleibt konzentriert, ihr habt schon einiges zusammen.`;
+  }
+  return (h) =>
+    `${at} Minuten sind um. Die Sitzung ist um ${h}. Ihr seid auf Kurs, macht weiter.`;
+}
+
+/**
+ * Baut die Zeitmeldungen passend zum Zeitbudget der Runde.
+ * Endspurt: budget-15 / budget-10 / budget-5. Halbzeit: budget/2.
+ */
+function buildBeats(budget: number): MajaBeat[] {
+  const beats: MajaBeat[] = [];
+  const half = Math.round(budget / 2);
+  const endStart = budget - 15;
+
+  const add = (at: number, body: MajaBeat["body"], urgent?: boolean) => {
+    if (at <= 0 || at >= budget) return;
+    // Marker, die zu nah beieinander liegen, würden sich gegenseitig
+    // überschreiben, daher halten wir mindestens 3 Minuten Abstand.
+    if (beats.some((b) => Math.abs(b.at - at) < 3)) return;
+    beats.push({ at, body, urgent });
+  };
+
+  // Endspurt zuerst: er hat Vorrang vor kollidierenden Viertelstunden.
+  add(endStart, () =>
+    "Noch 15 Minuten. Ab jetzt melde ich mich häufiger. Konzentriert euch auf das Wesentliche.",
+    true,
+  );
+  add(budget - 10, () =>
+    "10 Minuten. Vetterli wartet nicht. Falls die Lösung nahe ist, jetzt durchziehen.",
+    true,
+  );
+  add(budget - 5, () =>
+    "Nur noch 5 Minuten! Wenn ihr beim Hearing seid: gebt euer Bestes. Wenn nicht: macht den letzten Schritt jetzt.",
+    true,
+  );
+
+  // Halbzeit danach, damit sie den Endspurt nicht verdrängt.
+  add(half, () =>
+    "Halbzeit. Die Hälfte der Zeit ist weg. Wenn ihr feststeckt: lest die Hinweise noch einmal in Ruhe.",
+  );
+
+  // Viertelstunden-Takt bis zum Beginn des Endspurts.
+  for (let m = 15; m < endStart; m += 15) {
+    add(m, quarterBody(m));
+  }
+
+  return beats.sort((a, b) => a.at - b.at);
+}
+
 
 
 const SHOWN_KEY = "maya-timer-shown";
