@@ -868,9 +868,7 @@ export function ReportPanel({
   const hardest = [...withData].sort((a, b) => (b.puzzle.med ?? 0) - (a.puzzle.med ?? 0))[0];
   const easiest = [...withData].sort((a, b) => (a.puzzle.med ?? 0) - (b.puzzle.med ?? 0))[0];
   const questions = analyseQuestions(teams);
-  const hardestQuestion = [...questions]
-    .filter((q) => q.teamsAnswered > 0)
-    .sort((a, b) => b.firstWrong / b.teamsAnswered - a.firstWrong / a.teamsAnswered)[0];
+  const questions = analyseQuestions(teams);
 
   // Mediane pro Etappe für den Vergleich im Team-Popup.
   const medianPuzzle = new Map<number, number | null>(analyses.map((a) => [a.stage, a.puzzle.med]));
