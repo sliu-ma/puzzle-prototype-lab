@@ -95,34 +95,91 @@ function analyseStage(teams: ReportTeam[], stage: number): StageAnalysis {
   return { stage, puzzle, travel, solvedBy: n, withHint, withSolution, verdict };
 }
 
-type QuestionAnalysis = { question: number; answers: number; wrong: number };
+type Try = { attempt: number; correct: boolean };
+type TeamAnswer = {
+  question: number;
+  tries: Try[];
+  first: boolean;
+  last: boolean;
+};
 
 /**
- * Hearing-Fehler pro Frage über alle Teams und Versuche. Bevorzugt werden die
- * Einzelversuche; bei älteren Runden ohne diese Daten greift die Auswertung
- * auf die verbuchten Antworten des bestandenen Versuchs zurück.
+ * Alle Hearing-Antworten eines Teams, pro Frage nach Versuch geordnet.
+ * Altrunden ohne Versuchsnummer werden als erster Versuch behandelt.
  */
+function teamAnswers(t: ReportTeam): TeamAnswer[] {
+  const src: Try[] & { question?: number }[] = [];
+  const raw =
+    t.hearingAttempts.length > 0
+      ? t.hearingAttempts
+      : t.events
+          .filter((e) => e.type === "hearing_answer")
+          .map((e) => ({
+            question: e.question ?? 0,
+            correct: e.correct === true,
+            attempt: e.attempt ?? 1,
+          }));
+  void src;
+  const map = new Map<number, Try[]>();
+  for (const a of raw) {
+    const list = map.get(a.question) ?? [];
+    list.push({ attempt: a.attempt, correct: a.correct });
+    map.set(a.question, list);
+  }
+  return [...map.entries()]
+    .map(([question, tries]) => {
+      const sorted = [...tries].sort((a, b) => a.attempt - b.attempt);
+      return {
+        question,
+        tries: sorted,
+        first: sorted[0]!.correct,
+        last: sorted[sorted.length - 1]!.correct,
+      };
+    })
+    .sort((a, b) => a.question - b.question);
+}
+
+type QuestionAnalysis = {
+  question: number;
+  /** Teams mit mindestens einer Antwort auf diese Frage. */
+  teamsAnswered: number;
+  /** Teams, die im ersten Versuch falsch lagen. */
+  firstWrong: number;
+  /** Teams, die auch im letzten Versuch falsch lagen. */
+  lastWrong: number;
+  /** Alle Antworten über alle Versuche. */
+  answers: number;
+  wrong: number;
+};
+
+/** Hearing-Fehler pro Frage über alle Teams und Versuche. */
 function analyseQuestions(teams: ReportTeam[]): QuestionAnalysis[] {
-  const map = new Map<number, { answers: number; wrong: number }>();
+  const map = new Map<number, QuestionAnalysis>();
   for (const t of teams) {
-    const src =
-      t.hearingAttempts.length > 0
-        ? t.hearingAttempts
-        : t.events
-            .filter((e) => e.type === "hearing_answer")
-            .map((e) => ({ question: e.question ?? 0, correct: e.correct === true }));
-    for (const a of src) {
-      const cur = map.get(a.question) ?? { answers: 0, wrong: 0 };
+    for (const a of teamAnswers(t)) {
+      const cur =
+        map.get(a.question) ??
+        ({
+          question: a.question,
+          teamsAnswered: 0,
+          firstWrong: 0,
+          lastWrong: 0,
+          answers: 0,
+          wrong: 0,
+        } satisfies QuestionAnalysis);
       map.set(a.question, {
-        answers: cur.answers + 1,
-        wrong: cur.wrong + (a.correct ? 0 : 1),
+        question: a.question,
+        teamsAnswered: cur.teamsAnswered + 1,
+        firstWrong: cur.firstWrong + (a.first ? 0 : 1),
+        lastWrong: cur.lastWrong + (a.last ? 0 : 1),
+        answers: cur.answers + a.tries.length,
+        wrong: cur.wrong + a.tries.filter((x) => !x.correct).length,
       });
     }
   }
-  return [...map.entries()]
-    .map(([question, v]) => ({ question, ...v }))
-    .sort((a, b) => a.question - b.question);
+  return [...map.values()].sort((a, b) => a.question - b.question);
 }
+
 
 function Metric({
   label,
