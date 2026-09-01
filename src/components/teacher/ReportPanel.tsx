@@ -1105,19 +1105,13 @@ export function ReportPanel({
         <Metric
           label="Abgeschlossen"
           value={`${finished.length}/${teams.length}`}
-          hint={
-            teams.length === 0
-              ? "noch keine Gruppen"
-              : `${teams.length - finished.length} noch offen`
-          }
         />
-        <Metric label="Punkte" value={fmt(points.med)} hint={`Median · Ø ${fmt(points.avg)}`} />
+        <Metric label="Punkte" value={fmt(points.med)} />
         <Metric
           label="Spielzeit"
           value={fmt(totals.med, "min")}
-          hint={totals.n === 0 ? "noch niemand fertig" : `Median · ${totals.min}–${totals.max} min`}
         />
-        <Metric label="Hinweise" value={fmt(hints.med)} hint={`Median · Ø ${fmt(hints.avg)}`} />
+        <Metric label="Hinweise" value={fmt(hints.med)} />
       </div>
 
       <h3 className="mt-5 flex items-center gap-1.5 font-serif text-lg font-bold">
