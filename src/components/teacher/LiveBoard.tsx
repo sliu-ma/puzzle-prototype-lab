@@ -36,7 +36,27 @@ export function LiveBoard({
   }, []);
 
   const startMs = startedAt ? Date.parse(startedAt) : null;
-  const elapsedMs = startMs === null ? null : now - startMs;
+
+  // Endpunkt der Runde: Zeitbudget aufgebraucht oder Runde abgeschlossen.
+  // Ab da stehen alle Uhren im Dashboard still.
+  const budgetEndMs = startMs === null ? null : startMs + budgetMin * 60_000;
+  const lastEventMs = teams.reduce<number | null>((acc, t) => {
+    const ms = t.lastEventAt ? Date.parse(t.lastEventAt) : NaN;
+    if (!Number.isFinite(ms)) return acc;
+    return acc === null ? ms : Math.max(acc, ms);
+  }, null);
+  const closedEndMs =
+    status === "closed" ? (lastEventMs ?? budgetEndMs ?? null) : null;
+  const endMs =
+    budgetEndMs === null
+      ? null
+      : closedEndMs === null
+        ? budgetEndMs
+        : Math.min(budgetEndMs, closedEndMs);
+
+  const effectiveNow = endMs === null ? now : Math.min(now, endMs);
+  const roundOver = endMs !== null && now >= endMs;
+  const elapsedMs = startMs === null ? null : effectiveNow - startMs;
   const remainingMs =
     elapsedMs === null ? null : Math.max(0, budgetMin * 60_000 - elapsedMs);
 
