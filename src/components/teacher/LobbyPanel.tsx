@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { RefreshCw, Trash2, Play, Users } from "lucide-react";
 import { PrologueOverlay } from "@/components/case-file/PrologueVideo";
+import { JoinCodeCard } from "@/components/teacher/JoinCodeCard";
+
 import { teacherRoundReport, teacherDeleteTeam } from "@/lib/rounds.functions";
 import { cn } from "@/lib/utils";
 
@@ -141,13 +143,16 @@ export function LobbyPanel({
 
   return (
     <div className="mt-4">
-      <div className="flex items-center justify-between font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+      <JoinCodeCard code={code} teamCount={teams.length} />
+
+      <div className="mt-4 flex items-center justify-between font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
         <span className="flex items-center gap-1">
           <Users className="h-3.5 w-3.5" />
           {teams.length} Teams angemeldet
         </span>
         <RefreshCw className={cn("h-3.5 w-3.5", loading && "animate-spin")} />
       </div>
+
 
       <ul className="mt-2 space-y-1.5">
         {teams.length === 0 && (

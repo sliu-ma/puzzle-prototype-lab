@@ -31,6 +31,13 @@ import { useEnvelopePrompt } from "@/components/case-file/EnvelopeDialog";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/")({
+  // Beitritts-Link der Lehrperson: /?r=RUNDENCODE
+  validateSearch: (search: Record<string, unknown>): { r?: string } => {
+    const raw = search["r"];
+    const code = typeof raw === "string" ? raw.trim().slice(0, 12).toUpperCase() : "";
+    return code ? { r: code } : {};
+  },
+
   head: () => ({
     meta: [
       { title: "Majas Mission - Escape Game zu Nachhaltigkeit" },
@@ -44,12 +51,15 @@ export const Route = createFileRoute("/")({
   component: CoverPage,
 });
 
+
 function CoverPage() {
+  const { r: joinCode } = Route.useSearch();
   const [ready, setReady] = useState(false);
   const [team, setTeam] = useState<{ name: string; code: string } | null>(null);
   const [stage, setStage] = useState(0);
   const [showIntro, setShowIntro] = useState(false);
   const [introSeen, setIntroSeen] = useState(false);
+
 
   useEffect(() => {
     const sync = () => {
@@ -171,7 +181,9 @@ function CoverPage() {
               />
             ) : (
               <StartForm
+                initialCode={joinCode}
                 onStart={(name, code, members) => {
+
                   resetAll();
                   registerTeam(name, code, members);
                   if (code.toUpperCase() === CHEAT_CODE) {

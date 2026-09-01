@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ArrowRight, Plus, X, KeyRound, Users, Check, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { START_CODE } from "@/lib/progress";
@@ -37,12 +37,15 @@ function StepDots({ step }: { step: 0 | 1 }) {
 
 export function StartForm({
   onStart,
+  initialCode,
 }: {
   onStart: (name: string, code: string, members: string[]) => void;
+  /** Vorbelegter Rundencode aus dem Beitritts-Link (`/?r=CODE`). */
+  initialCode?: string;
 }) {
   const navigate = useNavigate();
   const [step, setStep] = useState<0 | 1>(0);
-  const [code, setCode] = useState("");
+  const [code, setCode] = useState(initialCode ? initialCode.toUpperCase() : "");
   const [codeError, setCodeError] = useState<string | null>(null);
   const [checking, setChecking] = useState(false);
   const [mode, setMode] = useState<"solo" | "round">("solo");
@@ -55,9 +58,8 @@ export function StartForm({
   const [roundError, setRoundError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
-  const checkCode = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const clean = code.trim().toUpperCase();
+  const verifyCode = useCallback(async (raw: string) => {
+    const clean = raw.trim().toUpperCase();
     if (!clean) {
       setCodeError("Bitte gebt den Code ein.");
       return;
@@ -92,7 +94,21 @@ export function StartForm({
     } finally {
       setChecking(false);
     }
+  }, []);
+
+  // Beitritts-Link: Code direkt prüfen und bei Erfolg zum Teamnamen springen.
+  const autoChecked = useRef(false);
+  useEffect(() => {
+    if (autoChecked.current || !initialCode) return;
+    autoChecked.current = true;
+    void verifyCode(initialCode);
+  }, [initialCode, verifyCode]);
+
+  const checkCode = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await verifyCode(code);
   };
+
 
   const submitTeam = async (e: React.FormEvent) => {
     e.preventDefault();
