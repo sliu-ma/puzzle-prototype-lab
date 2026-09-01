@@ -397,15 +397,17 @@ export function ProgressMatrix({
             <span className="font-mono-typed w-10 text-right text-sm font-bold tabular-nums">
               {s.team.points}
             </span>
+            </div>
+            {!s.finished && <PhaseBar s={s} />}
           </div>
         ))}
       </div>
 
       <p className="mt-2 text-[10px] leading-relaxed text-muted-foreground">
-        Zahl in der Zelle = Minuten im aktuellen Abschnitt. Dunkel ausgefüllt: gelöst.
-        Gestrichelt: gerade dran – die Uhr startet beim QR-Scan (am Rätsel) bzw. beim
-        Lösen der Vor-Etappe (unterwegs). Warnung ab {PUZZLE_WARN_MIN} min am Rätsel
-        bzw. {TRAVEL_WARN_MIN} min unterwegs, rot ab {PUZZLE_ALARM_MIN} bzw.{" "}
+        Leiste pro Gruppe: erst die Zeit unterwegs (Fussspuren – bei Etappe 1 der Weg
+        von der Schule), dann der QR-Scan am Posten, danach die Zeit am Rätsel (Lupe).
+        Zahlen in der Matrix: gelöste Etappen in Minuten. Warnung ab {PUZZLE_WARN_MIN} min
+        am Rätsel bzw. {TRAVEL_WARN_MIN} min unterwegs, rot ab {PUZZLE_ALARM_MIN} bzw.{" "}
         {TRAVEL_ALARM_MIN} min, bei genutzter Auflösung oder deutlich hinter der Klasse.
       </p>
     </div>
