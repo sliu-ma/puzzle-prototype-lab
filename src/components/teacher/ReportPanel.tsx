@@ -586,7 +586,17 @@ function TeamReportDialog({
 }
 
 /** Aufklappbarer Abschnitt – Details stören die Übersicht nicht. */
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+function Section({
+  title,
+  hint,
+  hintLabel,
+  children,
+}: {
+  title: string;
+  hint?: React.ReactNode;
+  hintLabel?: string;
+  children: React.ReactNode;
+}) {
   return (
     <Collapsible className="mt-5">
       <CollapsibleTrigger className="group flex min-h-12 w-full items-center justify-between gap-2 rounded-sm border border-border bg-card px-3 py-2 text-left">
@@ -596,7 +606,14 @@ function Section({ title, children }: { title: string; children: React.ReactNode
           className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-data-[state=open]:rotate-180"
         />
       </CollapsibleTrigger>
-      <CollapsibleContent>{children}</CollapsibleContent>
+      <CollapsibleContent>
+        {hint && (
+          <div className="flex justify-end pt-1.5">
+            <InfoHint label={hintLabel ?? title}>{hint}</InfoHint>
+          </div>
+        )}
+        {children}
+      </CollapsibleContent>
     </Collapsible>
   );
 }
