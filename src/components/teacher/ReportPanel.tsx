@@ -1103,63 +1103,8 @@ export function ReportPanel({
       />
 
       <Section title="Hearing pro Frage">
-        {questions.length === 0 ? (
-          <p className="mt-2 text-xs text-muted-foreground">
-            Noch keine Hearing-Antworten erfasst.
-          </p>
-        ) : (
-          <>
-            <div className="mt-2 rounded-sm border border-border bg-card p-3">
-              <p className="text-[11px] text-muted-foreground">
-                Balkenlänge = Anteil der Gruppen, die im ersten Versuch falsch lagen.
-              </p>
-              <ul className="mt-2 divide-y divide-border/60">
-                {[...questions]
-                  .filter((q) => q.teamsAnswered > 0)
-                  .sort((a, b) => b.firstWrong / b.teamsAnswered - a.firstWrong / a.teamsAnswered)
-                  .map((q) => {
-                    const share = Math.round((q.firstWrong / q.teamsAnswered) * 100);
-                    return (
-                      <BarRow
-                        key={q.question}
-                        label={`F${q.question + 1} · ${QUESTION_LABEL[q.question] ?? "Frage"}`}
-                        primary={share}
-                        max={100}
-                        highlight={q.question === hardestQuestion?.question}
-                        value={`${share} %`}
-                        sub={`${q.firstWrong} von ${q.teamsAnswered} Gruppen falsch · am Ende noch ${q.lastWrong} falsch`}
-                      />
-                    );
-                  })}
-              </ul>
-            </div>
-            <ul className="mt-2 space-y-1.5">
-              {[...questions]
-                .filter((q) => q.teamsAnswered > 0)
-                .map((q) => (
-                  <ClickRow
-                    key={q.question}
-                    title={`F${q.question + 1} · ${QUESTION_LABEL[q.question] ?? "Frage"}`}
-                    sub={`${q.teamsAnswered - q.firstWrong} im 1. Versuch richtig · ${q.lastWrong} am Ende falsch`}
-                    value={`${Math.round((q.firstWrong / q.teamsAnswered) * 100)} %`}
-                    highlight={q.question === hardestQuestion?.question}
-                    onOpen={() => setOpenQuestion(q.question)}
-                  />
-                ))}
-            </ul>
-            <p className="mt-1.5 text-[10px] text-muted-foreground">
-              Tippe auf eine Frage, um zu sehen, welche Gruppe sie richtig oder falsch beantwortet
-              hat – inklusive Zweitversuch.
-            </p>
-          </>
-        )}
+        <HearingMatrix teams={teams} nameOf={nameOf} />
       </Section>
-
-      <QuestionReportDialog
-        analysis={questions.find((q) => q.question === openQuestion) ?? null}
-        teams={teams}
-        onClose={() => setOpenQuestion(null)}
-      />
 
       <label className="mt-4 flex items-start gap-2 rounded-sm border border-border bg-card p-2.5 text-xs">
         <input
