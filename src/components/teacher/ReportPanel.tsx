@@ -1088,7 +1088,14 @@ export function ReportPanel({
         <Metric label="Hinweise" value={fmt(hints.med)} hint={`Median · Ø ${fmt(hints.avg)}`} />
       </div>
 
-      <h3 className="mt-5 font-serif text-lg font-bold">Pro Team</h3>
+      <h3 className="mt-5 flex items-center gap-1.5 font-serif text-lg font-bold">
+        Pro Team
+        <InfoHint label="Pro Team">
+          Tippe auf eine Gruppe für Zeiten pro Etappe, Hearing und Abzeichen.
+          Das Warn-Symbol zeigt Gruppen, die deutlich über dem Klassenmedian
+          liegen oder die Auflösung genutzt haben.
+        </InfoHint>
+      </h3>
       <ul className="mt-2 space-y-1.5">
         {teams.length === 0 && (
           <li className="rounded-sm border border-dashed border-border p-3 text-sm text-muted-foreground">
