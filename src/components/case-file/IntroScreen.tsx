@@ -11,9 +11,8 @@ import {
 import { PaperCard } from "@/components/case-file/PaperCard";
 import { Stamp } from "@/components/case-file/Stamp";
 import { PrologueOverlay } from "@/components/case-file/PrologueVideo";
-import { getBudgetMin, getHearingClock, startGame } from "@/lib/progress";
+import { getBudgetMin, startGame } from "@/lib/progress";
 import { getRoundSession } from "@/lib/round-client";
-import { StartTimerOverlay } from "@/components/case-file/StartTimerOverlay";
 import { useScrollToTopOnChange } from "@/hooks/use-scroll-top";
 
 const KEY = "maya-intro-seen";
@@ -47,7 +46,6 @@ export function IntroScreen({
   const [letterOpen, setLetterOpen] = useState(false);
   const [prologueOpen, setPrologueOpen] = useState(false);
   const [videoWatched, setVideoWatched] = useState(false);
-  const [showStartTimer, setShowStartTimer] = useState(false);
   const [budgetMin, setBudgetMin] = useState(90);
 
   useEffect(() => {
@@ -65,16 +63,10 @@ export function IntroScreen({
   const current = steps[step];
 
   const finish = () => {
-    setShowStartTimer(true);
-  };
-
-  const confirmStart = () => {
-    setShowStartTimer(false);
     markIntroSeen();
     startGame();
     onDone();
   };
-
 
   const next = () => {
     if (step < total - 1) setStep(step + 1);
@@ -266,7 +258,6 @@ export function IntroScreen({
           </button>
         </div>
       </div>
-      {showStartTimer && <StartTimerOverlay onConfirm={confirmStart} />}
     </main>
   );
 }
