@@ -440,6 +440,7 @@ function RoundPage() {
             code={round.code}
             budgetMin={round.budget_min}
             startedAt={round.started_at}
+            status={round.status}
           />
         </>
       )}

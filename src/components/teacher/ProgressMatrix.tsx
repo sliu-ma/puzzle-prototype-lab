@@ -32,8 +32,8 @@ export const COL_NAME: Record<number, string> = {
   1: "Mobilität",
   2: "Konsum",
   3: "Biodiversität",
-  4: "Energie",
-  5: "Gutachten",
+  4: "Wohnen",
+  5: "Energie",
   6: "Hearing",
 };
 
@@ -146,12 +146,13 @@ export function assessTeams(
 }
 
 /** Klartext-Status einer Gruppe – das Einzige, was in der Liste steht. */
-function statusLabel(s: TeamStatus): string {
+function statusLabel(s: TeamStatus, roundOver = false): string {
   if (s.finished) {
     return s.team.totalMin === null ? "Fertig" : `Fertig · ${s.team.totalMin} min`;
   }
   const min = s.minutesInPhase;
-  const seit = min === null ? "" : ` · seit ${min} min`;
+  const suffix = roundOver ? " (bei Rundenende)" : "";
+  const seit = min === null ? "" : ` · seit ${min} min${suffix}`;
   if (s.currentStage === 6) return `Am Hearing${seit}`;
   if (s.phase === "puzzle") return `Am Rätsel ${COL_LABEL[s.currentStage]}${seit}`;
   if (s.currentStage === 1) return `Unterwegs von der Schule zu Posten 1${seit}`;
@@ -163,7 +164,15 @@ function fmtMin(v: number | null | undefined) {
 }
 
 /** Eine Zeile pro Gruppe: nur ein Status, farbig wenn es hakt. */
-function TeamRow({ s, onOpen }: { s: TeamStatus; onOpen: () => void }) {
+function TeamRow({
+  s,
+  onOpen,
+  roundOver,
+}: {
+  s: TeamStatus;
+  onOpen: () => void;
+  roundOver: boolean;
+}) {
   return (
     <button
       type="button"
@@ -194,7 +203,7 @@ function TeamRow({ s, onOpen }: { s: TeamStatus; onOpen: () => void }) {
             ) : (
               <Footprints aria-hidden className="h-3 w-3 shrink-0" />
             ))}
-          <span className="truncate">{statusLabel(s)}</span>
+          <span className="truncate">{statusLabel(s, roundOver)}</span>
         </span>
       </span>
       <span className="font-mono-typed shrink-0 text-sm font-bold tabular-nums">
@@ -209,9 +218,11 @@ function TeamRow({ s, onOpen }: { s: TeamStatus; onOpen: () => void }) {
 function TeamDetailDialog({
   status,
   onClose,
+  roundOver,
 }: {
   status: TeamStatus | null;
   onClose: () => void;
+  roundOver: boolean;
 }) {
   const s = status;
   return (
@@ -225,7 +236,7 @@ function TeamDetailDialog({
 
             <div className="font-mono-typed flex items-center justify-between gap-2 rounded-sm border border-border bg-secondary/50 px-2.5 py-2 text-[11px]">
               <span className={cn(s.severity !== "ok" && "font-bold text-stamp")}>
-                {statusLabel(s)}
+                {statusLabel(s, roundOver)}
               </span>
               <span className="text-sm font-bold tabular-nums">{s.team.points} Pkt</span>
             </div>
@@ -340,10 +351,13 @@ export function ProgressMatrix({
   teams,
   startedAt,
   now,
+  roundOver = false,
 }: {
   teams: ReportTeam[];
   startedAt: string | null;
   now: number;
+  /** Runde vorbei: die Uhren stehen still. */
+  roundOver?: boolean;
 }) {
   const [openTeam, setOpenTeam] = useState<string | null>(null);
 
@@ -416,6 +430,7 @@ export function ProgressMatrix({
           <TeamRow
             key={s.team.teamId}
             s={s}
+            roundOver={roundOver}
             onOpen={() => setOpenTeam(s.team.teamId)}
           />
         ))}
@@ -429,6 +444,7 @@ export function ProgressMatrix({
 
       <TeamDetailDialog
         status={statuses.find((s) => s.team.teamId === openTeam) ?? null}
+        roundOver={roundOver}
         onClose={() => setOpenTeam(null)}
       />
     </div>

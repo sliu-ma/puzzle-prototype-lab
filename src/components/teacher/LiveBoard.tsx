@@ -16,11 +16,13 @@ export function LiveBoard({
   code,
   budgetMin,
   startedAt,
+  status,
 }: {
   password: string;
   code: string;
   budgetMin: number;
   startedAt: string | null;
+  status?: string;
 }) {
   const { report, loading, updatedAt } = useRoundReport(password, code, 8000);
   const teams = report?.teams ?? [];
@@ -34,7 +36,27 @@ export function LiveBoard({
   }, []);
 
   const startMs = startedAt ? Date.parse(startedAt) : null;
-  const elapsedMs = startMs === null ? null : now - startMs;
+
+  // Endpunkt der Runde: Zeitbudget aufgebraucht oder Runde abgeschlossen.
+  // Ab da stehen alle Uhren im Dashboard still.
+  const budgetEndMs = startMs === null ? null : startMs + budgetMin * 60_000;
+  const lastEventMs = teams.reduce<number | null>((acc, t) => {
+    const ms = t.lastEventAt ? Date.parse(t.lastEventAt) : NaN;
+    if (!Number.isFinite(ms)) return acc;
+    return acc === null ? ms : Math.max(acc, ms);
+  }, null);
+  const closedEndMs =
+    status === "closed" ? (lastEventMs ?? budgetEndMs ?? null) : null;
+  const endMs =
+    budgetEndMs === null
+      ? null
+      : closedEndMs === null
+        ? budgetEndMs
+        : Math.min(budgetEndMs, closedEndMs);
+
+  const effectiveNow = endMs === null ? now : Math.min(now, endMs);
+  const roundOver = endMs !== null && now >= endMs;
+  const elapsedMs = startMs === null ? null : effectiveNow - startMs;
   const remainingMs =
     elapsedMs === null ? null : Math.max(0, budgetMin * 60_000 - elapsedMs);
 
@@ -43,7 +65,11 @@ export function LiveBoard({
       <div className="flex items-center justify-between gap-2 rounded-sm border border-border bg-card p-3">
         <div>
           <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
-            {remainingMs === null ? "Runde noch nicht gestartet" : "Restzeit"}
+            {remainingMs === null
+              ? "Runde noch nicht gestartet"
+              : roundOver
+                ? "Runde beendet"
+                : "Restzeit"}
           </p>
           <p
             className={cn(
@@ -55,7 +81,8 @@ export function LiveBoard({
           </p>
           {elapsedMs !== null && (
             <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
-              läuft seit {Math.floor(elapsedMs / 60_000)} min von {budgetMin}
+              {roundOver ? "Dauer" : "läuft seit"} {Math.floor(elapsedMs / 60_000)} min von{" "}
+              {budgetMin}
             </p>
           )}
         </div>
@@ -79,7 +106,12 @@ export function LiveBoard({
         </div>
       </div>
 
-      <ProgressMatrix teams={teams} startedAt={startedAt} now={now} />
+      <ProgressMatrix
+        teams={teams}
+        startedAt={startedAt}
+        now={effectiveNow}
+        roundOver={roundOver}
+      />
     </div>
   );
 }
