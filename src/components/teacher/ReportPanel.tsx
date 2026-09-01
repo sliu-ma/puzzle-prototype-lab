@@ -699,6 +699,24 @@ function StageReportDialog({
               </DialogTitle>
             </DialogHeader>
 
+            <div className="flex items-center gap-1.5">
+              <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+                E{a.stage}
+              </p>
+              <InfoHint label="Etappen im Vergleich">
+                Wert = Median der Rätselzeit. Unten: Wegzeit und reine
+                Rätselzeit pro Gruppe sowie höchste genutzte Hinweisstufe
+                (H1–H3, H3 = Auflösung).
+                {hardest && easiest && hardest.stage !== easiest.stage && (
+                  <>
+                    {" "}
+                    Zäheste Etappe: E{hardest.stage} ({COL_NAME[hardest.stage]}) ·
+                    schnellste: E{easiest.stage} ({COL_NAME[easiest.stage]}).
+                  </>
+                )}
+              </InfoHint>
+            </div>
+
             <div className="font-mono-typed rounded-sm border border-border bg-secondary/50 px-2.5 py-2 text-[11px]">
               {a.solvedBy} von {teams.length} Gruppen gelöst ·{" "}
               <span className={cn(a.verdict !== "passend" && "text-stamp")}>{a.verdict}</span>
