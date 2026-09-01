@@ -881,6 +881,8 @@ export function ReportPanel({
   const { report, loading, updatedAt } = useRoundReport(password, code, 20_000);
   const [anon, setAnon] = useState(true);
   const [openTeam, setOpenTeam] = useState<string | null>(null);
+  const [openStage, setOpenStage] = useState<number | null>(null);
+  const [openQuestion, setOpenQuestion] = useState<number | null>(null);
 
   const teams = [...(report?.teams ?? [])].sort((a, b) =>
     a.name.localeCompare(b.name, "de-CH"),
@@ -899,32 +901,27 @@ export function ReportPanel({
   );
   const hints = stats(teams.map((t) => t.hintsUsed));
 
-  // Rätselzeit gegen Zeit zwischen den Rätseln: wie viel Zeit ging ausserhalb
-  // der Posten weg (Weg, Notizen, Pausen).
+  // Rätselzeit gegen Zeit zwischen den Rätseln – Grundlage für den CSV-Export
+  // und die Kennzahlen im Team-Popup.
   const puzzleTotals = teams.map((t) => t.stages.reduce((s, x) => s + x.minutes, 0));
   const travelTotals = teams.map((t) =>
     t.stages.reduce((s, x) => s + (x.betweenMin ?? 0), 0),
   );
   const puzzleSum = stats(puzzleTotals.filter((v) => v > 0));
   const travelSum = stats(travelTotals.filter((v) => v > 0));
-  const travelShare =
-    puzzleSum.sum + travelSum.sum > 0
-      ? Math.round((travelSum.sum / (puzzleSum.sum + travelSum.sum)) * 100)
-      : null;
+  void puzzleSum;
+  void travelSum;
 
   const analyses = STAGES.map((s) => analyseStage(teams, s));
   const withData = analyses.filter((a) => a.solvedBy > 0);
-  // Gemeinsame Skala für alle Etappen-Balken: Rätselzeit plus Weg.
-  const stageMax = Math.max(
-    1,
-    ...analyses.map(
-      (a) => (a.puzzle.med ?? 0) + (a.travel.n > 0 ? (a.travel.med ?? 0) : 0),
-    ),
-  );
 
   const hardest = [...withData].sort((a, b) => (b.puzzle.med ?? 0) - (a.puzzle.med ?? 0))[0];
   const easiest = [...withData].sort((a, b) => (a.puzzle.med ?? 0) - (b.puzzle.med ?? 0))[0];
   const questions = analyseQuestions(teams);
+  const hardestQuestion = [...questions]
+    .filter((q) => q.teamsAnswered > 0)
+    .sort((a, b) => b.firstWrong / b.teamsAnswered - a.firstWrong / a.teamsAnswered)[0];
+
   
 
 
