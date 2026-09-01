@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 export type ReportStage = {
   stage: number;
   minutes: number;
-  travelMin: number | null;
+  betweenMin: number | null;
   hintLevel: 0 | 1 | 2 | 3;
   solvedAt: string;
 };
@@ -45,6 +45,9 @@ export type ReportTeam = {
   hintsByStage: { stage: number; maxLevel: number; count: number }[];
   currentStage: number;
   lastSolvedAt: string | null;
+  phase: "travel" | "puzzle";
+  phaseSince: string | null;
+  currentScanAt: string | null;
   lastEventAt: string | null;
   hearingAttempts: { question: number; correct: boolean; attempt: number }[];
   events: ReportEvent[];
