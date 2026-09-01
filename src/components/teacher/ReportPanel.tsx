@@ -1,7 +1,25 @@
 import { useState } from "react";
-import { Download, RefreshCw, ShieldCheck } from "lucide-react";
+import {
+  AlertTriangle,
+  ChevronDown,
+  ChevronRight,
+  Download,
+  RefreshCw,
+  ShieldCheck,
+} from "lucide-react";
 import { useRoundReport, fmtTime, type ReportTeam } from "./LobbyPanel";
 import { COL_NAME } from "./ProgressMatrix";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
 
 const STAGES = [1, 2, 3, 4, 5];
