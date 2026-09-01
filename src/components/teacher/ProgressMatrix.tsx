@@ -379,6 +379,7 @@ export function ProgressMatrix({
                     <Cell
                       state="active"
                       severity={s.severity}
+                      icon={s.phase === "puzzle" ? "puzzle" : "travel"}
                       value={s.minutesInPhase === null ? "…" : String(s.minutesInPhase)}
                       label={`${COL_NAME[stage]} – ${
                         s.phase === "puzzle" ? "am Rätsel" : "unterwegs"
