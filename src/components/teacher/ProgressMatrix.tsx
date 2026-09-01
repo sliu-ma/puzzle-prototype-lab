@@ -126,6 +126,7 @@ export function assessTeams(
       severity,
       reasons,
       finished,
+      travelDoneMin: team.travelDoneMin ?? null,
     };
   });
 }
