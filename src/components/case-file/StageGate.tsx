@@ -3,7 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { Lock } from "lucide-react";
 import { PaperCard } from "./PaperCard";
 import { Stamp } from "./Stamp";
-import { getCurrentStage, getTeam, isTimeUp, STAGES } from "@/lib/progress";
+import { getCurrentStage, getTeam, isRoundClosed, isRoundOver, STAGES } from "@/lib/progress";
 
 type Props = {
   stage: number; // 1..6
@@ -20,12 +20,14 @@ export function StageGate({ stage, children }: Props) {
   const [current, setCurrent] = useState(0);
   const [hasTeam, setHasTeam] = useState(false);
   const [timeUp, setTimeUp] = useState(false);
+  const [closed, setClosed] = useState(false);
 
   useEffect(() => {
     const sync = () => {
       setCurrent(getCurrentStage());
       setHasTeam(!!getTeam());
-      setTimeUp(isTimeUp());
+      setTimeUp(isRoundOver());
+      setClosed(isRoundClosed());
     };
     sync();
     setReady(true);
@@ -89,14 +91,16 @@ export function StageGate({ stage, children }: Props) {
                   Ermittlung beendet
                 </p>
                 <h1 className="mt-2 flex items-center gap-2 font-serif text-3xl font-bold leading-tight">
-                  <Lock className="h-7 w-7 text-stamp" /> Die Zeit ist um
+                  <Lock className="h-7 w-7 text-stamp" />{" "}
+                  {closed ? "Die Runde ist beendet" : "Die Zeit ist um"}
                 </h1>
               </div>
-              <Stamp rotate={8}>Zeit abgelaufen</Stamp>
+              <Stamp rotate={8}>{closed ? "Runde beendet" : "Zeit abgelaufen"}</Stamp>
             </div>
             <p className="mt-5 text-[15px] leading-relaxed text-foreground/80">
-              Die Gemeindeversammlung hat begonnen. Neue Etappen und das Hearing
-              lassen sich nicht mehr starten.
+              {closed
+                ? "Die Lehrperson hat die Runde abgeschlossen. Neue Etappen und das Hearing lassen sich nicht mehr starten."
+                : "Die Gemeindeversammlung hat begonnen. Neue Etappen und das Hearing lassen sich nicht mehr starten."}
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
               <Link

@@ -115,6 +115,23 @@ export function startGame(ts?: number) {
   }
 }
 
+/**
+ * Setzt die Startzeit verbindlich (Klassenrunde: Startzeitpunkt der Runde).
+ * Damit läuft die Uhr auf allen Geräten synchron, unabhängig davon, wie lange
+ * ein Team im Briefing bleibt.
+ */
+export function setStartTs(ts: number) {
+  try {
+    const cur = localStorage.getItem(KEY_START_TS);
+    if (cur && Math.abs(parseInt(cur, 10) - ts) < 2000) return;
+    localStorage.setItem(KEY_START_TS, String(ts));
+    window.dispatchEvent(new Event("maya-progress"));
+  } catch {
+    /* ignore */
+  }
+}
+
+
 
 
 export function getStartTs(): number | null {
@@ -151,6 +168,33 @@ export function finishGame() {
   }
 }
 
+const KEY_ROUND_CLOSED = "maya-round-closed";
+
+/**
+ * Die Lehrperson hat die Runde abgeschlossen: Zeit einfrieren und ab jetzt
+ * gleich behandeln wie einen Zeitablauf.
+ */
+export function markRoundClosed() {
+  try {
+    if (!localStorage.getItem(KEY_ROUND_CLOSED)) {
+      localStorage.setItem(KEY_ROUND_CLOSED, String(Date.now()));
+    }
+    finishGame();
+    window.dispatchEvent(new Event("maya-progress"));
+  } catch {
+    /* ignore */
+  }
+}
+
+export function isRoundClosed(): boolean {
+  try {
+    return !!localStorage.getItem(KEY_ROUND_CLOSED);
+  } catch {
+    return false;
+  }
+}
+
+
 
 // ---- Adaptive Zeit-Helfer ---------------------------------------------------
 export function formatClock(d: Date): string {
@@ -176,6 +220,15 @@ export function isTimeUp(): boolean {
   if (!ts) return false;
   return Date.now() >= ts + getBudgetMin() * 60_000;
 }
+
+/**
+ * True, wenn die Runde vorbei ist: Zeit abgelaufen oder von der Lehrperson
+ * abgeschlossen. Grundlage für alle Sperren im Spiel.
+ */
+export function isRoundOver(): boolean {
+  return isTimeUp() || isRoundClosed();
+}
+
 
 /**
  * Einmalig eingefrorene Uhrzeit pro Schlüssel (localStorage).

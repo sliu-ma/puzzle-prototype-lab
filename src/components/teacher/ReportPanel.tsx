@@ -54,7 +54,7 @@ function analyseStage(teams: ReportTeam[], stage: number): StageAnalysis {
     .filter((s): s is NonNullable<typeof s> => !!s);
   const puzzle = stats(solved.map((s) => s.minutes));
   const travel = stats(
-    solved.map((s) => s.travelMin).filter((m): m is number => typeof m === "number"),
+    solved.map((s) => s.betweenMin).filter((m): m is number => typeof m === "number"),
   );
   const withHint = solved.filter((s) => s.hintLevel >= 1).length;
   const withSolution = solved.filter((s) => s.hintLevel === 3).length;
@@ -168,10 +168,11 @@ export function ReportPanel({
   );
   const hints = stats(teams.map((t) => t.hintsUsed));
 
-  // Rätselzeit gegen Wegzeit: die Kernfrage „wie viel Zeit ging unterwegs weg".
+  // Rätselzeit gegen Zeit zwischen den Rätseln: wie viel Zeit ging ausserhalb
+  // der Posten weg (Weg, Notizen, Pausen).
   const puzzleTotals = teams.map((t) => t.stages.reduce((s, x) => s + x.minutes, 0));
   const travelTotals = teams.map((t) =>
-    t.stages.reduce((s, x) => s + (x.travelMin ?? 0), 0),
+    t.stages.reduce((s, x) => s + (x.betweenMin ?? 0), 0),
   );
   const puzzleSum = stats(puzzleTotals.filter((v) => v > 0));
   const travelSum = stats(travelTotals.filter((v) => v > 0));
@@ -201,7 +202,7 @@ export function ReportPanel({
       "Hinweise_total",
       "Gesamtzeit_min",
       "Raetselzeit_total_min",
-      "Wegzeit_total_min",
+      "Zeit_zwischen_Raetseln_total_min",
       ...STAGES.flatMap((s) => [
         `E${s}_raetsel_min`,
         `E${s}_weg_min`,
@@ -227,10 +228,10 @@ export function ReportPanel({
         t.hintsUsed,
         t.totalMin ?? "",
         t.stages.reduce((s, x) => s + x.minutes, 0),
-        t.stages.reduce((s, x) => s + (x.travelMin ?? 0), 0),
+        t.stages.reduce((s, x) => s + (x.betweenMin ?? 0), 0),
         ...STAGES.flatMap((s) => {
           const st = t.stages.find((x) => x.stage === s);
-          return [st?.minutes ?? "", st?.travelMin ?? "", st?.hintLevel ?? ""];
+          return [st?.minutes ?? "", st?.betweenMin ?? "", st?.hintLevel ?? ""];
         }),
         t.badges.length,
         anon ? "" : t.badges.join(" / "),
@@ -346,19 +347,19 @@ export function ReportPanel({
           hint="Median, Summe aller Etappen"
         />
         <Metric
-          label="Wegzeit"
+          label="Zwischen Rätseln"
           value={hasTravelData ? fmt(travelSum.med, "min") : "–"}
-          hint={hasTravelData ? "Median, Summe aller Wege" : "erst ab neuer Runde"}
+          hint={hasTravelData ? "Median, Summe aller Zwischenzeiten" : "erst ab neuer Runde"}
         />
         <Metric
-          label="Anteil Weg"
+          label="Anteil dazwischen"
           value={travelShare === null ? "–" : `${travelShare} %`}
           hint="der erfassten Spielzeit"
         />
       </div>
       {!hasTravelData && (
         <p className="mt-2 text-xs text-muted-foreground">
-          Wegzeiten werden ab der nächsten gespielten Runde erhoben: sie ergeben sich aus
+          Zwischenzeiten werden ab der nächsten gespielten Runde erhoben: sie ergeben sich aus
           dem QR-Scan am Posten. Für bereits gespielte Runden lassen sie sich nicht
           rückwirkend berechnen.
         </p>
@@ -385,7 +386,7 @@ export function ReportPanel({
                 {a.puzzle.n > 0 ? `${a.puzzle.min}–${a.puzzle.max} min` : "–"}
               </span>
               <span>
-                <span className="text-muted-foreground">Weg </span>
+                <span className="text-muted-foreground">dazwischen </span>
                 {a.travel.n > 0 ? fmt(a.travel.med, "min") : "–"}
               </span>
               <span>
@@ -472,7 +473,7 @@ export function ReportPanel({
         )}
         {teams.map((t) => {
           const puzzle = t.stages.reduce((s, x) => s + x.minutes, 0);
-          const travel = t.stages.reduce((s, x) => s + (x.travelMin ?? 0), 0);
+          const travel = t.stages.reduce((s, x) => s + (x.betweenMin ?? 0), 0);
           return (
             <li key={t.teamId} className="rounded-sm border border-border bg-card p-2.5">
               <div className="flex items-baseline gap-2">
@@ -487,7 +488,7 @@ export function ReportPanel({
               <div className="mt-1 flex flex-wrap gap-x-3 gap-y-1 font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
                 <span>{t.totalMin === null ? "noch am Spielen" : `${t.totalMin} min total`}</span>
                 <span>{puzzle} min Rätsel</span>
-                {travel > 0 && <span>{travel} min Weg</span>}
+                {travel > 0 && <span>{travel} min dazwischen</span>}
                 <span>{t.hintsUsed} Hinweise</span>
                 <span>{t.badges.length} Abzeichen</span>
                 <span>
@@ -505,7 +506,7 @@ export function ReportPanel({
                       )}
                     >
                       E{s.stage}: {s.minutes}′
-                      {s.travelMin !== null && ` (+${s.travelMin}′ Weg)`}
+                      {s.betweenMin !== null && ` (+${s.betweenMin}′ dazwischen)`}
                       {s.hintLevel > 0 && ` · H${s.hintLevel}`}
                     </span>
                   ))}

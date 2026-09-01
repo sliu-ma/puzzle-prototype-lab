@@ -8,7 +8,7 @@ import {
   setRoundSession,
   type PendingJoin,
 } from "@/lib/round-client";
-import { registerTeam, resetAll, setBudgetMin } from "@/lib/progress";
+import { registerTeam, resetAll, setBudgetMin, setStartTs } from "@/lib/progress";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/lobby")({
@@ -70,6 +70,9 @@ function LobbyPage() {
           resetAll();
           setBudgetMin(budgetMin);
           registerTeam(p.teamName, p.code, p.members, startTs);
+          // Klassenrunde: die Uhr läuft ab dem Start der Runde für alle Teams
+          // gleich, unabhängig davon, wie lange das Briefing dauert.
+          setStartTs(startTs);
           setRoundSession({
             code: p.code,
             title: p.title,

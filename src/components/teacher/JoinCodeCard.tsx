@@ -65,49 +65,52 @@ function WallView({
   if (typeof document === "undefined") return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center gap-[3cqh] bg-paper px-[4cqw] py-[4cqh] [container-type:size]">
+    <div className="fixed inset-0 z-[100] overflow-auto bg-paper">
       <button
         type="button"
         onClick={onClose}
         aria-label="Beitrittsansicht schliessen"
-        className="absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-sm border border-border bg-card text-muted-foreground hover:text-foreground"
+        className="absolute right-4 top-4 z-10 flex h-11 w-11 items-center justify-center rounded-sm border border-border bg-card text-muted-foreground hover:text-foreground"
       >
         <X className="h-5 w-5" />
       </button>
 
-      <p className="font-mono-typed text-[max(10px,1.6cqh)] uppercase tracking-[0.3em] text-stamp">
-        Klassenrunde beitreten
-      </p>
+      <div className="mx-auto flex min-h-full max-w-5xl flex-col items-center justify-center gap-8 px-6 py-12 text-center">
+        <p className="font-mono-typed text-[clamp(11px,1.6vw,16px)] uppercase tracking-[0.3em] text-stamp">
+          Klassenrunde beitreten
+        </p>
 
-      <div className="flex flex-col items-center gap-[2cqh] sm:flex-row sm:gap-[4cqw]">
-        {qr && (
-          <img
-            src={qr}
-            alt={`QR-Code zum Beitritt der Runde ${code}`}
-            className="h-[38cqh] w-[38cqh] max-w-[80cqw] rounded-sm border border-border bg-white p-[1cqh]"
-          />
-        )}
-        <div className="text-center sm:text-left">
-          <p className="font-mono-typed text-[max(9px,1.4cqh)] uppercase tracking-[0.25em] text-muted-foreground">
-            Code
-          </p>
-          <p className="font-mono-typed text-[min(18cqh,14cqw)] font-bold leading-none tracking-[0.12em] text-foreground">
-            {code}
-          </p>
-          <p className="mt-[1.5cqh] font-serif text-[max(14px,2.4cqh)] text-foreground/80">
-            {joinUrl(code).replace(/^https?:\/\//, "")}
-          </p>
+        <div className="flex w-full flex-col items-center justify-center gap-8 sm:flex-row sm:gap-12">
+          {qr && (
+            <img
+              src={qr}
+              alt={`QR-Code zum Beitritt der Runde ${code}`}
+              className="w-[min(80vw,min(46vh,420px))] shrink-0 rounded-sm border border-border bg-white p-3"
+            />
+          )}
+          <div className="text-center sm:text-left">
+            <p className="font-mono-typed text-[clamp(10px,1.2vw,14px)] uppercase tracking-[0.25em] text-muted-foreground">
+              Code
+            </p>
+            <p className="font-mono-typed mt-2 text-[clamp(40px,9vw,120px)] font-bold leading-none tracking-[0.12em] text-foreground">
+              {code}
+            </p>
+            <p className="mt-5 font-serif text-[clamp(14px,2vw,26px)] leading-snug text-foreground/80">
+              {url.replace(/^https?:\/\//, "")}
+            </p>
+          </div>
         </div>
-      </div>
 
-      <p className="flex items-center gap-2 rounded-sm border border-border bg-secondary/60 px-[2cqw] py-[1.4cqh] font-serif text-[max(14px,2.6cqh)] font-semibold">
-        <Users className="h-[2.6cqh] w-[2.6cqh] min-h-4 min-w-4 text-stamp" />
-        {teamCount === 1 ? "1 Team angemeldet" : `${teamCount} Teams angemeldet`}
-      </p>
+        <p className="flex items-center gap-3 rounded-sm border border-border bg-secondary/60 px-5 py-3 font-serif text-[clamp(15px,2vw,26px)] font-semibold">
+          <Users className="h-[1.1em] w-[1.1em] text-stamp" />
+          {teamCount === 1 ? "1 Team angemeldet" : `${teamCount} Teams angemeldet`}
+        </p>
+      </div>
     </div>,
     document.body,
   );
 }
+
 
 export function JoinCodeCard({
   code,
