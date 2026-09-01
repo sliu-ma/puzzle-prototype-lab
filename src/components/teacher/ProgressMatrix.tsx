@@ -137,17 +137,19 @@ function Cell({
   value,
   severity,
   label,
+  icon,
 }: {
   state: "solved" | "active" | "open";
   value: string;
   severity: Severity;
   label: string;
+  icon?: "travel" | "puzzle";
 }) {
   return (
     <div
       title={label}
       className={cn(
-        "font-mono-typed flex h-7 items-center justify-center rounded-sm text-[10px] font-bold tabular-nums",
+        "font-mono-typed flex h-7 flex-col items-center justify-center rounded-sm text-[10px] font-bold leading-none tabular-nums",
         state === "solved" && "bg-primary text-primary-foreground",
         state === "active" &&
           "border-2 border-dashed border-primary/60 bg-secondary text-foreground",
