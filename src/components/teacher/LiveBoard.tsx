@@ -1,6 +1,15 @@
+import { useEffect, useState } from "react";
 import { RefreshCw } from "lucide-react";
 import { useRoundReport } from "./LobbyPanel";
+import { ProgressMatrix } from "./ProgressMatrix";
 import { cn } from "@/lib/utils";
+
+function fmtMmSs(ms: number) {
+  const total = Math.max(0, Math.floor(ms / 1000));
+  const m = Math.floor(total / 60);
+  const s = total % 60;
+  return `${m}:${String(s).padStart(2, "0")}`;
+}
 
 export function LiveBoard({
   password,
@@ -13,59 +22,64 @@ export function LiveBoard({
   budgetMin: number;
   startedAt: string | null;
 }) {
-  const { report, loading } = useRoundReport(password, code, 8000);
+  const { report, loading, updatedAt } = useRoundReport(password, code, 8000);
   const teams = report?.teams ?? [];
 
-  const elapsedMin = startedAt
-    ? Math.floor((Date.now() - new Date(startedAt).getTime()) / 60_000)
-    : null;
-  const remainingMin =
-    elapsedMin === null ? null : Math.max(0, budgetMin - elapsedMin);
+  // Eigener Sekundentakt: die Restzeit läuft flüssig, unabhängig davon,
+  // wann die Daten das letzte Mal geladen wurden.
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    const iv = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => window.clearInterval(iv);
+  }, []);
+
+  const startMs = startedAt ? Date.parse(startedAt) : null;
+  const elapsedMs = startMs === null ? null : now - startMs;
+  const remainingMs =
+    elapsedMs === null ? null : Math.max(0, budgetMin * 60_000 - elapsedMs);
 
   return (
     <div className="mt-4">
-      <div className="flex items-center justify-between font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
-        <span>
-          {elapsedMin === null
-            ? "Runde noch nicht gestartet"
-            : `Läuft seit ${elapsedMin} min · ${remainingMin} min übrig`}
-        </span>
-        <RefreshCw className={cn("h-3.5 w-3.5", loading && "animate-spin")} />
+      <div className="flex items-center justify-between gap-2 rounded-sm border border-border bg-card p-3">
+        <div>
+          <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+            {remainingMs === null ? "Runde noch nicht gestartet" : "Restzeit"}
+          </p>
+          <p
+            className={cn(
+              "font-mono-typed text-3xl font-bold tabular-nums",
+              remainingMs !== null && remainingMs <= 10 * 60_000 && "text-stamp",
+            )}
+          >
+            {remainingMs === null ? "–" : fmtMmSs(remainingMs)}
+          </p>
+          {elapsedMs !== null && (
+            <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+              läuft seit {Math.floor(elapsedMs / 60_000)} min von {budgetMin}
+            </p>
+          )}
+        </div>
+        <div className="text-right">
+          <RefreshCw
+            className={cn("ml-auto h-3.5 w-3.5 text-muted-foreground", loading && "animate-spin")}
+          />
+          <p className="font-mono-typed mt-1 text-[10px] uppercase tracking-wider text-muted-foreground">
+            {teams.length} Teams
+          </p>
+          {updatedAt !== null && (
+            <p className="font-mono-typed text-[10px] text-muted-foreground">
+              Stand{" "}
+              {new Date(updatedAt).toLocaleTimeString("de-CH", {
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+              })}
+            </p>
+          )}
+        </div>
       </div>
 
-      {teams.length === 0 ? (
-        <p className="mt-2 text-sm text-muted-foreground">Noch keine Gruppe unterwegs.</p>
-      ) : (
-        <ol className="mt-2 space-y-1.5">
-          {teams.map((t, i) => (
-            <li
-              key={t.teamId}
-              className="flex items-center gap-2 rounded-sm border border-border bg-card/70 px-2.5 py-2.5"
-            >
-              <span className="font-mono-typed w-6 text-lg font-bold tabular-nums text-muted-foreground">
-                {i + 1}
-              </span>
-              <span className="min-w-0 flex-1 truncate font-serif font-semibold">
-                {t.name}
-              </span>
-              <span className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
-                {t.stagesSolved}/5 · {t.hintsUsed} Hinweise
-              </span>
-              <span
-                aria-hidden
-                className={cn(
-                  "h-2.5 w-2.5 rounded-full",
-                  t.finishedAt ? "bg-stamp" : "animate-pulse bg-primary/60",
-                )}
-                title={t.finishedAt ? "fertig" : "spielt"}
-              />
-              <span className="font-mono-typed text-lg font-bold tabular-nums">
-                {t.points}
-              </span>
-            </li>
-          ))}
-        </ol>
-      )}
+      <ProgressMatrix teams={teams} startedAt={startedAt} now={now} />
     </div>
   );
 }
