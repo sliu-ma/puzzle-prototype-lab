@@ -310,11 +310,16 @@ export function buildReport(
       durations.set(stage, Number(payloadOf(e)["durationSec"]) || 0);
     }
 
+    // Startpunkt des Teams: Rundenstart (Schule) oder – falls unbekannt – das
+    // erste Ereignis. Damit zählt auch der Weg von der Schule zu Posten 1.
+    const firstEventMs = raw.length > 0 ? Math.min(...raw.map(eventMs)) : null;
+    const originMs = Number.isFinite(roundStartMs) ? roundStartMs : firstEventMs;
+
     const stages: ReportStage[] = [...solvedAt.keys()]
       .sort((a, b) => a - b)
       .map((stage) => {
         const scan = scanAt.get(stage) ?? null;
-        const prevSolved = stage > 1 ? (solvedAt.get(stage - 1) ?? null) : null;
+        const prevSolved = stage > 1 ? (solvedAt.get(stage - 1) ?? null) : originMs;
         // Zwischenzeit nur, wenn beide Marken vorhanden und plausibel sind.
         let betweenMin: number | null = null;
         if (scan !== null && prevSolved !== null && scan > prevSolved) {
