@@ -47,7 +47,6 @@ export function IntroScreen({
   const [letterOpen, setLetterOpen] = useState(false);
   const [prologueOpen, setPrologueOpen] = useState(false);
   const [videoWatched, setVideoWatched] = useState(false);
-  const [showStartTimer, setShowStartTimer] = useState(false);
   const [budgetMin, setBudgetMin] = useState(90);
 
   useEffect(() => {
@@ -65,16 +64,10 @@ export function IntroScreen({
   const current = steps[step];
 
   const finish = () => {
-    setShowStartTimer(true);
-  };
-
-  const confirmStart = () => {
-    setShowStartTimer(false);
     markIntroSeen();
     startGame();
     onDone();
   };
-
 
   const next = () => {
     if (step < total - 1) setStep(step + 1);
