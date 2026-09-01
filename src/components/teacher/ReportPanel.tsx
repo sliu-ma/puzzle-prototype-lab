@@ -1136,23 +1136,7 @@ export function ReportPanel({
         onClose={() => setOpenTeam(null)}
       />
 
-      <Section
-        title="Etappen im Vergleich"
-        hintLabel="Etappen im Vergleich"
-        hint={
-          <>
-            Wert = Median der Rätselzeit. Tippe für Zeiten, Hinweise und alle
-            Gruppen.
-            {hardest && easiest && hardest.stage !== easiest.stage && (
-              <>
-                {" "}
-                Zäheste Etappe: E{hardest.stage} ({COL_NAME[hardest.stage]}) ·
-                schnellste: E{easiest.stage} ({COL_NAME[easiest.stage]}).
-              </>
-            )}
-          </>
-        }
-      >
+      <Section title="Etappen im Vergleich">
         <ul className="mt-2 space-y-1.5">
           {analyses.map((a) => {
             const hard = a.stage === hardest?.stage && withData.length > 1;
