@@ -108,7 +108,7 @@ type TeamAnswer = {
  * Altrunden ohne Versuchsnummer werden als erster Versuch behandelt.
  */
 function teamAnswers(t: ReportTeam): TeamAnswer[] {
-  const src: Try[] & { question?: number }[] = [];
+  
   const raw =
     t.hearingAttempts.length > 0
       ? t.hearingAttempts
@@ -119,7 +119,7 @@ function teamAnswers(t: ReportTeam): TeamAnswer[] {
             correct: e.correct === true,
             attempt: e.attempt ?? 1,
           }));
-  void src;
+  
   const map = new Map<number, Try[]>();
   for (const a of raw) {
     const list = map.get(a.question) ?? [];
