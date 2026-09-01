@@ -734,62 +734,7 @@ export function ReportPanel({
           )}
         </>
       )}
-
-      <h3 className="mt-5 font-serif text-lg font-bold">Pro Team</h3>
-      <ul className="mt-2 space-y-2">
-        {teams.length === 0 && (
-          <li className="rounded-sm border border-dashed border-border p-3 text-sm text-muted-foreground">
-            Noch keine Daten.
-          </li>
-        )}
-        {teams.map((t) => {
-          const puzzle = t.stages.reduce((s, x) => s + x.minutes, 0);
-          const travel = t.stages.reduce((s, x) => s + (x.betweenMin ?? 0), 0);
-          return (
-            <li key={t.teamId} className="rounded-sm border border-border bg-card p-2.5">
-              <div className="flex items-baseline gap-2">
-                <span className="min-w-0 flex-1 truncate font-serif font-semibold">
-                  {t.name}
-                </span>
-                <span className="font-mono-typed font-bold tabular-nums">{t.points}</span>
-              </div>
-              <p className="mt-1 text-xs text-muted-foreground">
-                {t.members.join(", ") || "keine Namen"}
-              </p>
-              <div className="mt-1 flex flex-wrap gap-x-3 gap-y-1 font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
-                <span>{t.totalMin === null ? "noch am Spielen" : `${t.totalMin} min total`}</span>
-                <span>{puzzle} min Rätsel</span>
-                {travel > 0 && <span>{travel} min dazwischen</span>}
-                <span>{t.hintsUsed} Hinweise</span>
-                <span>{t.badges.length} Abzeichen</span>
-                <span>
-                  Hearing {t.hearingCorrect}✓ / {t.hearingWrong}✗
-                </span>
-              </div>
-              {t.stages.length > 0 && (
-                <div className="mt-1.5 flex flex-wrap gap-1">
-                  {t.stages.map((s) => (
-                    <span
-                      key={s.stage}
-                      className={cn(
-                        "font-mono-typed rounded-sm px-1.5 py-0.5 text-[10px]",
-                        s.hintLevel === 3 ? "bg-stamp/15 text-stamp" : "bg-secondary",
-                      )}
-                    >
-                      E{s.stage}: {s.minutes}′
-                      {s.betweenMin !== null &&
-                        (s.stage === 1
-                          ? ` (+${s.betweenMin}′ Schulweg → Posten 1)`
-                          : ` (+${s.betweenMin}′ dazwischen)`)}
-                      {s.hintLevel > 0 && ` · H${s.hintLevel}`}
-                    </span>
-                  ))}
-                </div>
-              )}
-            </li>
-          );
-        })}
-      </ul>
+      </Section>
 
       <label className="mt-4 flex items-start gap-2 rounded-sm border border-border bg-card p-2.5 text-xs">
         <input
