@@ -222,7 +222,7 @@ export function GlobalTimer() {
 
   if (!startTs) return null;
 
-  const totalMs = getBudgetMin() * 60_000;
+  const totalMs = budget * 60_000;
   const effectiveNow = endTs ?? now;
   const remaining = startTs + totalMs - effectiveNow;
   const isFinished = !!endTs;
