@@ -17,7 +17,7 @@ export function LiveLeaderboard({ teams }: { teams: ReportTeam[] }) {
       </p>
       <ol className="divide-y divide-border overflow-hidden rounded-sm border border-border bg-card">
         {rows.map((t, i) => (
-          <li key={t.id} className="flex items-center gap-3 px-3 py-2.5">
+          <li key={t.teamId} className="flex items-center gap-3 px-3 py-2.5">
             <Rank index={i} self={false} />
             <span className="min-w-0 flex-1">
               <span className="block truncate font-serif text-sm font-semibold text-foreground">
