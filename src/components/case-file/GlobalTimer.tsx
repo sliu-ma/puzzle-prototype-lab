@@ -156,8 +156,8 @@ export function GlobalTimer() {
     };
   }, []);
 
-  // Die Lehrperson kann während der Runde Zeit nachgeben. Dafür fragen wir
-  // regelmässig das Zeitbudget der Runde ab und melden Zuwachs per Pop-up.
+  // Abgleich mit der Runde: Startzeit (damit alle Teams synchron laufen),
+  // Zeitzugabe der Lehrperson und der Rundenabschluss.
   useEffect(() => {
     if (!startTs || endTs) return;
     const session = getRoundSession();
@@ -167,21 +167,30 @@ export function GlobalTimer() {
       void getRoundState({ data: { code: session.code } })
         .then((res) => {
           if (!alive || !res.found) return;
+          if (res.startedAt) {
+            const ms = Date.parse(res.startedAt);
+            if (Number.isFinite(ms)) setStartTs(ms);
+          }
           const local = getBudgetMin();
           if (res.budgetMin > local) {
             setBudgetMin(res.budgetMin);
             setBonusMin(res.budgetMin - local);
           }
+          if (res.status === "closed") {
+            markRoundClosed();
+            setClosed(true);
+          }
         })
         .catch(() => undefined);
     };
     check();
-    const id = window.setInterval(check, 15_000);
+    const id = window.setInterval(check, 10_000);
     return () => {
       alive = false;
       window.clearInterval(id);
     };
   }, [startTs, endTs]);
+
 
   useEffect(() => {
     if (!startTs || endTs) return;
