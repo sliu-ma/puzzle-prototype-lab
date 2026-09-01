@@ -15,12 +15,9 @@ Aktuell muss jede Gruppe den Rundencode von Hand abtippen und danach Teamname un
 - **Anzeige, welche Geräte wirklich wach sind.** Jedes Wartezimmer meldet sich ohnehin alle 3 Sekunden beim Server; dieser Zeitstempel wird gespeichert und im Lehrer-Dashboard als grüner Punkt („Gerät bereit") bzw. grauer Punkt („seit 2 min keine Verbindung") gezeigt. So startest du nicht mit einer Gruppe, deren Handy im Rucksack liegt.
 - **„Wir sind bereit"-Knopf** im Wartezimmer und Bildschirmsperre verhindern (Wake Lock), damit das Handy während der Wartezeit nicht zugeht. Der Hinweis „Handy nicht schliessen" wird dadurch überflüssig.
 - **Rückkehr statt Doppelanmeldung.** Heute lebt die Wartezimmer-Zuordnung nur in der Tab-Sitzung: schliesst iOS den Tab, meldet sich die Gruppe neu an und die Runde hat ein Geisterteam. Die Zuordnung wird dauerhaft gespeichert, ein erneuter Aufruf führt zurück ins Wartezimmer.
-- **Korrigieren ohne Löschen.** Gruppe kann in der Lobby Teamname und Mitglieder nachbearbeiten oder die Runde verlassen; die Lehrperson kann ein Team umbenennen statt es zu entfernen.
-- **Startknopf mit Sicherheitsfrage:** „4 Teams, 13 Personen, 1 Team ohne Verbindung — trotzdem starten?" Dazu zwei Optionen: Vorgeschichte vorab testen (Tonprobe, ohne die Runde zu starten) und Start ohne Video, wenn die Klasse es schon gesehen hat.
 
 ## Bündel C — Wartezeit sinnvoll füllen
 
-- Statt Spinner: der eigene **Ermittlerausweis** (Teamname, Mitglieder, Rundencode) als Karte, dazu „So läuft's ab" in drei Zeilen und ein kurzer Sicherheitshinweis fürs Velofahren im Verkehr.
 - Teamliste zeigt Beitrittszeit und Personenzahl, das eigene Team bleibt oben angeheftet.
 - Verbindungsstatus als ruhiges Symbol statt roter Fehlerbox, die bei jedem Funkloch aufblitzt.
 
