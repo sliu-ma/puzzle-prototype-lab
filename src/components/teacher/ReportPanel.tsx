@@ -695,8 +695,9 @@ export function ReportPanel({
           {COL_NAME[easiest.stage]}) mit Median {easiest.puzzle.med} min
         </p>
       )}
+      </Section>
 
-      <h3 className="mt-5 font-serif text-lg font-bold">Hearing pro Frage</h3>
+      <Section title="Hearing pro Frage">
       {questions.length === 0 ? (
         <p className="mt-1 text-xs text-muted-foreground">
           Noch keine Hearing-Antworten erfasst.
