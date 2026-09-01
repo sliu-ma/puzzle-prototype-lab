@@ -203,7 +203,9 @@ export function ProgressMatrix({
                 <span className="font-serif font-semibold">{s.team.name}</span>
                 <span className="text-muted-foreground">
                   {" "}
-                  · {COL_NAME[s.currentStage]} · {s.reasons.join(" · ")}
+                  · {COL_NAME[s.currentStage]} ·{" "}
+                  {s.phase === "puzzle" ? "am Rätsel" : "unterwegs"} ·{" "}
+                  {s.reasons.join(" · ")}
                 </span>
               </li>
             ))}
@@ -304,8 +306,10 @@ export function ProgressMatrix({
                     <Cell
                       state="active"
                       severity={s.severity}
-                      value={s.minutesOnCurrent === null ? "…" : String(s.minutesOnCurrent)}
-                      label={`${COL_NAME[stage]} – seit ${s.minutesOnCurrent ?? "?"} min`}
+                      value={s.minutesInPhase === null ? "…" : String(s.minutesInPhase)}
+                      label={`${COL_NAME[stage]} – ${
+                        s.phase === "puzzle" ? "am Rätsel" : "unterwegs"
+                      } seit ${s.minutesInPhase ?? "?"} min`}
                     />
                   </div>
                 );
@@ -324,8 +328,11 @@ export function ProgressMatrix({
       </div>
 
       <p className="mt-2 text-[10px] leading-relaxed text-muted-foreground">
-        Zahl in der Zelle = Minuten. Dunkel ausgefüllt: gelöst. Gestrichelt: gerade dran.
-        Rot: seit über {ALARM_MIN} min dran, Auflösung genutzt oder deutlich hinter der Klasse.
+        Zahl in der Zelle = Minuten im aktuellen Abschnitt. Dunkel ausgefüllt: gelöst.
+        Gestrichelt: gerade dran – die Uhr startet beim QR-Scan (am Rätsel) bzw. beim
+        Lösen der Vor-Etappe (unterwegs). Warnung ab {PUZZLE_WARN_MIN} min am Rätsel
+        bzw. {TRAVEL_WARN_MIN} min unterwegs, rot ab {PUZZLE_ALARM_MIN} bzw.{" "}
+        {TRAVEL_ALARM_MIN} min, bei genutzter Auflösung oder deutlich hinter der Klasse.
       </p>
     </div>
   );
