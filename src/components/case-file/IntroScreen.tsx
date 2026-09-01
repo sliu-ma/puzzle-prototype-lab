@@ -11,7 +11,8 @@ import {
 import { PaperCard } from "@/components/case-file/PaperCard";
 import { Stamp } from "@/components/case-file/Stamp";
 import { PrologueOverlay } from "@/components/case-file/PrologueVideo";
-import { StartTimerOverlay } from "@/components/case-file/StartTimerOverlay";
+import { getBudgetMin, startGame } from "@/lib/progress";
+import { getRoundSession } from "@/lib/round-client";
 import { useScrollToTopOnChange } from "@/hooks/use-scroll-top";
 
 const KEY = "maya-intro-seen";
