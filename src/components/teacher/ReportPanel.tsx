@@ -1191,59 +1191,91 @@ export function ReportPanel({
         <HearingMatrix teams={teams} nameOf={nameOf} />
       </Section>
 
-      <label className="mt-4 flex items-start gap-2 rounded-sm border border-border bg-card p-2.5 text-xs">
-        <input
-          type="checkbox"
-          checked={anon}
-          onChange={(e) => setAnon(e.target.checked)}
-          className="mt-0.5 h-4 w-4"
-        />
-        <span>
-          <span className="flex items-center gap-1 font-semibold">
-            <ShieldCheck className="h-3.5 w-3.5" />
-            Export ohne Namen
-          </span>
-          <span className="text-muted-foreground">
-            Teamnamen werden zu Team-01, Team-02 … und die Mitgliedernamen bleiben leer. Für eine
-            Masterarbeit in der Regel Voraussetzung.
-          </span>
-        </span>
-      </label>
+      <button
+        type="button"
+        onClick={() => setExportOpen(true)}
+        disabled={teams.length === 0}
+        className="mt-4 flex min-h-[48px] w-full items-center justify-center gap-2 rounded-sm border border-border px-4 font-serif font-semibold disabled:opacity-50"
+      >
+        <Download className="h-4 w-4" />
+        Export
+      </button>
 
-      <div className="mt-4 flex items-center gap-1.5">
-        <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
-          Daten exportieren
-        </p>
-        <InfoHint label="Daten exportieren">
-          <span className="font-semibold">Übersicht pro Team:</span> eine Zeile
-          je Gruppe mit Punkten, Etappenzeiten, Hinweisstufen, Hearing und
-          Abzeichen.
-          <br />
-          <span className="font-semibold">Rohdaten pro Ereignis:</span> eine
-          Zeile je Ereignis mit Sekunde seit Rundenstart – das Langformat für
-          Pivot-Tabellen, SPSS oder R.
-        </InfoHint>
-      </div>
-      <div className="mt-2 grid gap-2 sm:grid-cols-2">
-        <button
-          type="button"
-          onClick={exportTeamCsv}
-          disabled={teams.length === 0}
-          className="flex min-h-[48px] w-full items-center justify-center gap-2 rounded-sm border border-border px-4 font-serif font-semibold disabled:opacity-50"
-        >
-          <Download className="h-4 w-4" />
-          Übersicht pro Team (CSV)
-        </button>
-        <button
-          type="button"
-          onClick={exportEventCsv}
-          disabled={teams.length === 0}
-          className="flex min-h-[48px] w-full items-center justify-center gap-2 rounded-sm border border-border px-4 font-serif font-semibold disabled:opacity-50"
-        >
-          <Download className="h-4 w-4" />
-          Rohdaten pro Ereignis (CSV)
-        </button>
-      </div>
+      <Dialog open={exportOpen} onOpenChange={setExportOpen}>
+        <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="font-serif">Export</DialogTitle>
+          </DialogHeader>
+
+          <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+            Was soll exportiert werden?
+          </p>
+          <div className="space-y-2">
+            {(
+              [
+                ["teams", "Übersicht pro Team", "Eine Zeile je Gruppe: Punkte, Zeiten, Hinweise, Hearing, Abzeichen."],
+                ["stages", "Etappen-Zusammenfassung", "Median-, Min- und Max-Zeiten, Hinweise, Einschätzung pro Etappe."],
+                ["hearing", "Hearing pro Frage", "Antworten, falsche Antworten und Fehlerquote je Frage."],
+                ["events", "Rohdaten pro Ereignis", "Langformat mit Zeitstempel – separate Datei für Pivot, SPSS oder R."],
+              ] as const
+            ).map(([key, title, desc]) => (
+              <label
+                key={key}
+                className="flex items-start gap-2 rounded-sm border border-border bg-card p-2.5 text-xs"
+              >
+                <input
+                  type="checkbox"
+                  checked={sel[key]}
+                  onChange={(e) => setSel((s) => ({ ...s, [key]: e.target.checked }))}
+                  className="mt-0.5 h-4 w-4"
+                />
+                <span>
+                  <span className="font-semibold">{title}</span>
+                  <span className="block text-muted-foreground">{desc}</span>
+                </span>
+              </label>
+            ))}
+          </div>
+
+          <label className="flex items-start gap-2 rounded-sm border border-border bg-card p-2.5 text-xs">
+            <input
+              type="checkbox"
+              checked={anon}
+              onChange={(e) => setAnon(e.target.checked)}
+              className="mt-0.5 h-4 w-4"
+            />
+            <span>
+              <span className="flex items-center gap-1 font-semibold">
+                <ShieldCheck className="h-3.5 w-3.5" />
+                Export ohne Namen
+              </span>
+              <span className="text-muted-foreground">
+                Teamnamen werden zu Team-01, Team-02 … und die Mitgliedernamen bleiben leer.
+              </span>
+            </span>
+          </label>
+
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => setExportOpen(false)}
+              className="min-h-[44px] flex-1 rounded-sm border border-border px-4 font-serif font-semibold"
+            >
+              Abbrechen
+            </button>
+            <button
+              type="button"
+              onClick={runExport}
+              disabled={nothingSelected}
+              className="flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-sm bg-primary px-4 font-serif font-semibold text-primary-foreground disabled:opacity-50"
+            >
+              <Download className="h-4 w-4" />
+              CSV herunterladen
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
+
