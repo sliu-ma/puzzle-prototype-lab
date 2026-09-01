@@ -792,6 +792,16 @@ function HearingMatrix({
 
   return (
     <div className="mt-2">
+      <div className="mb-1 flex justify-end">
+        <InfoHint label="Hearing-Matrix">
+          ✓ richtig · ✗ falsch (gewertet = letzter Versuch) · – keine Antwort.
+          Hochgestellte Zahl = nötige Versuche. Spalten F1–F10:
+          {" "}
+          {Object.entries(QUESTION_LABEL)
+            .map(([k, v]) => `F${Number(k) + 1} ${v}`)
+            .join(" · ")}
+        </InfoHint>
+      </div>
       <div className="overflow-x-auto rounded-sm border border-border">
         <table className="w-full border-collapse text-[11px]">
           <thead>
