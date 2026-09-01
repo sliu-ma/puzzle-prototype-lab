@@ -882,16 +882,6 @@ function HearingMatrix({
           </tfoot>
         </table>
       </div>
-      <p className="mt-1 text-[10px] text-muted-foreground">
-        ✓ richtig · ✗ falsch (gewertet = letzter Versuch) · – keine Antwort.
-        Hochgestellte Zahl = nötige Versuche.{" "}
-        {(() => {
-          const short = QUESTION_LABEL;
-          return Object.entries(short)
-            .map(([k, v]) => `F${Number(k) + 1} ${v}`)
-            .join(" · ");
-        })()}
-      </p>
     </div>
   );
 }
