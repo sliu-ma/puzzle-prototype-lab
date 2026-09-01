@@ -1,5 +1,19 @@
-import { AlertTriangle, Flag, Footprints, QrCode, Search } from "lucide-react";
+import { useState } from "react";
+import {
+  AlertTriangle,
+  ChevronRight,
+  Flag,
+  Footprints,
+  QrCode,
+  Search,
+} from "lucide-react";
 import type { ReportTeam } from "./LobbyPanel";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 
 /** Etappen plus Hearing als letzte Spalte. */
@@ -131,106 +145,196 @@ export function assessTeams(
   });
 }
 
+/** Klartext-Status einer Gruppe – das Einzige, was in der Liste steht. */
+function statusLabel(s: TeamStatus): string {
+  if (s.finished) {
+    return s.team.totalMin === null ? "Fertig" : `Fertig · ${s.team.totalMin} min`;
+  }
+  const min = s.minutesInPhase;
+  const seit = min === null ? "" : ` · seit ${min} min`;
+  if (s.currentStage === 6) return `Am Hearing${seit}`;
+  if (s.phase === "puzzle") return `Am Rätsel ${COL_LABEL[s.currentStage]}${seit}`;
+  if (s.currentStage === 1) return `Unterwegs von der Schule zu Posten 1${seit}`;
+  return `Unterwegs zu ${COL_LABEL[s.currentStage]}${seit}`;
+}
 
-function Cell({
-  state,
-  value,
-  severity,
-  label,
-  icon,
-}: {
-  state: "solved" | "active" | "open";
-  value: string;
-  severity: Severity;
-  label: string;
-  icon?: "travel" | "puzzle";
-}) {
+function fmtMin(v: number | null | undefined) {
+  return v === null || v === undefined ? "–" : `${v} min`;
+}
+
+/** Eine Zeile pro Gruppe: nur ein Status, farbig wenn es hakt. */
+function TeamRow({ s, onOpen }: { s: TeamStatus; onOpen: () => void }) {
   return (
-    <div
-      title={label}
+    <button
+      type="button"
+      onClick={onOpen}
       className={cn(
-        "font-mono-typed flex h-7 flex-col items-center justify-center rounded-sm text-[10px] font-bold leading-none tabular-nums",
-        state === "solved" && "bg-primary text-primary-foreground",
-        state === "active" &&
-          "border-2 border-dashed border-primary/60 bg-secondary text-foreground",
-        state === "active" && severity === "warn" && "border-stamp/70 text-stamp",
-        state === "active" &&
-          severity === "alarm" &&
-          "border-stamp bg-stamp/15 text-stamp",
-        state === "open" && "bg-muted/60 text-muted-foreground",
+        "flex min-h-12 w-full items-center gap-2 rounded-sm border px-3 py-2 text-left transition-colors",
+        s.severity === "alarm"
+          ? "border-stamp bg-stamp/10 animate-pulse"
+          : s.severity === "warn"
+            ? "border-stamp/50 bg-stamp/5"
+            : "border-border bg-card/70 hover:bg-secondary/60",
       )}
     >
-      {icon === "travel" && <Footprints aria-hidden className="h-2.5 w-2.5" />}
-      {icon === "puzzle" && <Search aria-hidden className="h-2.5 w-2.5" />}
-      <span>{value}</span>
-    </div>
+      <span className="min-w-0 flex-1">
+        <span className="flex items-center gap-1.5 font-serif text-sm font-semibold">
+          {s.finished && <Flag aria-hidden className="h-3 w-3 text-stamp" />}
+          <span className="truncate">{s.team.name}</span>
+        </span>
+        <span
+          className={cn(
+            "font-mono-typed mt-0.5 flex items-center gap-1 text-[11px]",
+            s.severity === "ok" ? "text-muted-foreground" : "font-bold text-stamp",
+          )}
+        >
+          {!s.finished &&
+            (s.phase === "puzzle" ? (
+              <Search aria-hidden className="h-3 w-3 shrink-0" />
+            ) : (
+              <Footprints aria-hidden className="h-3 w-3 shrink-0" />
+            ))}
+          <span className="truncate">{statusLabel(s)}</span>
+        </span>
+      </span>
+      <span className="font-mono-typed shrink-0 text-sm font-bold tabular-nums">
+        {s.team.points}
+      </span>
+      <ChevronRight aria-hidden className="h-4 w-4 shrink-0 text-muted-foreground" />
+    </button>
   );
 }
 
-/**
- * Weg-/Rätsel-Leiste für ein Team: zuerst die Zeit unterwegs, dann die
- * QR-Marke, sobald der Posten gescannt wurde, danach die Rätselzeit.
- */
-function PhaseBar({ s }: { s: TeamStatus }) {
-  const scanned = s.phase === "puzzle";
-  const hearing = s.currentStage === 6;
-  const travelMin = scanned ? s.travelDoneMin : s.minutesInPhase;
-  const puzzleMin = scanned ? s.minutesInPhase : null;
-  const travelLabel =
-    s.currentStage === 1 ? "Schule → Posten 1" : `unterwegs zu ${COL_LABEL[s.currentStage]}`;
-
-  const seg = (active: boolean) =>
-    cn(
-      "font-mono-typed flex items-center gap-1 rounded-sm px-1.5 py-0.5 text-[10px] tabular-nums",
-      active
-        ? s.severity === "alarm"
-          ? "bg-stamp/15 font-bold text-stamp"
-          : s.severity === "warn"
-            ? "bg-stamp/10 font-bold text-stamp"
-            : "bg-secondary font-bold text-foreground"
-        : "bg-muted/60 text-muted-foreground",
-    );
-
+/** Detail-Popup: alle Zeiten, Hinweise und Punkte einer Gruppe. */
+function TeamDetailDialog({
+  status,
+  onClose,
+}: {
+  status: TeamStatus | null;
+  onClose: () => void;
+}) {
+  const s = status;
   return (
-    <div className="mt-1 flex flex-wrap items-center gap-1">
-      {!hearing && (
-        <>
-          <span className={seg(!scanned)} title={travelLabel}>
-            <Footprints aria-hidden className="h-3 w-3" />
-            {travelMin === null ? "…" : `${travelMin}′`}
-            <span className="hidden sm:inline">{s.currentStage === 1 ? "Schulweg" : "Weg"}</span>
-          </span>
-          <span
-            className={cn(
-              "flex items-center",
-              scanned ? "text-primary" : "text-muted-foreground/40",
+    <Dialog open={s !== null} onOpenChange={(o) => !o && onClose()}>
+      <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-md">
+        {s && (
+          <>
+            <DialogHeader>
+              <DialogTitle className="font-serif text-base">{s.team.name}</DialogTitle>
+            </DialogHeader>
+
+            <div className="font-mono-typed flex items-center justify-between gap-2 rounded-sm border border-border bg-secondary/50 px-2.5 py-2 text-[11px]">
+              <span className={cn(s.severity !== "ok" && "font-bold text-stamp")}>
+                {statusLabel(s)}
+              </span>
+              <span className="text-sm font-bold tabular-nums">{s.team.points} Pkt</span>
+            </div>
+
+            {s.reasons.length > 0 && (
+              <p className="font-mono-typed flex items-start gap-1.5 text-[11px] text-stamp">
+                <AlertTriangle aria-hidden className="mt-px h-3.5 w-3.5 shrink-0" />
+                <span>{s.reasons.join(" · ")}</span>
+              </p>
             )}
-            title={scanned ? "QR-Code am Posten gescannt" : "Posten noch nicht gescannt"}
-          >
-            <span aria-hidden className="mx-0.5 h-px w-2 bg-current" />
-            <QrCode className="h-3.5 w-3.5" />
-            <span aria-hidden className="mx-0.5 h-px w-2 bg-current" />
-          </span>
-        </>
-      )}
-      {scanned ? (
-        <span className={seg(true)} title={hearing ? "am Hearing" : "am Rätsel"}>
-          <Search aria-hidden className="h-3 w-3" />
-          {puzzleMin === null ? "…" : `${puzzleMin}′`} {hearing ? "Hearing" : COL_NAME[s.currentStage]}
-        </span>
-      ) : (
-        <span className={seg(false)}>
-          <Search aria-hidden className="h-3 w-3" />
-          {COL_NAME[s.currentStage]}
-        </span>
-      )}
-    </div>
+
+            {!s.finished && (
+              <div className="rounded-sm border border-border p-2.5">
+                <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+                  Aktueller Abschnitt · {COL_NAME[s.currentStage]}
+                </p>
+                <div className="font-mono-typed mt-1.5 flex flex-wrap items-center gap-2 text-[11px]">
+                  <span className="flex items-center gap-1">
+                    <Footprints aria-hidden className="h-3 w-3" />
+                    Weg{" "}
+                    {fmtMin(s.phase === "puzzle" ? s.travelDoneMin : s.minutesInPhase)}
+                  </span>
+                  {s.currentStage !== 6 && (
+                    <span
+                      className={cn(
+                        "flex items-center gap-1",
+                        s.phase === "puzzle" ? "text-primary" : "text-muted-foreground/50",
+                      )}
+                    >
+                      <QrCode aria-hidden className="h-3.5 w-3.5" />
+                      {s.phase === "puzzle" ? "gescannt" : "noch kein Scan"}
+                    </span>
+                  )}
+                  <span className="flex items-center gap-1">
+                    <Search aria-hidden className="h-3 w-3" />
+                    Rätsel {fmtMin(s.phase === "puzzle" ? s.minutesInPhase : null)}
+                  </span>
+                </div>
+              </div>
+            )}
+
+            <div>
+              <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+                Verlauf
+              </p>
+              <ul className="mt-1 divide-y divide-border rounded-sm border border-border">
+                {MATRIX_COLS.map((stage) => {
+                  const solved = s.team.stages.find((x) => x.stage === stage);
+                  const hint = s.team.hintsByStage.find((h) => h.stage === stage);
+                  const done = Boolean(solved) || (stage === 6 && s.finished);
+                  const active = !s.finished && stage === s.currentStage;
+                  return (
+                    <li
+                      key={stage}
+                      className={cn(
+                        "flex items-center gap-2 px-2.5 py-1.5 text-[11px]",
+                        !done && !active && "text-muted-foreground/60",
+                        active && "bg-secondary/50",
+                      )}
+                    >
+                      <span className="font-mono-typed w-9 shrink-0 font-bold">
+                        {COL_LABEL[stage]}
+                      </span>
+                      <span className="min-w-0 flex-1 truncate font-serif">
+                        {COL_NAME[stage]}
+                      </span>
+                      <span className="font-mono-typed shrink-0 tabular-nums text-muted-foreground">
+                        {solved
+                          ? `${solved.betweenMin === null ? "–" : `${solved.betweenMin}′`} Weg · ${solved.minutes}′ Rätsel`
+                          : done
+                            ? "gelöst"
+                            : active
+                              ? "läuft"
+                              : "offen"}
+                      </span>
+                      <span className="font-mono-typed w-10 shrink-0 text-right tabular-nums">
+                        {hint && hint.maxLevel > 0 ? `H${hint.maxLevel}` : "–"}
+                      </span>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+
+            <p className="font-mono-typed text-[10px] text-muted-foreground">
+              Beigetreten{" "}
+              {new Date(s.team.joinedAt).toLocaleTimeString("de-CH", {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+              {s.team.finishedAt &&
+                ` · fertig ${new Date(s.team.finishedAt).toLocaleTimeString("de-CH", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}`}
+              {s.team.totalMin !== null && ` · Gesamtdauer ${s.team.totalMin} min`}
+              {` · ${s.team.hintsUsed} Hinweise`}
+            </p>
+          </>
+        )}
+      </DialogContent>
+    </Dialog>
   );
 }
 
+const SEV_ORDER: Record<Severity, number> = { alarm: 0, warn: 1, ok: 2 };
+
 /**
- * Fortschritts-Matrix: eine Zeile pro Team, eine Spalte pro Etappe.
- * Gibt auf einen Blick, wo die Klasse steht und wer feststeckt.
+ * Live-Übersicht: eine Statuszeile pro Gruppe, Details erst im Popup.
  */
 export function ProgressMatrix({
   teams,
@@ -241,21 +345,22 @@ export function ProgressMatrix({
   startedAt: string | null;
   now: number;
 }) {
+  const [openTeam, setOpenTeam] = useState<string | null>(null);
+
   const statuses = assessTeams(teams, startedAt, now).sort(
     (a, b) =>
+      SEV_ORDER[a.severity] - SEV_ORDER[b.severity] ||
       b.currentStage - a.currentStage ||
       a.team.name.localeCompare(b.team.name, "de-CH"),
   );
 
-  // Verteilung: wie viele Teams stehen bei welcher Etappe?
   const distribution = MATRIX_COLS.map((stage) => ({
     stage,
     count: statuses.filter((s) => !s.finished && s.currentStage === stage).length,
   }));
   const finishedCount = statuses.filter((s) => s.finished).length;
   const maxCount = Math.max(1, ...distribution.map((d) => d.count), finishedCount);
-
-  const trouble = statuses.filter((s) => s.severity !== "ok");
+  const troubleCount = statuses.filter((s) => s.severity !== "ok").length;
 
   if (teams.length === 0) {
     return <p className="mt-2 text-sm text-muted-foreground">Noch keine Gruppe unterwegs.</p>;
@@ -263,26 +368,11 @@ export function ProgressMatrix({
 
   return (
     <div className="mt-3">
-      {trouble.length > 0 && (
-        <div className="rounded-sm border border-stamp/50 bg-stamp/5 p-2.5">
-          <p className="font-mono-typed flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-stamp">
-            <AlertTriangle className="h-3.5 w-3.5" />
-            Braucht evtl. Hilfe
-          </p>
-          <ul className="mt-1.5 space-y-1">
-            {trouble.map((s) => (
-              <li key={s.team.teamId} className="text-xs">
-                <span className="font-serif font-semibold">{s.team.name}</span>
-                <span className="text-muted-foreground">
-                  {" "}
-                  · {COL_NAME[s.currentStage]} ·{" "}
-                  {s.phase === "puzzle" ? "am Rätsel" : "unterwegs"} ·{" "}
-                  {s.reasons.join(" · ")}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </div>
+      {troubleCount > 0 && (
+        <p className="font-mono-typed flex items-center gap-1.5 rounded-sm border border-stamp/50 bg-stamp/5 px-2.5 py-1.5 text-[11px] font-bold uppercase tracking-wider text-stamp">
+          <AlertTriangle aria-hidden className="h-3.5 w-3.5" />
+          {troubleCount} {troubleCount === 1 ? "Gruppe braucht" : "Gruppen brauchen"} evtl. Hilfe
+        </p>
       )}
 
       {/* Klassenverteilung */}
@@ -320,96 +410,27 @@ export function ProgressMatrix({
         </div>
       </div>
 
-      {/* Matrix */}
-      <div className="mt-4 space-y-1">
-        <div className="flex items-center gap-1">
-          <span className="min-w-0 flex-1" />
-          {MATRIX_COLS.map((s) => (
-            <span
-              key={s}
-              className="font-mono-typed w-7 text-center text-[9px] uppercase tracking-wide text-muted-foreground"
-            >
-              {COL_LABEL[s]}
-            </span>
-          ))}
-          <span className="font-mono-typed w-10 text-right text-[9px] uppercase text-muted-foreground">
-            Pkt
-          </span>
-        </div>
-
+      {/* Statusliste */}
+      <div className="mt-4 space-y-1.5">
         {statuses.map((s) => (
-          <div
+          <TeamRow
             key={s.team.teamId}
-            className={cn(
-              "rounded-sm border px-1.5 py-1.5",
-              s.severity === "alarm"
-                ? "border-stamp/60 bg-stamp/5"
-                : "border-border bg-card/70",
-            )}
-          >
-            <div className="flex items-center gap-1">
-            <span className="min-w-0 flex-1 truncate font-serif text-sm font-semibold">
-              {s.finished && <Flag className="mr-1 inline h-3 w-3 text-stamp" />}
-              {s.team.name}
-            </span>
-            {MATRIX_COLS.map((stage) => {
-              const solved = s.team.stages.find((x) => x.stage === stage);
-              const hearingDone = stage === 6 && s.finished;
-              if (solved || hearingDone) {
-                return (
-                  <div key={stage} className="w-7">
-                    <Cell
-                      state="solved"
-                      severity="ok"
-                      value={solved ? String(solved.minutes) : "✓"}
-                      label={`${COL_NAME[stage]} gelöst${
-                        solved
-                          ? ` in ${solved.minutes} min${
-                              solved.hintLevel > 0 ? `, Hinweis ${solved.hintLevel}` : ""
-                            }`
-                          : ""
-                      }`}
-                    />
-                  </div>
-                );
-              }
-              if (stage === s.currentStage && !s.finished) {
-                return (
-                  <div key={stage} className="w-7">
-                    <Cell
-                      state="active"
-                      severity={s.severity}
-                      icon={s.phase === "puzzle" ? "puzzle" : "travel"}
-                      value={s.minutesInPhase === null ? "…" : String(s.minutesInPhase)}
-                      label={`${COL_NAME[stage]} – ${
-                        s.phase === "puzzle" ? "am Rätsel" : "unterwegs"
-                      } seit ${s.minutesInPhase ?? "?"} min`}
-                    />
-                  </div>
-                );
-              }
-              return (
-                <div key={stage} className="w-7">
-                  <Cell state="open" severity="ok" value="·" label={`${COL_NAME[stage]} offen`} />
-                </div>
-              );
-            })}
-            <span className="font-mono-typed w-10 text-right text-sm font-bold tabular-nums">
-              {s.team.points}
-            </span>
-            </div>
-            {!s.finished && <PhaseBar s={s} />}
-          </div>
+            s={s}
+            onOpen={() => setOpenTeam(s.team.teamId)}
+          />
         ))}
       </div>
 
       <p className="mt-2 text-[10px] leading-relaxed text-muted-foreground">
-        Leiste pro Gruppe: erst die Zeit unterwegs (Fussspuren – bei Etappe 1 der Weg
-        von der Schule), dann der QR-Scan am Posten, danach die Zeit am Rätsel (Lupe).
-        Zahlen in der Matrix: gelöste Etappen in Minuten. Warnung ab {PUZZLE_WARN_MIN} min
-        am Rätsel bzw. {TRAVEL_WARN_MIN} min unterwegs, rot ab {PUZZLE_ALARM_MIN} bzw.{" "}
-        {TRAVEL_ALARM_MIN} min, bei genutzter Auflösung oder deutlich hinter der Klasse.
+        Tippe auf eine Gruppe für Zeiten pro Etappe. Gelb ab {PUZZLE_WARN_MIN} min am
+        Rätsel bzw. {TRAVEL_WARN_MIN} min unterwegs, rot ab {PUZZLE_ALARM_MIN} bzw.{" "}
+        {TRAVEL_ALARM_MIN} min.
       </p>
+
+      <TeamDetailDialog
+        status={statuses.find((s) => s.team.teamId === openTeam) ?? null}
+        onClose={() => setOpenTeam(null)}
+      />
     </div>
   );
 }
