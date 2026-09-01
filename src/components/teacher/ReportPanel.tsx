@@ -671,10 +671,16 @@ function ClickRow({
 function StageReportDialog({
   analysis,
   teams,
+  hardest,
+  easiest,
+  withDataLen,
   onClose,
 }: {
   analysis: StageAnalysis | null;
   teams: ReportTeam[];
+  hardest?: StageAnalysis;
+  easiest?: StageAnalysis;
+  withDataLen: number;
   onClose: () => void;
 }) {
   const a = analysis;
@@ -698,6 +704,24 @@ function StageReportDialog({
                 E{a.stage} · {COL_NAME[a.stage]}
               </DialogTitle>
             </DialogHeader>
+
+            <div className="flex items-center gap-1.5">
+              <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+                E{a.stage}
+              </p>
+              <InfoHint label="Etappen im Vergleich">
+                Wert = Median der Rätselzeit. Unten: Wegzeit und reine
+                Rätselzeit pro Gruppe sowie höchste genutzte Hinweisstufe
+                (H1–H3, H3 = Auflösung).
+                {hardest && easiest && hardest.stage !== easiest.stage && withDataLen > 1 && (
+                  <>
+                    {" "}
+                    Zäheste Etappe: E{hardest.stage} ({COL_NAME[hardest.stage]}) ·
+                    schnellste: E{easiest.stage} ({COL_NAME[easiest.stage]}).
+                  </>
+                )}
+              </InfoHint>
+            </div>
 
             <div className="font-mono-typed rounded-sm border border-border bg-secondary/50 px-2.5 py-2 text-[11px]">
               {a.solvedBy} von {teams.length} Gruppen gelöst ·{" "}
@@ -792,16 +816,6 @@ function HearingMatrix({
 
   return (
     <div className="mt-2">
-      <div className="mb-1 flex justify-end">
-        <InfoHint label="Hearing-Matrix">
-          ✓ richtig · ✗ falsch (gewertet = letzter Versuch) · – keine Antwort.
-          Hochgestellte Zahl = nötige Versuche. Spalten F1–F10:
-          {" "}
-          {Object.entries(QUESTION_LABEL)
-            .map(([k, v]) => `F${Number(k) + 1} ${v}`)
-            .join(" · ")}
-        </InfoHint>
-      </div>
       <div className="overflow-x-auto rounded-sm border border-border">
         <table className="w-full border-collapse text-[11px]">
           <thead>
@@ -1146,23 +1160,7 @@ export function ReportPanel({
         onClose={() => setOpenTeam(null)}
       />
 
-      <Section
-        title="Etappen im Vergleich"
-        hintLabel="Etappen im Vergleich"
-        hint={
-          <>
-            Wert = Median der Rätselzeit. Tippe für Zeiten, Hinweise und alle
-            Gruppen.
-            {hardest && easiest && hardest.stage !== easiest.stage && (
-              <>
-                {" "}
-                Zäheste Etappe: E{hardest.stage} ({COL_NAME[hardest.stage]}) ·
-                schnellste: E{easiest.stage} ({COL_NAME[easiest.stage]}).
-              </>
-            )}
-          </>
-        }
-      >
+      <Section title="Etappen im Vergleich">
         <ul className="mt-2 space-y-1.5">
           {analyses.map((a) => {
             const hard = a.stage === hardest?.stage && withData.length > 1;
@@ -1185,6 +1183,9 @@ export function ReportPanel({
       <StageReportDialog
         analysis={analyses.find((a) => a.stage === openStage) ?? null}
         teams={teams}
+        hardest={hardest}
+        easiest={easiest}
+        withDataLen={withData.length}
         onClose={() => setOpenStage(null)}
       />
 
