@@ -54,8 +54,6 @@ function stats(values: number[]): Stats {
 
 const fmt = (v: number | null, unit = "") =>
   v === null ? "–" : `${v}${unit ? ` ${unit}` : ""}`;
-const pct = (part: number, whole: number) =>
-  whole === 0 ? "–" : `${Math.round((part / whole) * 100)} %`;
 
 type StageAnalysis = {
   stage: number;
