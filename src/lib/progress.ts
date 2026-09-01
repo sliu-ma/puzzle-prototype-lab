@@ -115,6 +115,23 @@ export function startGame(ts?: number) {
   }
 }
 
+/**
+ * Setzt die Startzeit verbindlich (Klassenrunde: Startzeitpunkt der Runde).
+ * Damit läuft die Uhr auf allen Geräten synchron, unabhängig davon, wie lange
+ * ein Team im Briefing bleibt.
+ */
+export function setStartTs(ts: number) {
+  try {
+    const cur = localStorage.getItem(KEY_START_TS);
+    if (cur && Math.abs(parseInt(cur, 10) - ts) < 2000) return;
+    localStorage.setItem(KEY_START_TS, String(ts));
+    window.dispatchEvent(new Event("maya-progress"));
+  } catch {
+    /* ignore */
+  }
+}
+
+
 
 
 export function getStartTs(): number | null {
