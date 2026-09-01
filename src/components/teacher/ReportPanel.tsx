@@ -713,7 +713,7 @@ function StageReportDialog({
                 Wert = Median der Rätselzeit. Unten: Wegzeit und reine
                 Rätselzeit pro Gruppe sowie höchste genutzte Hinweisstufe
                 (H1–H3, H3 = Auflösung).
-                {hardest && easiest && hardest.stage !== easiest.stage && (
+                {hardest && easiest && hardest.stage !== easiest.stage && withDataLen > 1 && (
                   <>
                     {" "}
                     Zäheste Etappe: E{hardest.stage} ({COL_NAME[hardest.stage]}) ·
