@@ -39,6 +39,8 @@ export type TeamStatus = {
   severity: Severity;
   reasons: string[];
   finished: boolean;
+  /** Abgeschlossene Wegzeit zum aktuellen Posten (bis QR-Scan). */
+  travelDoneMin: number | null;
 };
 
 /** Am Rätsel (ab QR-Scan): ab hier deutet es auf Mühe mit dem Rätsel hin. */
