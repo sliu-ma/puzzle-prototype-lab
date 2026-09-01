@@ -1,7 +1,25 @@
 import { useState } from "react";
-import { Download, RefreshCw, ShieldCheck } from "lucide-react";
+import {
+  AlertTriangle,
+  ChevronDown,
+  ChevronRight,
+  Download,
+  RefreshCw,
+  ShieldCheck,
+} from "lucide-react";
 import { useRoundReport, fmtTime, type ReportTeam } from "./LobbyPanel";
 import { COL_NAME } from "./ProgressMatrix";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
 
 const STAGES = [1, 2, 3, 4, 5];
@@ -139,6 +157,241 @@ function csvDownload(name: string, rows: (string | number)[][]) {
   URL.revokeObjectURL(url);
 }
 
+/** Fällt die Gruppe auf? Auflösung genutzt oder deutlich über dem Median. */
+function isFlagged(t: ReportTeam, medianPuzzle: Map<number, number | null>): boolean {
+  return t.stages.some((s) => {
+    const med = medianPuzzle.get(s.stage) ?? null;
+    return s.hintLevel === 3 || (med !== null && med > 0 && s.minutes >= med * 2);
+  });
+}
+
+/** Eine kompakte Zeile pro Gruppe – Details erst im Popup. */
+function TeamRow({
+  t,
+  name,
+  flagged,
+  onOpen,
+}: {
+  t: ReportTeam;
+  name: string;
+  flagged: boolean;
+  onOpen: () => void;
+}) {
+  return (
+    <li>
+      <button
+        type="button"
+        onClick={onOpen}
+        className="flex min-h-12 w-full items-center gap-2 rounded-sm border border-border bg-card px-3 py-2 text-left transition-colors hover:bg-secondary/60"
+      >
+        <span className="min-w-0 flex-1">
+          <span className="flex items-center gap-1.5">
+            {flagged && (
+              <AlertTriangle aria-hidden className="h-3 w-3 shrink-0 text-stamp" />
+            )}
+            <span className="truncate font-serif text-sm font-semibold">{name}</span>
+          </span>
+          <span className="font-mono-typed mt-0.5 block truncate text-[11px] text-muted-foreground">
+            {t.stagesSolved}/5 Etappen ·{" "}
+            {t.totalMin === null ? "noch am Spielen" : `${t.totalMin} min`} ·{" "}
+            {t.hintsUsed} Hinweise
+          </span>
+        </span>
+        <span className="font-mono-typed shrink-0 text-sm font-bold tabular-nums">
+          {t.points}
+        </span>
+        <ChevronRight aria-hidden className="h-4 w-4 shrink-0 text-muted-foreground" />
+      </button>
+    </li>
+  );
+}
+
+/** Detail-Popup: alle Zahlen einer Gruppe an einem Ort. */
+function TeamReportDialog({
+  team,
+  name,
+  showMembers,
+  medianPuzzle,
+  onClose,
+}: {
+  team: ReportTeam | null;
+  name: string;
+  showMembers: boolean;
+  medianPuzzle: Map<number, number | null>;
+  onClose: () => void;
+}) {
+  const t = team;
+  const puzzle = t ? t.stages.reduce((s, x) => s + x.minutes, 0) : 0;
+  const travel = t ? t.stages.reduce((s, x) => s + (x.betweenMin ?? 0), 0) : 0;
+  const attempts =
+    t && t.hearingAttempts.length
+      ? Math.max(...t.hearingAttempts.map((a) => a.attempt))
+      : 0;
+  const wrongQuestions = t
+    ? [
+        ...new Set(
+          t.hearingAttempts.filter((a) => !a.correct).map((a) => a.question + 1),
+        ),
+      ].sort((a, b) => a - b)
+    : [];
+
+  return (
+    <Dialog open={t !== null} onOpenChange={(o) => !o && onClose()}>
+      <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-md">
+        {t && (
+          <>
+            <DialogHeader>
+              <DialogTitle className="font-serif text-base">{name}</DialogTitle>
+            </DialogHeader>
+
+            {showMembers && t.members.length > 0 && (
+              <p className="text-xs text-muted-foreground">{t.members.join(", ")}</p>
+            )}
+
+            <div className="font-mono-typed flex items-center justify-between gap-2 rounded-sm border border-border bg-secondary/50 px-2.5 py-2 text-[11px]">
+              <span>
+                {t.finishedAt
+                  ? `Fertig ${fmtTime(t.finishedAt)}`
+                  : `${t.stagesSolved}/5 Etappen · nicht abgeschlossen`}
+              </span>
+              <span className="text-sm font-bold tabular-nums">{t.points} Pkt</span>
+            </div>
+
+            <div className="grid grid-cols-3 gap-2">
+              <Metric label="Gesamt" value={fmt(t.totalMin, "min")} />
+              <Metric label="Rätsel" value={`${puzzle} min`} />
+              <Metric
+                label="Dazwischen"
+                value={travel > 0 ? `${travel} min` : "–"}
+                hint={
+                  puzzle + travel > 0
+                    ? `${Math.round((travel / (puzzle + travel)) * 100)} % der Zeit`
+                    : undefined
+                }
+              />
+            </div>
+
+            <div>
+              <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+                Etappen
+              </p>
+              <ul className="mt-1 divide-y divide-border rounded-sm border border-border">
+                {STAGES.map((stage) => {
+                  const s = t.stages.find((x) => x.stage === stage);
+                  const med = medianPuzzle.get(stage) ?? null;
+                  const diff = s && med !== null ? Math.round(s.minutes - med) : null;
+                  return (
+                    <li
+                      key={stage}
+                      className={cn(
+                        "flex items-center gap-2 px-2.5 py-1.5 text-[11px]",
+                        !s && "text-muted-foreground/60",
+                      )}
+                    >
+                      <span className="font-mono-typed w-6 shrink-0 font-bold">
+                        E{stage}
+                      </span>
+                      <span className="min-w-0 flex-1 truncate font-serif">
+                        {COL_NAME[stage]}
+                      </span>
+                      <span className="font-mono-typed shrink-0 tabular-nums text-muted-foreground">
+                        {s
+                          ? `${s.betweenMin === null ? "–" : `${s.betweenMin}′`} Weg · ${s.minutes}′ Rätsel`
+                          : "offen"}
+                      </span>
+                      <span
+                        className={cn(
+                          "font-mono-typed w-12 shrink-0 text-right tabular-nums",
+                          diff !== null && diff > 0 ? "text-stamp" : "text-muted-foreground",
+                        )}
+                      >
+                        {diff === null ? "" : diff === 0 ? "±0" : diff > 0 ? `+${diff}′` : `${diff}′`}
+                      </span>
+                      <span
+                        className={cn(
+                          "font-mono-typed w-6 shrink-0 text-right",
+                          s?.hintLevel === 3 && "font-bold text-stamp",
+                        )}
+                      >
+                        {s && s.hintLevel > 0 ? `H${s.hintLevel}` : "–"}
+                      </span>
+                    </li>
+                  );
+                })}
+              </ul>
+              <p className="mt-1 text-[10px] text-muted-foreground">
+                Rechte Spalte: Abweichung der Rätselzeit vom Klassenmedian.
+              </p>
+            </div>
+
+            <div className="rounded-sm border border-border p-2.5">
+              <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+                Hearing
+              </p>
+              <p className="font-mono-typed mt-1 text-[11px]">
+                {t.hearingCorrect}✓ / {t.hearingWrong}✗
+                {attempts > 0 && ` · ${attempts} Versuch${attempts === 1 ? "" : "e"}`}
+              </p>
+              {wrongQuestions.length > 0 && (
+                <p className="mt-0.5 text-[11px] text-muted-foreground">
+                  Falsch beantwortet: F{wrongQuestions.join(", F")}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+                Abzeichen ({t.badges.length})
+              </p>
+              {t.badges.length === 0 ? (
+                <p className="mt-1 text-[11px] text-muted-foreground">keine</p>
+              ) : (
+                <div className="mt-1 flex flex-wrap gap-1">
+                  {t.badges.map((b) => (
+                    <span
+                      key={b}
+                      className="font-mono-typed rounded-sm bg-secondary px-1.5 py-0.5 text-[10px]"
+                    >
+                      {b}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <p className="font-mono-typed text-[10px] text-muted-foreground">
+              Beigetreten {fmtTime(t.joinedAt)}
+              {t.finishedAt && ` · fertig ${fmtTime(t.finishedAt)}`}
+            </p>
+          </>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+/** Aufklappbarer Abschnitt – Details stören die Übersicht nicht. */
+function Section({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <Collapsible className="mt-5">
+      <CollapsibleTrigger className="group flex min-h-12 w-full items-center justify-between gap-2 rounded-sm border border-border bg-card px-3 py-2 text-left">
+        <span className="font-serif text-base font-bold">{title}</span>
+        <ChevronDown
+          aria-hidden
+          className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-data-[state=open]:rotate-180"
+        />
+      </CollapsibleTrigger>
+      <CollapsibleContent>{children}</CollapsibleContent>
+    </Collapsible>
+  );
+}
+
 export function ReportPanel({
   password,
   code,
@@ -150,6 +403,7 @@ export function ReportPanel({
 }) {
   const { report, loading, updatedAt } = useRoundReport(password, code, 20_000);
   const [anon, setAnon] = useState(true);
+  const [openTeam, setOpenTeam] = useState<string | null>(null);
 
   const teams = [...(report?.teams ?? [])].sort((a, b) =>
     a.name.localeCompare(b.name, "de-CH"),
@@ -191,6 +445,14 @@ export function ReportPanel({
     .sort((a, b) => b.wrong / b.answers - a.wrong / a.answers)[0];
 
   const hasTravelData = travelSum.n > 0;
+
+  // Mediane pro Etappe für den Vergleich im Team-Popup.
+  const medianPuzzle = new Map<number, number | null>(
+    analyses.map((a) => [a.stage, a.puzzle.med]),
+  );
+  const teamsByPoints = [...teams].sort(
+    (a, b) => b.points - a.points || a.name.localeCompare(b.name, "de-CH"),
+  );
 
   /** Übersicht pro Team – eine Zeile je Gruppe. */
   const exportTeamCsv = () => {
@@ -342,28 +604,46 @@ export function ReportPanel({
         />
         <Metric label="Hinweise" value={fmt(hints.med)} hint={`Median · Ø ${fmt(hints.avg)}`} />
         <Metric
-          label="Rätselzeit"
-          value={fmt(puzzleSum.med, "min")}
-          hint="Median, Summe aller Etappen"
-        />
-        <Metric
-          label="Zwischen Rätseln"
-          value={hasTravelData ? fmt(travelSum.med, "min") : "–"}
-          hint={hasTravelData ? "Median, Summe aller Zwischenzeiten" : "erst ab neuer Runde"}
-        />
-        <Metric
-          label="Anteil dazwischen"
+          label="Anteil Weg"
           value={travelShare === null ? "–" : `${travelShare} %`}
           hint="der erfassten Spielzeit"
         />
       </div>
-      {!hasTravelData && (
-        <p className="mt-2 text-xs text-muted-foreground">
-          {"\n"}
-        </p>
-      )}
+      <p className="font-mono-typed mt-1.5 text-[10px] text-muted-foreground">
+        Median Rätselzeit {fmt(puzzleSum.med, "min")} · dazwischen{" "}
+        {hasTravelData ? fmt(travelSum.med, "min") : "erst ab neuer Runde"}
+      </p>
 
-      <h3 className="mt-5 font-serif text-lg font-bold">Etappen im Vergleich</h3>
+      <h3 className="mt-5 font-serif text-lg font-bold">Pro Team</h3>
+      <ul className="mt-2 space-y-1.5">
+        {teams.length === 0 && (
+          <li className="rounded-sm border border-dashed border-border p-3 text-sm text-muted-foreground">
+            Noch keine Daten.
+          </li>
+        )}
+        {teamsByPoints.map((t) => (
+          <TeamRow
+            key={t.teamId}
+            t={t}
+            name={t.name}
+            flagged={isFlagged(t, medianPuzzle)}
+            onOpen={() => setOpenTeam(t.teamId)}
+          />
+        ))}
+      </ul>
+      <p className="mt-1.5 text-[10px] text-muted-foreground">
+        Tippe auf eine Gruppe für Zeiten pro Etappe, Hearing und Abzeichen.
+      </p>
+
+      <TeamReportDialog
+        team={teams.find((t) => t.teamId === openTeam) ?? null}
+        name={teams.find((t) => t.teamId === openTeam)?.name ?? ""}
+        showMembers
+        medianPuzzle={medianPuzzle}
+        onClose={() => setOpenTeam(null)}
+      />
+
+      <Section title="Etappen im Vergleich">
       <ul className="mt-2 space-y-2">
         {analyses.map((a) => (
           <li key={a.stage} className="rounded-sm border border-border bg-card p-2.5">
@@ -423,8 +703,9 @@ export function ReportPanel({
           {COL_NAME[easiest.stage]}) mit Median {easiest.puzzle.med} min
         </p>
       )}
+      </Section>
 
-      <h3 className="mt-5 font-serif text-lg font-bold">Hearing pro Frage</h3>
+      <Section title="Hearing pro Frage">
       {questions.length === 0 ? (
         <p className="mt-1 text-xs text-muted-foreground">
           Noch keine Hearing-Antworten erfasst.
@@ -461,62 +742,7 @@ export function ReportPanel({
           )}
         </>
       )}
-
-      <h3 className="mt-5 font-serif text-lg font-bold">Pro Team</h3>
-      <ul className="mt-2 space-y-2">
-        {teams.length === 0 && (
-          <li className="rounded-sm border border-dashed border-border p-3 text-sm text-muted-foreground">
-            Noch keine Daten.
-          </li>
-        )}
-        {teams.map((t) => {
-          const puzzle = t.stages.reduce((s, x) => s + x.minutes, 0);
-          const travel = t.stages.reduce((s, x) => s + (x.betweenMin ?? 0), 0);
-          return (
-            <li key={t.teamId} className="rounded-sm border border-border bg-card p-2.5">
-              <div className="flex items-baseline gap-2">
-                <span className="min-w-0 flex-1 truncate font-serif font-semibold">
-                  {t.name}
-                </span>
-                <span className="font-mono-typed font-bold tabular-nums">{t.points}</span>
-              </div>
-              <p className="mt-1 text-xs text-muted-foreground">
-                {t.members.join(", ") || "keine Namen"}
-              </p>
-              <div className="mt-1 flex flex-wrap gap-x-3 gap-y-1 font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
-                <span>{t.totalMin === null ? "noch am Spielen" : `${t.totalMin} min total`}</span>
-                <span>{puzzle} min Rätsel</span>
-                {travel > 0 && <span>{travel} min dazwischen</span>}
-                <span>{t.hintsUsed} Hinweise</span>
-                <span>{t.badges.length} Abzeichen</span>
-                <span>
-                  Hearing {t.hearingCorrect}✓ / {t.hearingWrong}✗
-                </span>
-              </div>
-              {t.stages.length > 0 && (
-                <div className="mt-1.5 flex flex-wrap gap-1">
-                  {t.stages.map((s) => (
-                    <span
-                      key={s.stage}
-                      className={cn(
-                        "font-mono-typed rounded-sm px-1.5 py-0.5 text-[10px]",
-                        s.hintLevel === 3 ? "bg-stamp/15 text-stamp" : "bg-secondary",
-                      )}
-                    >
-                      E{s.stage}: {s.minutes}′
-                      {s.betweenMin !== null &&
-                        (s.stage === 1
-                          ? ` (+${s.betweenMin}′ Schulweg → Posten 1)`
-                          : ` (+${s.betweenMin}′ dazwischen)`)}
-                      {s.hintLevel > 0 && ` · H${s.hintLevel}`}
-                    </span>
-                  ))}
-                </div>
-              )}
-            </li>
-          );
-        })}
-      </ul>
+      </Section>
 
       <label className="mt-4 flex items-start gap-2 rounded-sm border border-border bg-card p-2.5 text-xs">
         <input
