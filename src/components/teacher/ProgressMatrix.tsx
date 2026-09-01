@@ -437,9 +437,7 @@ export function ProgressMatrix({
       </div>
 
       <p className="mt-2 text-[10px] leading-relaxed text-muted-foreground">
-        Tippe auf eine Gruppe für Zeiten pro Etappe. Gelb ab {PUZZLE_WARN_MIN} min am
-        Rätsel bzw. {TRAVEL_WARN_MIN} min unterwegs, rot ab {PUZZLE_ALARM_MIN} bzw.{" "}
-        {TRAVEL_ALARM_MIN} min.
+        {"\n"}
       </p>
 
       <TeamDetailDialog
