@@ -593,9 +593,8 @@ export function ReportPanel({
   const hardest = [...withData].sort((a, b) => (b.puzzle.med ?? 0) - (a.puzzle.med ?? 0))[0];
   const easiest = [...withData].sort((a, b) => (a.puzzle.med ?? 0) - (b.puzzle.med ?? 0))[0];
   const questions = analyseQuestions(teams);
-  const worstQuestion = [...questions]
-    .filter((q) => q.answers > 0)
-    .sort((a, b) => b.wrong / b.answers - a.wrong / a.answers)[0];
+  void worstQuestionUnused;
+
 
   const hasTravelData = travelSum.n > 0;
 
