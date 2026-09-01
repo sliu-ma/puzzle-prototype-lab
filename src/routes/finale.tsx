@@ -8,7 +8,7 @@ import { StageGate } from "@/components/case-file/StageGate";
 
 import { completeStage, finishGame, getHearingClock, getStartTs, getEndTs, getBudgetMin } from "@/lib/progress";
 import { awardBadge } from "@/lib/badges";
-import { recordHearingAnswer } from "@/lib/score-events";
+import { recordHearingAnswer, recordHearingAttempt } from "@/lib/score-events";
 import { FinalSummary } from "@/components/case-file/FinalSummary";
 import { markRoundFinished } from "@/lib/round-client";
 
@@ -455,6 +455,9 @@ function FinalePage() {
   }, [status]);
 
   const handleResult = (correct: boolean, userAnswer?: unknown) => {
+    // Sofort protokollieren (ohne Punkte-Wirkung), damit auch die Antworten
+    // eines später gescheiterten Versuchs in der Auswertung erscheinen.
+    recordHearingAttempt(aktuell, correct, versuch);
     setErgebnisse((prev) => {
       const next = [...prev];
       next[aktuell] = correct;
@@ -465,6 +468,7 @@ function FinalePage() {
       next[aktuell] = userAnswer ?? null;
       return next;
     });
+
     setPulse(correct ? "up" : "down");
     if (!correct && typeof navigator !== "undefined" && "vibrate" in navigator) {
       navigator.vibrate?.([80, 60, 120]);
