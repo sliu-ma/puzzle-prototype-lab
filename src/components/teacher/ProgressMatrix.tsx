@@ -1,4 +1,4 @@
-import { AlertTriangle, Flag } from "lucide-react";
+import { AlertTriangle, Flag, Footprints, QrCode, Search } from "lucide-react";
 import type { ReportTeam } from "./LobbyPanel";
 import { cn } from "@/lib/utils";
 
