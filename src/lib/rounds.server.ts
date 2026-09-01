@@ -265,7 +265,9 @@ export function buildReport(
   }[],
   events: RawEvent[],
   budgetMin: number,
+  startedAt?: string | null,
 ): ReportTeam[] {
+  const roundStartMs = startedAt ? Date.parse(startedAt) : NaN;
   const byTeam = new Map<string, RawEvent[]>();
   for (const e of events) {
     const list = byTeam.get(e.team_id) ?? [];
