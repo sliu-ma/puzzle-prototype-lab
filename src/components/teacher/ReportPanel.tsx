@@ -634,6 +634,241 @@ function Section({
   );
 }
 
+/** Eine antippbare Zeile – Kopf links, Kennzahl rechts. */
+function ClickRow({
+  title,
+  sub,
+  value,
+  highlight,
+  onOpen,
+}: {
+  title: string;
+  sub: string;
+  value: string;
+  highlight?: boolean;
+  onOpen: () => void;
+}) {
+  return (
+    <li>
+      <button
+        type="button"
+        onClick={onOpen}
+        className="flex min-h-12 w-full items-center gap-2 rounded-sm border border-border bg-card px-3 py-2 text-left transition-colors hover:bg-secondary/60"
+      >
+        <span className="min-w-0 flex-1">
+          <span className="block truncate font-serif text-sm font-semibold">{title}</span>
+          <span className="font-mono-typed mt-0.5 block truncate text-[11px] text-muted-foreground">
+            {sub}
+          </span>
+        </span>
+        <span
+          className={cn(
+            "font-mono-typed shrink-0 text-sm font-bold tabular-nums",
+            highlight && "text-stamp",
+          )}
+        >
+          {value}
+        </span>
+        <ChevronRight aria-hidden className="h-4 w-4 shrink-0 text-muted-foreground" />
+      </button>
+    </li>
+  );
+}
+
+/** Detail-Popup pro Etappe: Zeiten, Hinweise und alle Gruppen im Vergleich. */
+function StageReportDialog({
+  analysis,
+  teams,
+  onClose,
+}: {
+  analysis: StageAnalysis | null;
+  teams: ReportTeam[];
+  onClose: () => void;
+}) {
+  const a = analysis;
+  const rows = a
+    ? teams
+        .map((t) => ({ t, s: t.stages.find((x) => x.stage === a.stage) ?? null }))
+        .sort((x, y) => (x.s?.minutes ?? 9999) - (y.s?.minutes ?? 9999))
+    : [];
+  const hintCount = (level: number) =>
+    a
+      ? teams.filter((t) => t.stages.find((x) => x.stage === a.stage)?.hintLevel === level)
+          .length
+      : 0;
+
+  return (
+    <Dialog open={a !== null} onOpenChange={(o) => !o && onClose()}>
+      <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-md">
+        {a && (
+          <>
+            <DialogHeader>
+              <DialogTitle className="font-serif text-base">
+                E{a.stage} · {COL_NAME[a.stage]}
+              </DialogTitle>
+            </DialogHeader>
+
+            <div className="font-mono-typed rounded-sm border border-border bg-secondary/50 px-2.5 py-2 text-[11px]">
+              {a.solvedBy} von {teams.length} Gruppen gelöst ·{" "}
+              <span className={cn(a.verdict !== "passend" && "text-stamp")}>
+                {a.verdict}
+              </span>
+            </div>
+
+            <div className="divide-y divide-border rounded-sm border border-border px-2.5 py-1">
+              <Fact label="Rätselzeit Median" value={fmt(a.puzzle.med, "min")} />
+              <Fact label="Rätselzeit Ø" value={fmt(a.puzzle.avg, "min")} />
+              <Fact
+                label="Schnellste – langsamste"
+                value={
+                  a.puzzle.n > 0 ? `${a.puzzle.min}–${a.puzzle.max} min` : "–"
+                }
+              />
+              <Fact
+                label="Weg zur Etappe (Median)"
+                value={a.travel.n > 0 ? fmt(a.travel.med, "min") : "–"}
+              />
+              <Fact label="Ohne Hinweis gelöst" value={`${a.solvedBy - a.withHint}`} />
+              <Fact
+                label="Mit Hinweis"
+                value={`${a.withHint} (H1 ${hintCount(1)} · H2 ${hintCount(2)} · Auflösung ${a.withSolution})`}
+              />
+            </div>
+
+            <div>
+              <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+                Gruppen (nach Rätselzeit)
+              </p>
+              <ul className="mt-1 divide-y divide-border rounded-sm border border-border">
+                {rows.map(({ t, s }) => (
+                  <li
+                    key={t.teamId}
+                    className={cn(
+                      "flex items-center gap-2 px-2.5 py-1.5 text-[11px]",
+                      !s && "text-muted-foreground/60",
+                    )}
+                  >
+                    <span className="min-w-0 flex-1 truncate font-serif">{t.name}</span>
+                    <span className="font-mono-typed shrink-0 tabular-nums text-muted-foreground">
+                      {s
+                        ? `${s.betweenMin === null ? "–" : `${s.betweenMin}′`} Weg · ${s.minutes}′ Rätsel`
+                        : "nicht gelöst"}
+                    </span>
+                    <span
+                      className={cn(
+                        "font-mono-typed w-6 shrink-0 text-right",
+                        s?.hintLevel === 3 && "font-bold text-stamp",
+                      )}
+                    >
+                      {s && s.hintLevel > 0 ? `H${s.hintLevel}` : "–"}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+/** Detail-Popup pro Hearing-Frage: wer hat richtig, wer falsch geantwortet. */
+function QuestionReportDialog({
+  analysis,
+  teams,
+  onClose,
+}: {
+  analysis: QuestionAnalysis | null;
+  teams: ReportTeam[];
+  onClose: () => void;
+}) {
+  const q = analysis;
+  const rows = q
+    ? teams.map((t) => ({
+        t,
+        a: teamAnswers(t).find((x) => x.question === q.question) ?? null,
+      }))
+    : [];
+
+  return (
+    <Dialog open={q !== null} onOpenChange={(o) => !o && onClose()}>
+      <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-md">
+        {q && (
+          <>
+            <DialogHeader>
+              <DialogTitle className="font-serif text-base">
+                F{q.question + 1} · {QUESTION_LABEL[q.question] ?? "Frage"}
+              </DialogTitle>
+            </DialogHeader>
+
+            <div className="divide-y divide-border rounded-sm border border-border px-2.5 py-1">
+              <Fact
+                label="Fehlerquote 1. Versuch"
+                value={
+                  q.teamsAnswered === 0
+                    ? "–"
+                    : `${Math.round((q.firstWrong / q.teamsAnswered) * 100)} % (${q.firstWrong}/${q.teamsAnswered})`
+                }
+              />
+              <Fact
+                label="Am Ende noch falsch"
+                value={`${q.lastWrong} von ${q.teamsAnswered}`}
+              />
+              <Fact
+                label="Antworten total"
+                value={`${q.answers} · davon ${q.wrong} falsch`}
+              />
+            </div>
+
+            <div>
+              <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+                Pro Gruppe
+              </p>
+              <ul className="mt-1 divide-y divide-border rounded-sm border border-border">
+                {rows.map(({ t, a }) => (
+                  <li
+                    key={t.teamId}
+                    className={cn(
+                      "flex items-center gap-2 px-2.5 py-1.5 text-[11px]",
+                      !a && "text-muted-foreground/60",
+                    )}
+                  >
+                    <span className="min-w-0 flex-1 truncate font-serif">{t.name}</span>
+                    {a ? (
+                      <>
+                        <span
+                          className={cn(
+                            "font-mono-typed shrink-0 font-bold",
+                            a.last ? "text-primary" : "text-stamp",
+                          )}
+                        >
+                          {a.last ? "richtig" : "falsch"}
+                        </span>
+                        <span className="font-mono-typed w-28 shrink-0 text-right tabular-nums text-muted-foreground">
+                          {a.tries
+                            .map((x) => `V${x.attempt} ${x.correct ? "✓" : "✗"}`)
+                            .join(" · ")}
+                        </span>
+                      </>
+                    ) : (
+                      <span className="font-mono-typed shrink-0">keine Antwort</span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-1 text-[10px] text-muted-foreground">
+                Gewertet wird der letzte Versuch; V zeigt jeden Durchgang einzeln.
+              </p>
+            </div>
+          </>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+
 export function ReportPanel({
   password,
   code,
