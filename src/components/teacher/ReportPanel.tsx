@@ -531,19 +531,55 @@ function TeamReportDialog({
             </div>
 
             <div className="rounded-sm border border-border p-2.5">
-              <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
-                Hearing
-              </p>
-              <p className="font-mono-typed mt-1 text-[11px]">
-                {t.hearingCorrect}✓ / {t.hearingWrong}✗
-                {attempts > 0 && ` · ${attempts} Versuch${attempts === 1 ? "" : "e"}`}
-              </p>
-              {wrongQuestions.length > 0 && (
-                <p className="mt-0.5 text-[11px] text-muted-foreground">
-                  Falsch beantwortet: F{wrongQuestions.join(", F")}
+              <div className="flex items-baseline justify-between gap-2">
+                <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+                  Hearing
                 </p>
+                <p className="font-mono-typed text-[11px] tabular-nums">
+                  {t.hearingCorrect}✓ / {t.hearingWrong}✗
+                  {attempts > 0 && ` · ${attempts} Versuch${attempts === 1 ? "" : "e"}`}
+                </p>
+              </div>
+              {answers.length === 0 ? (
+                <p className="mt-1 text-[11px] text-muted-foreground">
+                  Noch keine Antworten erfasst.
+                </p>
+              ) : (
+                <>
+                  <ul className="mt-1.5 divide-y divide-border/60">
+                    {answers.map((a) => (
+                      <li
+                        key={a.question}
+                        className="flex items-start gap-2 py-1 text-[11px]"
+                      >
+                        <span className="font-mono-typed w-6 shrink-0 font-bold">
+                          F{a.question + 1}
+                        </span>
+                        <span className="min-w-0 flex-1 font-serif leading-tight">
+                          {QUESTION_LABEL[a.question] ?? "Frage"}
+                        </span>
+                        <span
+                          className={cn(
+                            "font-mono-typed shrink-0 tabular-nums",
+                            a.last ? "text-muted-foreground" : "font-bold text-stamp",
+                          )}
+                        >
+                          {a.tries
+                            .map((x) => `V${x.attempt} ${x.correct ? "✓" : "✗"}`)
+                            .join(" · ")}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="mt-1 text-[10px] text-muted-foreground">
+                    V = Versuch. {stillWrong === 0
+                      ? "Am Ende alle Fragen richtig."
+                      : `${stillWrong} Frage${stillWrong === 1 ? "" : "n"} blieb${stillWrong === 1 ? "" : "en"} falsch.`}
+                  </p>
+                </>
               )}
             </div>
+
 
             <div>
               <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
