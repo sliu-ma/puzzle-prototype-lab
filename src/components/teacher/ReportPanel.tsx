@@ -1060,22 +1060,24 @@ export function ReportPanel({
     return [head, ...rows];
   };
 
-  /** Setzt die gewählten Blöcke zusammen und lädt sie herunter. */
-  const runExport = () => {
-    const blocks: (string | number)[][] = [];
-    if (sel.teams) blocks.push(...buildTeamRows());
-    if (sel.stages) blocks.push(...(blocks.length ? [[]] : []), ...buildStageRows());
-    if (sel.hearing) blocks.push(...(blocks.length ? [[]] : []), ...buildHearingRows());
-    if (blocks.length) {
-      blocks.push(
-        [],
-        ["Runde", code, "Budget_min", budgetMin, "Teams", teams.length, "fertig", finished.length],
-      );
-      csvDownload(`auswertung-${code}.csv`, blocks);
+  /** Meta-Zeile am Ende jeder Datei. */
+  const metaRows = (): (string | number)[][] => [
+    [],
+    ["Runde", code, "Budget_min", budgetMin, "Teams", teams.length, "fertig", finished.length],
+  ];
+
+  const exportOne = (kind: "teams" | "stages" | "hearing" | "events") => {
+    if (kind === "events") {
+      csvDownload(`auswertung-ereignisse-${code}.csv`, buildEventRows());
+    } else if (kind === "teams") {
+      csvDownload(`auswertung-teams-${code}.csv`, [...buildTeamRows(), ...metaRows()]);
+    } else if (kind === "stages") {
+      csvDownload(`auswertung-etappen-${code}.csv`, [...buildStageRows(), ...metaRows()]);
+    } else {
+      csvDownload(`auswertung-hearing-${code}.csv`, [...buildHearingRows(), ...metaRows()]);
     }
-    if (sel.events) csvDownload(`auswertung-ereignisse-${code}.csv`, buildEventRows());
-    setExportOpen(false);
   };
+
 
 
   return (
