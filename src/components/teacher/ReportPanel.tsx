@@ -457,9 +457,17 @@ function TeamReportDialog({
             </div>
 
             <div>
-              <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
-                Etappen
-              </p>
+              <div className="flex items-center gap-1.5">
+                <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+                  Etappen
+                </p>
+                <InfoHint label="Etappen">
+                  Pro Etappe: Wegzeit (′) und reine Rätselzeit (′).
+                  Rechte Spalte = Abweichung der Rätselzeit vom Klassenmedian
+                  (+ = langsamer). Letzte Spalte = höchste genutzte Hinweisstufe
+                  (H1–H3, H3 = Auflösung).
+                </InfoHint>
+              </div>
               <ul className="mt-1 divide-y divide-border rounded-sm border border-border">
                 {STAGES.map((stage) => {
                   const s = t.stages.find((x) => x.stage === stage);
