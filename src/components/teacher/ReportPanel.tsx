@@ -9,17 +9,8 @@ import {
 } from "lucide-react";
 import { useRoundReport, fmtTime, type ReportTeam } from "./LobbyPanel";
 import { COL_NAME } from "./ProgressMatrix";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
 import { BADGES } from "@/lib/badges";
 
@@ -52,8 +43,7 @@ function stats(values: number[]): Stats {
   };
 }
 
-const fmt = (v: number | null, unit = "") =>
-  v === null ? "–" : `${v}${unit ? ` ${unit}` : ""}`;
+const fmt = (v: number | null, unit = "") => (v === null ? "–" : `${v}${unit ? ` ${unit}` : ""}`);
 
 type StageAnalysis = {
   stage: number;
@@ -108,7 +98,6 @@ type TeamAnswer = {
  * Altrunden ohne Versuchsnummer werden als erster Versuch behandelt.
  */
 function teamAnswers(t: ReportTeam): TeamAnswer[] {
-  
   const raw =
     t.hearingAttempts.length > 0
       ? t.hearingAttempts
@@ -119,7 +108,7 @@ function teamAnswers(t: ReportTeam): TeamAnswer[] {
             correct: e.correct === true,
             attempt: e.attempt ?? 1,
           }));
-  
+
   const map = new Map<number, Try[]>();
   for (const a of raw) {
     const list = map.get(a.question) ?? [];
@@ -180,16 +169,7 @@ function analyseQuestions(teams: ReportTeam[]): QuestionAnalysis[] {
   return [...map.values()].sort((a, b) => a.question - b.question);
 }
 
-
-function Metric({
-  label,
-  value,
-  hint,
-}: {
-  label: string;
-  value: string;
-  hint?: string;
-}) {
+function Metric({ label, value, hint }: { label: string; value: string; hint?: string }) {
   return (
     <div className="rounded-sm border border-border bg-card p-2.5">
       <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
@@ -226,7 +206,6 @@ function Fact({ label, value }: { label: string; value: string }) {
   );
 }
 
-
 /**
  * Horizontaler Balken mit Beschriftung links und Wert rechts. Optional ein
  * zweites Segment (gestapelt) und eine Spannweite als dünne Linie dahinter.
@@ -254,9 +233,7 @@ function BarRow({
   return (
     <li className="py-1.5">
       <div className="flex items-baseline justify-between gap-2">
-        <span className="min-w-0 truncate font-serif text-[13px] font-semibold">
-          {label}
-        </span>
+        <span className="min-w-0 truncate font-serif text-[13px] font-semibold">{label}</span>
         <span
           className={cn(
             "font-mono-typed shrink-0 text-[11px] font-bold tabular-nums",
@@ -283,10 +260,7 @@ function BarRow({
             style={{ width: scale(primary) }}
           />
           {secondary > 0 && (
-            <span
-              className="h-full bg-primary/30"
-              style={{ width: scale(secondary) }}
-            />
+            <span className="h-full bg-primary/30" style={{ width: scale(secondary) }} />
           )}
         </div>
       </div>
@@ -317,14 +291,11 @@ function BadgeTile({
       <img src={imageUrl} alt="" aria-hidden className="h-12 w-12" />
       <p className="font-serif text-[10px] font-semibold leading-tight">{title}</p>
       {caption && (
-        <p className="font-mono-typed text-[9px] tabular-nums text-muted-foreground">
-          {caption}
-        </p>
+        <p className="font-mono-typed text-[9px] tabular-nums text-muted-foreground">{caption}</p>
       )}
     </div>
   );
 }
-
 
 function csvDownload(name: string, rows: (string | number)[][]) {
   const csv = rows
@@ -367,28 +338,19 @@ function TeamRow({
       >
         <span className="min-w-0 flex-1">
           <span className="flex items-center gap-1.5">
-            {flagged && (
-              <AlertTriangle aria-hidden className="h-3 w-3 shrink-0 text-stamp" />
-            )}
+            {flagged && <AlertTriangle aria-hidden className="h-3 w-3 shrink-0 text-stamp" />}
             <span className="truncate font-serif text-sm font-semibold">{name}</span>
           </span>
           <span className="font-mono-typed mt-0.5 block truncate text-[11px] text-muted-foreground">
             {t.stagesSolved}/5 Etappen ·{" "}
-            {t.totalMin === null ? "noch am Spielen" : `${t.totalMin} min`} ·{" "}
-            {t.hintsUsed} Hinweise
+            {t.totalMin === null ? "noch am Spielen" : `${t.totalMin} min`} · {t.hintsUsed} Hinweise
           </span>
           {t.badges.length > 0 && (
             <span className="mt-1 flex items-center gap-0.5">
               {BADGES.filter((b) => t.badges.includes(b.id))
                 .slice(0, 3)
                 .map((b) => (
-                  <img
-                    key={b.id}
-                    src={b.imageUrl}
-                    alt=""
-                    aria-hidden
-                    className="h-5 w-5"
-                  />
+                  <img key={b.id} src={b.imageUrl} alt="" aria-hidden className="h-5 w-5" />
                 ))}
               {t.badges.length > 3 && (
                 <span className="font-mono-typed text-[10px] text-muted-foreground">
@@ -399,9 +361,7 @@ function TeamRow({
           )}
         </span>
 
-        <span className="font-mono-typed shrink-0 text-sm font-bold tabular-nums">
-          {t.points}
-        </span>
+        <span className="font-mono-typed shrink-0 text-sm font-bold tabular-nums">{t.points}</span>
         <ChevronRight aria-hidden className="h-4 w-4 shrink-0 text-muted-foreground" />
       </button>
     </li>
@@ -430,7 +390,6 @@ function TeamReportDialog({
     ? Math.max(...answers.flatMap((a) => a.tries.map((x) => x.attempt)))
     : 0;
   const stillWrong = answers.filter((a) => !a.last).length;
-
 
   return (
     <Dialog open={t !== null} onOpenChange={(o) => !o && onClose()}>
@@ -485,12 +444,8 @@ function TeamReportDialog({
                         !s && "text-muted-foreground/60",
                       )}
                     >
-                      <span className="font-mono-typed w-6 shrink-0 font-bold">
-                        E{stage}
-                      </span>
-                      <span className="min-w-0 flex-1 truncate font-serif">
-                        {COL_NAME[stage]}
-                      </span>
+                      <span className="font-mono-typed w-6 shrink-0 font-bold">E{stage}</span>
+                      <span className="min-w-0 flex-1 truncate font-serif">{COL_NAME[stage]}</span>
                       <span className="font-mono-typed shrink-0 tabular-nums text-muted-foreground">
                         {s
                           ? `${s.betweenMin === null ? "–" : `${s.betweenMin}′`} Weg · ${s.minutes}′ Rätsel`
@@ -502,7 +457,13 @@ function TeamReportDialog({
                           diff !== null && diff > 0 ? "text-stamp" : "text-muted-foreground",
                         )}
                       >
-                        {diff === null ? "" : diff === 0 ? "±0" : diff > 0 ? `+${diff}′` : `${diff}′`}
+                        {diff === null
+                          ? ""
+                          : diff === 0
+                            ? "±0"
+                            : diff > 0
+                              ? `+${diff}′`
+                              : `${diff}′`}
                       </span>
                       <span
                         className={cn(
@@ -539,10 +500,7 @@ function TeamReportDialog({
                 <>
                   <ul className="mt-1.5 divide-y divide-border/60">
                     {answers.map((a) => (
-                      <li
-                        key={a.question}
-                        className="flex items-start gap-2 py-1 text-[11px]"
-                      >
+                      <li key={a.question} className="flex items-start gap-2 py-1 text-[11px]">
                         <span className="font-mono-typed w-6 shrink-0 font-bold">
                           F{a.question + 1}
                         </span>
@@ -555,22 +513,20 @@ function TeamReportDialog({
                             a.last ? "text-muted-foreground" : "font-bold text-stamp",
                           )}
                         >
-                          {a.tries
-                            .map((x) => `V${x.attempt} ${x.correct ? "✓" : "✗"}`)
-                            .join(" · ")}
+                          {a.tries.map((x) => `V${x.attempt} ${x.correct ? "✓" : "✗"}`).join(" · ")}
                         </span>
                       </li>
                     ))}
                   </ul>
                   <p className="mt-1 text-[10px] text-muted-foreground">
-                    V = Versuch. {stillWrong === 0
+                    V = Versuch.{" "}
+                    {stillWrong === 0
                       ? "Am Ende alle Fragen richtig."
                       : `${stillWrong} Frage${stillWrong === 1 ? "" : "n"} blieb${stillWrong === 1 ? "" : "en"} falsch.`}
                   </p>
                 </>
               )}
             </div>
-
 
             <div>
               <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
@@ -586,11 +542,8 @@ function TeamReportDialog({
                   />
                 ))}
               </div>
-              <p className="mt-1 text-[10px] text-muted-foreground">
-                Ausgegraut = nicht erreicht.
-              </p>
+              <p className="mt-1 text-[10px] text-muted-foreground">Ausgegraut = nicht erreicht.</p>
             </div>
-
 
             <p className="font-mono-typed text-[10px] text-muted-foreground">
               Beigetreten {fmtTime(t.joinedAt)}
@@ -604,13 +557,7 @@ function TeamReportDialog({
 }
 
 /** Aufklappbarer Abschnitt – Details stören die Übersicht nicht. */
-function Section({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <Collapsible className="mt-5">
       <CollapsibleTrigger className="group flex min-h-12 w-full items-center justify-between gap-2 rounded-sm border border-border bg-card px-3 py-2 text-left">
@@ -684,8 +631,7 @@ function StageReportDialog({
     : [];
   const hintCount = (level: number) =>
     a
-      ? teams.filter((t) => t.stages.find((x) => x.stage === a.stage)?.hintLevel === level)
-          .length
+      ? teams.filter((t) => t.stages.find((x) => x.stage === a.stage)?.hintLevel === level).length
       : 0;
 
   return (
@@ -701,9 +647,7 @@ function StageReportDialog({
 
             <div className="font-mono-typed rounded-sm border border-border bg-secondary/50 px-2.5 py-2 text-[11px]">
               {a.solvedBy} von {teams.length} Gruppen gelöst ·{" "}
-              <span className={cn(a.verdict !== "passend" && "text-stamp")}>
-                {a.verdict}
-              </span>
+              <span className={cn(a.verdict !== "passend" && "text-stamp")}>{a.verdict}</span>
             </div>
 
             <div className="divide-y divide-border rounded-sm border border-border px-2.5 py-1">
@@ -711,9 +655,7 @@ function StageReportDialog({
               <Fact label="Rätselzeit Ø" value={fmt(a.puzzle.avg, "min")} />
               <Fact
                 label="Schnellste – langsamste"
-                value={
-                  a.puzzle.n > 0 ? `${a.puzzle.min}–${a.puzzle.max} min` : "–"
-                }
+                value={a.puzzle.n > 0 ? `${a.puzzle.min}–${a.puzzle.max} min` : "–"}
               />
               <Fact
                 label="Weg zur Etappe (Median)"
@@ -802,14 +744,8 @@ function QuestionReportDialog({
                     : `${Math.round((q.firstWrong / q.teamsAnswered) * 100)} % (${q.firstWrong}/${q.teamsAnswered})`
                 }
               />
-              <Fact
-                label="Am Ende noch falsch"
-                value={`${q.lastWrong} von ${q.teamsAnswered}`}
-              />
-              <Fact
-                label="Antworten total"
-                value={`${q.answers} · davon ${q.wrong} falsch`}
-              />
+              <Fact label="Am Ende noch falsch" value={`${q.lastWrong} von ${q.teamsAnswered}`} />
+              <Fact label="Antworten total" value={`${q.answers} · davon ${q.wrong} falsch`} />
             </div>
 
             <div>
@@ -837,9 +773,7 @@ function QuestionReportDialog({
                           {a.last ? "richtig" : "falsch"}
                         </span>
                         <span className="font-mono-typed w-28 shrink-0 text-right tabular-nums text-muted-foreground">
-                          {a.tries
-                            .map((x) => `V${x.attempt} ${x.correct ? "✓" : "✗"}`)
-                            .join(" · ")}
+                          {a.tries.map((x) => `V${x.attempt} ${x.correct ? "✓" : "✗"}`).join(" · ")}
                         </span>
                       </>
                     ) : (
@@ -859,7 +793,6 @@ function QuestionReportDialog({
   );
 }
 
-
 export function ReportPanel({
   password,
   code,
@@ -875,9 +808,7 @@ export function ReportPanel({
   const [openStage, setOpenStage] = useState<number | null>(null);
   const [openQuestion, setOpenQuestion] = useState<number | null>(null);
 
-  const teams = [...(report?.teams ?? [])].sort((a, b) =>
-    a.name.localeCompare(b.name, "de-CH"),
-  );
+  const teams = [...(report?.teams ?? [])].sort((a, b) => a.name.localeCompare(b.name, "de-CH"));
 
   // Pseudonyme für die Weiterverarbeitung: Personendaten bleiben draussen.
   const alias = new Map<string, string>();
@@ -892,7 +823,6 @@ export function ReportPanel({
   );
   const hints = stats(teams.map((t) => t.hintsUsed));
 
-
   const analyses = STAGES.map((s) => analyseStage(teams, s));
   const withData = analyses.filter((a) => a.solvedBy > 0);
 
@@ -903,11 +833,8 @@ export function ReportPanel({
     .filter((q) => q.teamsAnswered > 0)
     .sort((a, b) => b.firstWrong / b.teamsAnswered - a.firstWrong / a.teamsAnswered)[0];
 
-
   // Mediane pro Etappe für den Vergleich im Team-Popup.
-  const medianPuzzle = new Map<number, number | null>(
-    analyses.map((a) => [a.stage, a.puzzle.med]),
-  );
+  const medianPuzzle = new Map<number, number | null>(analyses.map((a) => [a.stage, a.puzzle.med]));
   const teamsByPoints = [...teams].sort(
     (a, b) => b.points - a.points || a.name.localeCompare(b.name, "de-CH"),
   );
@@ -923,11 +850,7 @@ export function ReportPanel({
       "Gesamtzeit_min",
       "Raetselzeit_total_min",
       "Zeit_zwischen_Raetseln_total_min",
-      ...STAGES.flatMap((s) => [
-        `E${s}_raetsel_min`,
-        `E${s}_weg_min`,
-        `E${s}_hinweisstufe`,
-      ]),
+      ...STAGES.flatMap((s) => [`E${s}_raetsel_min`, `E${s}_weg_min`, `E${s}_hinweisstufe`]),
       "Abzeichen_anzahl",
       "Abzeichen",
       "Hearing_richtig",
@@ -964,7 +887,18 @@ export function ReportPanel({
     });
     const stageSummary = [
       [],
-      ["Etappe", "Name", "geloest_von", "Median_raetsel_min", "Min", "Max", "Median_weg_min", "mit_Hinweis", "mit_Aufloesung", "Einschaetzung"],
+      [
+        "Etappe",
+        "Name",
+        "geloest_von",
+        "Median_raetsel_min",
+        "Min",
+        "Max",
+        "Median_weg_min",
+        "mit_Hinweis",
+        "mit_Aufloesung",
+        "Einschaetzung",
+      ],
       ...analyses.map((a) => [
         `E${a.stage}`,
         COL_NAME[a.stage] ?? "",
@@ -1055,28 +989,14 @@ export function ReportPanel({
               : `${teams.length - finished.length} noch offen`
           }
         />
-        <Metric
-          label="Punkte"
-          value={fmt(points.med)}
-          hint={`Median · Ø ${fmt(points.avg)}`}
-        />
+        <Metric label="Punkte" value={fmt(points.med)} hint={`Median · Ø ${fmt(points.avg)}`} />
         <Metric
           label="Spielzeit"
           value={fmt(totals.med, "min")}
-          hint={
-            totals.n === 0
-              ? "noch niemand fertig"
-              : `Median · ${totals.min}–${totals.max} min`
-          }
+          hint={totals.n === 0 ? "noch niemand fertig" : `Median · ${totals.min}–${totals.max} min`}
         />
-        <Metric
-          label="Hinweise"
-          value={fmt(hints.med)}
-          hint={`Median · Ø ${fmt(hints.avg)}`}
-        />
+        <Metric label="Hinweise" value={fmt(hints.med)} hint={`Median · Ø ${fmt(hints.avg)}`} />
       </div>
-
-
 
       <h3 className="mt-5 font-serif text-lg font-bold">Pro Team</h3>
       <ul className="mt-2 space-y-1.5">
@@ -1130,8 +1050,8 @@ export function ReportPanel({
           {hardest && easiest && hardest.stage !== easiest.stage && (
             <>
               {" "}
-              Zäheste Etappe: E{hardest.stage} ({COL_NAME[hardest.stage]}) ·
-              schnellste: E{easiest.stage} ({COL_NAME[easiest.stage]}).
+              Zäheste Etappe: E{hardest.stage} ({COL_NAME[hardest.stage]}) · schnellste: E
+              {easiest.stage} ({COL_NAME[easiest.stage]}).
             </>
           )}
         </p>
@@ -1157,10 +1077,7 @@ export function ReportPanel({
               <ul className="mt-2 divide-y divide-border/60">
                 {[...questions]
                   .filter((q) => q.teamsAnswered > 0)
-                  .sort(
-                    (a, b) =>
-                      b.firstWrong / b.teamsAnswered - a.firstWrong / a.teamsAnswered,
-                  )
+                  .sort((a, b) => b.firstWrong / b.teamsAnswered - a.firstWrong / a.teamsAnswered)
                   .map((q) => {
                     const share = Math.round((q.firstWrong / q.teamsAnswered) * 100);
                     return (
@@ -1192,8 +1109,8 @@ export function ReportPanel({
                 ))}
             </ul>
             <p className="mt-1.5 text-[10px] text-muted-foreground">
-              Tippe auf eine Frage, um zu sehen, welche Gruppe sie richtig oder falsch
-              beantwortet hat – inklusive Zweitversuch.
+              Tippe auf eine Frage, um zu sehen, welche Gruppe sie richtig oder falsch beantwortet
+              hat – inklusive Zweitversuch.
             </p>
           </>
         )}
@@ -1204,8 +1121,6 @@ export function ReportPanel({
         teams={teams}
         onClose={() => setOpenQuestion(null)}
       />
-
-
 
       <label className="mt-4 flex items-start gap-2 rounded-sm border border-border bg-card p-2.5 text-xs">
         <input
@@ -1220,8 +1135,8 @@ export function ReportPanel({
             Export ohne Namen
           </span>
           <span className="text-muted-foreground">
-            Teamnamen werden zu Team-01, Team-02 … und die Mitgliedernamen bleiben leer.
-            Für eine Masterarbeit in der Regel Voraussetzung.
+            Teamnamen werden zu Team-01, Team-02 … und die Mitgliedernamen bleiben leer. Für eine
+            Masterarbeit in der Regel Voraussetzung.
           </span>
         </span>
       </label>
@@ -1247,8 +1162,8 @@ export function ReportPanel({
         </button>
       </div>
       <p className="mt-1.5 text-[10px] leading-relaxed text-muted-foreground">
-        Die Rohdaten enthalten eine Zeile pro Ereignis mit Sekunde seit Rundenstart –
-        das Langformat für Pivot-Tabellen, SPSS oder R.
+        Die Rohdaten enthalten eine Zeile pro Ereignis mit Sekunde seit Rundenstart – das Langformat
+        für Pivot-Tabellen, SPSS oder R.
       </p>
     </div>
   );
