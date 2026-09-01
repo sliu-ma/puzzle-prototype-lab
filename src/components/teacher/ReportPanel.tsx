@@ -899,6 +899,10 @@ export function ReportPanel({
   const [anon, setAnon] = useState(true);
   const [openTeam, setOpenTeam] = useState<string | null>(null);
   const [openStage, setOpenStage] = useState<number | null>(null);
+  const [exportOpen, setExportOpen] = useState(false);
+  const [sel, setSel] = useState({ teams: true, stages: true, hearing: true, events: false });
+  const nothingSelected = !sel.teams && !sel.stages && !sel.hearing && !sel.events;
+
   
 
   const teams = [...(report?.teams ?? [])].sort((a, b) => a.name.localeCompare(b.name, "de-CH"));
