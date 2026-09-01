@@ -320,7 +320,28 @@ function TeamRow({
             {t.totalMin === null ? "noch am Spielen" : `${t.totalMin} min`} ·{" "}
             {t.hintsUsed} Hinweise
           </span>
+          {t.badges.length > 0 && (
+            <span className="mt-1 flex items-center gap-0.5">
+              {BADGES.filter((b) => t.badges.includes(b.id))
+                .slice(0, 3)
+                .map((b) => (
+                  <img
+                    key={b.id}
+                    src={b.imageUrl}
+                    alt=""
+                    aria-hidden
+                    className="h-5 w-5"
+                  />
+                ))}
+              {t.badges.length > 3 && (
+                <span className="font-mono-typed text-[10px] text-muted-foreground">
+                  +{t.badges.length - 3}
+                </span>
+              )}
+            </span>
+          )}
         </span>
+
         <span className="font-mono-typed shrink-0 text-sm font-bold tabular-nums">
           {t.points}
         </span>
