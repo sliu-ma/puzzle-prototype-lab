@@ -211,32 +211,6 @@ export type ReportTeam = {
   events: ReportEvent[];
 };
 
-export function buildLeaderboard(
-  teams: { id: string; name: string; finished_at: string | null }[],
-  events: { team_id: string; event_id: string; type: string; payload: unknown }[],
-  budgetMin: number,
-): LeaderboardRow[] {
-  const byTeam = new Map<string, typeof events>();
-  for (const e of events) {
-    const list = byTeam.get(e.team_id) ?? [];
-    list.push(e);
-    byTeam.set(e.team_id, list);
-  }
-  const rows = teams.map((t) => {
-    const raw = byTeam.get(t.id) ?? [];
-    const score = computeScore(rowsToEvents(raw), budgetMin);
-    return {
-      teamId: t.id,
-      name: t.name,
-      points: score.total,
-      stagesSolved: score.stages.length,
-      hintsUsed: raw.filter((e) => e.type === "hint_revealed").length,
-      finished: !!t.finished_at,
-    };
-  });
-  rows.sort((a, b) => b.points - a.points || a.name.localeCompare(b.name));
-  return rows;
-}
 
 type RawEvent = {
   team_id: string;
