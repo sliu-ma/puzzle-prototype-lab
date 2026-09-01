@@ -518,9 +518,15 @@ function TeamReportDialog({
 
             <div className="rounded-sm border border-border p-2.5">
               <div className="flex items-baseline justify-between gap-2">
-                <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
-                  Hearing
-                </p>
+                <div className="flex items-center gap-1.5">
+                  <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+                    Hearing
+                  </p>
+                  <InfoHint label="Hearing">
+                    V = Versuch. ✓ richtig, ✗ falsch. Gewertet wird der letzte
+                    Versuch je Frage. Am Ende sollten alle Fragen richtig sein.
+                  </InfoHint>
+                </div>
                 <p className="font-mono-typed text-[11px] tabular-nums">
                   {t.hearingCorrect}✓ / {t.hearingWrong}✗
                   {attempts > 0 && ` · ${attempts} Versuch${attempts === 1 ? "" : "e"}`}
@@ -552,12 +558,6 @@ function TeamReportDialog({
                       </li>
                     ))}
                   </ul>
-                  <p className="mt-1 text-[10px] text-muted-foreground">
-                    V = Versuch.{" "}
-                    {stillWrong === 0
-                      ? "Am Ende alle Fragen richtig."
-                      : `${stillWrong} Frage${stillWrong === 1 ? "" : "n"} blieb${stillWrong === 1 ? "" : "en"} falsch.`}
-                  </p>
                 </>
               )}
             </div>
