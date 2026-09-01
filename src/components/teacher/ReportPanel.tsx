@@ -892,16 +892,6 @@ export function ReportPanel({
   );
   const hints = stats(teams.map((t) => t.hintsUsed));
 
-  // Rätselzeit gegen Zeit zwischen den Rätseln – Grundlage für den CSV-Export
-  // und die Kennzahlen im Team-Popup.
-  const puzzleTotals = teams.map((t) => t.stages.reduce((s, x) => s + x.minutes, 0));
-  const travelTotals = teams.map((t) =>
-    t.stages.reduce((s, x) => s + (x.betweenMin ?? 0), 0),
-  );
-  const puzzleSum = stats(puzzleTotals.filter((v) => v > 0));
-  const travelSum = stats(travelTotals.filter((v) => v > 0));
-  void puzzleSum;
-  void travelSum;
 
   const analyses = STAGES.map((s) => analyseStage(teams, s));
   const withData = analyses.filter((a) => a.solvedBy > 0);
