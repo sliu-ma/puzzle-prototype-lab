@@ -418,7 +418,6 @@ function TeamReportDialog({
   const attempts = answers.length
     ? Math.max(...answers.flatMap((a) => a.tries.map((x) => x.attempt)))
     : 0;
-  const stillWrong = answers.filter((a) => !a.last).length;
 
   return (
     <Dialog open={t !== null} onOpenChange={(o) => !o && onClose()}>
