@@ -215,17 +215,8 @@ const QUESTION_LABEL: Record<number, string> = {
   9: "Energie · Anteil im Mix",
 };
 
-/** Legenden-Punkt für die Diagramme. */
-function LegendDot({ className, children }: { className: string; children: string }) {
-  return (
-    <span className="font-mono-typed flex items-center gap-1 text-[10px] text-muted-foreground">
-      <span aria-hidden className={cn("h-2 w-2 rounded-full", className)} />
-      {children}
-    </span>
-  );
-}
-
 /** Kleine Kennzahl-Zeile für die Detail-Popups. */
+
 function Fact({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-baseline justify-between gap-2 py-1 text-[11px]">
