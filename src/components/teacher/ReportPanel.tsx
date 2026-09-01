@@ -359,9 +359,7 @@ export function ReportPanel({
       </div>
       {!hasTravelData && (
         <p className="mt-2 text-xs text-muted-foreground">
-          Zwischenzeiten werden ab der nächsten gespielten Runde erhoben: sie ergeben sich aus
-          dem QR-Scan am Posten. Für bereits gespielte Runden lassen sie sich nicht
-          rückwirkend berechnen.
+          {"\n"}
         </p>
       )}
 
