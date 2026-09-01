@@ -596,28 +596,46 @@ export function ReportPanel({
         />
         <Metric label="Hinweise" value={fmt(hints.med)} hint={`Median · Ø ${fmt(hints.avg)}`} />
         <Metric
-          label="Rätselzeit"
-          value={fmt(puzzleSum.med, "min")}
-          hint="Median, Summe aller Etappen"
-        />
-        <Metric
-          label="Zwischen Rätseln"
-          value={hasTravelData ? fmt(travelSum.med, "min") : "–"}
-          hint={hasTravelData ? "Median, Summe aller Zwischenzeiten" : "erst ab neuer Runde"}
-        />
-        <Metric
-          label="Anteil dazwischen"
+          label="Anteil Weg"
           value={travelShare === null ? "–" : `${travelShare} %`}
           hint="der erfassten Spielzeit"
         />
       </div>
-      {!hasTravelData && (
-        <p className="mt-2 text-xs text-muted-foreground">
-          {"\n"}
-        </p>
-      )}
+      <p className="font-mono-typed mt-1.5 text-[10px] text-muted-foreground">
+        Median Rätselzeit {fmt(puzzleSum.med, "min")} · dazwischen{" "}
+        {hasTravelData ? fmt(travelSum.med, "min") : "erst ab neuer Runde"}
+      </p>
 
-      <h3 className="mt-5 font-serif text-lg font-bold">Etappen im Vergleich</h3>
+      <h3 className="mt-5 font-serif text-lg font-bold">Pro Team</h3>
+      <ul className="mt-2 space-y-1.5">
+        {teams.length === 0 && (
+          <li className="rounded-sm border border-dashed border-border p-3 text-sm text-muted-foreground">
+            Noch keine Daten.
+          </li>
+        )}
+        {teamsByPoints.map((t) => (
+          <TeamRow
+            key={t.teamId}
+            t={t}
+            name={t.name}
+            flagged={isFlagged(t, medianPuzzle)}
+            onOpen={() => setOpenTeam(t.teamId)}
+          />
+        ))}
+      </ul>
+      <p className="mt-1.5 text-[10px] text-muted-foreground">
+        Tippe auf eine Gruppe für Zeiten pro Etappe, Hearing und Abzeichen.
+      </p>
+
+      <TeamReportDialog
+        team={teams.find((t) => t.teamId === openTeam) ?? null}
+        name={teams.find((t) => t.teamId === openTeam)?.name ?? ""}
+        showMembers
+        medianPuzzle={medianPuzzle}
+        onClose={() => setOpenTeam(null)}
+      />
+
+      <Section title="Etappen im Vergleich">
       <ul className="mt-2 space-y-2">
         {analyses.map((a) => (
           <li key={a.stage} className="rounded-sm border border-border bg-card p-2.5">
