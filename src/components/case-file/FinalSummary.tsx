@@ -22,8 +22,11 @@ import { getStartTs, getEndTs, getTeam, resetAll } from "@/lib/progress";
 import { cn } from "@/lib/utils";
 
 type Props = {
-  /** "won" = Hearing bestanden, "timeout" = Zeit abgelaufen. */
-  reason?: "won" | "timeout";
+  /**
+   * "won" = Hearing bestanden, "timeout" = Zeit abgelaufen,
+   * "closed" = Runde von der Lehrperson abgeschlossen.
+   */
+  reason?: "won" | "timeout" | "closed";
 };
 
 /**
@@ -31,7 +34,8 @@ type Props = {
  * Abzeichen. Wird nach gewonnenem Hearing und nach Zeitablauf verwendet.
  */
 export function FinalSummary({ reason = "won" }: Props) {
-  const isTimeout = reason === "timeout";
+  const isClosed = reason === "closed";
+  const isTimeout = reason === "timeout" || isClosed;
 
   // Werte einmalig beim Mount einfrieren, damit der Abschluss stabil bleibt.
   const elapsedLabel = useState(() => {
@@ -55,18 +59,25 @@ export function FinalSummary({ reason = "won" }: Props) {
     <PaperCard rotate={-0.3} tape="top-left" className="relative overflow-hidden">
       {!isTimeout && <SummaryConfetti />}
       <div className="absolute right-4 top-6 sm:right-8 sm:top-8">
-        <Stamp rotate={-6}>{isTimeout ? "Zeit abgelaufen" : "Fall gelöst"}</Stamp>
+        <Stamp rotate={-6}>
+          {isClosed ? "Runde beendet" : isTimeout ? "Zeit abgelaufen" : "Fall gelöst"}
+        </Stamp>
       </div>
       <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
         Abschluss der Ermittlung
       </p>
       <h2 className="mt-2 font-serif text-3xl font-bold sm:text-4xl">
-        {isTimeout ? "Die Zeit ist um." : "Ihr habt es geschafft."}
+        {isClosed
+          ? "Die Runde ist beendet."
+          : isTimeout
+            ? "Die Zeit ist um."
+            : "Ihr habt es geschafft."}
       </h2>
       {isTimeout && (
         <p className="mt-3 max-w-md font-serif text-[15px] italic leading-relaxed text-foreground/80">
-          „Die Gemeindeversammlung hat begonnen. Weiter ermitteln können wir
-          jetzt nicht mehr – aber hier ist, was ihr zusammengetragen habt."
+          {isClosed
+            ? "„Die Lehrperson hat die Runde abgeschlossen. Weiter ermitteln können wir jetzt nicht mehr – aber hier ist, was ihr zusammengetragen habt.\u201c"
+            : "„Die Gemeindeversammlung hat begonnen. Weiter ermitteln können wir jetzt nicht mehr – aber hier ist, was ihr zusammengetragen habt.\u201c"}
         </p>
       )}
 
