@@ -446,6 +446,14 @@ export function ReportPanel({
 
   const hasTravelData = travelSum.n > 0;
 
+  // Mediane pro Etappe für den Vergleich im Team-Popup.
+  const medianPuzzle = new Map<number, number | null>(
+    analyses.map((a) => [a.stage, a.puzzle.med]),
+  );
+  const teamsByPoints = [...teams].sort(
+    (a, b) => b.points - a.points || a.name.localeCompare(b.name, "de-CH"),
+  );
+
   /** Übersicht pro Team – eine Zeile je Gruppe. */
   const exportTeamCsv = () => {
     const head = [
