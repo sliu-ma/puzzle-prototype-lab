@@ -59,19 +59,11 @@ export function FinalSummary({ reason = "won" }: Props) {
     <PaperCard rotate={-0.3} tape="top-left" className="relative overflow-hidden">
       {!isTimeout && <SummaryConfetti />}
       <div className="absolute right-4 top-6 sm:right-8 sm:top-8">
-        <Stamp rotate={-6}>
-          {isClosed ? "Runde beendet" : isTimeout ? "Zeit abgelaufen" : "Fall gelöst"}
-        </Stamp>
+        <Stamp rotate={-6}>{isClosed ? "Runde beendet" : isTimeout ? "Zeit abgelaufen" : "Fall gelöst"}</Stamp>
       </div>
-      <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-        Abschluss der Ermittlung
-      </p>
+      <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">Abschluss der Ermittlung</p>
       <h2 className="mt-2 font-serif text-3xl font-bold sm:text-4xl">
-        {isClosed
-          ? "Die Runde ist beendet."
-          : isTimeout
-            ? "Die Zeit ist um."
-            : "Ihr habt es geschafft."}
+        {isClosed ? "Die Runde ist beendet." : isTimeout ? "Die Zeit ist um." : "Ihr habt es geschafft."}
       </h2>
       {isTimeout && (
         <p className="mt-3 max-w-md font-serif text-[15px] italic leading-relaxed text-foreground/80">
@@ -83,9 +75,7 @@ export function FinalSummary({ reason = "won" }: Props) {
 
       {/* Punkte im Zentrum */}
       <div className="mt-7 text-center">
-        <p className="font-mono-typed text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
-          Schlusspunktzahl
-        </p>
+        <p className="font-mono-typed text-[10px] uppercase tracking-[0.3em] text-muted-foreground">Schlusspunktzahl</p>
         <p className="pt-3 font-mono-typed text-6xl font-bold leading-tight tabular-nums text-foreground sm:text-7xl">
           {shownPoints}
         </p>
@@ -103,16 +93,8 @@ export function FinalSummary({ reason = "won" }: Props) {
 
       {/* Kleine Fakten */}
       <div className="mt-6 grid grid-cols-2 gap-2">
-        <SummaryChip
-          icon={<Clock className="h-3.5 w-3.5" />}
-          label="Zeit"
-          value={elapsedLabel}
-        />
-        <SummaryChip
-          icon={<Lightbulb className="h-3.5 w-3.5" />}
-          label="Hinweise"
-          value={`${hintsUsed} / 15`}
-        />
+        <SummaryChip icon={<Clock className="h-3.5 w-3.5" />} label="Zeit" value={elapsedLabel} />
+        <SummaryChip icon={<Lightbulb className="h-3.5 w-3.5" />} label="Hinweise" value={`${hintsUsed} / 15`} />
       </div>
 
       <BadgeShowcase />
@@ -133,15 +115,15 @@ export function FinalSummary({ reason = "won" }: Props) {
               className="inline-flex items-center gap-2 rounded-sm border border-border bg-card/70 px-4 py-2.5 font-mono-typed text-[11px] uppercase tracking-[0.15em] text-muted-foreground transition-colors hover:text-foreground"
             >
               <RotateCcw className="h-3.5 w-3.5" />
-              Neue Ermittlung starten (alles zurücksetzen)
+              Neue Ermittlung starten
             </button>
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
               <AlertDialogTitle>Wirklich alles löschen?</AlertDialogTitle>
               <AlertDialogDescription>
-                Punkte, Abzeichen und der gesamte Fortschritt gehen verloren.
-                Danach beginnt eine neue Ermittlung von vorne.
+                Punkte, Abzeichen und der gesamte Fortschritt gehen verloren. Danach beginnt eine neue Ermittlung von
+                vorne.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
@@ -184,24 +166,14 @@ function useCountUp(target: number) {
   return shown;
 }
 
-function SummaryChip({
-  icon,
-  label,
-  value,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-}) {
+function SummaryChip({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
     <div className="flex flex-col items-center gap-1 rounded-sm border border-border bg-card/70 px-2 py-2.5 text-center">
       <span className="flex items-center gap-1 font-mono-typed text-[9px] uppercase tracking-[0.2em] text-muted-foreground">
         {icon}
         {label}
       </span>
-      <span className="font-mono-typed text-sm font-bold tabular-nums text-foreground">
-        {value}
-      </span>
+      <span className="font-mono-typed text-sm font-bold tabular-nums text-foreground">{value}</span>
     </div>
   );
 }
@@ -217,10 +189,7 @@ function SummaryConfetti() {
         return (
           <span
             key={i}
-            className={cn(
-              "absolute top-0 h-2 w-2 rounded-sm opacity-80 animate-fade-in",
-              colors[i % colors.length],
-            )}
+            className={cn("absolute top-0 h-2 w-2 rounded-sm opacity-80 animate-fade-in", colors[i % colors.length])}
             style={{
               left: `${left}%`,
               animationDelay: `${delay}ms`,
