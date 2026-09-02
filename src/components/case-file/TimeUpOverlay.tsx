@@ -18,7 +18,7 @@ import { RETURN_NOTICE, RETURN_TITLE } from "@/lib/story";
 export function TimeUpOverlay() {
   return (
     <Dialog open>
-      <DialogContent className="max-w-sm" hideClose>
+      <DialogContent className="max-w-sm">
         <DialogHeader>
           <IconStamp icon={School} tone="urgent" rotate={-5} className="mb-2" />
           <DialogTitle className="text-center font-serif text-destructive">
