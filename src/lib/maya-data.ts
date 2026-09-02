@@ -756,6 +756,7 @@ export const PRODUKTE: Produkt[] = [
     emoji: "🌰",
     bildUrl: mandelnAsset.url,
     bewertung: "neutral",
+    zutat: "nuesse",
     nachhaltigkeit: {
       regional: 3,
       saisonal: 5,
@@ -767,7 +768,14 @@ export const PRODUKTE: Produkt[] = [
   },
 ];
 
-export const REZEPT = {
+export interface Rezept {
+  titel: string;
+  emoji: string;
+  zutaten: string[];
+  zutatenKeys: ZutatKey[];
+}
+
+const REZEPT_TOERTCHEN: Rezept = {
   titel: "Erdbeer-Törtchen (8 Stück)",
   emoji: "🥧",
   zutaten: [
@@ -781,18 +789,69 @@ export const REZEPT = {
     "2 EL Vanillezucker",
     "500 g Erdbeeren",
   ],
+  zutatenKeys: [
+    "mehl",
+    "zucker",
+    "salz",
+    "butter",
+    "zitrone",
+    "eier",
+    "vollrahm",
+    "vanillezucker",
+    "erdbeeren",
+  ],
 };
+
+function waehe(fruchtLabel: string, fruchtKey: ZutatKey, titel: string): Rezept {
+  return {
+    titel,
+    emoji: "🥧",
+    zutaten: [
+      "200 g Mehl",
+      "½ KL Salz",
+      "70 g kalte Butter",
+      "3 EL gemahlene Nüsse",
+      `700 g ${fruchtLabel}`,
+      "1 dl Rahm",
+      "1 Ei",
+      "1 EL Vanillezucker",
+      "1 EL Zucker",
+      "½ KL Zimt",
+    ],
+    zutatenKeys: [
+      "mehl",
+      "salz",
+      "butter",
+      "nuesse",
+      fruchtKey,
+      "vollrahm",
+      "eier",
+      "vanillezucker",
+      "zucker",
+      "zimt",
+    ],
+  };
+}
+
+const REZEPT_ZWETSCHGEN = waehe("Zwetschgen", "zwetschgen", "Zwetschgenwähe (Blech 28 cm Ø)");
+const REZEPT_APFEL = waehe("Äpfel", "aepfel", "Apfelwähe (Blech 28 cm Ø)");
+
+/**
+ * Saisonales Rezept:
+ * Mai–August → Erdbeer-Törtchen, September → Zwetschgenwähe, Oktober–April → Apfelwähe.
+ */
+export function getAktuellesRezept(date: Date = new Date()): Rezept {
+  const m = date.getMonth() + 1;
+  if (m >= 5 && m <= 8) return REZEPT_TOERTCHEN;
+  if (m === 9) return REZEPT_ZWETSCHGEN;
+  return REZEPT_APFEL;
+}
 
 export const START_WARENKORB: string[] = [];
 
-export const REZEPT_ZUTATEN_KEYS = [
-  "mehl",
-  "zucker",
-  "salz",
-  "butter",
-  "zitrone",
-  "eier",
-  "vollrahm",
-  "vanillezucker",
-  "erdbeeren",
-] as const;
+/** @deprecated Nutze getAktuellesRezept() – bleibt für Kompatibilität erhalten. */
+export const REZEPT = getAktuellesRezept();
+
+/** @deprecated Nutze getAktuellesRezept().zutatenKeys */
+export const REZEPT_ZUTATEN_KEYS = REZEPT.zutatenKeys;
+
