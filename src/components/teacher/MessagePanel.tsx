@@ -1,6 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { Loader2, Send } from "lucide-react";
-import { teacherListMessages, teacherSendMessage } from "@/lib/rounds.functions";
+import {
+  getRoundState,
+  teacherListMessages,
+  teacherSendMessage,
+} from "@/lib/rounds.functions";
 import { cn } from "@/lib/utils";
 
 type Sent = {
@@ -14,7 +18,6 @@ type Sent = {
 type Props = {
   password: string;
   code: string;
-  teams: { id: string; name: string }[];
 };
 
 const MAX = 300;
@@ -27,7 +30,8 @@ function timeLabel(iso: string) {
 }
 
 /** Kurznachricht der Lehrperson an alle Gruppen oder an eine einzelne Gruppe. */
-export function MessagePanel({ password, code, teams }: Props) {
+export function MessagePanel({ password, code }: Props) {
+  const [teams, setTeams] = useState<{ id: string; name: string }[]>([]);
   const [body, setBody] = useState("");
   const [target, setTarget] = useState<string>("all");
   const [busy, setBusy] = useState(false);
@@ -42,7 +46,10 @@ export function MessagePanel({ password, code, teams }: Props) {
 
   useEffect(() => {
     load();
-  }, [load]);
+    void getRoundState({ data: { code } })
+      .then((res) => setTeams(res.found ? res.teams : []))
+      .catch(() => undefined);
+  }, [load, code]);
 
   const send = async (e: React.FormEvent) => {
     e.preventDefault();
