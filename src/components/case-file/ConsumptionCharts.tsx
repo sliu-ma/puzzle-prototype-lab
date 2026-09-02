@@ -44,7 +44,7 @@ const SAISON_MAP: Record<Saison, { label: string; items: SaisonItem[] }> = {
     label: "Herbst",
     items: [
       { name: "Kürbis", url: kuerbisAsset.url, months: [9, 10, 11] },
-      { name: "Zwetschge", url: zwetschgeAsset.url, months: [8, 9, 10] },
+      { name: "Zwetschge", url: zwetschgeAsset.url, months: [8, 9] },
     ],
   },
 };
