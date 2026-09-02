@@ -4,7 +4,7 @@ import rosenkohlAsset from "@/assets/produkte/rosenkohl.png.asset.json";
 import spargelAsset from "@/assets/produkte/spargel.webp.asset.json";
 import rhabarberAsset from "@/assets/produkte/rhabarber.webp.asset.json";
 import kuerbisAsset from "@/assets/produkte/kuerbis.webp.asset.json";
-import zwetschgeAsset from "@/assets/produkte/zwetschge.jpg.asset.json";
+import zwetschgeAsset from "@/assets/produkte/zwetschgen-bio-ch.webp.asset.json";
 import erdbeereAsset from "@/assets/produkte/erdbeeren-ch.webp.asset.json";
 import gurkeAsset from "@/assets/produkte/gurke-ch.webp.asset.json";
 import { SIEGEL } from "@/lib/maya-data";
@@ -44,7 +44,7 @@ const SAISON_MAP: Record<Saison, { label: string; items: SaisonItem[] }> = {
     label: "Herbst",
     items: [
       { name: "Kürbis", url: kuerbisAsset.url, months: [9, 10, 11] },
-      { name: "Zwetschge", url: zwetschgeAsset.url, months: [8, 9, 10] },
+      { name: "Zwetschge", url: zwetschgeAsset.url, months: [8, 9] },
     ],
   },
 };

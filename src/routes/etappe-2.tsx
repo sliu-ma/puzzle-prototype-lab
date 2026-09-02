@@ -13,7 +13,7 @@ import {
 import { QRGate } from "@/components/case-file/QRGate";
 import { StageGate } from "@/components/case-file/StageGate";
 import { HintSystem, type Hint } from "@/components/case-file/HintSystem";
-import { START_WARENKORB } from "@/lib/maya-data";
+import { START_WARENKORB, getAktuellesRezept } from "@/lib/maya-data";
 import { completeStage, getFrozenClock, getHearingClock } from "@/lib/progress";
 import { awardBadge, tryAwardNoHintStage } from "@/lib/badges";
 import { usePersistentState, usePersistentSet } from "@/lib/persist";
@@ -65,29 +65,46 @@ const STEPS: { id: Step; label: string }[] = [
   { id: "naechstes", label: "Nächste Etappe" },
 ];
 
-const DORFLADEN_HINTS: Hint[] = [
-  {
-    id: 0,
-    unlockMin: 3,
-    label: "Hinweis 1",
-    title: "Starte mit Jakobs Rezept",
-    body: "Der Korb ist leer, das ist Absicht. Öffne oben das Rezept-Akkordeon und geh die Zutaten Schritt für Schritt durch. Für jede Zutat gibt es im Laden mindestens eine Option.",
-  },
-  {
-    id: 1,
-    unlockMin: 6,
-    label: "Hinweis 2",
-    title: "Bio-Import oder regional & saisonal?",
-    body: "Beide Erdbeeren haben ihre Stärken: Die spanischen sind bio, die Schweizer sind regional und mitten in der Saison. Bio sagt etwas über den Anbau, aber nicht über Transport und Saison. Kurze Wege und Saisonware schlagen den Import meist deutlich.",
-  },
-  {
-    id: 2,
-    unlockMin: 9,
-    label: "Auflösung",
-    title: "So geht's",
-    body: "Wähle Schweizer Erdbeeren (IP-Suisse), Schweizer Bio-Freiland-Eier und die Bio/Demeter-Zitrone aus Italien. Ergänze Mehl, Zucker, Salz, Butter, Vollrahm und Vanillezucker, für die gibt es je nur eine Option. Dann springt die Kasse an.",
-  },
-];
+function buildHints(): Hint[] {
+  const rezept = getAktuellesRezept();
+  const keys = rezept.zutatenKeys as string[];
+  const istToertchen = keys.includes("erdbeeren");
+  const fruchtTipp = istToertchen
+    ? "Beide Erdbeeren haben ihre Stärken: Die spanischen sind bio, die Schweizer sind regional und mitten in der Saison. Bio sagt etwas über den Anbau, aber nicht über Transport und Saison. Kurze Wege und Saisonware schlagen den Import meist deutlich."
+    : keys.includes("zwetschgen")
+      ? "Bei den Zwetschgen zählt die Herkunft: Die Schweizer Bio-Zwetschgen sind gerade in der Saison (August bis September), die Importware reist um die halbe Welt. Beim Zimt gibt es kein regionales Produkt, dort entscheidet das Label: Bio und Fairtrade statt namenlos billig."
+      : "Bei den Äpfeln zählt die Herkunft: Schweizer Äpfel sind ganzjährig aus regionaler Lagerung verfügbar, Pink Lady kommt aus Frankreich. Beim Zimt gibt es kein regionales Produkt, dort entscheidet das Label: Bio und Fairtrade statt namenlos billig.";
+  const loesung = istToertchen
+    ? "Wähle Schweizer Erdbeeren, Schweizer Bio-Freiland-Eier und die Bio/Demeter-Zitrone aus Italien. Ergänze Mehl, Zucker, Salz, Butter, Vollrahm und Vanillezucker, für die gibt es je nur eine Option. Dann springt die Kasse an."
+    : `Wähle ${keys.includes("zwetschgen") ? "die Schweizer Bio-Zwetschgen" : "die Schweizer Äpfel"}, Schweizer Bio-Freiland-Eier und den Bio-/Fairtrade-Zimt aus Sri Lanka. Ergänze Mehl, Salz, Butter, gemahlene Mandeln, Vollrahm, Vanillezucker und Zucker, für die gibt es je nur eine Option. Dann springt die Kasse an.`;
+
+  return [
+    {
+      id: 0,
+      unlockMin: 3,
+      label: "Hinweis 1",
+      title: "Starte mit Jakobs Rezept",
+      body: "Der Korb ist leer, das ist Absicht. Öffne oben das Rezept-Akkordeon und geh die Zutaten Schritt für Schritt durch. Für jede Zutat gibt es im Laden mindestens eine Option.",
+    },
+    {
+      id: 1,
+      unlockMin: 6,
+      label: "Hinweis 2",
+      title: "Import oder regional & saisonal?",
+      body: fruchtTipp,
+    },
+    {
+      id: 2,
+      unlockMin: 9,
+      label: "Auflösung",
+      title: "So geht's",
+      body: loesung,
+    },
+  ];
+}
+
+const DORFLADEN_HINTS: Hint[] = buildHints();
+
 
 
 function AktePage() {

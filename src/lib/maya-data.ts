@@ -26,15 +26,20 @@ import spargelAsset from "@/assets/produkte/spargel.webp.asset.json";
 import rhabarberAsset from "@/assets/produkte/rhabarber.webp.asset.json";
 import kuerbisAsset from "@/assets/produkte/kuerbis.webp.asset.json";
 import zwetschgeAsset from "@/assets/produkte/zwetschge.jpg.asset.json";
+import zwetschgenBioChAsset from "@/assets/produkte/zwetschgen-bio-ch.webp.asset.json";
+import zimtBioAsset from "@/assets/produkte/zimt-bio.webp.asset.json";
+import zimtClassicAsset from "@/assets/produkte/zimt-classic.webp.asset.json";
+import aepfelPinkladyAsset from "@/assets/produkte/aepfel-pinklady.jpg.asset.json";
 
 import bioLogo from "@/assets/labels/bio.png.asset.json";
 import ipSuisseLogo from "@/assets/labels/ip-suisse.png.asset.json";
 import demeterLogo from "@/assets/labels/demeter.png.asset.json";
 import suisseGarantieLogo from "@/assets/labels/suisse-garantie.webp.asset.json";
+import fairtradeLogo from "@/assets/labels/fairtrade.jpg.asset.json";
 
 export type Kategorie = "milch-eier" | "fruechte-gemuese" | "backzutaten" | "andere";
 
-export type SiegelKey = "bio" | "ip-suisse" | "demeter" | "suisse-garantie";
+export type SiegelKey = "bio" | "ip-suisse" | "demeter" | "suisse-garantie" | "fairtrade";
 
 export interface SiegelInfo {
   key: SiegelKey;
@@ -47,7 +52,9 @@ export const SIEGEL: Record<SiegelKey, SiegelInfo> = {
   "ip-suisse": { key: "ip-suisse", label: "IP-Suisse", logoUrl: ipSuisseLogo.url },
   demeter: { key: "demeter", label: "Demeter", logoUrl: demeterLogo.url },
   "suisse-garantie": { key: "suisse-garantie", label: "Suisse Garantie", logoUrl: suisseGarantieLogo.url },
+  fairtrade: { key: "fairtrade", label: "Fairtrade", logoUrl: fairtradeLogo.url },
 };
+
 
 export interface Nachhaltigkeit {
   regional: number; // 1–5
@@ -56,6 +63,22 @@ export interface Nachhaltigkeit {
   label: number; // 1–5
   erklaerung: string;
 }
+
+export type ZutatKey =
+  | "erdbeeren"
+  | "zwetschgen"
+  | "aepfel"
+  | "eier"
+  | "mehl"
+  | "zucker"
+  | "salz"
+  | "butter"
+  | "zitrone"
+  | "vollrahm"
+  | "vanillezucker"
+  | "zimt"
+  | "nuesse";
+
 
 export interface Produkt {
   id: string;
@@ -72,7 +95,7 @@ export interface Produkt {
   bewertung: "gut" | "schlecht" | "neutral";
   problemHinweis?: string;
   ersetzt?: string;
-  zutat?: "erdbeeren" | "eier" | "mehl" | "zucker" | "salz" | "butter" | "zitrone" | "vollrahm" | "vanillezucker";
+  zutat?: ZutatKey;
   nachhaltigkeit: Nachhaltigkeit;
 }
 
@@ -190,7 +213,10 @@ export const PRODUKTE: Produkt[] = [
     saison: "in",
     emoji: "🍎",
     bildUrl: aepfelAsset.url,
-    bewertung: "neutral",
+    bewertung: "gut",
+    zutat: "aepfel",
+    ersetzt: "aepfel-pinklady-fr",
+
     nachhaltigkeit: {
       regional: 5,
       saisonal: 5,
@@ -306,26 +332,122 @@ export const PRODUKTE: Produkt[] = [
     },
   },
   {
-    id: "zwetschge-ch",
+    id: "zwetschge-import",
+    name: "Zwetschgen 1kg",
+    kategorie: "fruechte-gemuese",
+    herkunft: "Chile",
+    preis: 4.5,
+    siegel: [],
+    saison: "out",
+    saisonMonate: [1, 2, 3],
+    emoji: "🍑",
+    bildUrl: zwetschgeAsset.url,
+    bewertung: "schlecht",
+    zutat: "zwetschgen",
+    problemHinweis:
+      "Zwetschgen aus Chile reisen um die halbe Welt, obwohl es in der Schweiz gerade Zwetschgen-Saison gibt. Die Schweizer Bio-Zwetschgen sind die klar bessere Wahl.",
+    nachhaltigkeit: {
+      regional: 1,
+      saisonal: 1,
+      verpackung: 2,
+      label: 1,
+      erklaerung:
+        "Importzwetschgen aus Übersee: sehr lange Transportwege, Ernte in der südlichen Halbkugel-Saison, keine Nachhaltigkeitslabel.",
+    },
+  },
+  {
+    id: "zwetschge-bio-ch",
     name: "Zwetschgen 1kg",
     kategorie: "fruechte-gemuese",
     herkunft: "Schweiz",
-    preis: 4.5,
-    siegel: ["ip-suisse"],
+    preis: 4.95,
+    siegel: ["bio"],
     saison: "in",
-    saisonMonate: [8, 9, 10],
+    saisonMonate: [8, 9],
     emoji: "🍑",
-    bildUrl: zwetschgeAsset.url,
+    bildUrl: zwetschgenBioChAsset.url,
     bewertung: "gut",
+    zutat: "zwetschgen",
+    ersetzt: "zwetschge-import",
     nachhaltigkeit: {
       regional: 5,
       saisonal: 5,
-      verpackung: 4,
-      label: 4,
+      verpackung: 3,
+      label: 5,
       erklaerung:
-        "Schweizer Zwetschgen aus IP-Suisse-Anbau, Hauptsaison August–Oktober, kurze Transportwege.",
+        "Schweizer Bio-Zwetschgen aus der Hauptsaison (August–September), kurze Transportwege, Anbau ohne synthetische Pestizide.",
     },
   },
+  {
+    id: "aepfel-pinklady-fr",
+    name: "Äpfel 'Pink Lady' 1kg",
+    kategorie: "fruechte-gemuese",
+    herkunft: "Frankreich",
+    preis: 4.8,
+    siegel: [],
+    saison: "out",
+    saisonMonate: [11, 12, 1, 2, 3, 4],
+    emoji: "🍎",
+    bildUrl: aepfelPinkladyAsset.url,
+    bewertung: "schlecht",
+    zutat: "aepfel",
+    problemHinweis:
+      "Pink Lady wächst in Südfrankreich und wird importiert, obwohl Schweizer Äpfel das ganze Jahr aus regionaler Lagerung verfügbar sind. Kein Nachhaltigkeitslabel.",
+    nachhaltigkeit: {
+      regional: 2,
+      saisonal: 3,
+      verpackung: 2,
+      label: 1,
+      erklaerung:
+        "Importäpfel aus Frankreich: längere Transportwege als Schweizer Lagerware, meist in Plastikschale, ohne Bio- oder Nachhaltigkeitslabel.",
+    },
+  },
+  {
+    id: "zimt-bio-fairtrade",
+    name: "Ceylon-Zimt gemahlen 35g",
+    kategorie: "backzutaten",
+    herkunft: "Sri Lanka",
+    preis: 1.6,
+    siegel: ["bio", "fairtrade"],
+    saison: "ganzjahr",
+    emoji: "🌰",
+    bildUrl: zimtBioAsset.url,
+    bewertung: "gut",
+    zutat: "zimt",
+    ersetzt: "zimt-classic",
+    nachhaltigkeit: {
+      regional: 1,
+      saisonal: 5,
+      verpackung: 3,
+      label: 5,
+      erklaerung:
+        "Zimt wächst nur in den Tropen. Diese Variante ist Bio und Fairtrade: kontrollierter Anbau und faire Preise für die Produzentinnen und Produzenten in Sri Lanka.",
+    },
+  },
+  {
+    id: "zimt-classic",
+    name: "Ceylon-Zimt gemahlen 32g",
+    kategorie: "backzutaten",
+    herkunft: "Madagaskar",
+    preis: 0.45,
+    siegel: [],
+    saison: "ganzjahr",
+    emoji: "🌰",
+    bildUrl: zimtClassicAsset.url,
+    bewertung: "schlecht",
+    zutat: "zimt",
+    problemHinweis:
+      "Der günstige Zimt hat kein Label: weder Bio noch Fairtrade. Beim gleichen Gewürz aus dem Süden macht ein Fairtrade-Label den grössten Unterschied.",
+    nachhaltigkeit: {
+      regional: 1,
+      saisonal: 5,
+      verpackung: 3,
+      label: 1,
+      erklaerung:
+        "Importgewürz ohne Bio- oder Fairtrade-Standard. Sehr tiefer Preis, der meist zulasten der Löhne im Anbauland geht.",
+    },
+  },
+
 
 
   {
@@ -634,6 +756,7 @@ export const PRODUKTE: Produkt[] = [
     emoji: "🌰",
     bildUrl: mandelnAsset.url,
     bewertung: "neutral",
+    zutat: "nuesse",
     nachhaltigkeit: {
       regional: 3,
       saisonal: 5,
@@ -645,7 +768,14 @@ export const PRODUKTE: Produkt[] = [
   },
 ];
 
-export const REZEPT = {
+export interface Rezept {
+  titel: string;
+  emoji: string;
+  zutaten: string[];
+  zutatenKeys: ZutatKey[];
+}
+
+const REZEPT_TOERTCHEN: Rezept = {
   titel: "Erdbeer-Törtchen (8 Stück)",
   emoji: "🥧",
   zutaten: [
@@ -659,18 +789,69 @@ export const REZEPT = {
     "2 EL Vanillezucker",
     "500 g Erdbeeren",
   ],
+  zutatenKeys: [
+    "mehl",
+    "zucker",
+    "salz",
+    "butter",
+    "zitrone",
+    "eier",
+    "vollrahm",
+    "vanillezucker",
+    "erdbeeren",
+  ],
 };
+
+function waehe(fruchtLabel: string, fruchtKey: ZutatKey, titel: string): Rezept {
+  return {
+    titel,
+    emoji: "🥧",
+    zutaten: [
+      "200 g Mehl",
+      "½ KL Salz",
+      "70 g kalte Butter",
+      "3 EL gemahlene Nüsse",
+      `700 g ${fruchtLabel}`,
+      "1 dl Rahm",
+      "1 Ei",
+      "1 EL Vanillezucker",
+      "1 EL Zucker",
+      "½ KL Zimt",
+    ],
+    zutatenKeys: [
+      "mehl",
+      "salz",
+      "butter",
+      "nuesse",
+      fruchtKey,
+      "vollrahm",
+      "eier",
+      "vanillezucker",
+      "zucker",
+      "zimt",
+    ],
+  };
+}
+
+const REZEPT_ZWETSCHGEN = waehe("Zwetschgen", "zwetschgen", "Zwetschgenwähe (Blech 28 cm Ø)");
+const REZEPT_APFEL = waehe("Äpfel", "aepfel", "Apfelwähe (Blech 28 cm Ø)");
+
+/**
+ * Saisonales Rezept:
+ * Mai–August → Erdbeer-Törtchen, September → Zwetschgenwähe, Oktober–April → Apfelwähe.
+ */
+export function getAktuellesRezept(date: Date = new Date()): Rezept {
+  const m = date.getMonth() + 1;
+  if (m >= 5 && m <= 8) return REZEPT_TOERTCHEN;
+  if (m === 9) return REZEPT_ZWETSCHGEN;
+  return REZEPT_APFEL;
+}
 
 export const START_WARENKORB: string[] = [];
 
-export const REZEPT_ZUTATEN_KEYS = [
-  "mehl",
-  "zucker",
-  "salz",
-  "butter",
-  "zitrone",
-  "eier",
-  "vollrahm",
-  "vanillezucker",
-  "erdbeeren",
-] as const;
+/** @deprecated Nutze getAktuellesRezept() – bleibt für Kompatibilität erhalten. */
+export const REZEPT = getAktuellesRezept();
+
+/** @deprecated Nutze getAktuellesRezept().zutatenKeys */
+export const REZEPT_ZUTATEN_KEYS = REZEPT.zutatenKeys;
+

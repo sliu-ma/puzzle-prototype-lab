@@ -5,12 +5,12 @@ import { cn } from "@/lib/utils";
 import {
   KATEGORIEN,
   PRODUKTE,
-  REZEPT,
-  REZEPT_ZUTATEN_KEYS,
+  getAktuellesRezept,
   SIEGEL,
   type Kategorie,
   type Produkt,
 } from "@/lib/maya-data";
+
 import { ProduktDetailDialog } from "./ProduktDetailDialog";
 
 import { MarketTutorial, type TutorialStep } from "./MarketTutorial";
@@ -73,10 +73,13 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
     setTutorialSeen(true);
   };
 
+  const rezept = useMemo(() => getAktuellesRezept(), []);
+
   const produktById = useMemo(
     () => Object.fromEntries(PRODUKTE.map((p) => [p.id, p])) as Record<string, Produkt>,
     [],
   );
+
 
   const warenkorbProdukte = warenkorb.map((id) => produktById[id]).filter(Boolean);
   const total = warenkorbProdukte.reduce((s, p) => s + p.preis, 0);
@@ -101,7 +104,7 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
     const abgedeckt = new Set(
       warenkorbProdukte.map((p) => p.zutat).filter(Boolean) as string[],
     );
-    const fehlend = REZEPT_ZUTATEN_KEYS.filter((z) => !abgedeckt.has(z));
+    const fehlend = rezept.zutatenKeys.filter((z) => !abgedeckt.has(z));
 
     if (fehlend.length > 0 || schlechteImKorb.length > 0) {
       setFeedback(true);
@@ -149,10 +152,10 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
       {/* Rezept-Akkordeon */}
       <details open className="border-b border-border bg-paper-deep/20 px-3 py-2 sm:px-5">
         <summary className="cursor-pointer font-mono-typed text-[11px] uppercase tracking-wider text-stamp">
-          Rezept · {REZEPT.titel}
+          Rezept · {rezept.titel}
         </summary>
         <ul className="mt-2 grid grid-cols-2 gap-x-3 gap-y-1 text-xs">
-          {REZEPT.zutaten.map((z) => (
+          {rezept.zutaten.map((z) => (
             <li key={z}>• {z}</li>
           ))}
         </ul>
