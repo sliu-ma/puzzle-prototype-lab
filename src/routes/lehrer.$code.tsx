@@ -76,7 +76,6 @@ function RoundPage() {
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [deleteAsk, setDeleteAsk] = useState(false);
-  const [recallAsk, setRecallAsk] = useState(false);
   const [step, setStep] = useState<Step | null>(null);
   const [copied, setCopied] = useState(false);
   const [editing, setEditing] = useState(false);
@@ -338,17 +337,17 @@ function RoundPage() {
           <button
             type="button"
             disabled={busy}
-            onClick={() => {
-              if (round.status === "closed") {
-                void run(() =>
-                  teacherSetRoundStatus({
-                    data: { password, code: round.code, status: "lobby" },
-                  }),
-                );
-              } else {
-                setRecallAsk(true);
-              }
-            }}
+            onClick={() =>
+              void run(() =>
+                teacherSetRoundStatus({
+                  data: {
+                    password,
+                    code: round.code,
+                    status: round.status === "closed" ? "lobby" : "closed",
+                  },
+                }),
+              )
+            }
             className="flex min-h-[48px] w-full items-center justify-center gap-2 rounded-sm border border-border font-serif font-semibold"
           >
             {round.status === "closed" ? (
@@ -357,26 +356,10 @@ function RoundPage() {
               </>
             ) : (
               <>
-                <Lock className="h-4 w-4" /> Runde beenden & alle zurückrufen
+                <Lock className="h-4 w-4" /> Runde abschliessen
               </>
             )}
           </button>
-
-          <ConfirmDialog
-            open={recallAsk}
-            onOpenChange={setRecallAsk}
-            title="Alle Gruppen zurückrufen?"
-            description="Alle Gruppen erhalten den Befehl, zur Schule zurückzukehren. Rätsel und Hearing werden gesperrt."
-            confirmLabel="Zurückrufen"
-            onConfirm={() => {
-              setRecallAsk(false);
-              void run(() =>
-                teacherSetRoundStatus({
-                  data: { password, code: round.code, status: "closed" },
-                }),
-              );
-            }}
-          />
 
           <button
             type="button"
