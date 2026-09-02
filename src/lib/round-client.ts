@@ -163,6 +163,7 @@ async function push() {
       data: { teamId: session.teamId, token: session.token, events: batch },
     });
     attempt = 0;
+    queued = [];
     setPending(0);
   } catch {
     // Fehlgeschlagen: Ereignisse bleiben in der Warteschlange und werden mit
@@ -194,7 +195,6 @@ export function syncScoreEvents(events: ScoreEvent[]) {
   if (!session || events.length === 0) return;
   bindListeners();
   queued = events;
-  setPending(events.length);
   attempt = 0;
   schedule(400);
 }
