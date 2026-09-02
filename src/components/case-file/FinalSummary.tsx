@@ -73,6 +73,15 @@ export function FinalSummary({ reason = "won" }: Props) {
         </p>
       )}
 
+      {showReturn && (
+        <div className="mt-4 flex items-start gap-2 rounded-sm border border-destructive/50 bg-destructive/10 px-3 py-2.5">
+          <School className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
+          <p className="font-serif text-sm font-semibold leading-snug text-foreground">
+            {RETURN_BANNER}
+          </p>
+        </div>
+      )}
+
       {/* Punkte im Zentrum */}
       <div className="mt-7 text-center">
         <p className="font-mono-typed text-[10px] uppercase tracking-[0.3em] text-muted-foreground">Schlusspunktzahl</p>
