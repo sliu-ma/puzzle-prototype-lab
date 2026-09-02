@@ -30,6 +30,7 @@ import { LobbyPanel } from "@/components/teacher/LobbyPanel";
 import { LiveBoard } from "@/components/teacher/LiveBoard";
 import { ReportPanel } from "@/components/teacher/ReportPanel";
 import type { RoundItem } from "./lehrer.index";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/lehrer/$code")({
@@ -74,6 +75,7 @@ function RoundPage() {
   const [round, setRound] = useState<RoundItem | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [deleteAsk, setDeleteAsk] = useState(false);
   const [step, setStep] = useState<Step | null>(null);
   const [copied, setCopied] = useState(false);
   const [editing, setEditing] = useState(false);

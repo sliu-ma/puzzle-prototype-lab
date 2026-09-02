@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { RefreshCw } from "lucide-react";
+import { RefreshCw, WifiOff } from "lucide-react";
 import { useRoundReport } from "./LobbyPanel";
 import { ProgressMatrix } from "./ProgressMatrix";
 import { LiveLeaderboard } from "./LiveLeaderboard";
@@ -25,7 +25,7 @@ export function LiveBoard({
   startedAt: string | null;
   status?: string;
 }) {
-  const { report, loading, updatedAt } = useRoundReport(password, code, 8000);
+  const { report, loading, updatedAt, offline } = useRoundReport(password, code, 8000);
   const teams = report?.teams ?? [];
 
   // Eigener Sekundentakt: die Restzeit läuft flüssig, unabhängig davon,
@@ -106,6 +106,13 @@ export function LiveBoard({
           )}
         </div>
       </div>
+
+      {offline && (
+        <p className="mt-2 flex items-center gap-2 rounded-sm border border-destructive/40 bg-destructive/5 px-3 py-2 font-mono-typed text-[11px] uppercase tracking-wider text-destructive">
+          <WifiOff className="h-3.5 w-3.5" />
+          Keine Verbindung, angezeigte Daten sind womöglich veraltet.
+        </p>
+      )}
 
       <ProgressMatrix
         teams={teams}
