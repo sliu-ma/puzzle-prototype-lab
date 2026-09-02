@@ -273,6 +273,7 @@ export const getRoundState = createServerFn({ method: "POST" })
       startedAt?: string | null;
       teamExists?: boolean;
       teams?: { id: string; name: string }[];
+      messages?: { id: string; body: string; createdAt: string }[];
     };
     if (!p.found) return { found: false as const };
     return {
@@ -284,7 +285,55 @@ export const getRoundState = createServerFn({ method: "POST" })
       startedAt: p.startedAt ?? null,
       teamExists: !!p.teamExists,
       teams: p.teams ?? [],
+      messages: p.messages ?? [],
     };
+  });
+
+/** Nachricht der Lehrperson an alle Gruppen oder an eine einzelne Gruppe. */
+export const teacherSendMessage = createServerFn({ method: "POST" })
+  .inputValidator((d) =>
+    z
+      .object({
+        password: z.string().min(1).max(200),
+        code: z.string().min(1).max(20),
+        teamId: z.string().uuid().nullable().optional(),
+        body: z.string().min(1).max(300),
+      })
+      .parse(d),
+  )
+  .handler(async ({ data }) => {
+    const { roundsDb, hashPassword } = await import("./rounds.server");
+    const { error } = await roundsDb().rpc("teacher_send_message", {
+      p_password_hash: hashPassword(data.password),
+      p_code: data.code,
+      p_team_id: (data.teamId ?? null) as unknown as string,
+      p_body: data.body,
+    });
+    if (error) throw new Error(error.message);
+    return { ok: true as const };
+  });
+
+/** Die zuletzt gesendeten Nachrichten einer Runde für die Lehreransicht. */
+export const teacherListMessages = createServerFn({ method: "POST" })
+  .inputValidator((d) =>
+    z
+      .object({ password: z.string().min(1).max(200), code: z.string().min(1).max(20) })
+      .parse(d),
+  )
+  .handler(async ({ data }) => {
+    const { roundsDb, hashPassword } = await import("./rounds.server");
+    const { data: rows, error } = await roundsDb().rpc("teacher_list_messages", {
+      p_password_hash: hashPassword(data.password),
+      p_code: data.code,
+    });
+    if (error) throw new Error(error.message);
+    return (rows ?? []).map((r) => ({
+      id: r.id as string,
+      teamId: (r.team_id as string | null) ?? null,
+      teamName: (r.team_name as string | null) ?? null,
+      body: r.body as string,
+      createdAt: r.created_at as string,
+    }));
   });
 
 export const teacherStartRound = createServerFn({ method: "POST" })

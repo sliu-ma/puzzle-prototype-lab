@@ -5,6 +5,7 @@ import { BadgeToast } from "@/components/case-file/BadgeToast";
 import { ScoreCounter } from "@/components/case-file/ScoreCounter";
 import { SyncIndicator } from "@/components/case-file/SyncIndicator";
 import { ErrorScreen } from "@/components/case-file/ErrorScreen";
+import { TeacherMessageOverlay } from "@/components/case-file/TeacherMessageOverlay";
 import { Toaster } from "@/components/ui/sonner";
 import appCss from "../styles.css?url";
 
@@ -99,6 +100,7 @@ function RootComponent() {
         <GlobalTimer />
       </div>
       <BadgeToast />
+      <TeacherMessageOverlay />
       <Toaster />
     </>
   );
