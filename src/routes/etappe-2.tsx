@@ -13,7 +13,7 @@ import {
 import { QRGate } from "@/components/case-file/QRGate";
 import { StageGate } from "@/components/case-file/StageGate";
 import { HintSystem, type Hint } from "@/components/case-file/HintSystem";
-import { START_WARENKORB } from "@/lib/maya-data";
+import { START_WARENKORB, getAktuellesRezept } from "@/lib/maya-data";
 import { completeStage, getFrozenClock, getHearingClock } from "@/lib/progress";
 import { awardBadge, tryAwardNoHintStage } from "@/lib/badges";
 import { usePersistentState, usePersistentSet } from "@/lib/persist";
