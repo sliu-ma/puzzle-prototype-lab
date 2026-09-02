@@ -79,7 +79,7 @@ export interface Produkt {
   bewertung: "gut" | "schlecht" | "neutral";
   problemHinweis?: string;
   ersetzt?: string;
-  zutat?: "erdbeeren" | "eier" | "mehl" | "zucker" | "salz" | "butter" | "zitrone" | "vollrahm" | "vanillezucker";
+  zutat?: ZutatKey;
   nachhaltigkeit: Nachhaltigkeit;
 }
 
