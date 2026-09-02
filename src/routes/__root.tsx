@@ -3,6 +3,9 @@ import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/r
 import { GlobalTimer } from "@/components/case-file/GlobalTimer";
 import { BadgeToast } from "@/components/case-file/BadgeToast";
 import { ScoreCounter } from "@/components/case-file/ScoreCounter";
+import { SyncIndicator } from "@/components/case-file/SyncIndicator";
+import { ErrorScreen } from "@/components/case-file/ErrorScreen";
+import { Toaster } from "@/components/ui/sonner";
 import appCss from "../styles.css?url";
 
 function NotFoundComponent() {
@@ -69,11 +72,12 @@ export const Route = createRootRoute({
   shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
+  errorComponent: ({ reset }) => <ErrorScreen reset={reset} />,
 });
 
 function RootShell({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="de">
       <head>
         <HeadContent />
       </head>
@@ -90,10 +94,12 @@ function RootComponent() {
     <>
       <Outlet />
       <div className="fixed right-3 top-3 z-40 flex items-center gap-2">
+        <SyncIndicator />
         <ScoreCounter />
         <GlobalTimer />
       </div>
       <BadgeToast />
+      <Toaster />
     </>
   );
 }

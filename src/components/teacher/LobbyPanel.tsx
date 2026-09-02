@@ -4,6 +4,7 @@ import { PrologueOverlay } from "@/components/case-file/PrologueVideo";
 import { JoinCodeCard } from "@/components/teacher/JoinCodeCard";
 
 import { teacherRoundReport, teacherDeleteTeam } from "@/lib/rounds.functions";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { cn } from "@/lib/utils";
 
 /** Spiegelt `ReportStage` aus rounds.server.ts (dort nicht importierbar). */
@@ -69,6 +70,9 @@ export function useRoundReport(password: string, code: string, intervalMs = 6000
   const [report, setReport] = useState<Report | null>(null);
   const [loading, setLoading] = useState(true);
   const [updatedAt, setUpdatedAt] = useState<number | null>(null);
+  // Zählt aufeinanderfolgende Fehlversuche: das Dashboard zeigt an, wenn
+  // die Verbindung weg ist, statt still veraltete Zahlen zu behalten.
+  const [failures, setFailures] = useState(0);
   const [tick, setTick] = useState(0);
 
   useEffect(() => {
@@ -83,9 +87,12 @@ export function useRoundReport(password: string, code: string, intervalMs = 6000
           if (alive && res.found) {
             setReport(res as Report);
             setUpdatedAt(Date.now());
+            setFailures(0);
           }
         })
-        .catch(() => undefined)
+        .catch(() => {
+          if (alive) setFailures((n) => n + 1);
+        })
         .finally(() => {
           if (alive && first) {
             first = false;
@@ -101,7 +108,13 @@ export function useRoundReport(password: string, code: string, intervalMs = 6000
     };
   }, [password, code, intervalMs, tick]);
 
-  return { report, loading, updatedAt, reload: () => setTick((t) => t + 1) };
+  return {
+    report,
+    loading,
+    updatedAt,
+    offline: failures >= 2,
+    reload: () => setTick((t) => t + 1),
+  };
 }
 
 
@@ -128,6 +141,7 @@ export function LobbyPanel({
   const { report, loading, reload } = useRoundReport(password, code, 4000);
   const teams = report?.teams ?? [];
   const [prologueOpen, setPrologueOpen] = useState(false);
+  const [removeAsk, setRemoveAsk] = useState<{ id: string; name: string } | null>(null);
   const fired = useRef(false);
 
   // Startknopf -> Vorgeschichte im Vollbild -> Runde genau einmal starten.
@@ -141,7 +155,6 @@ export function LobbyPanel({
 
 
   const removeTeam = async (teamId: string) => {
-    if (!confirm("Dieses Team wirklich entfernen?")) return;
     await teacherDeleteTeam({ data: { password, teamId } }).catch(() => undefined);
     reload();
   };
@@ -178,7 +191,7 @@ export function LobbyPanel({
             </div>
             <button
               type="button"
-              onClick={() => void removeTeam(t.teamId)}
+              onClick={() => setRemoveAsk({ id: t.teamId, name: t.name })}
               aria-label={`Team ${t.name} entfernen`}
               className="rounded-sm border border-border p-2 text-destructive"
             >
@@ -213,7 +226,23 @@ export function LobbyPanel({
           : "Zuerst läuft die Vorgeschichte im Vollbild. Danach zählen alle Geräte kurz herunter und öffnen das Briefing."}
       </p>
 
-
+      <ConfirmDialog
+        open={removeAsk !== null}
+        onOpenChange={(o) => !o && setRemoveAsk(null)}
+        title="Team entfernen?"
+        description={
+          removeAsk
+            ? `${removeAsk.name} wird aus dieser Runde gelöscht und muss sich neu anmelden.`
+            : undefined
+        }
+        confirmLabel="Entfernen"
+        destructive
+        onConfirm={() => {
+          const id = removeAsk?.id;
+          setRemoveAsk(null);
+          if (id) void removeTeam(id);
+        }}
+      />
     </div>
   );
 }

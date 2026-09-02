@@ -30,6 +30,7 @@ import { LobbyPanel } from "@/components/teacher/LobbyPanel";
 import { LiveBoard } from "@/components/teacher/LiveBoard";
 import { ReportPanel } from "@/components/teacher/ReportPanel";
 import type { RoundItem } from "./lehrer.index";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/lehrer/$code")({
@@ -74,6 +75,7 @@ function RoundPage() {
   const [round, setRound] = useState<RoundItem | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [deleteAsk, setDeleteAsk] = useState(false);
   const [step, setStep] = useState<Step | null>(null);
   const [copied, setCopied] = useState(false);
   const [editing, setEditing] = useState(false);
@@ -362,13 +364,22 @@ function RoundPage() {
           <button
             type="button"
             disabled={busy}
-            onClick={() => {
-              if (
-                !confirm(
-                  `Runde ${round.code} wirklich löschen? Teams und Punkte dieser Runde werden entfernt.`,
-                )
-              )
-                return;
+            onClick={() => setDeleteAsk(true)}
+            className="flex min-h-[48px] w-full items-center justify-center gap-2 rounded-sm border border-border font-serif font-semibold text-destructive"
+          >
+            <Trash2 className="h-4 w-4" />
+            Runde löschen
+          </button>
+
+          <ConfirmDialog
+            open={deleteAsk}
+            onOpenChange={setDeleteAsk}
+            title={`Runde ${round.code} löschen?`}
+            description="Teams, Punkte und Auswertung dieser Runde werden entfernt. Das kann nicht rückgängig gemacht werden."
+            confirmLabel="Löschen"
+            destructive
+            onConfirm={() => {
+              setDeleteAsk(false);
               void (async () => {
                 setBusy(true);
                 try {
@@ -380,11 +391,10 @@ function RoundPage() {
                 }
               })();
             }}
-            className="flex min-h-[48px] w-full items-center justify-center gap-2 rounded-sm border border-border font-serif font-semibold text-destructive"
-          >
-            <Trash2 className="h-4 w-4" />
-            Runde löschen
-          </button>
+          />
+
+
+
         </section>
       )}
 
