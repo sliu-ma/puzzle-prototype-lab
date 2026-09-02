@@ -35,6 +35,45 @@ export type Database = {
         }
         Relationships: []
       }
+      round_messages: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          round_id: string
+          team_id: string | null
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          id?: string
+          round_id: string
+          team_id?: string | null
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          round_id?: string
+          team_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "round_messages_round_id_fkey"
+            columns: ["round_id"]
+            isOneToOne: false
+            referencedRelation: "rounds"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "round_messages_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       rounds: {
         Row: {
           budget_min: number
@@ -210,6 +249,16 @@ export type Database = {
         Args: { p_password_hash: string; p_team_id: string }
         Returns: boolean
       }
+      teacher_list_messages: {
+        Args: { p_code: string; p_password_hash: string }
+        Returns: {
+          body: string
+          created_at: string
+          id: string
+          team_id: string
+          team_name: string
+        }[]
+      }
       teacher_list_rounds: {
         Args: { p_password_hash: string }
         Returns: {
@@ -225,6 +274,15 @@ export type Database = {
       teacher_round_report: {
         Args: { p_code: string; p_password_hash: string }
         Returns: Json
+      }
+      teacher_send_message: {
+        Args: {
+          p_body: string
+          p_code: string
+          p_password_hash: string
+          p_team_id: string
+        }
+        Returns: string
       }
       teacher_set_round_status: {
         Args: { p_code: string; p_password_hash: string; p_status: string }
