@@ -5,12 +5,12 @@ import { cn } from "@/lib/utils";
 import {
   KATEGORIEN,
   PRODUKTE,
-  REZEPT,
-  REZEPT_ZUTATEN_KEYS,
+  getAktuellesRezept,
   SIEGEL,
   type Kategorie,
   type Produkt,
 } from "@/lib/maya-data";
+
 import { ProduktDetailDialog } from "./ProduktDetailDialog";
 
 import { MarketTutorial, type TutorialStep } from "./MarketTutorial";
