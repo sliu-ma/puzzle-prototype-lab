@@ -169,17 +169,10 @@ function CoverPage() {
               <ProgressPanel
                 teamName={team.name}
                 currentStage={stage}
-                onReset={() => {
-                  if (
-                    confirm(
-                      "Wirklich neu starten? Alle Etappen werden zurückgesetzt.",
-                    )
-                  ) {
-                    resetAll();
-                  }
-                }}
+                onReset={() => setResetAsk(true)}
               />
             ) : (
+
               <StartForm
                 initialCode={joinCode}
                 onStart={(name, code, members) => {
