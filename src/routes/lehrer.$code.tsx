@@ -445,6 +445,7 @@ function RoundPage() {
               Alle Gruppen erhalten innert Sekunden ein Pop-up mit der neuen Restzeit.
             </p>
           </div>
+          <MessagePanel password={password} code={round.code} />
           <LiveBoard
             password={password}
             code={round.code}
