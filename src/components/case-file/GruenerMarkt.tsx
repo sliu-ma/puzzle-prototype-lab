@@ -73,10 +73,13 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
     setTutorialSeen(true);
   };
 
+  const rezept = useMemo(() => getAktuellesRezept(), []);
+
   const produktById = useMemo(
     () => Object.fromEntries(PRODUKTE.map((p) => [p.id, p])) as Record<string, Produkt>,
     [],
   );
+
 
   const warenkorbProdukte = warenkorb.map((id) => produktById[id]).filter(Boolean);
   const total = warenkorbProdukte.reduce((s, p) => s + p.preis, 0);
