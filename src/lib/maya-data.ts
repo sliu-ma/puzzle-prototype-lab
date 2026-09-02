@@ -64,6 +64,22 @@ export interface Nachhaltigkeit {
   erklaerung: string;
 }
 
+export type ZutatKey =
+  | "erdbeeren"
+  | "zwetschgen"
+  | "aepfel"
+  | "eier"
+  | "mehl"
+  | "zucker"
+  | "salz"
+  | "butter"
+  | "zitrone"
+  | "vollrahm"
+  | "vanillezucker"
+  | "zimt"
+  | "nuesse";
+
+
 export interface Produkt {
   id: string;
   name: string;
