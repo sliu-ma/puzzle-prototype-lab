@@ -6,11 +6,11 @@ Ziel: Sobald die Zeit um ist (oder die Lehrperson es auslöst), sehen alle Grupp
 
 1. Bis zum Ablauf des Zeitbudgets läuft alles wie heute: alle dürfen an ihren Rätseln bleiben.
 2. Zeit um (oder Lehrperson löst Rückruf aus): Vollbild-Pop-up, das nicht wegklickbar ist:
-   - Titel: "Zurück zur Schule"
-   - Text: "Kehrt zurück zur Schule! In 10 Minuten geht es weiter."
-   - Ein Button: "Zum Abschluss →"
+  - Titel: "Zurück zur Schule"
+  - Text: "Kehrt zurück zur Schule! In 10 Minuten geht es weiter."
+  - Ein Button: "Zum Abschluss →"
 3. Keine neuen Etappen, kein Hearing mehr – gelöste Etappen bleiben nur zum Nachlesen offen (Verhalten ist heute schon so, wird beibehalten).
-4. Auf dem Abschluss-Screen bleibt eine schmale Rückkehr-Leiste oben stehen ("Kehrt zurück zur Schule – in 10 Minuten geht es weiter"), damit der Hinweis unterwegs nicht verloren geht. Sie erscheint auch für Teams, die vor Zeitende fertig geworden sind.
+4. Auf dem Abschluss-Screen bleibt eine schmale Rückkehr-Leiste oben stehen ("Kehrt zurück zur Schule in 10 Minuten geht es weiter"), damit der Hinweis unterwegs nicht verloren geht. Sie erscheint auch für Teams, die vor Zeitende fertig geworden sind.
 
 ## Ablauf für die Lehrperson
 
