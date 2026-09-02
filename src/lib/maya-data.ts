@@ -213,7 +213,10 @@ export const PRODUKTE: Produkt[] = [
     saison: "in",
     emoji: "🍎",
     bildUrl: aepfelAsset.url,
-    bewertung: "neutral",
+    bewertung: "gut",
+    zutat: "aepfel",
+    ersetzt: "aepfel-pinklady-fr",
+
     nachhaltigkeit: {
       regional: 5,
       saisonal: 5,
