@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Clock, Lightbulb, RotateCcw, Sparkles } from "lucide-react";
+import { Clock, Lightbulb, RotateCcw, School, Sparkles } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,7 +18,14 @@ import { Leaderboard } from "./Leaderboard";
 import { BadgeShowcase } from "./BadgeShowcase";
 import { getTotalRevealedHints } from "./HintSystem";
 import { getScore } from "@/lib/score-events";
-import { getStartTs, getEndTs, getTeam, resetAll } from "@/lib/progress";
+import {
+  getStartTs,
+  getEndTs,
+  getTeam,
+  resetAll,
+  isRoundOver,
+} from "@/lib/progress";
+import { RETURN_BANNER } from "@/lib/story";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -54,6 +61,18 @@ export function FinalSummary({ reason = "won" }: Props) {
   const score = useState(() => getScore())[0];
   const teamName = useState(() => getTeam()?.name?.trim() || "Mein Team")[0];
   const shownPoints = useCountUp(score.total);
+  // Rückkehr-Hinweis, solange die Runde beendet ist (Zeit um oder Lehrperson).
+  const [showReturn, setShowReturn] = useState(false);
+  useEffect(() => {
+    const sync = () => setShowReturn(isRoundOver());
+    sync();
+    const id = window.setInterval(sync, 5000);
+    window.addEventListener("maya-progress", sync);
+    return () => {
+      window.clearInterval(id);
+      window.removeEventListener("maya-progress", sync);
+    };
+  }, []);
 
   return (
     <PaperCard rotate={-0.3} tape="top-left" className="relative overflow-hidden">
