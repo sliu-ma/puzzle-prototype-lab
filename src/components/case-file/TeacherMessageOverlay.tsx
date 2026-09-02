@@ -51,11 +51,13 @@ export function TeacherMessageOverlay() {
 
   useEffect(() => {
     if (onSummary) return;
-    const session = getRoundSession();
-    if (!session) return;
     let alive = true;
 
     const check = () => {
+      // Sitzung bei jedem Zyklus neu lesen: Gruppen treten erst nach dem
+      // ersten Rendern bei, ein einmaliges Auslesen würde das Polling stoppen.
+      const session = getRoundSession();
+      if (!session) return;
       if (!getStartTs() || getEndTs() || isRoundClosed()) return;
       void getRoundState({
         data: { code: session.code, teamId: session.teamId, token: session.token },
