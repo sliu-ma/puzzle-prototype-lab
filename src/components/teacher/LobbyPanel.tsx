@@ -4,6 +4,7 @@ import { PrologueOverlay } from "@/components/case-file/PrologueVideo";
 import { JoinCodeCard } from "@/components/teacher/JoinCodeCard";
 
 import { teacherRoundReport, teacherDeleteTeam } from "@/lib/rounds.functions";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { cn } from "@/lib/utils";
 
 /** Spiegelt `ReportStage` aus rounds.server.ts (dort nicht importierbar). */
@@ -213,7 +214,23 @@ export function LobbyPanel({
           : "Zuerst läuft die Vorgeschichte im Vollbild. Danach zählen alle Geräte kurz herunter und öffnen das Briefing."}
       </p>
 
-
+      <ConfirmDialog
+        open={removeAsk !== null}
+        onOpenChange={(o) => !o && setRemoveAsk(null)}
+        title="Team entfernen?"
+        description={
+          removeAsk
+            ? `${removeAsk.name} wird aus dieser Runde gelöscht und muss sich neu anmelden.`
+            : undefined
+        }
+        confirmLabel="Entfernen"
+        destructive
+        onConfirm={() => {
+          const id = removeAsk?.id;
+          setRemoveAsk(null);
+          if (id) void removeTeam(id);
+        }}
+      />
     </div>
   );
 }

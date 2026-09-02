@@ -362,13 +362,22 @@ function RoundPage() {
           <button
             type="button"
             disabled={busy}
-            onClick={() => {
-              if (
-                !confirm(
-                  `Runde ${round.code} wirklich löschen? Teams und Punkte dieser Runde werden entfernt.`,
-                )
-              )
-                return;
+            onClick={() => setDeleteAsk(true)}
+            className="flex min-h-[48px] w-full items-center justify-center gap-2 rounded-sm border border-border font-serif font-semibold text-destructive"
+          >
+            <Trash2 className="h-4 w-4" />
+            Runde löschen
+          </button>
+
+          <ConfirmDialog
+            open={deleteAsk}
+            onOpenChange={setDeleteAsk}
+            title={`Runde ${round.code} löschen?`}
+            description="Teams, Punkte und Auswertung dieser Runde werden entfernt. Das kann nicht rückgängig gemacht werden."
+            confirmLabel="Löschen"
+            destructive
+            onConfirm={() => {
+              setDeleteAsk(false);
               void (async () => {
                 setBusy(true);
                 try {
