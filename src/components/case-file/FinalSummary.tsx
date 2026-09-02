@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Clock, Lightbulb, RotateCcw, Sparkles } from "lucide-react";
+import { Clock, Lightbulb, RotateCcw, School, Sparkles } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,7 +18,14 @@ import { Leaderboard } from "./Leaderboard";
 import { BadgeShowcase } from "./BadgeShowcase";
 import { getTotalRevealedHints } from "./HintSystem";
 import { getScore } from "@/lib/score-events";
-import { getStartTs, getEndTs, getTeam, resetAll } from "@/lib/progress";
+import {
+  getStartTs,
+  getEndTs,
+  getTeam,
+  resetAll,
+  isRoundOver,
+} from "@/lib/progress";
+import { RETURN_BANNER } from "@/lib/story";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -54,6 +61,18 @@ export function FinalSummary({ reason = "won" }: Props) {
   const score = useState(() => getScore())[0];
   const teamName = useState(() => getTeam()?.name?.trim() || "Mein Team")[0];
   const shownPoints = useCountUp(score.total);
+  // Rückkehr-Hinweis, solange die Runde beendet ist (Zeit um oder Lehrperson).
+  const [showReturn, setShowReturn] = useState(false);
+  useEffect(() => {
+    const sync = () => setShowReturn(isRoundOver());
+    sync();
+    const id = window.setInterval(sync, 5000);
+    window.addEventListener("maya-progress", sync);
+    return () => {
+      window.clearInterval(id);
+      window.removeEventListener("maya-progress", sync);
+    };
+  }, []);
 
   return (
     <PaperCard rotate={-0.3} tape="top-left" className="relative overflow-hidden">
@@ -71,6 +90,15 @@ export function FinalSummary({ reason = "won" }: Props) {
             ? "„Die Lehrperson hat die Runde abgeschlossen. Weiter ermitteln können wir jetzt nicht mehr – aber hier ist, was ihr zusammengetragen habt.\u201c"
             : "„Die Gemeindeversammlung hat begonnen. Weiter ermitteln können wir jetzt nicht mehr – aber hier ist, was ihr zusammengetragen habt.\u201c"}
         </p>
+      )}
+
+      {showReturn && (
+        <div className="mt-4 flex items-start gap-2 rounded-sm border border-destructive/50 bg-destructive/10 px-3 py-2.5">
+          <School className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
+          <p className="font-serif text-sm font-semibold leading-snug text-foreground">
+            {RETURN_BANNER}
+          </p>
+        </div>
       )}
 
       {/* Punkte im Zentrum */}

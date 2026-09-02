@@ -19,3 +19,8 @@ export function prologueIntroDate(now: Date = new Date()) {
 export const PROLOGUE_INTRO_PLACE = "An einer Lichtung mitten im Wald";
 export const PROLOGUE_OUTRO_TEXT =
   "Wenige Monate später starb Jakob nach kurzer Krankheit.";
+
+/** Rückkehr-Befehl am Rundenende: erscheint auf allen Handys. */
+export const RETURN_TITLE = "Zurück zur Schule";
+export const RETURN_NOTICE = "Kehrt zurück zur Schule! In 10 Minuten geht es weiter.";
+export const RETURN_BANNER = "Kehrt zurück zur Schule – in 10 Minuten geht es weiter.";
