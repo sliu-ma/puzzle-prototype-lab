@@ -388,12 +388,8 @@ function RoundPage() {
                   setBusy(false);
                 }
               })();
-            }}
-            className="flex min-h-[48px] w-full items-center justify-center gap-2 rounded-sm border border-border font-serif font-semibold text-destructive"
-          >
-            <Trash2 className="h-4 w-4" />
-            Runde löschen
-          </button>
+          />
+
         </section>
       )}
 
