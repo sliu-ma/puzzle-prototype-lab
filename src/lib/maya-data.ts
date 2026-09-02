@@ -26,15 +26,20 @@ import spargelAsset from "@/assets/produkte/spargel.webp.asset.json";
 import rhabarberAsset from "@/assets/produkte/rhabarber.webp.asset.json";
 import kuerbisAsset from "@/assets/produkte/kuerbis.webp.asset.json";
 import zwetschgeAsset from "@/assets/produkte/zwetschge.jpg.asset.json";
+import zwetschgenBioChAsset from "@/assets/produkte/zwetschgen-bio-ch.webp.asset.json";
+import zimtBioAsset from "@/assets/produkte/zimt-bio.webp.asset.json";
+import zimtClassicAsset from "@/assets/produkte/zimt-classic.webp.asset.json";
+import aepfelPinkladyAsset from "@/assets/produkte/aepfel-pinklady.jpg.asset.json";
 
 import bioLogo from "@/assets/labels/bio.png.asset.json";
 import ipSuisseLogo from "@/assets/labels/ip-suisse.png.asset.json";
 import demeterLogo from "@/assets/labels/demeter.png.asset.json";
 import suisseGarantieLogo from "@/assets/labels/suisse-garantie.webp.asset.json";
+import fairtradeLogo from "@/assets/labels/fairtrade.jpg.asset.json";
 
 export type Kategorie = "milch-eier" | "fruechte-gemuese" | "backzutaten" | "andere";
 
-export type SiegelKey = "bio" | "ip-suisse" | "demeter" | "suisse-garantie";
+export type SiegelKey = "bio" | "ip-suisse" | "demeter" | "suisse-garantie" | "fairtrade";
 
 export interface SiegelInfo {
   key: SiegelKey;
@@ -47,7 +52,9 @@ export const SIEGEL: Record<SiegelKey, SiegelInfo> = {
   "ip-suisse": { key: "ip-suisse", label: "IP-Suisse", logoUrl: ipSuisseLogo.url },
   demeter: { key: "demeter", label: "Demeter", logoUrl: demeterLogo.url },
   "suisse-garantie": { key: "suisse-garantie", label: "Suisse Garantie", logoUrl: suisseGarantieLogo.url },
+  fairtrade: { key: "fairtrade", label: "Fairtrade", logoUrl: fairtradeLogo.url },
 };
+
 
 export interface Nachhaltigkeit {
   regional: number; // 1–5
