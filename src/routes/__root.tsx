@@ -100,6 +100,7 @@ function RootComponent() {
         <GlobalTimer />
       </div>
       <BadgeToast />
+      <TeacherMessageOverlay />
       <Toaster />
     </>
   );
