@@ -127,7 +127,7 @@ export const ROUTES: RouteOption[] = [
     titel: "Zug",
     iconKeys: ["train"],
     dauer: "4h 31min",
-    preis: "CHF 62.00",
+    preis: "CHF 60.40",
     co2Kg: 3,
     beschreibung:
       "Genève → Zürich HB mit IC 1, weiter mit IC 3 nach Sargans und mit IR 13 nach Heerbrugg. Eine Verbindung, ein Ticket.",
@@ -248,7 +248,7 @@ export const ROUTES: RouteOption[] = [
     titel: "Zug + Flug + Zug",
     iconKeys: ["train", "plane", "train"],
     dauer: "4h 19min",
-    preis: "CHF 281",
+    preis: "CHF 318",
     co2Kg: 140,
     beschreibung:
       "Genève → Flughafen, Inlandflug nach Zürich, dann mit IR 13 weiter nach Heerbrugg. Klingt schnell, ist es kaum.",
