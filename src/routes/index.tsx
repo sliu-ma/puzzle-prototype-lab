@@ -20,6 +20,7 @@ import { getStageHintsUsed } from "@/lib/badges";
 import { NextStepCard } from "@/components/case-file/NextStepCard";
 import { BadgeShelf } from "@/components/case-file/BadgeShelf";
 import { StartForm } from "@/components/case-file/StartForm";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 const CHEAT_CODE = "KRXZMVBQ";
 
@@ -59,6 +60,7 @@ function CoverPage() {
   const [stage, setStage] = useState(0);
   const [showIntro, setShowIntro] = useState(false);
   const [introSeen, setIntroSeen] = useState(false);
+  const [resetAsk, setResetAsk] = useState(false);
 
 
   useEffect(() => {
@@ -209,6 +211,19 @@ function CoverPage() {
         </p>
 
       </div>
+
+      <ConfirmDialog
+        open={resetAsk}
+        onOpenChange={setResetAsk}
+        title="Wirklich neu starten?"
+        description="Alle Etappen, Punkte und Hinweise dieses Teams werden zurückgesetzt."
+        confirmLabel="Zurücksetzen"
+        destructive
+        onConfirm={() => {
+          setResetAsk(false);
+          resetAll();
+        }}
+      />
     </main>
   );
 }

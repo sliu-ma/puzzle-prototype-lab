@@ -128,6 +128,7 @@ export function LobbyPanel({
   const { report, loading, reload } = useRoundReport(password, code, 4000);
   const teams = report?.teams ?? [];
   const [prologueOpen, setPrologueOpen] = useState(false);
+  const [removeAsk, setRemoveAsk] = useState<{ id: string; name: string } | null>(null);
   const fired = useRef(false);
 
   // Startknopf -> Vorgeschichte im Vollbild -> Runde genau einmal starten.
@@ -141,7 +142,6 @@ export function LobbyPanel({
 
 
   const removeTeam = async (teamId: string) => {
-    if (!confirm("Dieses Team wirklich entfernen?")) return;
     await teacherDeleteTeam({ data: { password, teamId } }).catch(() => undefined);
     reload();
   };
@@ -178,7 +178,7 @@ export function LobbyPanel({
             </div>
             <button
               type="button"
-              onClick={() => void removeTeam(t.teamId)}
+              onClick={() => setRemoveAsk({ id: t.teamId, name: t.name })}
               aria-label={`Team ${t.name} entfernen`}
               className="rounded-sm border border-border p-2 text-destructive"
             >
