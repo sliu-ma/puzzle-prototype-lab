@@ -75,9 +75,14 @@ export function TeacherMessageOverlay() {
 
     check();
     const id = window.setInterval(check, POLL_MS);
+    const onVisible = () => {
+      if (document.visibilityState === "visible") check();
+    };
+    document.addEventListener("visibilitychange", onVisible);
     return () => {
       alive = false;
       window.clearInterval(id);
+      document.removeEventListener("visibilitychange", onVisible);
     };
   }, [onSummary]);
 
