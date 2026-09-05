@@ -212,6 +212,26 @@ export function QRGate({
     };
   }, []);
 
+  /** Ausweg ohne Kamera: Zeichenfolge unter dem QR-Code eintippen. */
+  const unlockManually = async () => {
+    const clean = manual.trim();
+    if (clean !== EXPECTED_TOKEN) {
+      setManualError(true);
+      return;
+    }
+    try {
+      localStorage.setItem(STORAGE_KEY, await sha256(EXPECTED_TOKEN));
+      if (stage) recordStageScan(stage);
+    } catch {
+      /* ignore */
+    }
+    setManualError(false);
+    setError(null);
+    setScanning(false);
+    setUnlocked(true);
+  };
+
+
   useEffect(() => {
     if (!scanning) return;
 
