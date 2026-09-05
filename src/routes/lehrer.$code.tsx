@@ -472,7 +472,15 @@ function RoundPage() {
               Alle Gruppen erhalten innert Sekunden ein Pop-up mit der neuen Restzeit.
             </p>
           </div>
-          <MessagePanel password={password} code={round.code} acks={acks} />
+          {pendingCount > 0 && (
+            <button
+              type="button"
+              onClick={() => setStep("messages")}
+              className="mt-2 flex w-full items-center justify-center gap-2 rounded-sm border border-stamp bg-stamp/10 px-3 py-2 font-mono-typed text-[10px] uppercase tracking-wider text-stamp"
+            >
+              {pendingCount} neue Meldung(en) · im Reiter «Nachrichten» ansehen
+            </button>
+          )}
           <LiveBoard
             password={password}
             code={round.code}
@@ -482,9 +490,32 @@ function RoundPage() {
           />
         </>
       )}
+      {step === "messages" && (
+        <>
+          <MessagePanel
+            password={password}
+            code={round.code}
+            acks={acks}
+            initialTarget={replyTarget}
+            onTargetConsumed={() => setReplyTarget(null)}
+          />
+          <section className="mt-4 rounded-sm border border-border bg-secondary/40 p-3">
+            <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+              Meldungen der Gruppen
+            </p>
+            <HelpFeed
+              report={ackReport}
+              password={password}
+              code={round.code}
+              onReply={(teamId) => setReplyTarget(teamId)}
+            />
+          </section>
+        </>
+      )}
       {step === "report" && (
         <ReportPanel password={password} code={round.code} budgetMin={round.budget_min} />
       )}
+
     </main>
   );
 }
