@@ -4,29 +4,9 @@ import { teacherListMessages } from "@/lib/rounds.functions";
 import type { Report, ReportTeam } from "./LobbyPanel";
 import { assessTeams, COL_NAME, COL_LABEL } from "./ProgressMatrix";
 import { MessageComposer } from "./MessagePanel";
+import { helpId, useHelpDone } from "@/lib/teacher-help-done";
 import { cn } from "@/lib/utils";
 
-/** Häkchen werden pro Runde gespeichert, damit alte Runden nicht durchschlagen. */
-function doneKey(code: string) {
-  return `mm.teacher.help.done.${code}`;
-}
-
-/** IDs der als erledigt markierten Hilferufe (localStorage). */
-function readDone(code: string): Set<string> {
-  try {
-    const raw = window.localStorage.getItem(doneKey(code));
-    return raw ? new Set(JSON.parse(raw) as string[]) : new Set();
-  } catch {
-    return new Set();
-  }
-}
-function writeDone(code: string, set: Set<string>) {
-  try {
-    window.localStorage.setItem(doneKey(code), JSON.stringify([...set]));
-  } catch {
-    /* ignore */
-  }
-}
 
 type Sent = {
   id: string;
