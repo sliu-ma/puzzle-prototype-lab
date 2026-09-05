@@ -244,8 +244,15 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
             <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
               Die Kasse springt nicht an. Schau dich nochmal um.
             </p>
+            {tries >= 3 && (
+              <p className="mt-1.5 leading-relaxed text-foreground/80">
+                Geht das Rezept Zutat für Zutat durch: Ist für jede genau ein Produkt
+                im Korb? Und stimmen bei allen Herkunft, Saison und Label?
+              </p>
+            )}
           </div>
         )}
+
 
       </div>
 
