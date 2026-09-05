@@ -447,10 +447,20 @@ function RoundPage() {
       )}
       {step === "live" && (
         <>
-          <div className="mt-4 rounded-sm border border-border bg-secondary/40 p-3">
-            <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+          {pendingCount > 0 && (
+            <button
+              type="button"
+              onClick={() => setStep("messages")}
+              className="mt-4 flex min-h-[44px] w-full items-center justify-center gap-2 rounded-sm border border-stamp bg-stamp/10 px-3 py-2 font-mono-typed text-[11px] uppercase tracking-wider text-stamp"
+            >
+              {pendingCount} neue Meldung(en) · Reiter «Nachrichten»
+            </button>
+          )}
+          {/* Eingeklappt, damit die Gruppenliste sofort sichtbar ist. */}
+          <details className="mt-3 rounded-sm border border-border bg-secondary/40 p-3">
+            <summary className="font-mono-typed cursor-pointer list-none text-[11px] uppercase tracking-wider text-muted-foreground">
               Zeit nachgeben · aktuell {round.budget_min} min
-            </p>
+            </summary>
             <div className="mt-2 flex gap-2">
               {[5, 10].map((plus) => (
                 <button
@@ -477,16 +487,8 @@ function RoundPage() {
             <p className="mt-1 text-xs text-muted-foreground">
               Alle Gruppen erhalten innert Sekunden ein Pop-up mit der neuen Restzeit.
             </p>
-          </div>
-          {pendingCount > 0 && (
-            <button
-              type="button"
-              onClick={() => setStep("messages")}
-              className="mt-2 flex w-full items-center justify-center gap-2 rounded-sm border border-stamp bg-stamp/10 px-3 py-2 font-mono-typed text-[10px] uppercase tracking-wider text-stamp"
-            >
-              {pendingCount} neue Meldung(en) · im Reiter «Nachrichten» ansehen
-            </button>
-          )}
+          </details>
+
           <LiveBoard
             password={password}
             code={round.code}
