@@ -36,13 +36,21 @@ function timeLabel(iso: string) {
 }
 
 /** Kurznachricht der Lehrperson an alle Gruppen oder an eine einzelne Gruppe. */
-export function MessagePanel({ password, code, acks = [] }: Props) {
+export function MessagePanel({ password, code, acks = [], initialTarget = null, onTargetConsumed }: Props) {
   const [teams, setTeams] = useState<{ id: string; name: string }[]>([]);
   const [body, setBody] = useState("");
   const [target, setTarget] = useState<string>("all");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [sent, setSent] = useState<Sent[]>([]);
+
+  // Vorausgewählte Gruppe aus Aussen (z. B. «Antworten» im Hilfefeed) übernehmen.
+  useEffect(() => {
+    if (initialTarget && initialTarget !== "all") {
+      setTarget(initialTarget);
+      onTargetConsumed?.();
+    }
+  }, [initialTarget, onTargetConsumed]);
 
   const load = useCallback(() => {
     void teacherListMessages({ data: { password, code } })
