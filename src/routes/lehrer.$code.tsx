@@ -115,6 +115,18 @@ function RoundPage() {
     );
   }, [round, step]);
 
+  // Lesebestätigungen der Gruppen für die Nachrichtenliste.
+  const { report: ackReport } = useRoundReport(
+    step === "live" ? password : "",
+    step === "live" ? code : "",
+    15000,
+  );
+  const acks = (ackReport?.teams ?? []).map((t) => ({
+    name: t.name,
+    ids: t.ackedMessageIds ?? [],
+  }));
+
+
   const login = async (e: React.FormEvent) => {
     e.preventDefault();
     setBusy(true);
