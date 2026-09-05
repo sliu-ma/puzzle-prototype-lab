@@ -185,8 +185,10 @@ export function QRGate({
   const [unlocked, setUnlocked] = useState<boolean | null>(null);
   const [scanning, setScanning] = useState(false);
   const [error, setError] = useState<FriendlyError | null>(null);
-  const [showDebug, setShowDebug] = useState(false);
+  const [manual, setManual] = useState("");
+  const [manualError, setManualError] = useState(false);
   const [expectedHash, setExpectedHash] = useState<string | null>(null);
+
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const controlsRef = useRef<IScannerControls | null>(null);
