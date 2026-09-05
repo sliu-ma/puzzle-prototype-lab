@@ -325,15 +325,14 @@ export function MessageRooms({ password, code, report, initialRoom = null }: Pro
             );
           }
 
-          const hint = team?.hintsByStage?.find((h) => h.stage === e.stage);
+          const snap = e.snapshot;
           const isDone = done.has(e.id);
-          const answered = entries.some((o) => o.kind === "out" && o.at > e.at);
           return (
             <li key={e.id} className="flex justify-start">
               <div
                 className={cn(
                   "max-w-[90%] rounded-sm border border-stamp/50 bg-paper p-2.5",
-                  (isDone || answered) && "border-border opacity-60",
+                  isDone && "border-border opacity-60",
                 )}
               >
                 <p className="font-mono-typed flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-stamp">
@@ -341,19 +340,21 @@ export function MessageRooms({ password, code, report, initialRoom = null }: Pro
                 </p>
                 {e.body && <p className="mt-1 text-sm text-foreground/90">{e.body}</p>}
                 <p className="font-mono-typed mt-1 text-[10px] uppercase tracking-wider text-muted-foreground">
-                  {COL_LABEL[e.stage] ?? `Etappe ${e.stage}`}
-                  {st && !st.finished
+                  Stand beim Hilferuf:{" "}
+                  {COL_LABEL[snap?.stage ?? e.stage] ?? `Etappe ${snap?.stage ?? e.stage}`}
+                  {snap
                     ? ` · ${
-                        st.phase === "puzzle"
-                          ? `am Rätsel seit ${st.minutesInPhase ?? 0} Min`
-                          : `unterwegs seit ${st.minutesInPhase ?? 0} Min`
+                        snap.phase === "puzzle"
+                          ? `am Rätsel seit ${snap.minutesInPhase ?? 0} Min`
+                          : `unterwegs seit ${snap.minutesInPhase ?? 0} Min`
                       }`
                     : ""}
-                  {hint && hint.maxLevel > 0
-                    ? ` · Hinweis ${hint.maxLevel}${hint.maxLevel === 3 ? " (Auflösung)" : ""}`
+                  {snap && snap.hintLevel > 0
+                    ? ` · Hinweis ${snap.hintLevel}${snap.hintLevel === 3 ? " (Auflösung)" : ""}`
                     : " · noch keine Hinweise"}
-                  {team ? ` · ${team.stagesSolved} Etappen gelöst` : ""}
+                  {snap ? ` · ${snap.stagesSolved} Etappen gelöst` : ""}
                 </p>
+
                 <button
                   type="button"
                   onClick={() => toggleDone(e.id)}
