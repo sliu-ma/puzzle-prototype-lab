@@ -247,7 +247,7 @@ function TeamDetailDialog({
   const s = status;
   return (
     <Dialog open={s !== null} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-md">
+      <DialogContent className="max-h-[85svh] overflow-y-auto sm:max-w-md">
         {s && (
           <>
             <DialogHeader>

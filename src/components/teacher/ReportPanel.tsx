@@ -421,7 +421,7 @@ function TeamReportDialog({
 
   return (
     <Dialog open={t !== null} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-md">
+      <DialogContent className="max-h-[85svh] overflow-y-auto sm:max-w-md">
         {t && (
           <>
             <DialogHeader>
@@ -696,7 +696,7 @@ function StageReportDialog({
 
   return (
     <Dialog open={a !== null} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-md">
+      <DialogContent className="max-h-[85svh] overflow-y-auto sm:max-w-md">
         {a && (
           <>
             <DialogHeader>
@@ -1235,7 +1235,7 @@ export function ReportPanel({
       </button>
 
       <Dialog open={exportOpen} onOpenChange={setExportOpen}>
-        <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-md">
+        <DialogContent className="max-h-[85svh] overflow-y-auto sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="font-serif">Export</DialogTitle>
           </DialogHeader>
