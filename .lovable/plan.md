@@ -1,42 +1,72 @@
-# Redesign Startscreen: «Tactile Noir Dossier»
+# Qualitätskontrolle «Majas Mission»
 
-Der Einstiegsscreen (vor Team-Beitritt) wird vom aktuellen hellen Akten-Cover in die gewählte Noir-Dossier-Richtung überführt: dunkler Schreibtisch-Hintergrund, warmes Dossier-Papier mit echter Tiefe, Stempel mit Tinten-Charakter, Code-Eingabe wie ein beschriftetes Aktenfeld.
+Geprüft: Spielablauf und Eingaben, Lehreransicht, Feldtauglichkeit, Datenhaltung, Sicherheit. Unten alle Funde nach Schweregrad, jeweils mit Ort, Erklärung und Vorschlag. Am Ende ein Vorschlag, in welcher Reihenfolge ich es beheben würde.
 
-## Was sich ändert (nur Landing-Ansicht, kein Funktionsumfang)
+## Kritisch
 
-1. **Hintergrund & Bühne**
-   - Hintergrund der Landing-Ansicht wird dunkel (warmes Schwarz-Braun aus der bestehenden Ink-Familie, als neues Token `--noir` in `src/styles.css`), mit einem weichen, warmen Lichtschein (Radial-Glow) hinter der Akte.
-   - Die Akte bekommt einen starken, seitlichen Tiefenschatten und eine leichte Rotation (-1°); darunter zwei versetzte Papierschichten (bestehendes Stapelprinzip, abgedunkelt).
-   - Dekorativer «Ordner-Reiter» an der rechten Kartenkante.
+**K1 – Abkürzungs-Code schaltet alles frei, für alle sichtbar**
+Der Code `KRXZMVBQ` gilt alle sechs Etappen sofort als gelöst. Er steht im Klartext im ausgelieferten Programm (`src/routes/index.tsx`, `src/components/case-file/StartForm.tsx`) und ist von jedem Handy aus auffindbar. Damit ist die Kernmechanik des Spiels umgehbar.
+→ Vorschlag: Abkürzung nur noch mit dem Lehrer-Passwort über die Lehreransicht, nicht mehr über die Startseite; den festen Code entfernen.
 
-2. **Die Aktenkarte**
-   - Papierfarbton etwas wärmer/dunkler (`#dccbb0`-Richtung als neues Token `--dossier`), Papierfaser-Textur als dezentes CSS-Overlay (lokal generiertes Rauschen, keine externe URL).
-   - Oben links: «Fallnummer»-Zeile in Special Elite mit feiner Linie darunter (ersetzt den «Vertraulich · Widnau»-Tab auf der Landing-Ansicht; Datum/Ort-Zeile bleibt als Metadaten).
-   - «Eilig»-Stempel: kräftiger (dickerer Rahmen, `mix-blend-multiply`, leichte Deckkraft-Variation für Tinten-Look), Position oben rechts, rotiert.
+**K2 – Kein Ausweg, wenn die Kamera nicht funktioniert**
+Jeder Posten wird ausschliesslich per QR-Scan freigeschaltet (`src/components/case-file/QRGate.tsx`). Verweigert das Gerät die Kamera oder ist sie durch die Schul-Geräteverwaltung gesperrt, ist die Etappe für diese Gruppe unlösbar – es gibt keine Ersatzeingabe.
+→ Vorschlag: Feld «Code von Hand eingeben» als Alternative unter dem Scanner; zusätzlich in der Lehreransicht eine Schaltfläche, um einer Gruppe einen Posten manuell freizugeben.
 
-3. **Typografie & Titel**
-   - Titel «Grossvaters letzte Spur.» in Lora bold, der Punkt in Stempelrot; darunter kursiver Untertitel «Ein geheimnisvolles Vermächtnis …»-Ton, bestehender Text «Ein Bildungs-Escape-Room. Fünf Etappen, ein Hearing.» bleibt.
-   - Fliesstext/UI-Schrift wird auf **Nunito Sans** umgestellt (Font-Link in `src/routes/__root.tsx`, Token `--font-sans`); Special Elite bleibt für Stempel/Labels.
+**K3 – Fortschritt hängt nur am Gerät**
+Gelöste Etappen liegen ausschliesslich lokal auf dem Handy (`src/lib/progress.ts`). Leerer Akku, defektes oder getauschtes Gerät bedeutet Neuanfang bei Etappe 1 – die Punkte liegen zwar auf dem Server, werden aber nie zurückgeholt. Beim Neu-Anmelden entsteht zudem eine zweite Gruppe mit gleichem Namen.
+→ Vorschlag: Fortschritt aus den bereits gespeicherten Server-Ereignissen wiederherstellen, wenn eine Gruppe mit ihrem Code zurückkehrt; Wiedereinstieg über den bestehenden Gruppen-Zugang statt Neuanmeldung.
 
-4. **Code-Eingabe (`StartForm`)**
-   - Label «Zugangscode für das Team eingeben:» in Special Elite.
-   - Eingabefeld ohne Kasten: transparent mit 2-px-Unterstrich in Tintenfarbe, grosse Schreibmaschinen-Schrift mit weitem Tracking, Platzhalter `_ _ _ _ _ _`; Fokus verstärkt den Strich (Ring in Stempelrot bleibt für Accessibility).
-   - Button: tintenschwarz mit dossier-farbenem Text, uppercase, gesperrt, Label «Akten öffnen»; aktiver Zustand senkt sich leicht (Stempel-Druck-Gefühl).
-   - Teamname/Mitglieder-Felder und Code-Prüf-Logik bleiben unverändert, nur restylt.
+**K4 – Punkte können im Funkloch dauerhaft liegen bleiben**
+Die Warteschlange für noch nicht übertragene Ereignisse existiert nur im Arbeitsspeicher (`src/lib/round-client.ts`). Nach einem Neuladen wird sie erst wieder angestossen, wenn ein *neues* Ereignis entsteht. Löst eine Gruppe die letzte Aufgabe ohne Netz und schliesst dann die Seite, kommen diese Punkte nie an.
+→ Vorschlag: Beim App-Start immer einmal alles Gespeicherte nachschicken; beim Abschluss ebenfalls den vollständigen Stand senden, nicht nur die offene Warteschlange.
 
-5. **Footer**
-   - «Widnau · v3 · Linearer Ablauf» bleibt, in gedämpftem Ton auf dem dunklen Hintergrund.
+**K5 – Lehrer-Zugang ohne Bremse bei Rateversuchen**
+Ein einziges gemeinsames Passwort schützt alle Runden. Es gibt keine Begrenzung der Fehlversuche (`assert_teacher` in der Datenbank), also ist systematisches Durchprobieren möglich. Das Dashboard zeigt Gruppen- und Mitgliedernamen und erlaubt Löschen.
+→ Vorschlag: Fehlversuche pro Gerät/Zeitfenster begrenzen und Wartezeit einführen, Vergleich zeitkonstant machen, Passwort nur für die Sitzung merken und langes Passwort setzen.
 
-## Nicht im Umfang
-- Übersicht nach Beitritt (ProgressPanel, Etappenpfad), Intro/Briefing, Etappen-Seiten und Lehrerbereich bleiben optisch wie bisher.
-- Keine Änderung an Logik, Routen, Supabase oder Texten ausser den genannten Labels.
+## Mittel
 
-## Technische Umsetzung
-- `src/styles.css`: neue Tokens `--noir`, `--dossier`, Glow-/Schatten-Utilities, Papier-Textur-Utility; `--font-sans` auf Nunito Sans.
-- `src/routes/__root.tsx`: Google-Fonts-Link um Nunito Sans ergänzen.
-- `src/routes/index.tsx`: Landing-Branch (`screen === "landing"`) neu strukturiert gemäss Referenz-Prototyp; Loading-State farblich angepasst.
-- `src/components/case-file/StartForm.tsx`: Unterstrich-Eingabe + Noir-Button.
-- Mobile-first (393 px), Desktop zentriert mit max-width; reduzierte Bewegung respektiert.
+**M1 – Technische Diagnosedaten für Schülerinnen und Schüler sichtbar**
+Der Scanner zeigt auf Knopfdruck Fehlerspuren, Browserkennung und interne Hinweise («Lovable Builder blockiert die Kamera») – für Jugendliche im Feld unbrauchbar und verwirrend (`QRGate.tsx`).
+→ Vorschlag: nur eine klare Handlungsanweisung anzeigen; Technikdetails entfernen oder hinter einen Lehrer-Zugang legen.
 
-## Verifikation
-- Playwright-Screenshots der Landing-Ansicht (393×828 und Desktop), Code-Eingabe-Fokus prüfen, Build-Log fehlerfrei.
+**M2 – Einkaufskorb gibt kein nutzbares Feedback**
+Es wird intern genau berechnet, welche Zutaten fehlen bzw. welche Produkte schlecht abschneiden, angezeigt wird aber nur «Die Kasse springt nicht an» (`GruenerMarkt.tsx`).
+→ Vorschlag: gestufte Rückmeldung ohne Lösung zu verraten, z. B. «Es fehlt noch eine Zutat» / «Ein Produkt passt nicht zur Saison».
+
+**M3 – Doppelte Gruppen (Geisterteams)**
+Wird der Beitritts-Link erneut geöffnet, führt er wieder ins Anmeldeformular, obwohl die Gruppe bereits angemeldet ist – ein zweiter Beitritt mit leicht anderem Namen erzeugt eine zusätzliche Gruppe (`src/routes/index.tsx`, `StartForm.tsx`).
+→ Vorschlag: Ist eine Anmeldung vorhanden, direkt ins Wartezimmer führen statt das Formular zeigen.
+
+**M4 – Kein Hilfe-Knopf für Gruppen**
+Hilfebedarf erkennt die Lehrperson nur indirekt über Zeitschwellen und genutzte Tipps (`ProgressMatrix.tsx`). Eine Gruppe, die im Feld feststeckt, kann sich nicht melden.
+→ Vorschlag: Knopf «Wir brauchen Hilfe» mit Freitext, in der Lehreransicht rot hervorgehoben; wird als Ereignis geloggt und ist exportierbar.
+
+**M5 – Nachrichten ohne Zustellnachweis**
+Die Lehrperson sieht nicht, ob eine Nachricht angekommen ist; Latenz rund zehn Sekunden, kein Wiederholversuch (`MessagePanel.tsx`).
+→ Vorschlag: Bestätigung durch die Gruppe («Verstanden») zurückmelden und im Dashboard anzeigen.
+
+**M6 – Veraltete Zahlen im Dashboard**
+Bei anhaltender Störung bleibt die Anzeige stehen; der Hinweis kommt erst nach zwei Fehlversuchen, die Restzeit läuft weiter, als wäre alles in Ordnung (`LobbyPanel.tsx`, `LiveBoard.tsx`).
+→ Vorschlag: Zeitstempel «Stand von HH:MM» einblenden und die Restzeit bei fehlender Verbindung sichtbar als geschätzt markieren.
+
+## Gering
+
+- **G1 – Doppelte Zeit-abgelaufen-Anzeige:** Auf Etappenseiten können gleichzeitig ein Pop-up und eine Vollbildsperre erscheinen (`GlobalTimer.tsx`, `StageGate.tsx`). Einen der beiden Wege verwenden.
+- **G2 – Vorgeschichte startet auf iPhones evtl. nicht:** Das Video wird zeitverzögert und mit Ton gestartet, was Safari blockieren kann (`PrologueVideo.tsx`). Stummstart mit sichtbarer Ton-Schaltfläche oder Start direkt per Tippen.
+- **G3 – Wartezimmer ohne Ausweg:** Bei dauerhaftem Verbindungsfehler bleibt nur der Hinweis, kein Weg zurück zur Startseite (`src/routes/lobby.tsx`).
+- **G4 – Kein Vorschaubild für geteilte Links:** Der Beitritts-Link im Klassenchat erscheint ohne Bild.
+- **G5 – Waagrechtes Scrollen der Etappenleiste** ist ohne Hinweis leicht zu übersehen.
+
+## Was in Ordnung ist
+
+Reihenfolge der Posten ist gegen Direktaufruf per Adresse gesichert; keine toten Links oder Schaltflächen ohne Funktion gefunden; Punkte werden doppelt gezählt-sicher übertragen (jedes Ereignis genau einmal); gleichzeitiges Bearbeiten desselben Postens durch mehrere Gruppen ist problemlos, da jede Gruppe ihren eigenen Stand hat; Gruppenname pro Runde eindeutig; Uhr läuft auf allen Geräten synchron über den Server; Übertragung durchgehend verschlüsselt; Datenbanktabellen sind direkt nicht zugänglich, Zugriff nur über geprüfte Funktionen; Standortdaten werden gar nicht erhoben (datenschutzfreundlich, GPS-Ausfall daher kein Thema); Zeitstempel pro Posten und Gruppe werden geloggt und sind als Tabellen exportierbar.
+
+## Vorgeschlagene Reihenfolge
+
+1. Feldtauglichkeit: K2, K4, K3 – das entscheidet, ob eine Lektion bei Störungen rettbar ist.
+2. Spielintegrität und Zugang: K1, K5.
+3. Betreuung: M4, M5, M6, M3.
+4. Verständlichkeit: M1, M2, dann G1–G5.
+
+Sag mir, ob ich alles in dieser Reihenfolge umsetzen soll oder nur einzelne Punkte.
