@@ -29,8 +29,8 @@ import {
 import { LobbyPanel, useRoundReport } from "@/components/teacher/LobbyPanel";
 import { LiveBoard } from "@/components/teacher/LiveBoard";
 import { ReportPanel } from "@/components/teacher/ReportPanel";
-import { MessagePanel } from "@/components/teacher/MessagePanel";
-import { HelpFeed } from "@/components/teacher/HelpFeed";
+import { MessageRooms } from "@/components/teacher/MessageRooms";
+
 import type { RoundItem } from "./lehrer.index";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { cn } from "@/lib/utils";
@@ -499,27 +499,14 @@ function RoundPage() {
         </>
       )}
       {step === "messages" && (
-        <>
-          <MessagePanel
-            password={password}
-            code={round.code}
-            acks={acks}
-            initialTarget={replyTarget}
-            onTargetConsumed={() => setReplyTarget(null)}
-          />
-          <section className="mt-4 rounded-sm border border-border bg-secondary/40 p-3">
-            <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
-              Meldungen der Gruppen
-            </p>
-            <HelpFeed
-              report={ackReport}
-              password={password}
-              code={round.code}
-              onReply={(teamId) => setReplyTarget(teamId)}
-            />
-          </section>
-        </>
+        <MessageRooms
+          password={password}
+          code={round.code}
+          report={ackReport}
+          initialRoom={replyTarget}
+        />
       )}
+
       {step === "report" && (
         <ReportPanel password={password} code={round.code} budgetMin={round.budget_min} />
       )}
