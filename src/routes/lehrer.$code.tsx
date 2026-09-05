@@ -116,16 +116,23 @@ function RoundPage() {
     );
   }, [round, step]);
 
-  // Lesebestätigungen der Gruppen für die Nachrichtenliste.
+  // Lesebestätigungen und Meldungen: in Live- und Nachrichten-Schritt.
+  const reportActive = step === "live" || step === "messages";
   const { report: ackReport } = useRoundReport(
-    step === "live" ? password : "",
-    step === "live" ? code : "",
+    reportActive ? password : "",
+    reportActive ? code : "",
     15000,
   );
   const acks = (ackReport?.teams ?? []).map((t) => ({
     name: t.name,
     ids: t.ackedMessageIds ?? [],
   }));
+
+  // Vorausgewählte Zielgruppe aus «Antworten» im Hilfefeed.
+  const [replyTarget, setReplyTarget] = useState<string | null>(null);
+  const pendingCount =
+    ackReport?.teams?.reduce((n, t) => n + (t.helpRequests?.length ?? 0), 0) ?? 0;
+
 
 
   const login = async (e: React.FormEvent) => {
