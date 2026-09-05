@@ -8,7 +8,13 @@ import {
   setRoundSession,
   type PendingJoin,
 } from "@/lib/round-client";
-import { registerTeam, resetAll, setBudgetMin, setStartTs } from "@/lib/progress";
+import {
+  registerTeam,
+  resetAll,
+  setBudgetMin,
+  setProgressOwner,
+  setStartTs,
+} from "@/lib/progress";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/lobby")({
@@ -70,6 +76,8 @@ function LobbyPage() {
           resetAll();
           setBudgetMin(budgetMin);
           registerTeam(p.teamName, p.code, p.members, startTs);
+          // Fortschritt fest an diese Gruppe binden.
+          setProgressOwner(p.teamId);
           // Klassenrunde: die Uhr läuft ab dem Start der Runde für alle Teams
           // gleich, unabhängig davon, wie lange das Briefing dauert.
           setStartTs(startTs);
@@ -242,6 +250,17 @@ function LobbyPage() {
           {error}
         </p>
       )}
+
+      <button
+        type="button"
+        onClick={() => {
+          clearPendingJoin();
+          void navigate({ to: "/" });
+        }}
+        className="font-mono-typed mt-6 min-h-[36px] text-[10px] uppercase tracking-wider text-muted-foreground underline"
+      >
+        Falsche Runde? Neu anmelden
+      </button>
     </main>
   );
 }

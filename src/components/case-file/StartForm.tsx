@@ -3,7 +3,7 @@ import { ArrowRight, Plus, X, KeyRound, Users, Check, Loader2 } from "lucide-rea
 import { cn } from "@/lib/utils";
 import { START_CODE } from "@/lib/progress";
 import { joinRound, lookupRound } from "@/lib/rounds.functions";
-import { getPendingJoin, setPendingJoin } from "@/lib/round-client";
+import { clearPendingJoin, getPendingJoin, setPendingJoin } from "@/lib/round-client";
 import { useNavigate } from "@tanstack/react-router";
 
 
@@ -96,10 +96,27 @@ export function StartForm({
     }
   }, []);
 
-  // Schon angemeldet? Dann direkt ins Wartezimmer, statt eine zweite Gruppe
-  // mit fast gleichem Namen anzulegen.
+  // Schon angemeldet? Dann zurück ins Wartezimmer, statt eine zweite Gruppe
+  // mit fast gleichem Namen anzulegen. Nur wenn die gespeicherte Runde beim
+  // Server noch offen ist. Reste einer alten Runde werden verworfen, sonst
+  // landet ein Gerät, das schon einmal gespielt hat, im alten Wartezimmer.
   useEffect(() => {
-    if (getPendingJoin()) void navigate({ to: "/lobby" });
+    const p = getPendingJoin();
+    if (!p) return;
+    let alive = true;
+    void lookupRound({ data: { code: p.code } })
+      .then((res) => {
+        if (!alive) return;
+        if (res.found && res.status !== "closed") {
+          void navigate({ to: "/lobby" });
+        } else {
+          clearPendingJoin();
+        }
+      })
+      .catch(() => undefined);
+    return () => {
+      alive = false;
+    };
   }, [navigate]);
 
   // Beitritts-Link: Code direkt prüfen und bei Erfolg zum Teamnamen springen.

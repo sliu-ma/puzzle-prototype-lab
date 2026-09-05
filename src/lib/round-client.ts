@@ -99,11 +99,25 @@ export function getRoundSession(): RoundSession | null {
 
 export function setRoundSession(s: RoundSession) {
   try {
+    // Neue Runde: noch nicht gesendete Punkte der alten Runde verwerfen, sonst
+    // laufen Wiederholversuche mit fremden Ereignissen weiter.
+    clearSyncQueue();
     window.localStorage.setItem(KEY_ROUND, JSON.stringify(s));
     window.dispatchEvent(new Event("maya-progress"));
   } catch {
     /* ignore */
   }
+}
+
+/** Warteschlange und Wiederholversuche leeren (Rundenwechsel, Zurücksetzen). */
+export function clearSyncQueue() {
+  queued = [];
+  attempt = 0;
+  if (typeof window !== "undefined" && timer) {
+    window.clearTimeout(timer);
+    timer = null;
+  }
+  setPending(0);
 }
 
 // ---- Abgleich der Ereignisse ------------------------------------------------
