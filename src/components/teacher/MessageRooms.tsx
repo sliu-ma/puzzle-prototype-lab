@@ -4,29 +4,9 @@ import { teacherListMessages } from "@/lib/rounds.functions";
 import type { Report, ReportTeam } from "./LobbyPanel";
 import { assessTeams, COL_NAME, COL_LABEL } from "./ProgressMatrix";
 import { MessageComposer } from "./MessagePanel";
+import { helpId, useHelpDone } from "@/lib/teacher-help-done";
 import { cn } from "@/lib/utils";
 
-/** Häkchen werden pro Runde gespeichert, damit alte Runden nicht durchschlagen. */
-function doneKey(code: string) {
-  return `mm.teacher.help.done.${code}`;
-}
-
-/** IDs der als erledigt markierten Hilferufe (localStorage). */
-function readDone(code: string): Set<string> {
-  try {
-    const raw = window.localStorage.getItem(doneKey(code));
-    return raw ? new Set(JSON.parse(raw) as string[]) : new Set();
-  } catch {
-    return new Set();
-  }
-}
-function writeDone(code: string, set: Set<string>) {
-  try {
-    window.localStorage.setItem(doneKey(code), JSON.stringify([...set]));
-  } catch {
-    /* ignore */
-  }
-}
 
 type Sent = {
   id: string;
@@ -35,6 +15,8 @@ type Sent = {
   body: string;
   createdAt: string;
 };
+
+type Snapshot = ReportTeam["helpRequests"][number]["snapshot"];
 
 type Entry =
   | { kind: "out"; id: string; at: number; body: string; msgId: string }
@@ -45,7 +27,9 @@ type Entry =
       body: string | null;
       stage: number;
       teamId: string;
+      snapshot: Snapshot;
     };
+
 
 function relTime(ms: number): string {
   const mins = Math.round((Date.now() - ms) / 60_000);
@@ -74,12 +58,12 @@ type Props = {
 export function MessageRooms({ password, code, report, initialRoom = null }: Props) {
   const [sent, setSent] = useState<Sent[]>([]);
   const [room, setRoom] = useState<string | null>(initialRoom);
-  const [done, setDone] = useState<Set<string>>(new Set());
+  const { done, toggle: toggleDone, markDone } = useHelpDone(code);
 
-  useEffect(() => setDone(readDone(code)), [code]);
   useEffect(() => {
     if (initialRoom) setRoom(initialRoom);
   }, [initialRoom]);
+
 
   const load = useCallback(() => {
     if (!password || !code) return;
@@ -132,11 +116,12 @@ export function MessageRooms({ password, code, report, initialRoom = null }: Pro
       for (const h of t.helpRequests ?? []) {
         push(t.teamId, {
           kind: "help",
-          id: `${t.teamId}|${h.at}|${h.stage}|${h.note ?? ""}`,
+          id: helpId(t.teamId, h),
           at: Date.parse(h.at),
           body: h.note,
           stage: h.stage,
           teamId: t.teamId,
+          snapshot: h.snapshot,
         });
       }
     }
@@ -144,18 +129,23 @@ export function MessageRooms({ password, code, report, initialRoom = null }: Pro
     return map;
   }, [sent, teams]);
 
-  /** Offene Hilferufe eines Raums: nicht abgehakt und ohne Antwort danach. */
+  // Beantwortete Hilferufe gelten automatisch als erledigt – auch im Live-Reiter.
+  useEffect(() => {
+    const ids: string[] = [];
+    for (const list of threads.values()) {
+      for (const e of list) {
+        if (e.kind !== "help" || done.has(e.id)) continue;
+        if (list.some((o) => o.kind === "out" && o.at > e.at)) ids.push(e.id);
+      }
+    }
+    markDone(ids);
+  }, [threads, done, markDone]);
+
+  /** Offene Hilferufe eines Raums: nicht abgehakt. */
   const openHelp = useCallback(
     (key: string) => {
       const list = threads.get(key) ?? [];
-      let count = 0;
-      for (let i = 0; i < list.length; i++) {
-        const e = list[i];
-        if (e.kind !== "help" || done.has(e.id)) continue;
-        const answered = list.some((o) => o.kind === "out" && o.at > e.at);
-        if (!answered) count++;
-      }
-      return count;
+      return list.filter((e) => e.kind === "help" && !done.has(e.id)).length;
     },
     [threads, done],
   );
@@ -181,15 +171,6 @@ export function MessageRooms({ password, code, report, initialRoom = null }: Pro
   const allEntries = threads.get("all") ?? [];
   const allLast = allEntries[allEntries.length - 1];
 
-  const toggleDone = (id: string) => {
-    setDone((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      writeDone(code, next);
-      return next;
-    });
-  };
 
   // ---------- Raumliste ----------
   if (room === null) {
@@ -305,14 +286,15 @@ export function MessageRooms({ password, code, report, initialRoom = null }: Pro
       {!isAll && st && (
         <p className="font-mono-typed mt-0.5 text-[10px] uppercase tracking-wider text-muted-foreground">
           {st.finished
-            ? "Fertig"
-            : `${COL_NAME[st.currentStage] ?? `Etappe ${st.currentStage}`} · ${
+            ? "jetzt: Fertig"
+            : `jetzt: ${COL_NAME[st.currentStage] ?? `Etappe ${st.currentStage}`} · ${
                 st.phase === "puzzle"
                   ? `am Rätsel seit ${st.minutesInPhase ?? 0} Min`
                   : `unterwegs seit ${st.minutesInPhase ?? 0} Min`
               } · ${team?.stagesSolved ?? 0} Etappen gelöst`}
         </p>
       )}
+
 
       <ul className="mt-3 space-y-2">
         {entries.length === 0 && (
@@ -343,15 +325,14 @@ export function MessageRooms({ password, code, report, initialRoom = null }: Pro
             );
           }
 
-          const hint = team?.hintsByStage?.find((h) => h.stage === e.stage);
+          const snap = e.snapshot;
           const isDone = done.has(e.id);
-          const answered = entries.some((o) => o.kind === "out" && o.at > e.at);
           return (
             <li key={e.id} className="flex justify-start">
               <div
                 className={cn(
                   "max-w-[90%] rounded-sm border border-stamp/50 bg-paper p-2.5",
-                  (isDone || answered) && "border-border opacity-60",
+                  isDone && "border-border opacity-60",
                 )}
               >
                 <p className="font-mono-typed flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-stamp">
@@ -359,19 +340,21 @@ export function MessageRooms({ password, code, report, initialRoom = null }: Pro
                 </p>
                 {e.body && <p className="mt-1 text-sm text-foreground/90">{e.body}</p>}
                 <p className="font-mono-typed mt-1 text-[10px] uppercase tracking-wider text-muted-foreground">
-                  {COL_LABEL[e.stage] ?? `Etappe ${e.stage}`}
-                  {st && !st.finished
+                  Stand beim Hilferuf:{" "}
+                  {COL_LABEL[snap?.stage ?? e.stage] ?? `Etappe ${snap?.stage ?? e.stage}`}
+                  {snap
                     ? ` · ${
-                        st.phase === "puzzle"
-                          ? `am Rätsel seit ${st.minutesInPhase ?? 0} Min`
-                          : `unterwegs seit ${st.minutesInPhase ?? 0} Min`
+                        snap.phase === "puzzle"
+                          ? `am Rätsel seit ${snap.minutesInPhase ?? 0} Min`
+                          : `unterwegs seit ${snap.minutesInPhase ?? 0} Min`
                       }`
                     : ""}
-                  {hint && hint.maxLevel > 0
-                    ? ` · Hinweis ${hint.maxLevel}${hint.maxLevel === 3 ? " (Auflösung)" : ""}`
+                  {snap && snap.hintLevel > 0
+                    ? ` · Hinweis ${snap.hintLevel}${snap.hintLevel === 3 ? " (Auflösung)" : ""}`
                     : " · noch keine Hinweise"}
-                  {team ? ` · ${team.stagesSolved} Etappen gelöst` : ""}
+                  {snap ? ` · ${snap.stagesSolved} Etappen gelöst` : ""}
                 </p>
+
                 <button
                   type="button"
                   onClick={() => toggleDone(e.id)}

@@ -115,6 +115,7 @@ export function LiveBoard({
       )}
 
       <ProgressMatrix
+        code={code}
         teams={teams}
         startedAt={startedAt}
         now={effectiveNow}

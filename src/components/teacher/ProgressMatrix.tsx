@@ -16,6 +16,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { helpId, useHelpDone } from "@/lib/teacher-help-done";
 import { cn } from "@/lib/utils";
 
 /** Etappen plus Hearing als letzte Spalte. */
@@ -170,13 +171,16 @@ function TeamRow({
   s,
   onOpen,
   roundOver,
+  done,
 }: {
   s: TeamStatus;
   onOpen: () => void;
   roundOver: boolean;
+  /** IDs bereits erledigter Hilferufe – die blinken nicht mehr. */
+  done: Set<string>;
 }) {
-  // Hilferuf der letzten 20 Minuten: hat Vorrang vor allen Zeitwarnungen.
-  const help = s.team.helpRequests?.[0];
+  // Neuester offener Hilferuf der letzten 20 Minuten: Vorrang vor Zeitwarnungen.
+  const help = s.team.helpRequests?.find((h) => !done.has(helpId(s.team.teamId, h)));
   const helpFresh =
     !!help && Date.now() - new Date(help.at).getTime() < 20 * 60 * 1000 && !roundOver;
 
@@ -372,14 +376,18 @@ export function ProgressMatrix({
   startedAt,
   now,
   roundOver = false,
+  code = "",
 }: {
   teams: ReportTeam[];
   startedAt: string | null;
   now: number;
+  /** Rundencode – für die erledigten Hilferufe. */
+  code?: string;
   /** Runde vorbei: die Uhren stehen still. */
   roundOver?: boolean;
 }) {
   const [openTeam, setOpenTeam] = useState<string | null>(null);
+  const { done } = useHelpDone(code);
 
   const statuses = assessTeams(teams, startedAt, now).sort(
     (a, b) =>
@@ -456,6 +464,7 @@ export function ProgressMatrix({
             key={s.team.teamId}
             s={s}
             roundOver={roundOver}
+            done={done}
             onOpen={() => setOpenTeam(s.team.teamId)}
           />
         ))}

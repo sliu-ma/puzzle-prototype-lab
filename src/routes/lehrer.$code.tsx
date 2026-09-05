@@ -29,6 +29,7 @@ import {
 import { LobbyPanel, useRoundReport } from "@/components/teacher/LobbyPanel";
 import { LiveBoard } from "@/components/teacher/LiveBoard";
 import { ReportPanel } from "@/components/teacher/ReportPanel";
+import { helpId, useHelpDone } from "@/lib/teacher-help-done";
 import { MessageRooms } from "@/components/teacher/MessageRooms";
 
 import type { RoundItem } from "./lehrer.index";
@@ -127,8 +128,14 @@ function RoundPage() {
 
   // Vorausgewählter Chatraum (z. B. aus dem Live-Reiter).
   const [replyTarget] = useState<string | null>(null);
+  const { done: helpDone } = useHelpDone(code);
   const pendingCount =
-    ackReport?.teams?.reduce((n, t) => n + (t.helpRequests?.length ?? 0), 0) ?? 0;
+    ackReport?.teams?.reduce(
+      (n, t) =>
+        n +
+        (t.helpRequests?.filter((h) => !helpDone.has(helpId(t.teamId, h))).length ?? 0),
+      0,
+    ) ?? 0;
 
 
 
