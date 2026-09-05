@@ -79,6 +79,11 @@ export function useRoundReport(password: string, code: string, intervalMs = 6000
   const [tick, setTick] = useState(0);
 
   useEffect(() => {
+    // Ohne Passwort/Code gibt es nichts zu laden (sonst schlägt die Prüfung fehl).
+    if (!password || !code) {
+      setLoading(false);
+      return;
+    }
     let alive = true;
     let first = true;
     const load = () => {
