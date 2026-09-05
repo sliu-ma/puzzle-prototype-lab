@@ -30,6 +30,7 @@ import { LobbyPanel, useRoundReport } from "@/components/teacher/LobbyPanel";
 import { LiveBoard } from "@/components/teacher/LiveBoard";
 import { ReportPanel } from "@/components/teacher/ReportPanel";
 import { MessagePanel } from "@/components/teacher/MessagePanel";
+import { HelpFeed } from "@/components/teacher/HelpFeed";
 import type { RoundItem } from "./lehrer.index";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { cn } from "@/lib/utils";
@@ -59,12 +60,13 @@ export const Route = createFileRoute("/lehrer/$code")({
 const inputBase =
   "w-full min-h-[48px] rounded-sm border border-border bg-paper px-3 py-3 text-[16px] focus:border-stamp focus:outline-none focus:ring-2 focus:ring-stamp/25";
 
-type Step = "prepare" | "lobby" | "live" | "report";
+type Step = "prepare" | "lobby" | "live" | "messages" | "report";
 
 const STEPS: [Step, string][] = [
   ["prepare", "Vorbereiten"],
   ["lobby", "Lobby"],
   ["live", "Live"],
+  ["messages", "Nachrichten"],
   ["report", "Auswertung"],
 ];
 
@@ -115,16 +117,23 @@ function RoundPage() {
     );
   }, [round, step]);
 
-  // Lesebestätigungen der Gruppen für die Nachrichtenliste.
+  // Lesebestätigungen und Meldungen: in Live- und Nachrichten-Schritt.
+  const reportActive = step === "live" || step === "messages";
   const { report: ackReport } = useRoundReport(
-    step === "live" ? password : "",
-    step === "live" ? code : "",
+    reportActive ? password : "",
+    reportActive ? code : "",
     15000,
   );
   const acks = (ackReport?.teams ?? []).map((t) => ({
     name: t.name,
     ids: t.ackedMessageIds ?? [],
   }));
+
+  // Vorausgewählte Zielgruppe aus «Antworten» im Hilfefeed.
+  const [replyTarget, setReplyTarget] = useState<string | null>(null);
+  const pendingCount =
+    ackReport?.teams?.reduce((n, t) => n + (t.helpRequests?.length ?? 0), 0) ?? 0;
+
 
 
   const login = async (e: React.FormEvent) => {
@@ -259,21 +268,27 @@ function RoundPage() {
         </div>
       </div>
 
-      <nav className="mt-5 grid grid-cols-4 gap-1.5">
+      <nav className="mt-5 grid grid-cols-5 gap-1.5">
         {STEPS.map(([key, label]) => (
           <button
             key={key}
             type="button"
             onClick={() => setStep(key)}
             className={cn(
-              "min-h-[44px] rounded-sm border border-border px-1 font-mono-typed text-[10px] uppercase tracking-wider",
+              "relative min-h-[44px] rounded-sm border border-border px-1 font-mono-typed text-[10px] uppercase tracking-wider",
               step === key && "border-stamp bg-stamp/10 text-stamp",
             )}
           >
             {label}
+            {key === "messages" && pendingCount > 0 && (
+              <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-stamp px-1 text-[9px] font-bold text-paper">
+                {pendingCount}
+              </span>
+            )}
           </button>
         ))}
       </nav>
+
 
       {error && (
         <p className="mt-3 rounded-sm border border-destructive/40 bg-destructive/10 p-2 text-xs text-destructive">
@@ -458,7 +473,15 @@ function RoundPage() {
               Alle Gruppen erhalten innert Sekunden ein Pop-up mit der neuen Restzeit.
             </p>
           </div>
-          <MessagePanel password={password} code={round.code} acks={acks} />
+          {pendingCount > 0 && (
+            <button
+              type="button"
+              onClick={() => setStep("messages")}
+              className="mt-2 flex w-full items-center justify-center gap-2 rounded-sm border border-stamp bg-stamp/10 px-3 py-2 font-mono-typed text-[10px] uppercase tracking-wider text-stamp"
+            >
+              {pendingCount} neue Meldung(en) · im Reiter «Nachrichten» ansehen
+            </button>
+          )}
           <LiveBoard
             password={password}
             code={round.code}
@@ -468,9 +491,32 @@ function RoundPage() {
           />
         </>
       )}
+      {step === "messages" && (
+        <>
+          <MessagePanel
+            password={password}
+            code={round.code}
+            acks={acks}
+            initialTarget={replyTarget}
+            onTargetConsumed={() => setReplyTarget(null)}
+          />
+          <section className="mt-4 rounded-sm border border-border bg-secondary/40 p-3">
+            <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+              Meldungen der Gruppen
+            </p>
+            <HelpFeed
+              report={ackReport}
+              password={password}
+              code={round.code}
+              onReply={(teamId) => setReplyTarget(teamId)}
+            />
+          </section>
+        </>
+      )}
       {step === "report" && (
         <ReportPanel password={password} code={round.code} budgetMin={round.budget_min} />
       )}
+
     </main>
   );
 }
