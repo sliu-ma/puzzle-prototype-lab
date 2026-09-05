@@ -116,11 +116,12 @@ export function MessageRooms({ password, code, report, initialRoom = null }: Pro
       for (const h of t.helpRequests ?? []) {
         push(t.teamId, {
           kind: "help",
-          id: `${t.teamId}|${h.at}|${h.stage}|${h.note ?? ""}`,
+          id: helpId(t.teamId, h),
           at: Date.parse(h.at),
           body: h.note,
           stage: h.stage,
           teamId: t.teamId,
+          snapshot: h.snapshot,
         });
       }
     }
@@ -128,18 +129,23 @@ export function MessageRooms({ password, code, report, initialRoom = null }: Pro
     return map;
   }, [sent, teams]);
 
-  /** Offene Hilferufe eines Raums: nicht abgehakt und ohne Antwort danach. */
+  // Beantwortete Hilferufe gelten automatisch als erledigt – auch im Live-Reiter.
+  useEffect(() => {
+    const ids: string[] = [];
+    for (const list of threads.values()) {
+      for (const e of list) {
+        if (e.kind !== "help" || done.has(e.id)) continue;
+        if (list.some((o) => o.kind === "out" && o.at > e.at)) ids.push(e.id);
+      }
+    }
+    markDone(ids);
+  }, [threads, done, markDone]);
+
+  /** Offene Hilferufe eines Raums: nicht abgehakt. */
   const openHelp = useCallback(
     (key: string) => {
       const list = threads.get(key) ?? [];
-      let count = 0;
-      for (let i = 0; i < list.length; i++) {
-        const e = list[i];
-        if (e.kind !== "help" || done.has(e.id)) continue;
-        const answered = list.some((o) => o.kind === "out" && o.at > e.at);
-        if (!answered) count++;
-      }
-      return count;
+      return list.filter((e) => e.kind === "help" && !done.has(e.id)).length;
     },
     [threads, done],
   );
@@ -165,15 +171,6 @@ export function MessageRooms({ password, code, report, initialRoom = null }: Pro
   const allEntries = threads.get("all") ?? [];
   const allLast = allEntries[allEntries.length - 1];
 
-  const toggleDone = (id: string) => {
-    setDone((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      writeDone(code, next);
-      return next;
-    });
-  };
 
   // ---------- Raumliste ----------
   if (room === null) {
