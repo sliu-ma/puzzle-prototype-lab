@@ -65,6 +65,7 @@ const STEPS: [Step, string][] = [
   ["prepare", "Vorbereiten"],
   ["lobby", "Lobby"],
   ["live", "Live"],
+  ["messages", "Nachrichten"],
   ["report", "Auswertung"],
 ];
 
