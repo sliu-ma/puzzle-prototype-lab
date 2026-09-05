@@ -10,6 +10,14 @@ import { recordStageScan } from "@/lib/progress";
 const DEFAULT_TOKEN = "CpZk0z9RaQkL22gtiWoR";
 const DEFAULT_STORAGE_KEY = "akte-001-unlocked";
 
+/**
+ * Schalter für die manuelle Eingabe der Zeichenfolge unter dem QR-Code.
+ * Auf `true` stellen, um den Ausweg ohne Kamera wieder sichtbar zu machen.
+ * Bewusst ausgeschaltet: sonst kann der Code weitergeschickt werden, ohne
+ * dass eine Gruppe vor Ort ist.
+ */
+const ALLOW_MANUAL_ENTRY = false;
+
 // Hash zur Persistenz, wir speichern nicht den Klartext-Token im LocalStorage.
 async function sha256(text: string): Promise<string> {
   const buf = new TextEncoder().encode(text);
