@@ -404,12 +404,38 @@ export function buildReport(
         attempt: Number(payloadOf(e)["attempt"]) || 1,
       }));
 
+    /** Spielstand zu einem Zeitpunkt – nur aus Ereignissen bis dahin. */
+    const snapshotAt = (ms: number) => {
+      const solvedBefore = [...solvedAt.entries()]
+        .filter(([s, t]) => s >= 1 && s <= 5 && t <= ms)
+        .map(([s]) => s);
+      const highest = solvedBefore.length > 0 ? Math.max(...solvedBefore) : 0;
+      const lastSolved = highest > 0 ? (solvedAt.get(highest) ?? null) : null;
+      const stage = Math.min(6, highest + 1);
+      const scanRaw = scanAt.get(stage) ?? null;
+      const scan = scanRaw !== null && scanRaw <= ms ? scanRaw : null;
+      const phase: "travel" | "puzzle" =
+        stage === 6 || scan !== null ? "puzzle" : "travel";
+      const travelSince = lastSolved ?? originMs;
+      const since = stage === 6 ? (scan ?? lastSolved) : (scan ?? travelSince);
+      const minutesInPhase =
+        since === null || !Number.isFinite(since) ? null : Math.max(0, toMin(ms - since));
+      let hintLevel = 0;
+      for (const e of raw) {
+        if (e.type !== "hint_revealed" || eventMs(e) > ms) continue;
+        if ((Number(payloadOf(e)["stage"]) || 0) !== stage) continue;
+        hintLevel = Math.max(hintLevel, Number(payloadOf(e)["level"]) || 1);
+      }
+      return { stage, phase, minutesInPhase, hintLevel, stagesSolved: solvedBefore.length };
+    };
+
     const helpRequests = raw
       .filter((e) => e.type === "help_requested")
       .map((e) => ({
         at: new Date(eventMs(e)).toISOString(),
         stage: Number(payloadOf(e)["stage"]) || 0,
         note: payloadOf(e)["note"] ? String(payloadOf(e)["note"]) : null,
+        snapshot: snapshotAt(eventMs(e)),
       }))
       .sort((a, b) => (a.at < b.at ? 1 : -1));
 
