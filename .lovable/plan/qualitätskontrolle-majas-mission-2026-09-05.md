@@ -8,10 +8,6 @@ Geprüft: Spielablauf und Eingaben, Lehreransicht, Feldtauglichkeit, Datenhaltun
 Der Code `KRXZMVBQ` gilt alle sechs Etappen sofort als gelöst. Er steht im Klartext im ausgelieferten Programm (`src/routes/index.tsx`, `src/components/case-file/StartForm.tsx`) und ist von jedem Handy aus auffindbar. Damit ist die Kernmechanik des Spiels umgehbar.
 → Vorschlag: Abkürzung nur noch mit dem Lehrer-Passwort über die Lehreransicht, nicht mehr über die Startseite; den festen Code entfernen.
 
-**K2 – Kein Ausweg, wenn die Kamera nicht funktioniert**
-Jeder Posten wird ausschliesslich per QR-Scan freigeschaltet (`src/components/case-file/QRGate.tsx`). Verweigert das Gerät die Kamera oder ist sie durch die Schul-Geräteverwaltung gesperrt, ist die Etappe für diese Gruppe unlösbar – es gibt keine Ersatzeingabe.
-→ Vorschlag: Feld «Code von Hand eingeben» als Alternative unter dem Scanner; zusätzlich in der Lehreransicht eine Schaltfläche, um einer Gruppe einen Posten manuell freizugeben.
-
 **K3 – Fortschritt hängt nur am Gerät**
 Gelöste Etappen liegen ausschliesslich lokal auf dem Handy (`src/lib/progress.ts`). Leerer Akku, defektes oder getauschtes Gerät bedeutet Neuanfang bei Etappe 1 – die Punkte liegen zwar auf dem Server, werden aber nie zurückgeholt. Beim Neu-Anmelden entsteht zudem eine zweite Gruppe mit gleichem Namen.
 → Vorschlag: Fortschritt aus den bereits gespeicherten Server-Ereignissen wiederherstellen, wenn eine Gruppe mit ihrem Code zurückkehrt; Wiedereinstieg über den bestehenden Gruppen-Zugang statt Neuanmeldung.
@@ -53,7 +49,6 @@ Bei anhaltender Störung bleibt die Anzeige stehen; der Hinweis kommt erst nach 
 ## Gering
 
 - **G1 – Doppelte Zeit-abgelaufen-Anzeige:** Auf Etappenseiten können gleichzeitig ein Pop-up und eine Vollbildsperre erscheinen (`GlobalTimer.tsx`, `StageGate.tsx`). Einen der beiden Wege verwenden.
-- **G2 – Vorgeschichte startet auf iPhones evtl. nicht:** Das Video wird zeitverzögert und mit Ton gestartet, was Safari blockieren kann (`PrologueVideo.tsx`). Stummstart mit sichtbarer Ton-Schaltfläche oder Start direkt per Tippen.
 - **G3 – Wartezimmer ohne Ausweg:** Bei dauerhaftem Verbindungsfehler bleibt nur der Hinweis, kein Weg zurück zur Startseite (`src/routes/lobby.tsx`).
 - **G4 – Kein Vorschaubild für geteilte Links:** Der Beitritts-Link im Klassenchat erscheint ohne Bild.
 - **G5 – Waagrechtes Scrollen der Etappenleiste** ist ohne Hinweis leicht zu übersehen.
