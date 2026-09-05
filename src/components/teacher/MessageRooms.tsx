@@ -286,14 +286,15 @@ export function MessageRooms({ password, code, report, initialRoom = null }: Pro
       {!isAll && st && (
         <p className="font-mono-typed mt-0.5 text-[10px] uppercase tracking-wider text-muted-foreground">
           {st.finished
-            ? "Fertig"
-            : `${COL_NAME[st.currentStage] ?? `Etappe ${st.currentStage}`} · ${
+            ? "jetzt: Fertig"
+            : `jetzt: ${COL_NAME[st.currentStage] ?? `Etappe ${st.currentStage}`} · ${
                 st.phase === "puzzle"
                   ? `am Rätsel seit ${st.minutesInPhase ?? 0} Min`
                   : `unterwegs seit ${st.minutesInPhase ?? 0} Min`
               } · ${team?.stagesSolved ?? 0} Etappen gelöst`}
         </p>
       )}
+
 
       <ul className="mt-3 space-y-2">
         {entries.length === 0 && (
