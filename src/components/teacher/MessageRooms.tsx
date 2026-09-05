@@ -76,7 +76,7 @@ export function MessageRooms({ password, code, report, initialRoom = null }: Pro
   const [room, setRoom] = useState<string | null>(initialRoom);
   const [done, setDone] = useState<Set<string>>(new Set());
 
-  useEffect(() => setDone(readDone()), []);
+  useEffect(() => setDone(readDone(code)), [code]);
   useEffect(() => {
     if (initialRoom) setRoom(initialRoom);
   }, [initialRoom]);
@@ -186,7 +186,7 @@ export function MessageRooms({ password, code, report, initialRoom = null }: Pro
       const next = new Set(prev);
       if (next.has(id)) next.delete(id);
       else next.add(id);
-      writeDone(next);
+      writeDone(code, next);
       return next;
     });
   };

@@ -19,6 +19,17 @@ export function ProgressRecovery() {
   useEffect(() => {
     const session = getRoundSession();
     if (!session) return;
+
+    // Gehört der gespeicherte Fortschritt zu einer anderen Gruppe (Gerät hat
+    // schon einmal eine Runde gespielt)? Dann alten Stand verwerfen, statt ihn
+    // mit der neuen Runde zu vermischen.
+    const owner = getProgressOwner();
+    if (owner && owner !== session.teamId) {
+      resetAll();
+      return;
+    }
+    if (!owner) setProgressOwner(session.teamId);
+
     let alive = true;
 
     void getTeamEvents({ data: { teamId: session.teamId, token: session.token } })
