@@ -205,7 +205,7 @@ export function GutachtenRaetsel({ onErfolg }: { onErfolg: () => void }) {
   const closeTutorial = () => {
     setShowTutorial(false);
     try {
-      localStorage.setItem("etappe-5-tutorial-seen", "1");
+      localStorage.setItem("akte-5-tutorial-seen", "1");
     } catch {}
   };
 

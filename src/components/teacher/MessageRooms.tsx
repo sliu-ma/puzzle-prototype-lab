@@ -6,20 +6,23 @@ import { assessTeams, COL_NAME, COL_LABEL } from "./ProgressMatrix";
 import { MessageComposer } from "./MessagePanel";
 import { cn } from "@/lib/utils";
 
-const DONE_KEY = "mm.teacher.help.done";
+/** Häkchen werden pro Runde gespeichert, damit alte Runden nicht durchschlagen. */
+function doneKey(code: string) {
+  return `mm.teacher.help.done.${code}`;
+}
 
 /** IDs der als erledigt markierten Hilferufe (localStorage). */
-function readDone(): Set<string> {
+function readDone(code: string): Set<string> {
   try {
-    const raw = window.localStorage.getItem(DONE_KEY);
+    const raw = window.localStorage.getItem(doneKey(code));
     return raw ? new Set(JSON.parse(raw) as string[]) : new Set();
   } catch {
     return new Set();
   }
 }
-function writeDone(set: Set<string>) {
+function writeDone(code: string, set: Set<string>) {
   try {
-    window.localStorage.setItem(DONE_KEY, JSON.stringify([...set]));
+    window.localStorage.setItem(doneKey(code), JSON.stringify([...set]));
   } catch {
     /* ignore */
   }

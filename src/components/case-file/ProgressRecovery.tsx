@@ -2,7 +2,12 @@ import { useEffect } from "react";
 import { getRoundSession, resumeSync } from "@/lib/round-client";
 import { getTeamEvents } from "@/lib/rounds.functions";
 import { mergeScoreEvents } from "@/lib/score-events";
-import { applyRestoredEvents } from "@/lib/progress";
+import {
+  applyRestoredEvents,
+  getProgressOwner,
+  resetAll,
+  setProgressOwner,
+} from "@/lib/progress";
 
 /**
  * Holt beim Öffnen der App den auf dem Server gespeicherten Stand der Gruppe
