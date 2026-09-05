@@ -10,6 +10,14 @@ import { recordStageScan } from "@/lib/progress";
 const DEFAULT_TOKEN = "CpZk0z9RaQkL22gtiWoR";
 const DEFAULT_STORAGE_KEY = "akte-001-unlocked";
 
+/**
+ * Schalter für die manuelle Eingabe der Zeichenfolge unter dem QR-Code.
+ * Auf `true` stellen, um den Ausweg ohne Kamera wieder sichtbar zu machen.
+ * Bewusst ausgeschaltet: sonst kann der Code weitergeschickt werden, ohne
+ * dass eine Gruppe vor Ort ist.
+ */
+const ALLOW_MANUAL_ENTRY = false;
+
 // Hash zur Persistenz, wir speichern nicht den Klartext-Token im LocalStorage.
 async function sha256(text: string): Promise<string> {
   const buf = new TextEncoder().encode(text);
@@ -405,48 +413,52 @@ export function QRGate({
               )}
 
               <p className="mt-3 text-xs leading-relaxed text-destructive/80">
-                Wenn die Kamera nicht will: Der Code steht auch als Zeichenfolge unter
-                dem QR-Bild. Gib ihn unten von Hand ein oder frag die Lehrperson.
+                {ALLOW_MANUAL_ENTRY
+                  ? "Wenn die Kamera nicht will: Der Code steht auch als Zeichenfolge unter dem QR-Bild. Gib ihn unten von Hand ein oder frag die Lehrperson."
+                  : "Wenn die Kamera nicht startet, frag die Lehrperson."}
               </p>
             </div>
           )}
 
-          {/* Ausweg ohne Kamera: Zeichenfolge unter dem QR-Code eintippen. */}
-          <div className="mt-5 rounded-sm border border-border bg-paper/60 p-3">
-            <label
-              htmlFor="qr-manual"
-              className="font-mono-typed block text-[10px] uppercase tracking-[0.2em] text-muted-foreground"
-            >
-              Code von Hand eingeben
-            </label>
-            <div className="mt-2 flex gap-2">
-              <input
-                id="qr-manual"
-                value={manual}
-                onChange={(e) => {
-                  setManual(e.target.value);
-                  setManualError(false);
-                }}
-                autoCapitalize="none"
-                autoCorrect="off"
-                spellCheck={false}
-                placeholder="Zeichenfolge unter dem QR-Code"
-                className="min-h-11 w-full rounded-sm border border-border bg-card px-3 text-[16px] focus:border-stamp focus:outline-none focus:ring-2 focus:ring-stamp/25"
-              />
-              <button
-                type="button"
-                onClick={() => void unlockManually()}
-                className="min-h-11 shrink-0 rounded-sm bg-primary px-3 font-serif text-sm font-semibold text-primary-foreground"
+          {/* Ausweg ohne Kamera: nur sichtbar, wenn ALLOW_MANUAL_ENTRY aktiv ist. */}
+          {ALLOW_MANUAL_ENTRY && (
+            <div className="mt-5 rounded-sm border border-border bg-paper/60 p-3">
+              <label
+                htmlFor="qr-manual"
+                className="font-mono-typed block text-[10px] uppercase tracking-[0.2em] text-muted-foreground"
               >
-                Öffnen
-              </button>
+                Code von Hand eingeben
+              </label>
+              <div className="mt-2 flex gap-2">
+                <input
+                  id="qr-manual"
+                  value={manual}
+                  onChange={(e) => {
+                    setManual(e.target.value);
+                    setManualError(false);
+                  }}
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  spellCheck={false}
+                  placeholder="Zeichenfolge unter dem QR-Code"
+                  className="min-h-11 w-full rounded-sm border border-border bg-card px-3 text-[16px] focus:border-stamp focus:outline-none focus:ring-2 focus:ring-stamp/25"
+                />
+                <button
+                  type="button"
+                  onClick={() => void unlockManually()}
+                  className="min-h-11 shrink-0 rounded-sm bg-primary px-3 font-serif text-sm font-semibold text-primary-foreground"
+                >
+                  Öffnen
+                </button>
+              </div>
+              {manualError && (
+                <p className="mt-2 text-xs text-destructive">
+                  Diese Zeichenfolge passt nicht zu dieser Etappe.
+                </p>
+              )}
             </div>
-            {manualError && (
-              <p className="mt-2 text-xs text-destructive">
-                Diese Zeichenfolge passt nicht zu dieser Etappe.
-              </p>
-            )}
-          </div>
+          )}
+
 
 
           <div className="mt-6 flex flex-wrap gap-3">
