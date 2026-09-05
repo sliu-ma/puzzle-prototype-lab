@@ -6,7 +6,9 @@ import {
   Footprints,
   QrCode,
   Search,
+  LifeBuoy,
 } from "lucide-react";
+
 import type { ReportTeam } from "./LobbyPanel";
 import {
   Dialog,
