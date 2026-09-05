@@ -405,19 +405,52 @@ export function applyRestoredEvents(
   return changed;
 }
 
-export function resetAll() {
+/**
+ * Alle Präfixe, unter denen Spieldaten auf dem Gerät liegen. Wird beim
+ * Zurücksetzen vollständig geleert, damit auf einem Gerät, das schon einmal
+ * eine Runde gespielt hat, keine Reste in die neue Partie durchschlagen.
+ */
+const RESET_PREFIXES = ["maya-", "akte-", "etappe-", "mm."];
 
+export function resetAll() {
   try {
     const toRemove: string[] = [];
     for (let i = 0; i < localStorage.length; i++) {
       const k = localStorage.key(i);
       if (!k) continue;
-      if (k.startsWith("maya-") || k.startsWith("akte-")) {
-        toRemove.push(k);
-      }
+      if (RESET_PREFIXES.some((p) => k.startsWith(p))) toRemove.push(k);
     }
     toRemove.forEach((k) => localStorage.removeItem(k));
+    try {
+      window.sessionStorage.removeItem("maya-lobby-pending");
+    } catch {
+      /* ignore */
+    }
     window.dispatchEvent(new Event("maya-progress"));
+    window.dispatchEvent(new Event("maya-reset"));
+  } catch {
+    /* ignore */
+  }
+}
+
+/**
+ * Kennung der Gruppe, zu der der gespeicherte Fortschritt gehört. Damit lässt
+ * sich beim Öffnen der App erkennen, ob alter Fortschritt einer anderen Runde
+ * im Weg liegt.
+ */
+const KEY_OWNER = "maya-progress-team";
+
+export function getProgressOwner(): string | null {
+  try {
+    return localStorage.getItem(KEY_OWNER);
+  } catch {
+    return null;
+  }
+}
+
+export function setProgressOwner(teamId: string) {
+  try {
+    localStorage.setItem(KEY_OWNER, teamId);
   } catch {
     /* ignore */
   }
