@@ -73,8 +73,8 @@ export function HelpButton() {
             </DialogTitle>
             <DialogDescription className="pt-2 text-center text-sm leading-relaxed">
               {sentAt
-                ? "Deine Lehrperson sieht euren Hilferuf in der Übersicht. Bleibt beim Posten, es kommt jemand."
-                : "Schreibt kurz, wo es klemmt. Die Lehrperson sieht den Hilferuf samt Etappe in ihrer Übersicht."}
+                ? "Eure Lehrperson sieht euren Hilferuf und meldet sich bei euch."
+                : "Schreibt kurz, wo es klemmt. Die Lehrperson sieht den Hilferuf samt Etappe in ihrer Übersicht und meldet sich bei euch."}
             </DialogDescription>
           </DialogHeader>
 
