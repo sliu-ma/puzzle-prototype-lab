@@ -53,7 +53,18 @@ export type ReportTeam = {
   travelSince: string | null;
   lastEventAt: string | null;
   hearingAttempts: { question: number; correct: boolean; attempt: number }[];
-  helpRequests: { at: string; stage: number; note: string | null }[];
+  helpRequests: {
+    at: string;
+    stage: number;
+    note: string | null;
+    snapshot: {
+      stage: number;
+      phase: "travel" | "puzzle";
+      minutesInPhase: number | null;
+      hintLevel: number;
+      stagesSolved: number;
+    };
+  }[];
   ackedMessageIds: string[];
   events: ReportEvent[];
 
