@@ -281,7 +281,7 @@ function RoundPage() {
             >
               {label}
               {key === "messages" && pendingCount > 0 && (
-                <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-stamp px-1 text-[9px] font-bold text-paper">
+                <span className="absolute right-0.5 top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-stamp px-1 text-[9px] font-bold text-paper shadow-sm ring-1 ring-paper">
                   {pendingCount}
                 </span>
               )}
