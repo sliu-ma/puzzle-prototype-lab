@@ -191,7 +191,7 @@ export function GutachtenRaetsel({ onErfolg }: { onErfolg: () => void }) {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    if (!localStorage.getItem("etappe-5-tutorial-seen")) {
+    if (!localStorage.getItem("akte-5-tutorial-seen")) {
       setAktuell(0);
       setShowTutorial(true);
     }
