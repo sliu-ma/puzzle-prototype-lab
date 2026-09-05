@@ -124,15 +124,12 @@ function RoundPage() {
     reportActive ? code : "",
     15000,
   );
-  const acks = (ackReport?.teams ?? []).map((t) => ({
-    name: t.name,
-    ids: t.ackedMessageIds ?? [],
-  }));
 
-  // Vorausgewählte Zielgruppe aus «Antworten» im Hilfefeed.
-  const [replyTarget, setReplyTarget] = useState<string | null>(null);
+  // Vorausgewählter Chatraum (z. B. aus dem Live-Reiter).
+  const [replyTarget] = useState<string | null>(null);
   const pendingCount =
     ackReport?.teams?.reduce((n, t) => n + (t.helpRequests?.length ?? 0), 0) ?? 0;
+
 
 
 
