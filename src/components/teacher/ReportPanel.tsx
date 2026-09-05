@@ -809,7 +809,51 @@ function HearingMatrix({
 
   return (
     <div className="mt-2">
-      <div className="overflow-x-auto rounded-sm border border-border">
+      {/* Handy: eine Karte pro Gruppe statt seitlichem Schieben. */}
+      <ul className="space-y-1.5 sm:hidden">
+        {rows.map(({ t, answers }) => {
+          const right = answers.filter((a) => a.last).length;
+          return (
+            <li key={t.teamId} className="rounded-sm border border-border bg-card p-2.5">
+              <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2">
+                <span className="truncate font-serif text-sm font-semibold">
+                  {nameOf(t)}
+                </span>
+                <span className="font-mono-typed shrink-0 text-[11px] font-bold tabular-nums">
+                  {right}/{QUESTIONS.length}
+                </span>
+              </div>
+              <div className="mt-1.5 flex flex-wrap gap-1">
+                {QUESTIONS.map((q) => {
+                  const a = answers.find((x) => x.question === q);
+                  return (
+                    <span
+                      key={q}
+                      title={QUESTION_LABEL[q] ?? "Frage"}
+                      className={cn(
+                        "font-mono-typed flex h-6 min-w-6 items-center justify-center rounded-sm border px-1 text-[10px] font-bold",
+                        !a
+                          ? "border-border text-muted-foreground"
+                          : a.last
+                            ? "border-primary/40 bg-primary/10 text-primary"
+                            : "border-stamp/40 bg-stamp/10 text-stamp",
+                      )}
+                    >
+                      {q + 1}
+                    </span>
+                  );
+                })}
+              </div>
+            </li>
+          );
+        })}
+        <li className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+          Grün = richtig · Rot = falsch · Grau = keine Antwort
+        </li>
+      </ul>
+
+      <div className="hidden overflow-x-auto rounded-sm border border-border sm:block">
+
         <table className="w-full border-collapse text-[11px]">
           <thead>
             <tr className="bg-muted/40">
