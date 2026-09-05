@@ -20,8 +20,11 @@ type Props = {
   code: string;
   /** Gruppen mit den bereits bestätigten Nachrichten (für «gelesen von»). */
   acks?: { name: string; ids: string[] }[];
+  /** Vorausgewählte Zielgruppe (z. B. nach «Antworten» im Hilfefeed). */
+  initialTarget?: string | null;
+  /** Wird beim Senden zurückgesetzt, damit die Vorauswahl nur einmal greift. */
+  onTargetConsumed?: () => void;
 };
-
 
 const MAX = 300;
 
