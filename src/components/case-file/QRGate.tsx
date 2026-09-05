@@ -382,20 +382,50 @@ export function QRGate({
                 </div>
               )}
 
-              <button
-                onClick={() => setShowDebug((v) => !v)}
-                className="mt-3 font-mono-typed text-[10px] uppercase tracking-[0.2em] text-destructive/80 underline underline-offset-4"
-              >
-                {showDebug ? "Technische Details ausblenden" : "Technische Details anzeigen"}
-              </button>
-
-              {showDebug && (
-                <pre className="mt-2 max-h-64 overflow-auto rounded-sm bg-black/80 p-3 text-[11px] leading-relaxed text-green-200">
-{JSON.stringify(error.diagnostics, null, 2)}
-                </pre>
-              )}
+              <p className="mt-3 text-xs leading-relaxed text-destructive/80">
+                Wenn die Kamera nicht will: Der Code steht auch als Zeichenfolge unter
+                dem QR-Bild. Gib ihn unten von Hand ein oder frag die Lehrperson.
+              </p>
             </div>
           )}
+
+          {/* Ausweg ohne Kamera: Zeichenfolge unter dem QR-Code eintippen. */}
+          <div className="mt-5 rounded-sm border border-border bg-paper/60 p-3">
+            <label
+              htmlFor="qr-manual"
+              className="font-mono-typed block text-[10px] uppercase tracking-[0.2em] text-muted-foreground"
+            >
+              Code von Hand eingeben
+            </label>
+            <div className="mt-2 flex gap-2">
+              <input
+                id="qr-manual"
+                value={manual}
+                onChange={(e) => {
+                  setManual(e.target.value);
+                  setManualError(false);
+                }}
+                autoCapitalize="none"
+                autoCorrect="off"
+                spellCheck={false}
+                placeholder="Zeichenfolge unter dem QR-Code"
+                className="min-h-11 w-full rounded-sm border border-border bg-card px-3 text-[16px] focus:border-stamp focus:outline-none focus:ring-2 focus:ring-stamp/25"
+              />
+              <button
+                type="button"
+                onClick={() => void unlockManually()}
+                className="min-h-11 shrink-0 rounded-sm bg-primary px-3 font-serif text-sm font-semibold text-primary-foreground"
+              >
+                Öffnen
+              </button>
+            </div>
+            {manualError && (
+              <p className="mt-2 text-xs text-destructive">
+                Diese Zeichenfolge passt nicht zu dieser Etappe.
+              </p>
+            )}
+          </div>
+
 
           <div className="mt-6 flex flex-wrap gap-3">
             {!scanning ? (

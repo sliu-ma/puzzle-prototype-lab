@@ -80,6 +80,50 @@ export function assertTeacher(password: string) {
   if (!safeEqual(password, expected)) throw new Error("Passwort falsch.");
 }
 
+/**
+ * Brute-Force-Bremse für den Lehrer-Zugang. Der Kübel («bucket») ist ein
+ * Prüfwert des Netz-Zugangs, damit keine Adressen gespeichert werden.
+ */
+export async function loginBucket(): Promise<string> {
+  try {
+    const { getRequest } = await import("@tanstack/react-start/server");
+    const req = getRequest();
+    const h = req?.headers;
+    const ip =
+      h?.get("cf-connecting-ip") ??
+      h?.get("x-real-ip") ??
+      h?.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+      "unbekannt";
+    return hashToken(`teacher-login:${ip}`);
+  } catch {
+    return hashToken("teacher-login:unbekannt");
+  }
+}
+
+/** Wirft einen verständlichen Fehler, solange der Zugang gesperrt ist. */
+export async function assertLoginAllowed(bucket: string) {
+  const { data, error } = await roundsDb().rpc("teacher_login_gate", {
+    p_bucket: bucket,
+  });
+  if (error) return; // Bremse darf den Betrieb nie blockieren
+  const seconds = Number(data) || 0;
+  if (seconds > 0) {
+    throw new Error(
+      `Zu viele Fehlversuche. Bitte in ${Math.ceil(seconds / 30) * 30} Sekunden nochmals versuchen.`,
+    );
+  }
+}
+
+/** Merkt sich Erfolg oder Fehlversuch der Passwortprüfung. */
+export async function noteLoginResult(bucket: string, ok: boolean) {
+  try {
+    await roundsDb().rpc("teacher_login_result", { p_bucket: bucket, p_ok: ok });
+  } catch {
+    /* ignore */
+  }
+}
+
+
 /** Datenbank-Zeilen zurück in Score-Ereignisse übersetzen. */
 export function rowsToEvents(
   rows: { event_id: string; type: string; payload: unknown }[],
@@ -226,9 +270,14 @@ export type ReportTeam = {
   lastEventAt: string | null;
   /** Alle Hearing-Antworten über alle Versuche. */
   hearingAttempts: { question: number; correct: boolean; attempt: number }[];
+  /** Hilferufe der Gruppe (neueste zuerst). */
+  helpRequests: { at: string; stage: number; note: string | null }[];
+  /** Nachrichten der Lehrperson, die die Gruppe bestätigt hat. */
+  ackedMessageIds: string[];
   /** Rohereignisse im Langformat für den Datenexport. */
   events: ReportEvent[];
 };
+
 
 
 type RawEvent = {
@@ -343,6 +392,21 @@ export function buildReport(
         attempt: Number(payloadOf(e)["attempt"]) || 1,
       }));
 
+    const helpRequests = raw
+      .filter((e) => e.type === "help_requested")
+      .map((e) => ({
+        at: new Date(eventMs(e)).toISOString(),
+        stage: Number(payloadOf(e)["stage"]) || 0,
+        note: payloadOf(e)["note"] ? String(payloadOf(e)["note"]) : null,
+      }))
+      .sort((a, b) => (a.at < b.at ? 1 : -1));
+
+    const ackedMessageIds = raw
+      .filter((e) => e.type === "message_ack")
+      .map((e) => String(payloadOf(e)["messageId"] ?? ""))
+      .filter(Boolean);
+
+
     const hearing = raw.filter((e) => e.type === "hearing_answer");
     const firstEvent = raw.reduce<string | null>(
       (min, e) => (min === null || e.created_at < min ? e.created_at : min),
@@ -433,6 +497,9 @@ export function buildReport(
       travelSince: travelSinceMs === null ? null : new Date(travelSinceMs).toISOString(),
       lastEventAt: lastEvent,
       hearingAttempts,
+      helpRequests,
+      ackedMessageIds,
+
       events: exportEvents,
     } satisfies ReportTeam;
   });

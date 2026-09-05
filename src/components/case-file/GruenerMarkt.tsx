@@ -34,6 +34,10 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
   const [cartOpen, setCartOpen] = useState(false);
   const [detail, setDetail] = useState<Produkt | null>(null);
   const [feedback, setFeedback] = useState<boolean>(false);
+  // Anzahl Fehlversuche: ab dem dritten Mal gibt es einen allgemeinen
+  // Denkanstoss – ohne zu verraten, welches Produkt falsch ist.
+  const [tries, setTries] = useState(0);
+
 
   const [tutorialSeen, setTutorialSeen] = usePersistentState<boolean>(
     "akte-2-tutorial-seen",
@@ -108,9 +112,11 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
 
     if (fehlend.length > 0 || schlechteImKorb.length > 0) {
       setFeedback(true);
+      setTries((t) => t + 1);
       setHadFail(true);
       return;
     }
+
     setFeedback(false);
     // Badge wird erst am Ende der Etappe vergeben, damit die "Gelöst"-Animation
     // nicht mit der Badge-Animation kollidiert. Wir merken uns nur die Berechtigung.
@@ -238,8 +244,15 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
             <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
               Die Kasse springt nicht an. Schau dich nochmal um.
             </p>
+            {tries >= 3 && (
+              <p className="mt-1.5 leading-relaxed text-foreground/80">
+                Geht das Rezept Zutat für Zutat durch: Ist für jede genau ein Produkt
+                im Korb? Und stimmen bei allen Herkunft, Saison und Label?
+              </p>
+            )}
           </div>
         )}
+
 
       </div>
 

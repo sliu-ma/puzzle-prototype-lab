@@ -11,6 +11,8 @@ import {
 import { getRoundSession } from "@/lib/round-client";
 import { getRoundState } from "@/lib/rounds.functions";
 import { getStartTs, getEndTs, isRoundClosed } from "@/lib/progress";
+import { recordMessageAck } from "@/lib/score-events";
+
 import { IconStamp } from "./IconStamp";
 
 type Message = { id: string; body: string; createdAt: string };
@@ -89,11 +91,17 @@ export function TeacherMessageOverlay() {
   const current = queue[0];
   if (!current) return null;
 
+  // Lesebestätigung: die Lehrperson sieht damit, dass die Nachricht angekommen ist.
+  const confirm = () => {
+    recordMessageAck(current.id);
+    setQueue((q) => q.slice(1));
+  };
+
   return (
     <Dialog
       open
       onOpenChange={(open) => {
-        if (!open) setQueue((q) => q.slice(1));
+        if (!open) confirm();
       }}
     >
       <DialogContent className="max-w-sm">
@@ -108,7 +116,7 @@ export function TeacherMessageOverlay() {
         </DialogHeader>
         <button
           type="button"
-          onClick={() => setQueue((q) => q.slice(1))}
+          onClick={confirm}
           className="mt-2 min-h-[48px] w-full rounded-sm bg-primary px-4 font-serif text-sm font-semibold text-primary-foreground"
         >
           Verstanden
@@ -117,3 +125,4 @@ export function TeacherMessageOverlay() {
     </Dialog>
   );
 }
+

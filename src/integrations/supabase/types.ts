@@ -142,6 +142,30 @@ export type Database = {
           },
         ]
       }
+      teacher_login_attempts: {
+        Row: {
+          blocked_until: string | null
+          bucket: string
+          created_at: string
+          fails: number
+          updated_at: string
+        }
+        Insert: {
+          blocked_until?: string | null
+          bucket: string
+          created_at?: string
+          fails?: number
+          updated_at?: string
+        }
+        Update: {
+          blocked_until?: string | null
+          bucket?: string
+          created_at?: string
+          fails?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       teams: {
         Row: {
           created_at: string
@@ -189,6 +213,10 @@ export type Database = {
     }
     Functions: {
       assert_teacher: { Args: { p_password_hash: string }; Returns: undefined }
+      round_events: {
+        Args: { p_team_id: string; p_token_hash: string }
+        Returns: Json
+      }
       round_finish: {
         Args: { p_team_id: string; p_token_hash: string }
         Returns: boolean
@@ -270,6 +298,11 @@ export type Database = {
           team_count: number
           title: string
         }[]
+      }
+      teacher_login_gate: { Args: { p_bucket: string }; Returns: number }
+      teacher_login_result: {
+        Args: { p_bucket: string; p_ok: boolean }
+        Returns: undefined
       }
       teacher_round_report: {
         Args: { p_code: string; p_password_hash: string }

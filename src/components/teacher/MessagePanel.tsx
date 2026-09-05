@@ -18,7 +18,10 @@ type Sent = {
 type Props = {
   password: string;
   code: string;
+  /** Gruppen mit den bereits bestätigten Nachrichten (für «gelesen von»). */
+  acks?: { name: string; ids: string[] }[];
 };
+
 
 const MAX = 300;
 
@@ -30,7 +33,7 @@ function timeLabel(iso: string) {
 }
 
 /** Kurznachricht der Lehrperson an alle Gruppen oder an eine einzelne Gruppe. */
-export function MessagePanel({ password, code }: Props) {
+export function MessagePanel({ password, code, acks = [] }: Props) {
   const [teams, setTeams] = useState<{ id: string; name: string }[]>([]);
   const [body, setBody] = useState("");
   const [target, setTarget] = useState<string>("all");
@@ -129,16 +132,31 @@ export function MessagePanel({ password, code }: Props) {
 
       {sent.length > 0 && (
         <ul className="mt-3 space-y-1.5 border-t border-border pt-2">
-          {sent.map((m) => (
-            <li key={m.id} className="text-xs text-muted-foreground">
-              <span className="font-mono-typed text-[10px] uppercase tracking-wider">
-                {timeLabel(m.createdAt)} · {m.teamName ?? "Alle Gruppen"}
-              </span>
-              <p className="text-foreground/80">{m.body}</p>
-            </li>
-          ))}
+          {sent.map((m) => {
+            const relevant = m.teamId
+              ? acks.filter((a) => a.name === m.teamName)
+              : acks;
+            const read = relevant.filter((a) => a.ids.includes(m.id));
+            return (
+              <li key={m.id} className="text-xs text-muted-foreground">
+                <span className="font-mono-typed text-[10px] uppercase tracking-wider">
+                  {timeLabel(m.createdAt)} · {m.teamName ?? "Alle Gruppen"}
+                  {relevant.length > 0 && (
+                    <>
+                      {" · "}
+                      <span className={read.length === relevant.length ? "text-emerald-700" : ""}>
+                        gelesen {read.length}/{relevant.length}
+                      </span>
+                    </>
+                  )}
+                </span>
+                <p className="text-foreground/80">{m.body}</p>
+              </li>
+            );
+          })}
         </ul>
       )}
     </section>
   );
+
 }

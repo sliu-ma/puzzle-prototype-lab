@@ -26,7 +26,7 @@ import {
   setTeacherPassword,
   STATUS_LABEL,
 } from "@/lib/teacher-session";
-import { LobbyPanel } from "@/components/teacher/LobbyPanel";
+import { LobbyPanel, useRoundReport } from "@/components/teacher/LobbyPanel";
 import { LiveBoard } from "@/components/teacher/LiveBoard";
 import { ReportPanel } from "@/components/teacher/ReportPanel";
 import { MessagePanel } from "@/components/teacher/MessagePanel";
@@ -114,6 +114,18 @@ function RoundPage() {
       round.status === "running" ? "live" : round.status === "closed" ? "report" : "lobby",
     );
   }, [round, step]);
+
+  // Lesebestätigungen der Gruppen für die Nachrichtenliste.
+  const { report: ackReport } = useRoundReport(
+    step === "live" ? password : "",
+    step === "live" ? code : "",
+    15000,
+  );
+  const acks = (ackReport?.teams ?? []).map((t) => ({
+    name: t.name,
+    ids: t.ackedMessageIds ?? [],
+  }));
+
 
   const login = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -446,7 +458,7 @@ function RoundPage() {
               Alle Gruppen erhalten innert Sekunden ein Pop-up mit der neuen Restzeit.
             </p>
           </div>
-          <MessagePanel password={password} code={round.code} />
+          <MessagePanel password={password} code={round.code} acks={acks} />
           <LiveBoard
             password={password}
             code={round.code}

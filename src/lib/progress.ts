@@ -358,7 +358,55 @@ export function formatRemaining(ms: number): string {
   return `${m}:${String(s).padStart(2, "0")}`;
 }
 
+/**
+ * Stellt den Fortschritt aus den auf dem Server gespeicherten Ereignissen
+ * wieder her: gelöste Etappen, Scan- und Lösungszeiten sowie die aktuelle
+ * Etappe. Bestehende, weiter fortgeschrittene Werte bleiben unberührt.
+ */
+export function applyRestoredEvents(
+  rows: { eventId: string; type: string; stage: number; at: number }[],
+): boolean {
+  if (typeof window === "undefined" || rows.length === 0) return false;
+  let changed = false;
+  const stamp = (key: string, value: number) => {
+    try {
+      if (!localStorage.getItem(key) && Number.isFinite(value) && value > 0) {
+        localStorage.setItem(key, String(Math.round(value)));
+        changed = true;
+      }
+    } catch {
+      /* ignore */
+    }
+  };
+
+  let highestSolved = 0;
+  for (const r of rows) {
+    const stage = r.stage;
+    const at = r.at;
+
+    if (r.type === "stage_scanned" && stage >= 1) stamp(stageScanKey(stage), at);
+    if (r.type === "stage_solved" && stage >= 1) {
+      stamp(stageDoneKey(stage), at);
+      if (stage > highestSolved) highestSolved = stage;
+    }
+  }
+
+  try {
+    const target = Math.min(7, highestSolved + 1);
+    if (target > getCurrentStage()) {
+      localStorage.setItem(KEY_STAGE, String(target));
+      changed = true;
+    }
+  } catch {
+    /* ignore */
+  }
+
+  if (changed) window.dispatchEvent(new Event("maya-progress"));
+  return changed;
+}
+
 export function resetAll() {
+
   try {
     const toRemove: string[] = [];
     for (let i = 0; i < localStorage.length; i++) {
