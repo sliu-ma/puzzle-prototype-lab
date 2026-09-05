@@ -18,7 +18,10 @@ type Sent = {
 type Props = {
   password: string;
   code: string;
+  /** Gruppen mit den bereits bestätigten Nachrichten (für «gelesen von»). */
+  acks?: { name: string; ids: string[] }[];
 };
+
 
 const MAX = 300;
 
@@ -30,7 +33,7 @@ function timeLabel(iso: string) {
 }
 
 /** Kurznachricht der Lehrperson an alle Gruppen oder an eine einzelne Gruppe. */
-export function MessagePanel({ password, code }: Props) {
+export function MessagePanel({ password, code, acks = [] }: Props) {
   const [teams, setTeams] = useState<{ id: string; name: string }[]>([]);
   const [body, setBody] = useState("");
   const [target, setTarget] = useState<string>("all");
