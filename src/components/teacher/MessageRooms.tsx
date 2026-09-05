@@ -16,6 +16,8 @@ type Sent = {
   createdAt: string;
 };
 
+type Snapshot = ReportTeam["helpRequests"][number]["snapshot"];
+
 type Entry =
   | { kind: "out"; id: string; at: number; body: string; msgId: string }
   | {
@@ -25,7 +27,9 @@ type Entry =
       body: string | null;
       stage: number;
       teamId: string;
+      snapshot: Snapshot;
     };
+
 
 function relTime(ms: number): string {
   const mins = Math.round((Date.now() - ms) / 60_000);
