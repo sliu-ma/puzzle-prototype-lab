@@ -15,7 +15,7 @@ Darunter: **Meldungen der Gruppen**, neueste zuerst. Jede Meldung zeigt
 - ob schon Hinweise genutzt wurden («Hinweis 2 genutzt», «Auflösung genutzt») und wie viele Etappen gelöst sind,
 - eine Schaltfläche «Antworten», die das Schreibfeld oben mit dieser Gruppe als Empfänger vorbereitet, und «Erledigt», die die Meldung ausgraut.
 
-Der Ton ist bewusst ruhig: Über der Liste steht «Meldungen sind kein Notfall – die Gruppen warten auf eine Antwort, nicht zwingend auf deinen Besuch.» Auch der Text im Hilfe-Knopf der Gruppen wird entsprechend angepasst, damit klar ist, dass eine Antwort per Nachricht kommt und ein Besuch nur auf Absprache erfolgt.
+Der Text im Hilfe-Knopf der Gruppen wird so angepasst, dass klar ist: die Lehrperson meldet sich per Nachricht – ohne Erwähnung eines Besuchs.
 
 Die Liste aktualisiert sich alle 15 Sekunden. Neue, noch nicht erledigte Meldungen sind farblich markiert; der Reiter «Nachrichten» zeigt die Anzahl offener Meldungen als Zähler.
 
