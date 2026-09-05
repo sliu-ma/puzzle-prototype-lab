@@ -30,6 +30,7 @@ import { LobbyPanel, useRoundReport } from "@/components/teacher/LobbyPanel";
 import { LiveBoard } from "@/components/teacher/LiveBoard";
 import { ReportPanel } from "@/components/teacher/ReportPanel";
 import { MessagePanel } from "@/components/teacher/MessagePanel";
+import { HelpFeed } from "@/components/teacher/HelpFeed";
 import type { RoundItem } from "./lehrer.index";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { cn } from "@/lib/utils";
