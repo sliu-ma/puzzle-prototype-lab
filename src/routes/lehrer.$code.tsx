@@ -59,7 +59,7 @@ export const Route = createFileRoute("/lehrer/$code")({
 const inputBase =
   "w-full min-h-[48px] rounded-sm border border-border bg-paper px-3 py-3 text-[16px] focus:border-stamp focus:outline-none focus:ring-2 focus:ring-stamp/25";
 
-type Step = "prepare" | "lobby" | "live" | "report";
+type Step = "prepare" | "lobby" | "live" | "messages" | "report";
 
 const STEPS: [Step, string][] = [
   ["prepare", "Vorbereiten"],
