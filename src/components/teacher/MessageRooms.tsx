@@ -58,12 +58,12 @@ type Props = {
 export function MessageRooms({ password, code, report, initialRoom = null }: Props) {
   const [sent, setSent] = useState<Sent[]>([]);
   const [room, setRoom] = useState<string | null>(initialRoom);
-  const [done, setDone] = useState<Set<string>>(new Set());
+  const { done, toggle: toggleDone, markDone } = useHelpDone(code);
 
-  useEffect(() => setDone(readDone(code)), [code]);
   useEffect(() => {
     if (initialRoom) setRoom(initialRoom);
   }, [initialRoom]);
+
 
   const load = useCallback(() => {
     if (!password || !code) return;
