@@ -34,6 +34,10 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
   const [cartOpen, setCartOpen] = useState(false);
   const [detail, setDetail] = useState<Produkt | null>(null);
   const [feedback, setFeedback] = useState<boolean>(false);
+  // Anzahl Fehlversuche: ab dem dritten Mal gibt es einen allgemeinen
+  // Denkanstoss – ohne zu verraten, welches Produkt falsch ist.
+  const [tries, setTries] = useState(0);
+
 
   const [tutorialSeen, setTutorialSeen] = usePersistentState<boolean>(
     "akte-2-tutorial-seen",
@@ -108,9 +112,11 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
 
     if (fehlend.length > 0 || schlechteImKorb.length > 0) {
       setFeedback(true);
+      setTries((t) => t + 1);
       setHadFail(true);
       return;
     }
+
     setFeedback(false);
     // Badge wird erst am Ende der Etappe vergeben, damit die "Gelöst"-Animation
     // nicht mit der Badge-Animation kollidiert. Wir merken uns nur die Berechtigung.
