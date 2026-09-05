@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { BrowserQRCodeReader, IScannerControls } from "@zxing/browser";
 import { PaperCard } from "./PaperCard";
 import { Stamp } from "./Stamp";
@@ -356,6 +357,12 @@ export function QRGate({
         }}
       />
       <div className="relative mx-auto max-w-xl">
+        <Link
+          to="/"
+          className="inline-flex items-center gap-1 font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground hover:text-foreground"
+        >
+          ← Zurück zur Übersicht
+        </Link>
         <PaperCard rotate={-0.4} tape="top">
           <div className="flex items-start justify-between gap-3">
             <div>
