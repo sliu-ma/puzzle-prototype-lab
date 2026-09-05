@@ -26,7 +26,7 @@ import {
   setTeacherPassword,
   STATUS_LABEL,
 } from "@/lib/teacher-session";
-import { LobbyPanel } from "@/components/teacher/LobbyPanel";
+import { LobbyPanel, useRoundReport } from "@/components/teacher/LobbyPanel";
 import { LiveBoard } from "@/components/teacher/LiveBoard";
 import { ReportPanel } from "@/components/teacher/ReportPanel";
 import { MessagePanel } from "@/components/teacher/MessagePanel";
@@ -458,7 +458,7 @@ function RoundPage() {
               Alle Gruppen erhalten innert Sekunden ein Pop-up mit der neuen Restzeit.
             </p>
           </div>
-          <MessagePanel password={password} code={round.code} />
+          <MessagePanel password={password} code={round.code} acks={acks} />
           <LiveBoard
             password={password}
             code={round.code}
