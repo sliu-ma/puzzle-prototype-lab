@@ -53,7 +53,10 @@ export type ReportTeam = {
   travelSince: string | null;
   lastEventAt: string | null;
   hearingAttempts: { question: number; correct: boolean; attempt: number }[];
+  helpRequests: { at: string; stage: number; note: string | null }[];
+  ackedMessageIds: string[];
   events: ReportEvent[];
+
 };
 
 export type Report = {

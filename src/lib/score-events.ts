@@ -67,6 +67,54 @@ export function addScoreEvent(event: ScoreEvent) {
   );
 }
 
+/**
+ * Führt Ereignisse vom Server mit den lokalen zusammen (ohne erneut zu
+ * senden). Grundlage für den Wiedereinstieg auf einem anderen Gerät.
+ */
+export function mergeScoreEvents(incoming: ScoreEvent[]): number {
+  if (typeof window === "undefined" || incoming.length === 0) return 0;
+  const events = readScoreEvents();
+  const ids = new Set(events.map((e) => e.id));
+  let added = 0;
+  for (const e of incoming) {
+    if (!e?.id || ids.has(e.id)) continue;
+    ids.add(e.id);
+    events.push(e);
+    added += 1;
+  }
+  if (added === 0) return 0;
+  writeScoreEvents(events);
+  window.dispatchEvent(
+    new CustomEvent(SCORE_CHANGED, {
+      detail: { total: computeScore(events, budgetMin()).total, delta: 0 },
+    }),
+  );
+  return added;
+}
+
+/** Hilferuf an die Lehrperson (ohne Punkteeinfluss). */
+export function recordHelpRequest(stage: number, note?: string) {
+  addScoreEvent({
+    id: `help_requested:${Date.now()}`,
+    type: "help_requested",
+    at: Date.now(),
+    stage,
+    ...(note ? { note: note.slice(0, 200) } : {}),
+  });
+}
+
+/** Lesebestätigung einer Nachricht der Lehrperson. */
+export function recordMessageAck(messageId: string) {
+  addScoreEvent({
+    id: `message_ack:${messageId}`,
+    type: "message_ack",
+    at: Date.now(),
+    messageId,
+  });
+}
+
+
+
 
 export function getScore(): ScoreBreakdown {
   return computeScore(readScoreEvents(), budgetMin());

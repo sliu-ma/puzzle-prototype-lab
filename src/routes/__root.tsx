@@ -6,6 +6,9 @@ import { ScoreCounter } from "@/components/case-file/ScoreCounter";
 import { SyncIndicator } from "@/components/case-file/SyncIndicator";
 import { ErrorScreen } from "@/components/case-file/ErrorScreen";
 import { TeacherMessageOverlay } from "@/components/case-file/TeacherMessageOverlay";
+import { HelpButton } from "@/components/case-file/HelpButton";
+import { ProgressRecovery } from "@/components/case-file/ProgressRecovery";
+
 import { Toaster } from "@/components/ui/sonner";
 import appCss from "../styles.css?url";
 
@@ -102,7 +105,10 @@ function RootComponent() {
       </div>
       <BadgeToast />
       <TeacherMessageOverlay />
+      <HelpButton />
+      <ProgressRecovery />
       <Toaster />
     </>
   );
 }
+

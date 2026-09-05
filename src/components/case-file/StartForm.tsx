@@ -3,11 +3,11 @@ import { ArrowRight, Plus, X, KeyRound, Users, Check, Loader2 } from "lucide-rea
 import { cn } from "@/lib/utils";
 import { START_CODE } from "@/lib/progress";
 import { joinRound, lookupRound } from "@/lib/rounds.functions";
-import { setPendingJoin } from "@/lib/round-client";
+import { getPendingJoin, setPendingJoin } from "@/lib/round-client";
 import { useNavigate } from "@tanstack/react-router";
 
 
-const CHEAT_CODE = "KRXZMVBQ";
+
 const MAX_MEMBERS = 4;
 
 
@@ -64,7 +64,7 @@ export function StartForm({
       setCodeError("Bitte gebt den Code ein.");
       return;
     }
-    if (clean === START_CODE || clean === CHEAT_CODE) {
+    if (clean === START_CODE) {
       setCodeError(null);
       setCode(clean);
       setMode("solo");
@@ -96,6 +96,12 @@ export function StartForm({
     }
   }, []);
 
+  // Schon angemeldet? Dann direkt ins Wartezimmer, statt eine zweite Gruppe
+  // mit fast gleichem Namen anzulegen.
+  useEffect(() => {
+    if (getPendingJoin()) void navigate({ to: "/lobby" });
+  }, [navigate]);
+
   // Beitritts-Link: Code direkt prüfen und bei Erfolg zum Teamnamen springen.
   const autoChecked = useRef(false);
   useEffect(() => {
@@ -103,6 +109,7 @@ export function StartForm({
     autoChecked.current = true;
     void verifyCode(initialCode);
   }, [initialCode, verifyCode]);
+
 
   const checkCode = async (e: React.FormEvent) => {
     e.preventDefault();

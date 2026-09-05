@@ -11,6 +11,8 @@ const eventSchema = z.object({
     // Reine Erhebungsereignisse für die Auswertung (ohne Punkte-Einfluss).
     "stage_scanned",
     "hearing_attempt",
+    "help_requested",
+    "message_ack",
   ]),
   at: z.number().int().nonnegative().optional(),
   stage: z.number().int().min(0).max(10).optional(),
@@ -20,7 +22,10 @@ const eventSchema = z.object({
   question: z.number().int().min(0).max(100).optional(),
   correct: z.boolean().optional(),
   attempt: z.number().int().min(1).max(20).optional(),
+  note: z.string().max(200).optional(),
+  messageId: z.string().max(60).optional(),
 });
+
 
 
 /** Prüft, ob ein eingegebener Code zu einer offenen Klassen-Runde gehört. */
@@ -157,16 +162,55 @@ export const getRoundLeaderboard = createServerFn({ method: "POST" })
     };
   });
 
+/** Eigene Ereignisse einer Gruppe zurückholen (Wiedereinstieg nach Gerätewechsel). */
+export const getTeamEvents = createServerFn({ method: "POST" })
+  .inputValidator((d) =>
+    z.object({ teamId: z.string().uuid(), token: z.string().min(10).max(200) }).parse(d),
+  )
+  .handler(async ({ data }) => {
+    const { roundsDb, hashToken, rowsToEvents } = await import("./rounds.server");
+    const { data: raw, error } = await roundsDb().rpc("round_events", {
+      p_team_id: data.teamId,
+      p_token_hash: hashToken(data.token),
+    });
+    if (error) throw new Error(error.message);
+    const payload = (raw ?? {}) as {
+      events?: { event_id: string; type: string; payload: unknown; created_at: string }[];
+    };
+    const rows = payload.events ?? [];
+    return {
+      events: rowsToEvents(rows),
+      /** Rohtypen, damit auch Ereignisse ohne Punktebezug ausgewertet werden können. */
+      types: rows.map((r) => {
+        const p = (r.payload ?? {}) as { stage?: unknown; at?: unknown };
+        return {
+          eventId: String(r.event_id),
+          type: String(r.type),
+          stage: Number(p.stage) || 0,
+          at: Number(p.at) || 0,
+        };
+      }),
+
+    };
+  });
+
 // ---- Lehrpersonen -----------------------------------------------------------
 
 export const teacherListRounds = createServerFn({ method: "POST" })
   .inputValidator((d) => z.object({ password: z.string().min(1).max(200) }).parse(d))
   .handler(async ({ data }) => {
-    const { roundsDb, hashPassword } = await import("./rounds.server");
+    const { roundsDb, hashPassword, loginBucket, assertLoginAllowed, noteLoginResult } =
+      await import("./rounds.server");
+    const bucket = await loginBucket();
+    await assertLoginAllowed(bucket);
     const { data: rounds, error } = await roundsDb().rpc("teacher_list_rounds", {
       p_password_hash: hashPassword(data.password),
     });
-    if (error) throw new Error(error.message);
+    if (error) {
+      await noteLoginResult(bucket, false);
+      throw new Error(error.message);
+    }
+    await noteLoginResult(bucket, true);
     return (rounds ?? []).map((r) => ({
       code: r.code,
       title: r.title,
@@ -177,6 +221,7 @@ export const teacherListRounds = createServerFn({ method: "POST" })
       started_at: r.started_at ?? null,
     }));
   });
+
 
 export const teacherCreateRound = createServerFn({ method: "POST" })
   .inputValidator((d) =>
@@ -399,12 +444,26 @@ export const teacherRoundReport = createServerFn({ method: "POST" })
       .parse(d),
   )
   .handler(async ({ data }) => {
-    const { roundsDb, hashPassword, buildReport } = await import("./rounds.server");
+    const {
+      roundsDb,
+      hashPassword,
+      buildReport,
+      loginBucket,
+      assertLoginAllowed,
+      noteLoginResult,
+    } = await import("./rounds.server");
+    const bucket = await loginBucket();
+    await assertLoginAllowed(bucket);
     const { data: raw, error } = await roundsDb().rpc("teacher_round_report", {
       p_password_hash: hashPassword(data.password),
       p_code: data.code,
     });
-    if (error) throw new Error(error.message);
+    if (error) {
+      await noteLoginResult(bucket, false);
+      throw new Error(error.message);
+    }
+    await noteLoginResult(bucket, true);
+
     const p = (raw ?? {}) as {
       found?: boolean;
       code?: string;

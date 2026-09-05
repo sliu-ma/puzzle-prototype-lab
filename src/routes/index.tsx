@@ -8,7 +8,7 @@ import {
   getCurrentStage,
   registerTeam,
   resetAll,
-  completeStage,
+  
   getNowClock,
   getHearingClock,
   getRemainingMs,
@@ -22,7 +22,7 @@ import { BadgeShelf } from "@/components/case-file/BadgeShelf";
 import { StartForm } from "@/components/case-file/StartForm";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
-const CHEAT_CODE = "KRXZMVBQ";
+
 
 
 
@@ -178,18 +178,14 @@ function CoverPage() {
               <StartForm
                 initialCode={joinCode}
                 onStart={(name, code, members) => {
-
                   resetAll();
                   registerTeam(name, code, members);
-                  if (code.toUpperCase() === CHEAT_CODE) {
-                    // Debug-Modus: alle Etappen freischalten
-                    for (let i = 1; i <= 6; i++) completeStage(i);
-                  }
                   setIntroSeen(false);
                   setTeam({ name, code });
                   setStage(getCurrentStage());
                 }}
               />
+
             )}
 
           </article>

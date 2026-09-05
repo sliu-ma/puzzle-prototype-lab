@@ -32,7 +32,12 @@ export type ScoreEvent =
       question: number;
       correct: boolean;
       attempt: number;
-    };
+    }
+  /** Hilferuf einer Gruppe an die Lehrperson (ohne Punkteeinfluss). */
+  | { id: string; type: "help_requested"; at: number; stage: number; note?: string }
+  /** Lesebestätigung einer Nachricht der Lehrperson. */
+  | { id: string; type: "message_ack"; at: number; messageId: string };
+
 
 
 /** Zeitbudget, auf das der Zeitfaktor bezogen wird (Minuten). */

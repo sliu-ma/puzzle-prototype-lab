@@ -196,14 +196,39 @@ export function syncScoreEvents(events: ScoreEvent[]) {
   bindListeners();
   queued = events;
   attempt = 0;
+  setPending(events.length);
   schedule(400);
+}
+
+/**
+ * Nach dem Öffnen der App alles Gespeicherte einmal nachschicken. Ohne diesen
+ * Anstoss blieben Ereignisse, die im Funkloch entstanden sind, liegen, bis
+ * zufällig ein neues Ereignis dazukommt.
+ */
+export function resumeSync() {
+  if (typeof window === "undefined") return;
+  if (!getRoundSession()) return;
+  void import("./score-events").then((m) => {
+    const events = m.readScoreEvents();
+    if (events.length > 0) syncScoreEvents(events);
+  });
 }
 
 export function markRoundFinished() {
   const session = getRoundSession();
   if (!session) return;
-  flushNow();
+  // Erst den vollständigen Stand melden, dann das Team abschliessen.
+  void import("./score-events").then((m) => {
+    const events = m.readScoreEvents();
+    if (events.length > 0) {
+      queued = events;
+      attempt = 0;
+      setPending(events.length);
+    }
+    flushNow();
+  });
   void finishTeam({ data: { teamId: session.teamId, token: session.token } }).catch(
     () => undefined,
   );
 }
+
