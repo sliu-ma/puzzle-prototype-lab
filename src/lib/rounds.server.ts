@@ -271,7 +271,19 @@ export type ReportTeam = {
   /** Alle Hearing-Antworten über alle Versuche. */
   hearingAttempts: { question: number; correct: boolean; attempt: number }[];
   /** Hilferufe der Gruppe (neueste zuerst). */
-  helpRequests: { at: string; stage: number; note: string | null }[];
+  helpRequests: {
+    at: string;
+    stage: number;
+    note: string | null;
+    /** Eingefrorener Spielstand im Moment des Hilferufs. */
+    snapshot: {
+      stage: number;
+      phase: "travel" | "puzzle";
+      minutesInPhase: number | null;
+      hintLevel: number;
+      stagesSolved: number;
+    };
+  }[];
   /** Nachrichten der Lehrperson, die die Gruppe bestätigt hat. */
   ackedMessageIds: string[];
   /** Rohereignisse im Langformat für den Datenexport. */
