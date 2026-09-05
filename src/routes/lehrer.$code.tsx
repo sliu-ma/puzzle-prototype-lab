@@ -222,72 +222,77 @@ function RoundPage() {
   };
 
   return (
-    <main className="mx-auto min-h-screen max-w-2xl px-4 py-8">
-      <div className="flex items-center justify-between gap-3">
-        <Link
-          to="/lehrer"
-          className="font-mono-typed flex items-center gap-1 text-[10px] uppercase tracking-wider text-muted-foreground"
-        >
-          <ArrowLeft className="h-3.5 w-3.5" />
-          Alle Runden
-        </Link>
-        <button
-          type="button"
-          onClick={() => {
-            clearTeacherPassword();
-            void navigate({ to: "/lehrer" });
-          }}
-          className="flex min-h-[40px] items-center gap-1.5 rounded-sm border border-border px-3 font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground hover:border-stamp hover:text-foreground"
-        >
-          <LogOut className="h-3.5 w-3.5" />
-          Abmelden
-        </button>
-      </div>
-
-
-      <div className="mt-3 flex flex-wrap items-center gap-3">
-        <button
-          type="button"
-          onClick={copy}
-          aria-label="Rundencode kopieren"
-          className="font-mono-typed flex items-center gap-2 rounded-sm bg-secondary px-3 py-2 text-2xl font-bold tracking-[0.25em]"
-        >
-          {round.code}
-          {copied ? (
-            <Check className="h-4 w-4 text-stamp" />
-          ) : (
-            <Copy className="h-4 w-4 text-muted-foreground" />
-          )}
-        </button>
-        <div className="min-w-0">
-          <h1 className="truncate font-serif text-2xl font-bold">{round.title}</h1>
-          <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
-            {STATUS_LABEL[round.status] ?? round.status} · {round.teamCount} Teams ·{" "}
-            {round.budget_min} min
-          </p>
-        </div>
-      </div>
-
-      <nav className="mt-5 grid grid-cols-5 gap-1.5">
-        {STEPS.map(([key, label]) => (
-          <button
-            key={key}
-            type="button"
-            onClick={() => setStep(key)}
-            className={cn(
-              "relative min-h-[44px] rounded-sm border border-border px-1 font-mono-typed text-[10px] uppercase tracking-wider",
-              step === key && "border-stamp bg-stamp/10 text-stamp",
-            )}
+    <main className="mx-auto min-h-screen max-w-2xl px-4 pb-10">
+      {/* Kopf und Reiter bleiben oben stehen, damit unterwegs alles erreichbar ist. */}
+      <div className="sticky top-0 z-30 -mx-4 border-b border-border bg-paper/95 px-4 pb-2 pt-3 backdrop-blur">
+        <div className="flex items-center justify-between gap-3">
+          <Link
+            to="/lehrer"
+            className="font-mono-typed flex items-center gap-1 text-[10px] uppercase tracking-wider text-muted-foreground"
           >
-            {label}
-            {key === "messages" && pendingCount > 0 && (
-              <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-stamp px-1 text-[9px] font-bold text-paper">
-                {pendingCount}
-              </span>
+            <ArrowLeft className="h-3.5 w-3.5" />
+            Alle Runden
+          </Link>
+          <button
+            type="button"
+            onClick={() => {
+              clearTeacherPassword();
+              void navigate({ to: "/lehrer" });
+            }}
+            className="flex min-h-[36px] items-center gap-1.5 rounded-sm border border-border px-2.5 font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground hover:border-stamp hover:text-foreground"
+          >
+            <LogOut className="h-3.5 w-3.5" />
+            Abmelden
+          </button>
+        </div>
+
+        <div className="mt-2 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
+          <div className="min-w-0">
+            <h1 className="truncate font-serif text-lg font-bold sm:text-2xl">
+              {round.title}
+            </h1>
+            <p className="font-mono-typed truncate text-[10px] uppercase tracking-wider text-muted-foreground">
+              {STATUS_LABEL[round.status] ?? round.status} · {round.teamCount} Teams ·{" "}
+              {round.budget_min} min
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={copy}
+            aria-label="Rundencode kopieren"
+            className="font-mono-typed flex shrink-0 items-center gap-1.5 rounded-sm bg-secondary px-2.5 py-1.5 text-base font-bold tracking-[0.2em] sm:text-xl"
+          >
+            {round.code}
+            {copied ? (
+              <Check className="h-4 w-4 shrink-0 text-stamp" />
+            ) : (
+              <Copy className="h-4 w-4 shrink-0 text-muted-foreground" />
             )}
           </button>
-        ))}
-      </nav>
+        </div>
+
+        <nav className="-mx-4 mt-2 flex snap-x gap-1.5 overflow-x-auto px-4 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {STEPS.map(([key, label]) => (
+            <button
+              key={key}
+              type="button"
+              onClick={() => setStep(key)}
+              className={cn(
+                "relative min-h-[44px] shrink-0 snap-start whitespace-nowrap rounded-sm border border-border px-3 font-mono-typed text-[11px] uppercase tracking-wider",
+                step === key && "border-stamp bg-stamp/10 text-stamp",
+              )}
+            >
+              {label}
+              {key === "messages" && pendingCount > 0 && (
+                <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-stamp px-1 text-[9px] font-bold text-paper">
+                  {pendingCount}
+                </span>
+              )}
+            </button>
+          ))}
+        </nav>
+      </div>
+
 
 
       {error && (
@@ -442,10 +447,20 @@ function RoundPage() {
       )}
       {step === "live" && (
         <>
-          <div className="mt-4 rounded-sm border border-border bg-secondary/40 p-3">
-            <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+          {pendingCount > 0 && (
+            <button
+              type="button"
+              onClick={() => setStep("messages")}
+              className="mt-4 flex min-h-[44px] w-full items-center justify-center gap-2 rounded-sm border border-stamp bg-stamp/10 px-3 py-2 font-mono-typed text-[11px] uppercase tracking-wider text-stamp"
+            >
+              {pendingCount} neue Meldung(en) · Reiter «Nachrichten»
+            </button>
+          )}
+          {/* Eingeklappt, damit die Gruppenliste sofort sichtbar ist. */}
+          <details className="mt-3 rounded-sm border border-border bg-secondary/40 p-3">
+            <summary className="font-mono-typed cursor-pointer list-none text-[11px] uppercase tracking-wider text-muted-foreground">
               Zeit nachgeben · aktuell {round.budget_min} min
-            </p>
+            </summary>
             <div className="mt-2 flex gap-2">
               {[5, 10].map((plus) => (
                 <button
@@ -472,16 +487,8 @@ function RoundPage() {
             <p className="mt-1 text-xs text-muted-foreground">
               Alle Gruppen erhalten innert Sekunden ein Pop-up mit der neuen Restzeit.
             </p>
-          </div>
-          {pendingCount > 0 && (
-            <button
-              type="button"
-              onClick={() => setStep("messages")}
-              className="mt-2 flex w-full items-center justify-center gap-2 rounded-sm border border-stamp bg-stamp/10 px-3 py-2 font-mono-typed text-[10px] uppercase tracking-wider text-stamp"
-            >
-              {pendingCount} neue Meldung(en) · im Reiter «Nachrichten» ansehen
-            </button>
-          )}
+          </details>
+
           <LiveBoard
             password={password}
             code={round.code}

@@ -247,7 +247,7 @@ function TeamDetailDialog({
   const s = status;
   return (
     <Dialog open={s !== null} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-md">
+      <DialogContent className="max-h-[85svh] overflow-y-auto sm:max-w-md">
         {s && (
           <>
             <DialogHeader>
@@ -413,36 +413,41 @@ export function ProgressMatrix({
       <p className="font-mono-typed mt-3 text-[10px] uppercase tracking-wider text-muted-foreground">
         Wo steht die Klasse
       </p>
-      <div className="mt-1 grid grid-cols-7 items-end gap-1">
+      <div className="mt-1 flex items-end gap-1">
         {distribution.map((d) => (
-          <div key={d.stage} className="flex flex-col items-center gap-1">
-            <span className="font-mono-typed text-[10px] font-bold tabular-nums">
-              {d.count || ""}
-            </span>
+          <div key={d.stage} className="flex min-w-0 flex-1 flex-col items-center gap-1">
             <div
-              aria-hidden
-              className="w-full rounded-sm bg-primary/70"
-              style={{ height: `${4 + (d.count / maxCount) * 40}px` }}
-            />
-            <span className="font-mono-typed text-[9px] uppercase text-muted-foreground">
+              className="flex w-full items-end justify-center rounded-sm bg-primary/70"
+              style={{ height: `${8 + (d.count / maxCount) * 40}px` }}
+            >
+              {d.count > 0 && (
+                <span className="font-mono-typed text-[11px] font-bold leading-none tabular-nums text-primary-foreground">
+                  {d.count}
+                </span>
+              )}
+            </div>
+            <span className="font-mono-typed text-[11px] uppercase text-muted-foreground">
               {COL_LABEL[d.stage]}
             </span>
           </div>
         ))}
-        <div className="flex flex-col items-center gap-1">
-          <span className="font-mono-typed text-[10px] font-bold tabular-nums text-stamp">
-            {finishedCount || ""}
-          </span>
+        <div className="flex min-w-0 flex-1 flex-col items-center gap-1">
           <div
-            aria-hidden
-            className="w-full rounded-sm bg-stamp/70"
-            style={{ height: `${4 + (finishedCount / maxCount) * 40}px` }}
-          />
-          <span className="font-mono-typed text-[9px] uppercase text-muted-foreground">
-            fertig
+            className="flex w-full items-end justify-center rounded-sm bg-stamp/80"
+            style={{ height: `${8 + (finishedCount / maxCount) * 40}px` }}
+          >
+            {finishedCount > 0 && (
+              <span className="font-mono-typed text-[11px] font-bold leading-none tabular-nums text-paper">
+                {finishedCount}
+              </span>
+            )}
+          </div>
+          <span className="font-mono-typed text-[11px] uppercase text-muted-foreground">
+            ✓
           </span>
         </div>
       </div>
+
 
       {/* Statusliste */}
       <div className="mt-4 space-y-1.5">
