@@ -47,7 +47,7 @@ export function MessageComposer({ password, code, teamId, onSent }: Props) {
         placeholder={
           teamId
             ? "Antwort an diese Gruppe …"
-            : "z. B. Treffpunkt um 16:00 beim Bahnhof Heerbrugg"
+            : "z. B. Treffpunkt um 16:00 bei der Bushaltestelle Widnau, Gemeindehaus"
         }
         className="w-full rounded-sm border border-border bg-paper px-3 py-2 text-[16px] focus:border-stamp focus:outline-none focus:ring-2 focus:ring-stamp/25"
       />
