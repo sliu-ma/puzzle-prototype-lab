@@ -4,16 +4,48 @@ Neue Reihenfolge: 1 Mobilität, 2 Konsum, **3 Wohnen (Jakobs Haus)**, **4 Biodiv
 
 Die gedruckten QR-Codes bleiben unverändert: die Zeichenfolge wandert mit dem Inhalt mit. Der Code beim Haus öffnet neu Etappe 3, der im Wald Etappe 4.
 
-## Was du inhaltlich anpassen musst (Texte im Spiel)
+## Konkrete Text-Anpassungen (drei Übergänge)
 
-1. **Übergang nach Etappe 2 (Konsum).** Der Ausblick am Ende von Etappe 2 zeigt heute auf die Wald-Lichtung; neu auf Jakobs Haus.
-2. **Ende Wohnen → Biodiversität.** Der Abschlusstext bei Jakobs Haus verweist neu auf die Wald-Lichtung statt aufs Wasserkraftwerk.
-3. **Ende Biodiversität → Energie.** Der Abschlusstext im Wald verweist neu aufs alte Wasserkraftwerk statt auf Jakobs Haus.
-4. **Erzähl-Logik prüfen.** Falls in einem Text ein Gegenstand oder Hinweis aus dem Wald im Haus wieder auftaucht (oder umgekehrt), muss die Begründung getauscht werden – das ist die einzige Stelle, wo du eventuell einen Satz neu schreiben musst. Ich prüfe alle Briefing- und Abschlusstexte der beiden Etappen und melde dir jede Stelle, die inhaltlich nicht einfach umgehängt werden kann.
-5. **Uhrzeiten in den Notizen.** Die eingefrorenen Uhrzeiten in den Kopfzeilen wandern mit, damit die Zeitlinie weiter aufsteigend bleibt.
-6. **Wegzeiten / Laufweg.** Der Weg Konsum → Haus → Wald → Wasserkraftwerk sollte örtlich Sinn machen. Wenn die Distanz Haus → Wald deutlich länger ist, lohnt sich eine Anpassung des Zeitbudgets bzw. ein Hinweis im Briefing.
-7. **Hearing.** Die zehn Fragen werden umsortiert: Fragen 5/6 Wohnen, 7/8 Biodiversität. Themenzuordnung und Auswertung passen sich mit an.
-8. **Aussenmaterial (nicht im Spiel).** Deine Postenkarten/Laufblätter und die Reihenfolge der Ausdrucke musst du selber tauschen; die QR-Codes bleiben gleich.
+Die Erzählfäden hängen nur an drei Stellen an der Reihenfolge. Glücklicherweise passt die Logik sogar besser: die Holzkiste, die heute am Forsthaus die Stromrechnungen enthält, kann nach dem Tausch die **Schlüsselkarte fürs Wasserkraftwerk** enthalten – das Zahlenschloss öffnet also direkt den Weg zu Marlene.
+
+### 1. Ende Etappe 2 (Konsum) – Kassenbon führt neu zum Haus
+
+Heute: Titel „Zur Waldlichtung.", Bon-Text: „Geh zurück zur Lichtung im Wald. Dort wartet mein Notizbuch auf dich."
+
+Neu (Vorschlag): Titel **„Zu Jakobs Haus."**, Bon-Text:
+
+> „Du bist auf dem richtigen Weg. Geh zu meinem Haus. Auf dem Küchentisch liegt eine Zeichnung – nicht jede Massnahme spart gleich viel Energie."
+
+### 2. Ende Etappe 3 (Wohnen) – neu Wegweiser zur Wald-Lichtung
+
+Heute: Titel „Zum Wasserkraftwerk.", Text mit Schlüsselkarte im Sicherungskasten → Marlene.
+
+Neu (Vorschlag): Titel **„Zur Wald-Lichtung."**, Text:
+
+> Im Sicherungskasten steckt ein Zettel:
+> „Beeil dich. Geh zurück zur Lichtung im Wald – dort soll gerodet werden. Beim Forsthaus liegt mein Notizbuch. Man wird dich brauchen."
+
+Hinweistext darunter: „In Etappe 4 sortierst du die Tiere der Lichtung und knackst den Code von Jakobs Kiste."
+
+### 3. Ende Etappe 4 (Biodiversität) – Kiste enthält neu die Schlüsselkarte
+
+Heute: Titel „Zurück ins Haus.", im Forsthaus liegt eine Holzkiste mit alten Strom- und Heizrechnungen („Im Haus wartet der nächste Hinweis").
+
+Neu (Vorschlag): Titel **„Zum Wasserkraftwerk."**, Text:
+
+> In der Kiste, die du gerade geöffnet hast, liegen eine Schlüsselkarte und ein Brief:
+> „Du hast fast alles gefunden. Mit dieser Karte gelangst du ins alte Wasserkraftwerk. Dort wartet Marlene mit den letzten Unterlagen."
+
+(Dieser Brief ist der heutige Text aus dem Haus – er zieht einfach um.)
+
+Die Briefing-Texte zu Beginn der beiden Etappen (Zeichnung auf dem Küchentisch / Notizbuch beim Forsthaus) bleiben **unverändert** – sie hängen nicht von der Reihenfolge ab. Dasselbe gilt für die Rätsel und Fachinputs selbst.
+
+## Weitere Punkte
+
+- **Uhrzeiten in den Notizen.** Die eingefrorenen Uhrzeiten in den Kopfzeilen wandern mit, damit die Zeitlinie weiter aufsteigend bleibt.
+- **Wegzeiten / Laufweg.** Der Weg Konsum → Haus → Wald → Wasserkraftwerk sollte örtlich Sinn machen. Wenn die Distanz Haus → Wald deutlich länger ist, lohnt sich eine Anpassung des Zeitbudgets bzw. ein Hinweis im Briefing.
+- **Hearing.** Die zehn Fragen werden umsortiert: Fragen 5/6 Wohnen, 7/8 Biodiversität. Themenzuordnung und Auswertung passen sich mit an.
+- **Aussenmaterial (nicht im Spiel).** Deine Postenkarten/Laufblätter und die Reihenfolge der Ausdrucke musst du selber tauschen; die QR-Codes bleiben gleich.
 
 ## Was automatisch mitgeht
 
