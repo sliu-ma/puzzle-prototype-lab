@@ -410,7 +410,7 @@ export function applyRestoredEvents(
  * Zurücksetzen vollständig geleert, damit auf einem Gerät, das schon einmal
  * eine Runde gespielt hat, keine Reste in die neue Partie durchschlagen.
  */
-const RESET_PREFIXES = ["maya-", "akte-", "etappe-", "mm."];
+const RESET_PREFIXES = ["maya-", "akte-", "etappe-", "mm.", "hearing-"];
 
 export function resetAll() {
   try {
