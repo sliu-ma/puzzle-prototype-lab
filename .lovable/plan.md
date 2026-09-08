@@ -15,7 +15,7 @@ Heute: Titel „Zur Waldlichtung.", Bon-Text: „Geh zurück zur Lichtung im Wal
 Neu (Vorschlag): Titel **„Zurück ins Haus."**, Text:
 
 > Maja packt die Einkäufe in die Taschen und bringt sie zu Jakobs Haus. Kaum hat sie die Taschen in der Küche abgestellt, fällt der Strom aus. Auf dem Küchentisch liegt eine Zeichnung des Hauses und ein kurzer Zettel von Jakob:
-> „Gut gemacht. Nicht jede Massnahme spart gleich viel Energie. Finde heraus, welche am meisten bewirken, dann geht das Licht wieder an."
+> „Der Strom ist ausgefallen, weil das Haus zu viel auf einmal zieht. Finde heraus, welche Massnahmen am meisten Energie sparen, dann springt die Sicherung wieder an."
 
 ### 2. Ende Etappe 3 (Wohnen), neu Wegweiser zur Wald-Lichtung
 
