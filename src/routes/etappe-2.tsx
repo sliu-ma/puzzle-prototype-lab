@@ -287,17 +287,20 @@ function AktePage() {
         {step === "naechstes" && (
           <PaperCard rotate={-0.5} tape="top-left">
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-              Etappe 3 · Wald-Lichtung
+              Etappe 3 · Zurück ins Haus
             </p>
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-              „Zur Waldlichtung."
+              „Zurück ins Haus."
             </h2>
             <div className="mt-4 rounded-sm border border-dashed border-stamp/40 bg-paper-deep/30 p-5">
               <p className="font-serif italic leading-relaxed">
-                Die Kasse piepst. Auf dem Kassenbon steht:
+                Maja packt die Einkäufe in die Taschen und bringt sie zu Jakobs
+                Haus. Kaum ist sie in der Küche, fällt der Strom aus. Auf dem
+                Küchentisch liegt ein Zettel:
                 <br /><br />
-                „Du bist auf dem richtigen Weg. Geh zurück zur Lichtung im Wald.
-                Dort wartet mein Notizbuch auf dich."
+                „Der Strom ist ausgefallen, weil das Haus zu viel auf einmal
+                zieht. Finde heraus, welche Massnahmen am meisten Energie
+                sparen, dann springt die Sicherung wieder an."
               </p>
               <p className="mt-3 font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
                 J.
@@ -311,8 +314,8 @@ function AktePage() {
                 onClick={() =>
                   envelope.ask({
                     nr: 3,
-                    ort: "Wald-Lichtung · Etappe 3",
-                    etappeLabel: "Etappe 3 · Wald-Lichtung",
+                    ort: "Jakobs Haus · Etappe 3",
+                    etappeLabel: "Etappe 3 · Jakobs Haus",
                     onConfirm: () => navigate({ to: "/etappe-3" }),
                   })
                 }

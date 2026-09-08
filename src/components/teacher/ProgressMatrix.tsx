@@ -34,8 +34,8 @@ export const COL_LABEL: Record<number, string> = {
 export const COL_NAME: Record<number, string> = {
   1: "Mobilität",
   2: "Konsum",
-  3: "Biodiversität",
-  4: "Wohnen",
+  3: "Wohnen",
+  4: "Biodiversität",
   5: "Energie",
   6: "Hearing",
 };
