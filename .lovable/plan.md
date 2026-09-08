@@ -8,13 +8,14 @@ Die gedruckten QR-Codes bleiben unverändert: die Zeichenfolge wandert mit dem I
 
 Die Erzählfäden hängen nur an drei Stellen an der Reihenfolge. Glücklicherweise passt die Logik sogar besser: die Holzkiste, die heute am Forsthaus die Stromrechnungen enthält, kann nach dem Tausch die **Schlüsselkarte fürs Wasserkraftwerk** enthalten – das Zahlenschloss öffnet also direkt den Weg zu Marlene.
 
-### 1. Ende Etappe 2 (Konsum) – Kassenbon führt neu zum Haus
+### 1. Ende Etappe 2 (Konsum) – Maja bringt die Einkäufe ins Haus
 
 Heute: Titel „Zur Waldlichtung.", Bon-Text: „Geh zurück zur Lichtung im Wald. Dort wartet mein Notizbuch auf dich."
 
-Neu (Vorschlag): Titel **„Zu Jakobs Haus."**, Bon-Text:
+Neu (Vorschlag): Titel **„Zurück ins Haus."**, Text:
 
-> „Du bist auf dem richtigen Weg. Geh zu meinem Haus. Auf dem Küchentisch liegt eine Zeichnung – nicht jede Massnahme spart gleich viel Energie."
+> Maja packt die Einkäufe in die Taschen und bringt sie zu Jakobs Haus. Auf dem Küchentisch liegt eine Zeichnung des Hauses. Daneben ein kurzer Zettel:
+> „Gut gemacht. Nicht jede Massnahme spart gleich viel Energie. Finde heraus, welche am meisten bewirken."
 
 ### 2. Ende Etappe 3 (Wohnen) – neu Wegweiser zur Wald-Lichtung
 
