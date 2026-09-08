@@ -256,7 +256,7 @@ function AktePage() {
           return (
           <InputCarousel
             kicker="Fachlicher Input · 3 Lernkarten"
-            title="Wie Konsum wirkt"
+             title="Nachhaltig einkaufen, worauf es ankommt"
             intro="Drei Grundregeln, die du gerade angewendet hast, und die der Rat heute Abend hören will:"
             cards={[
               {
