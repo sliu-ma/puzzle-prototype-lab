@@ -5,6 +5,7 @@ import { CheckCircle2, XCircle, Gauge, RefreshCw, ArrowUp, ArrowDown, Sparkles, 
 import { PaperCard } from "@/components/case-file/PaperCard";
 import { Stamp } from "@/components/case-file/Stamp";
 import { StageGate } from "@/components/case-file/StageGate";
+import { QRGate } from "@/components/case-file/QRGate";
 
 import { completeStage, finishGame, getHearingClock, getStartTs, getEndTs, getBudgetMin } from "@/lib/progress";
 import { awardBadge } from "@/lib/badges";
@@ -37,10 +38,22 @@ export const Route = createFileRoute("/finale")({
   component: FinaleGated,
 });
 
+/** Zeichenfolge im QR-Code des Hearings (hängt im Schulzimmer). */
+const HEARING_TOKEN = "Hq4Zn8Tv2LrYc6Wk1Pm5";
+
 function FinaleGated() {
   return (
     <StageGate stage={6}>
-      <FinalePage />
+      <QRGate
+        stage={6}
+        token={HEARING_TOKEN}
+        storageKey="hearing-unlocked"
+        title={<>Hearing, QR-Code im Schulzimmer scannen</>}
+        description="Das Hearing ist versiegelt. Scanne den QR-Code im Schulzimmer, um die Fragerunde des Gemeinderats zu öffnen."
+        label="Hearing · Versiegelt"
+      >
+        <FinalePage />
+      </QRGate>
     </StageGate>
   );
 }
