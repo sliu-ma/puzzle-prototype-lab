@@ -296,7 +296,7 @@ function AktePage() {
         )}
 
         <p className="mt-12 text-center font-mono-typed text-xs uppercase tracking-[0.2em] text-muted-foreground">
-         , Etappe 5 · Altes Wasserkraftwerk
+         ETAPPE 5 · ALTES WASSERKRAFTWERK
         </p>
       </div>
 
