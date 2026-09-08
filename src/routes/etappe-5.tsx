@@ -271,7 +271,7 @@ function AktePage() {
                 müssen sofort zur Gemeinderatssitzung.“
               </p>
               <p className="mt-3 font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
-               , Marlene Vogt
+                MARLENE VOGT
               </p>
             </div>
             <p className="mt-5 text-sm text-foreground/70">
