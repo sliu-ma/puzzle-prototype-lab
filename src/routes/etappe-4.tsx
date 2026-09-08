@@ -341,7 +341,7 @@ function AktePage() {
         )}
 
         <p className="mt-12 text-center font-mono-typed text-xs uppercase tracking-[0.2em] text-muted-foreground">
-         , Etappe 3 · Wald-Lichtung
+          ETAPPE 3 · WALD-LICHTUNG
         </p>
       </div>
 
