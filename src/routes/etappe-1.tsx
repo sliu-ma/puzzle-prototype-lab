@@ -25,11 +25,11 @@ import { StageScoreRecap } from "@/components/case-file/StageScoreRecap";
 export const Route = createFileRoute("/etappe-1")({
   head: () => ({
     meta: [
-      { title: "Etappe 1, Bahnhof Heerbrugg | Majas Mission - Escape Game zu Nachhaltigkeit" },
+      { title: "Etappe 1, Bushaltestelle Widnau | Majas Mission - Escape Game zu Nachhaltigkeit" },
       {
         name: "description",
         content:
-          "Etappe 1: Auf dem Bahnhof liegt Jakobs altes Reiseticket. Welchen Weg hat er wirklich gewählt? – Majas Mission ist ein mobiler Bildungs Escape Game zum Thema Nachhaltigkeit: Schulklassen lösen reale Rätsel zu Mobilität, Konsum, Energie & mehr",
+          "Etappe 1: An der Bushaltestelle liegt Jakobs altes Reiseticket. Welchen Weg hat er wirklich gewählt? – Majas Mission ist ein mobiler Bildungs Escape Game zum Thema Nachhaltigkeit: Schulklassen lösen reale Rätsel zu Mobilität, Konsum, Energie & mehr",
       },
     ],
   }),
@@ -58,7 +58,7 @@ const HINTS_003: Hint[] = [
     unlockMin: 9,
     label: "Auflösung",
     title: "So geht's",
-    body: "Start: Genf, Ziel: Widnau (Bahnhof Heerbrugg). Die nachhaltigste Route ist der Zug (IC 1 → IC 3 → IR 13) mit ca. 3 kg CO₂ pro Person. Auto und Inlandflug stossen ein Vielfaches aus, ohne nennenswerte Zeitersparnis.",
+    body: "Start: Genf, Ziel: Widnau, Gemeindehaus (Bushaltestelle). Die nachhaltigste Route ist der Zug (IC 1 → IC 3 → IR 13 bis Heerbrugg) mit ca. 3 kg CO₂ pro Person. Auto und Inlandflug stossen ein Vielfaches aus, ohne nennenswerte Zeitersparnis.",
   },
 ];
 
@@ -69,8 +69,8 @@ function AkteGated() {
         stage={1}
         token={AKTE_003_TOKEN}
         storageKey="akte-003-unlocked"
-        title={<>Etappe 1, QR-Code am Bahnhof scannen</>}
-        description="Diese Etappe ist versiegelt. Scanne den QR-Code, der am Bahnhof Heerbrugg für dich hinterlegt ist."
+        title={<>Etappe 1, QR-Code an der Bushaltestelle scannen</>}
+        description="Diese Etappe ist versiegelt. Scanne den QR-Code, der an der Bushaltestelle Widnau, Gemeindehaus für dich hinterlegt ist."
         label="Etappe 1 · Versiegelt"
       >
         <AktePage />
@@ -179,7 +179,7 @@ function AktePage() {
               ← Zurück zur Übersicht
             </Link>
             <h1 className="mt-1.5 font-serif text-2xl font-bold leading-tight sm:mt-2 sm:text-5xl">
-              Etappe 1 · Bahnhof
+              Etappe 1 · Bushaltestelle
             </h1>
             <p className="mt-0.5 font-serif italic text-sm text-foreground/70 sm:text-base">
               Auf den Spuren einer alten Reise
@@ -230,12 +230,12 @@ function AktePage() {
         {step === "brief" && (
           <PaperCard rotate={-0.4}>
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-              Notiz 01, Bahnhof Heerbrugg, Bank am Gleis 1
+              Notiz 01, Bushaltestelle Widnau, Gemeindehaus · Wartebank
             </p>
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">Grossvaters altes Reiseticket</h2>
             <p className="mt-1 font-mono-typed text-xs text-muted-foreground">[Hinweis gefunden um {jetzt}]</p>
             <p className="mt-5 text-[15px] leading-relaxed">
-              Im alten Bahnhofsgebäude findet Maja am Fahrkartenschalter ein Couvert mit Jakobs alten Reiseunterlagen und ein Zettel. Darauf steht:
+              An der Bushaltestelle Widnau, Gemeindehaus findet Maja auf der Wartebank ein Couvert mit Jakobs alten Reiseunterlagen und einem Zettel. Darauf steht:
             </p>
             <blockquote className="mt-4 border-l-4 border-stamp pl-4 font-serif italic text-[15px] leading-relaxed">
               „Ich habe immer das gewählt, was am wenigsten Spuren hinterlässt. Findest du heraus, welchen Weg ich nach
@@ -316,7 +316,7 @@ function AktePage() {
                 Verbindung identifiziert
               </p>
               <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-                Genf <span className="text-muted-foreground">›</span> Widnau
+                Genf <span className="text-muted-foreground">›</span> Widnau, Gemeindehaus
               </h2>
               <p className="mt-1 text-sm text-foreground/70">
                 Drei Routen stehen zur Auswahl. Tippe eine an, um Karte und Verbindung im Detail zu sehen.
@@ -426,7 +426,7 @@ function AktePage() {
         {envelope.dialog}
 
         <p className="mt-12 text-center font-mono-typed text-xs uppercase tracking-[0.2em] text-muted-foreground">
-          ETAPPE 1 · BAHNHOF HEERBRUGG
+          ETAPPE 1 · BUSHALTESTELLE WIDNAU
         </p>
       </div>
 
