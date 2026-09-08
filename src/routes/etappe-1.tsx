@@ -68,7 +68,7 @@ function AkteGated() {
       <QRGate
         stage={1}
         token={AKTE_003_TOKEN}
-        storageKey="akte-003-unlocked"
+        storageKey="akte-001-unlocked"
         title={<>Etappe 1, QR-Code an der Bushaltestelle scannen</>}
         description="Diese Etappe ist versiegelt. Scanne den QR-Code, der an der Bushaltestelle Widnau, Gemeindehaus für dich hinterlegt ist."
         label="Etappe 1 · Versiegelt"
