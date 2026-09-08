@@ -53,8 +53,8 @@ export type StageInfo = {
 export const STAGES: StageInfo[] = [
   { nr: 1, to: "/etappe-1", ort: "Bahnhof", thema: "Mobilität" },
   { nr: 2, to: "/etappe-2", ort: "Dorfladen", thema: "Konsum" },
-  { nr: 3, to: "/etappe-3", ort: "Wald-Lichtung", thema: "Biodiversität" },
-  { nr: 4, to: "/etappe-4", ort: "Jakobs Haus", thema: "Wohnen" },
+  { nr: 3, to: "/etappe-3", ort: "Jakobs Haus", thema: "Wohnen" },
+  { nr: 4, to: "/etappe-4", ort: "Wald-Lichtung", thema: "Biodiversität" },
   { nr: 5, to: "/etappe-5", ort: "Wasserkraftwerk", thema: "Energie" },
   { nr: 6, to: "/finale", ort: "Gemeindesaal", thema: "Finale" },
 ];

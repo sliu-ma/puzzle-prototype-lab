@@ -2,10 +2,10 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { PaperCard } from "@/components/case-file/PaperCard";
 import { Stamp } from "@/components/case-file/Stamp";
-import { CodeLock } from "@/components/case-file/CodeLock";
-import { InputCarousel } from "@/components/case-file/InputCarousel";
 import { QRGate } from "@/components/case-file/QRGate";
 import { StageGate } from "@/components/case-file/StageGate";
+import { EnergyGame } from "@/components/case-file/EnergyGame";
+import { InputCarousel } from "@/components/case-file/InputCarousel";
 import { HintSystem, type Hint } from "@/components/case-file/HintSystem";
 import { completeStage, getFrozenClock } from "@/lib/progress";
 import { tryAwardNoHintStage } from "@/lib/badges";
@@ -16,72 +16,61 @@ import { cn } from "@/lib/utils";
 import { useEnvelopePrompt } from "@/components/case-file/EnvelopeDialog";
 import { useSuccessBurst } from "@/components/case-file/SuccessBurst";
 import { StageScoreRecap } from "@/components/case-file/StageScoreRecap";
-import { IconStamp } from "@/components/case-file/IconStamp";
-import { Search } from "lucide-react";
-import {
-  RoteListeChart,
-  UrsachenCarousel,
-  VielfaltGrid,
-} from "@/components/case-file/BiodiversityCharts";
+import energieetiketteAsset from "@/assets/energieetikette.png.asset.json";
+import waschmaschineEtiketteAsset from "@/assets/waschmaschine-klasse-a.png.asset.json";
+import waschmaschineEtiketteEAsset from "@/assets/waschmaschine-klasse-e.png.asset.json";
+import { AlltagsTippsGrid, SparPotenzialChart } from "@/components/case-file/WohnenCharts";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+
+const HINTS_004: Hint[] = [
+  {
+    id: 0,
+    unlockMin: 3,
+    label: "Hinweis 1",
+    title: "Grosse Posten zuerst",
+    body: "Klick als Erstes auf Heizung/Raumtemperatur, Dusche und die Wäsche. Kleine Geräte wie Staubsauger oder Fernseher bringen nur wenige Punkte.",
+  },
+  {
+    id: 1,
+    unlockMin: 6,
+    label: "Hinweis 2",
+    title: "Gewohnheiten sind gratis, und stark",
+    body: "18 °C heizen, kurz duschen, Wäsche aufhängen, Eco-Programme, Deckel auf den Topf, Kühlschrank auf 7 °C: alles kostet 0 CHF und bringt zusammen schon fast die 3'500 ESP.",
+  },
+  {
+    id: 2,
+    unlockMin: 9,
+    label: "Auflösung",
+    title: "So erreichst du die 3'500 ESP",
+    body: "Nur mit Verhalten: 18 °C (1480) + 5-Min-Dusche (820) + Aufhängen (550) + Eco-Waschen (340) + Eco-Spülen (150) + Umluft (20) + Deckel + Pfannengrösse (220) + Kühlschrank 7 °C (90) = ~3'670 ESP. Ergänze eine LED-Lampe (60 CHF) oder Sparbrause (30 CHF), Budget bleibt fast unangetastet.",
+  },
+];
 
 export const Route = createFileRoute("/etappe-3")({
   head: () => ({
     meta: [
-      { title: "Etappe 3, Wald-Lichtung | Majas Mission - Escape Game zu Nachhaltigkeit" },
+      { title: "Etappe 3, Jakobs Haus | Majas Mission - Escape Game zu Nachhaltigkeit" },
       {
         name: "description",
         content:
-          "Etappe 3: Beim Forsthaus liegt Jakobs Notizbuch. Sortiere die Tiere und entschlüssele den Code des Türschlosses. – Majas Mission ist ein mobiler Bildungs Escape Game zum Thema Nachhaltigkeit: Schulklassen lösen reale Rätsel zu Mobilität, Konsum, Energie & mehr",
+          "Etappe 3: Eine Zeichnung von Jakobs Haus, alte Rechnungen, und das Ziel: Energiesparpunkte sammeln. – Majas Mission ist ein mobiler Bildungs Escape Game zum Thema Nachhaltigkeit: Schulklassen lösen reale Rätsel zu Mobilität, Konsum, Energie & mehr",
       },
     ],
   }),
   component: AkteGated,
 });
 
-const AKTE_002_TOKEN = "Mn7YxQ2pVe9TbR4Ks0Lh";
-const EXPECTED_CODE = "123";
-
-const HINTS_002: Hint[] = [
-  {
-    id: 0,
-    unlockMin: 3,
-    label: "Hinweis 1",
-    title: "Sortier zuerst die Tiere",
-    body: "Lege die acht Polaroids vor dich. Welche dieser Tiere sind in der Schweiz bedroht? Fünf davon sind in der Schweiz in irgendeiner Form gefährdet, drei sind nicht gefährdet.",
-  },
-  {
-    id: 1,
-    unlockMin: 6,
-    label: "Hinweis 2",
-    title: "Dreh die Karten um",
-    body: "Hinter einer einzigen Karte verbergen sich gleich alle drei Zahlen des Codes. Such bei den bedrohten Arten weiter.",
-  },
-  {
-    id: 2,
-    unlockMin: 9,
-    label: "Auflösung",
-    title: "So geht's",
-    body: "Hinter der Kreuzotter (in der Schweiz stark gefährdet) stehen die Zahlen 1, 2 und 3. Aufsteigend ergibt das den Code 1, 2, 3.",
-  },
-];
+const AKTE_004_TOKEN = "Wb6Vc4Hn1ZqYpMr8Js3F";
 
 function AkteGated() {
   return (
     <StageGate stage={3}>
       <QRGate
         stage={3}
-        token={AKTE_002_TOKEN}
-        storageKey="akte-002-unlocked"
-        title={<>Etappe 3, QR-Code an der Hütte scannen</>}
-        description="Diese Etappe ist versiegelt. Scanne den QR-Code beim Forsthaus an der Lichtung."
+        token={AKTE_004_TOKEN}
+        storageKey="akte-003-unlocked"
+        title={<>Etappe 3, QR-Code in Jakobs Haus scannen</>}
+        description="Diese Etappe ist versiegelt. Scanne den QR-Code, der bei Jakob auf dem Küchentisch liegt."
         label="Etappe 3 · Versiegelt"
       >
         <AktePage />
@@ -90,11 +79,12 @@ function AkteGated() {
   );
 }
 
-type Step = "brief" | "code" | "input" | "naechstes";
+type Step = "brief" | "raetselkarte" | "spiel" | "input" | "naechstes";
 
 const STEPS: { id: Step; label: string }[] = [
-  { id: "brief", label: "Beobachtungsbuch" },
-  { id: "code", label: "Code eintippen" },
+  { id: "brief", label: "Zettel" },
+  { id: "raetselkarte", label: "Rätselkarte" },
+  { id: "spiel", label: "Haus planen" },
   { id: "input", label: "Fachlicher Input" },
   { id: "naechstes", label: "Nächste Etappe" },
 ];
@@ -103,13 +93,12 @@ function AktePage() {
   const navigate = useNavigate();
   const envelope = useEnvelopePrompt();
   const { burst, celebrate } = useSuccessBurst({ stageNr: 3 });
-  const [step, setStep] = usePersistentState<Step>("akte-3-step", "brief");
+  const [step, setStep] = usePersistentState<Step>("akte-4-step", "brief");
   useScrollToTopOnChange(step);
   const [unlockedSteps, setUnlockedSteps] = usePersistentSet<Step>(
-    "akte-3-unlocked-steps",
+    "akte-4-unlocked-steps",
     () => new Set(["brief"]),
   );
-  const [showCodeHint, setShowCodeHint] = useState(false);
 
 
   useEffect(() => {
@@ -148,10 +137,10 @@ function AktePage() {
               ← Zurück zur Übersicht
             </Link>
             <h1 className="mt-1.5 font-serif text-2xl font-bold leading-tight sm:mt-2 sm:text-5xl">
-              Etappe 3 · Wald-Lichtung
+              Etappe 3 · Zuhause
             </h1>
             <p className="mt-0.5 font-serif italic text-sm text-foreground/70 sm:text-base">
-              Jakobs Notizbuch beim Forsthaus
+              Jakobs Haus, Zeichnung auf dem Küchentisch
             </p>
           </div>
           <Stamp rotate={-6}>Vertraulich</Stamp>
@@ -197,93 +186,147 @@ function AktePage() {
         {step === "brief" && (
           <PaperCard rotate={-0.4}>
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-              Notiz 03 · Beobachtungsbuch · Forsthaus
+              Notiz 03 · Küchentisch · neben der Zeichnung
             </p>
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-              „Die Zeit läuft."
+              Eine Zeichnung und ein knapper Zettel
             </h2>
             <p className="mt-1 font-mono-typed text-xs text-muted-foreground">
-              [Aufgeschlagenes Beobachtungsbuch · {getFrozenClock("maya-clock-akte-003")} Uhr]
+              [Hauszeichnung + Rechnungen aus der Kiste · {getFrozenClock("maya-clock-akte-003")} Uhr]
             </p>
             <blockquote className="mt-5 border-l-4 border-stamp pl-4 text-[15px] leading-relaxed">
-              Die Lichtung hat sich verändert. Zwischen den Bäumen hängen
-              Absperrbänder. Ein Schild warnt: Rodung beginnt in Kürze.
+              Auf dem Küchentisch liegt eine Zeichnung des Hauses: ein
+              Querschnitt mit allen Räumen. Daneben ein kurzer Zettel:
               <br />
-              &nbsp;&nbsp;&nbsp;
               <br />
-              Beim Forsthaus liegt Jakobs Notizbuch. Auf der letzten Seite
-              steht:
-              <br />
-              &nbsp;&nbsp;&nbsp;
-              <br />
-              „Manche dieser Tiere sind hier noch sicher, andere stehen kurz vor
-              dem Verschwinden. Trenne die gefährdeten von den nicht
-              gefährdeten Arten, um das Kiste zu öffnen.“
+              „Nicht jede Massnahme spart gleich viel Energie. Finde heraus,
+              welche am meisten bewirken.“
             </blockquote>
             <div className="mt-6 flex justify-end">
               <button
-                onClick={() => setShowCodeHint(true)}
+                onClick={() => goto("raetselkarte")}
                 className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
               >
-                Code eintippen →
+                Weiter zur Rätselkarte →
               </button>
             </div>
           </PaperCard>
         )}
 
-
-        {step === "code" && (
-          <PaperCard rotate={-0.2} tape="top-right">
+        {step === "raetselkarte" && (
+          <PaperCard rotate={0.3} tape="top">
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-              Zahlenschloss · Ausrüstungskiste
+              Rätselkarte · Auftrag von Jakob
             </p>
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-              Findest du den Code?
+              Plane Jakobs Haus um
             </h2>
-            <p className="mt-3 text-[15px] text-foreground/80">
-              Tippe die drei Zahlen <strong>von der kleinsten zur grössten</strong>{" "}
-              ein.
-            </p>
-
-            <div className="mt-6">
-              <CodeLock expected={EXPECTED_CODE} onUnlock={() => celebrate(() => goto("input"))} />
+            <div className="mt-5 grid gap-4 sm:grid-cols-2">
+              <div className="rounded-sm border border-border bg-paper p-4">
+                <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
+                  Was du hast
+                </p>
+                <ul className="mt-2 space-y-1 text-[15px]">
+                  <li>· Querschnitt mit 5 Räumen</li>
+                  <li>· 1'000.– CHF Budget</li>
+                  <li>· Pro Gerät 2–3 Optionen</li>
+                </ul>
+              </div>
+              <div className="rounded-sm border border-border bg-paper p-4">
+                <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
+                  Dein Auftrag
+                </p>
+                <ol className="mt-2 list-decimal space-y-1 pl-5 text-[15px]">
+                  <li>Tippe Geräte im Haus an.</li>
+                  <li>Wähle eine Option pro Gerät.</li>
+                  <li>Achte aufs Budget.</li>
+                  <li>Sammle mind. 3'500 Energiesparpunkte.</li>
+                </ol>
+              </div>
             </div>
-
-            <div className="mt-6 flex justify-start">
+            <div className="mt-6 flex justify-between">
               <button
                 onClick={() => setStep("brief")}
                 className="rounded-sm border border-border bg-card px-4 py-2.5 font-serif text-sm hover:bg-secondary"
               >
                 ← Zurück
               </button>
+              <button
+                onClick={() => goto("spiel")}
+                className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
+              >
+                Haus planen →
+              </button>
             </div>
           </PaperCard>
         )}
 
+        {step === "spiel" && (
+          <div className="space-y-4">
+            <EnergyGame onErfolg={() => celebrate(() => goto("input"))} />
+            <div className="flex justify-start">
+              <button
+                onClick={() => setStep("raetselkarte")}
+                className="rounded-sm border border-border bg-card px-4 py-2.5 font-serif text-sm hover:bg-secondary"
+              >
+                ← Rätselkarte erneut ansehen
+              </button>
+            </div>
+          </div>
+        )}
+
         {step === "input" && (
           <InputCarousel
-            kicker="Fachlicher Input · Biodiversität"
-            title="Wie Biodiversität wirkt"
-            intro="Die Schweiz gehört in Europa zu den Ländern mit dem grössten Anteil bedrohter Arten. Drei Informationen, die du für den Rat brauchst:"
+            kicker="Fachlicher Input · Wohnen & Energie"
+            title="Wie Wohnen wirkt"
+            intro="Rund 40 % des Schweizer Energieverbrauchs entstehen in Gebäuden. Drei Impulse, die du fürs Hearing brauchst:"
             cards={[
               {
-                title: "Rote Liste",
-                body: "Jede dritte untersuchte Art in der Schweiz gilt heute als gefährdet oder ist bereits ausgestorben. Diese bedrohten Arten stehen auf der sogenannten Roten Liste.",
-                visual: <RoteListeChart />,
+                title: "Energieetiketten",
+                body: "Energieetiketten verraten, wie sparsam ein Gerät mit Strom umgeht. Geräte der Klasse A brauchen wenig Strom, Geräte der Klasse G deutlich mehr.",
+                visual: (
+                  <figure className="mx-auto flex w-full flex-col items-center">
+                    <div className="flex w-full items-end justify-center gap-3">
+                      <div className="flex flex-col items-center">
+                        <img
+                          src={waschmaschineEtiketteAsset.url}
+                          alt="Energieetikette einer Waschmaschine der Klasse A"
+                          className="block h-[220px] w-auto max-w-full object-contain"
+                        />
+                        <span className="mt-1 font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
+                          Klasse A
+                        </span>
+                      </div>
+                      <div className="flex flex-col items-center">
+                        <img
+                          src={waschmaschineEtiketteEAsset.url}
+                          alt="Energieetikette einer Waschmaschine der Klasse E"
+                          className="block h-[220px] w-auto max-w-full object-contain"
+                        />
+                        <span className="mt-1 font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
+                          Klasse E
+                        </span>
+                      </div>
+                    </div>
+                    <figcaption className="mt-2 text-center font-serif text-xs italic text-ink/70">
+                      Zwei Waschmaschinen im Vergleich. Links sparsam. Rechts stromhungrig.
+                    </figcaption>
+                  </figure>
+                ),
               },
               {
-                title: "Ursachen",
-                body: "Die Gründe für den Rückgang der Biodiversität sind vielfältig. Diese Bilder zeigen drei davon.",
-                visual: <UrsachenCarousel />,
+                title: "Kleine Veränderungen, grosse Wirkung",
+                body: "Schon kleine Änderungen im Alltag sparen viel Energie.",
+                visual: <AlltagsTippsGrid />,
               },
               {
-                title: "Biodiversität bedeutet Vielfalt",
-                body: "All das brauchen wir zum Leben. Die Vielfalt an Arten sichert uns genau das.",
-                visual: <VielfaltGrid />,
-                visualFirst: true,
+                title: "Energie sparen bedeutet Geld sparen",
+                body: "Es lohnt sich, Energie zu sparen. Wer Energie spart, spart auch Geld. Du kannst deine Nebenkosten um bis zu 30 % senken. Ein Beispiel:",
+                visual: <SparPotenzialChart />,
               },
             ]}
-            onBack={() => setStep("code")}
+            backLabel="← Zurück zum Spiel"
+            onBack={() => setStep("spiel")}
             nextLabel="Weiter zu Etappe 4 →"
             onNext={() => goto("naechstes")}
           />
@@ -294,34 +337,34 @@ function AktePage() {
           <PaperCard rotate={-0.5} tape="top-left">
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
 
-              Etappe 4 · Jakobs Haus
+              Etappe 4 · Wald-Lichtung
             </p>
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-              „Zurück ins Haus."
+              „Zur Wald-Lichtung."
             </h2>
             <div className="mt-4 rounded-sm border border-dashed border-stamp/40 bg-paper-deep/30 p-5">
               <p className="font-serif italic leading-relaxed">
-                Im Forsthaus entdeckt Maja eine Holzkiste. Darin liegen alte
-                Strom- und Heizrechnungen. Ein Zettel steckt dazwischen:
+                Im Sicherungskasten steckt ein Zettel:
                 <br /><br />
-                „Wer sorgsam mit Energie umgeht, schützt mehr als nur sein
-                Zuhause. Im Haus wartet der nächste Hinweis.“
+                „Beeil dich. Geh zurück zur Lichtung im Wald, dort soll gerodet
+                werden. Beim Forsthaus liegt mein Notizbuch. Man wird dich
+                brauchen."
               </p>
               <p className="mt-3 font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
                 J.
               </p>
             </div>
             <p className="mt-5 text-sm text-foreground/70">
-              Du wirfst einen letzten Blick auf das Bauschild, greifst die
-              Rechnungen, und rennst los.
+              In Etappe 4 sortierst du die Tiere der Lichtung und knackst den
+              Code von Jakobs Kiste.
             </p>
             <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
               <button
                 onClick={() =>
                   envelope.ask({
                     nr: 4,
-                    ort: "Jakobs Haus · Etappe 4",
-                    etappeLabel: "Etappe 4 · Jakobs Haus",
+                    ort: "Wald-Lichtung · Etappe 4",
+                    etappeLabel: "Etappe 4 · Wald-Lichtung",
                     onConfirm: () => navigate({ to: "/etappe-4" }),
                   })
                 }
@@ -340,38 +383,13 @@ function AktePage() {
         )}
 
         <p className="mt-12 text-center font-mono-typed text-xs uppercase tracking-[0.2em] text-muted-foreground">
-         , Etappe 3 · Wald-Lichtung
+         , Etappe 3 · Jakobs Haus
         </p>
       </div>
 
-      {step === "code" && (
-        <HintSystem stage={3} hints={HINTS_002} storageKey="akte-003-hints-start" />
+      {step === "spiel" && (
+        <HintSystem stage={3} hints={HINTS_004} storageKey="akte-003-hints-start" />
       )}
-
-      <Dialog open={showCodeHint} onOpenChange={setShowCodeHint}>
-        <DialogContent>
-          <DialogHeader>
-            <IconStamp icon={Search} tone="neutral" rotate={-5} className="mb-2" />
-            <DialogTitle className="text-center">Recherche-Tipp</DialogTitle>
-            <DialogDescription>
-              Falls du dir nicht sicher bist, ob ein Tier in der Schweiz
-              gefährdet ist: Recherchiere im Internet. Das hilft dir, die
-              Polaroids richtig zuzuordnen.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="mt-2 flex justify-center">
-            <button
-              onClick={() => {
-                setShowCodeHint(false);
-                goto("code");
-              }}
-              className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
-            >
-              Zum Zahlenschloss →
-            </button>
-          </div>
-        </DialogContent>
-      </Dialog>
       {envelope.dialog}
     </main>
   );

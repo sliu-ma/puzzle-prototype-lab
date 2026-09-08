@@ -255,7 +255,35 @@ function buildFragen(): Frage[] {
         `Im ${season} sind in der Schweiz z. B. ${SAISON_ANZEIGE[season].slice(0, 4).join(", ")} saisonal verfügbar.`,
     },
 
-    // F5 · Biodiversität · Multi
+    // F5 · Wohnen · Short (1 °C)
+    {
+      id: 7,
+      type: "short",
+      thema: "Wohnen",
+      ratsmitglied: "Ratsherr Frei",
+      frage:
+        "Wie viel Prozent Heizenergie spart eine Absenkung der Raumtemperatur um 1 °C?",
+      akzeptiert: ["6"],
+      erklaerung:
+        "Faustregel: 1 °C kühler entspricht ca. 6 % weniger Heizenergie.",
+    },
+    // F6 · Wohnen · Either (Bildvergleich Waschmaschinen)
+    {
+      id: 8,
+      type: "either",
+      thema: "Wohnen",
+      ratsmitglied: "Ratsherr Frei",
+      frage: "Welche Waschmaschine spart mehr Energie?",
+      optionen: [
+        { id: "a", label: "Klasse A", image: waschmaschineA.url },
+        { id: "e", label: "Klasse E", image: waschmaschineE.url },
+      ],
+      korrekt: "a",
+      erklaerung:
+        "Klasse A steht für die höchste Energieeffizienz. Klasse E verbraucht deutlich mehr Strom für dieselbe Wäscheladung.",
+    },
+
+    // F7 · Biodiversität · Multi
     {
       id: 5,
       type: "multi",
@@ -273,7 +301,7 @@ function buildFragen(): Frage[] {
       erklaerung:
         'Versiegelung, Pestizide und begradigte Gewässer zerstören Lebensräume. „Zu viel Regen" gehört nicht zu den Hauptursachen.',
     },
-    // F6 · Biodiversität · Single
+    // F8 · Biodiversität · Single (Rote Liste)
     {
       id: 6,
       type: "single",
@@ -284,34 +312,6 @@ function buildFragen(): Frage[] {
       optionen: ["Rund 1 von 20", "Rund 1 von 3", "Rund 1 von 100"],
       korrekt: 1,
       erklaerung: "Rund ein Drittel der untersuchten Arten ist gefährdet (BAFU).",
-    },
-
-    // F7 · Wohnen · Short
-    {
-      id: 7,
-      type: "short",
-      thema: "Wohnen",
-      ratsmitglied: "Ratsherr Frei",
-      frage:
-        "Wie viel Prozent Heizenergie spart eine Absenkung der Raumtemperatur um 1 °C?",
-      akzeptiert: ["6"],
-      erklaerung:
-        "Faustregel: 1 °C kühler entspricht ca. 6 % weniger Heizenergie.",
-    },
-    // F8 · Wohnen · Either (Bildvergleich Waschmaschinen)
-    {
-      id: 8,
-      type: "either",
-      thema: "Wohnen",
-      ratsmitglied: "Ratsherr Frei",
-      frage: "Welche Waschmaschine spart mehr Energie?",
-      optionen: [
-        { id: "a", label: "Klasse A", image: waschmaschineA.url },
-        { id: "e", label: "Klasse E", image: waschmaschineE.url },
-      ],
-      korrekt: "a",
-      erklaerung:
-        "Klasse A steht für die höchste Energieeffizienz. Klasse E verbraucht deutlich mehr Strom für dieselbe Wäscheladung.",
     },
 
     // F9 · Energie · Bucket
