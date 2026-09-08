@@ -1,6 +1,6 @@
 // Spielfortschritt (Team & Etappen), clientseitig in localStorage.
 // Linearer Ablauf: currentStage gibt an, welche Etappe als nächstes freigeschaltet ist.
-//   1 = Etappe 1 (Bahnhof)
+//   1 = Etappe 1 (Bushaltestelle)
 //   2 = Etappe 2 (Dorfladen)
 //   3 = Etappe 3 (Wald)
 //   4 = Etappe 4 (Haus)
@@ -51,7 +51,7 @@ export type StageInfo = {
 };
 
 export const STAGES: StageInfo[] = [
-  { nr: 1, to: "/etappe-1", ort: "Bahnhof", thema: "Mobilität" },
+  { nr: 1, to: "/etappe-1", ort: "Bushaltestelle", thema: "Mobilität" },
   { nr: 2, to: "/etappe-2", ort: "Dorfladen", thema: "Konsum" },
   { nr: 3, to: "/etappe-3", ort: "Jakobs Haus", thema: "Wohnen" },
   { nr: 4, to: "/etappe-4", ort: "Wald-Lichtung", thema: "Biodiversität" },
