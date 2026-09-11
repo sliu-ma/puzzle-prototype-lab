@@ -1,16 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import { RefreshCw, Trash2, Play, Users, Shuffle } from "lucide-react";
+import { RefreshCw, Trash2, Play, Users } from "lucide-react";
 import { PrologueOverlay } from "@/components/case-file/PrologueVideo";
 import { JoinCodeCard } from "@/components/teacher/JoinCodeCard";
 
-import {
-  teacherRoundReport,
-  teacherDeleteTeam,
-  teacherAssignVariants,
-} from "@/lib/rounds.functions";
-import { BranchDiagram } from "@/components/teacher/BranchDiagram";
-import { QRPrintList } from "@/components/teacher/QRPrintList";
-import { PATH_COLOR, normalizeBranches, type Branches, type Letter } from "@/lib/variants";
+import { teacherRoundReport, teacherDeleteTeam } from "@/lib/rounds.functions";
+import { PathsPanel } from "@/components/teacher/PathsPanel";
+import { PATH_COLOR, type Branches, type Letter } from "@/lib/variants";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { cn } from "@/lib/utils";
 
@@ -173,30 +168,10 @@ export function LobbyPanel({
   const teams = report?.teams ?? [];
   const [prologueOpen, setPrologueOpen] = useState(false);
   const [removeAsk, setRemoveAsk] = useState<{ id: string; name: string } | null>(null);
-  const [assigning, setAssigning] = useState(false);
-  const [assignError, setAssignError] = useState<string | null>(null);
-  const [showCodes, setShowCodes] = useState(false);
   const fired = useRef(false);
 
   const pathCount = report?.pathCount ?? 1;
   const branches = report?.branches ?? null;
-  const assigned = teams.filter((t) => t.variant).length;
-
-  /** Wege zufällig und gleichmässig verteilen (erst wenn alle da sind). */
-  const assign = async () => {
-    setAssigning(true);
-    setAssignError(null);
-    try {
-      await teacherAssignVariants({ data: { password, code } });
-      reload();
-    } catch (err) {
-      setAssignError(
-        err instanceof Error ? err.message : "Die Wege konnten nicht verteilt werden.",
-      );
-    } finally {
-      setAssigning(false);
-    }
-  };
 
   // Startknopf -> Vorgeschichte im Vollbild -> Runde genau einmal starten.
   // Das Overlay bleibt auf der Schlusstafel stehen, bis die Lehrperson weiterklickt.
@@ -269,52 +244,14 @@ export function LobbyPanel({
       </ul>
 
       {pathCount > 1 && (
-        <section className="mt-5 rounded-sm border border-border bg-secondary/40 p-3">
-          <h3 className="font-serif text-lg font-bold">
-            Wege ({pathCount}) und Material
-          </h3>
-          <p className="mt-1 text-sm text-foreground/80">
-            Verteilt die Wege erst, wenn alle Gruppen angemeldet sind. Danach steht
-            neben jeder Gruppe ihr Buchstabe.
-          </p>
-
-          <button
-            type="button"
-            onClick={() => void assign()}
-            disabled={assigning || teams.length === 0}
-            className="mt-3 flex min-h-[44px] w-full items-center justify-center gap-2 rounded-sm border border-stamp bg-stamp/10 px-3 font-serif font-semibold disabled:opacity-50"
-          >
-            <Shuffle className={cn("h-4 w-4", assigning && "animate-spin")} />
-            {assigned > 0 ? "Wege neu verteilen" : "Wege zufällig verteilen"}
-          </button>
-          {assignError && (
-            <p className="mt-2 text-xs text-destructive">{assignError}</p>
-          )}
-          <p className="mt-2 text-xs text-muted-foreground">
-            {assigned} von {teams.length} Gruppen haben einen Weg.
-          </p>
-
-          <div className="mt-3">
-            <BranchDiagram
-              pathCount={pathCount}
-              branches={normalizeBranches(branches, pathCount)}
-            />
-          </div>
-
-          <button
-            type="button"
-            onClick={() => setShowCodes((v) => !v)}
-            className="font-mono-typed mt-3 min-h-[40px] text-[10px] uppercase tracking-wider text-muted-foreground underline"
-          >
-            {showCodes ? "QR-Codes ausblenden" : "QR-Codes zum Ausdrucken zeigen"}
-          </button>
-          {showCodes && (
-            <QRPrintList
-              pathCount={pathCount}
-              branches={normalizeBranches(branches, pathCount)}
-            />
-          )}
-        </section>
+        <PathsPanel
+          password={password}
+          code={code}
+          pathCount={pathCount}
+          branches={branches}
+          teams={teams}
+          reload={reload}
+        />
       )}
 
       {prologueOpen && (

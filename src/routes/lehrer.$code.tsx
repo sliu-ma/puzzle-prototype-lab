@@ -28,6 +28,7 @@ import {
 } from "@/lib/teacher-session";
 import { LobbyPanel, useRoundReport } from "@/components/teacher/LobbyPanel";
 import { LiveBoard } from "@/components/teacher/LiveBoard";
+import { PathsPanel } from "@/components/teacher/PathsPanel";
 import { ReportPanel } from "@/components/teacher/ReportPanel";
 import { helpId, useHelpDone } from "@/lib/teacher-help-done";
 import { MessageRooms } from "@/components/teacher/MessageRooms";
@@ -120,7 +121,7 @@ function RoundPage() {
 
   // Lesebestätigungen und Meldungen: in Live- und Nachrichten-Schritt.
   const reportActive = step === "live" || step === "messages";
-  const { report: ackReport } = useRoundReport(
+  const { report: ackReport, reload: reloadAckReport } = useRoundReport(
     reportActive ? password : "",
     reportActive ? code : "",
     15000,
@@ -492,6 +493,18 @@ function RoundPage() {
               Alle Gruppen erhalten innert Sekunden ein Pop-up mit der neuen Restzeit.
             </p>
           </details>
+
+          {(ackReport?.pathCount ?? 1) > 1 && (
+            <PathsPanel
+              password={password}
+              code={round.code}
+              pathCount={ackReport?.pathCount ?? 1}
+              branches={ackReport?.branches ?? null}
+              teams={ackReport?.teams ?? []}
+              reload={reloadAckReport}
+            />
+          )}
+
 
           <LiveBoard
             password={password}
