@@ -57,9 +57,12 @@ export function normalizeStationDescriptions(
   const out: StationDescriptions = {};
   for (const stage of STAGE_IDS) {
     const count = stationsFor(branches, stage, pathCount).length;
-    const values = Array.isArray(src[String(stage)]) ? src[String(stage)] : [];
+    const candidate = src[String(stage)];
+    const values: unknown[] = Array.isArray(candidate) ? candidate : [];
     out[String(stage)] = Array.from({ length: count }, (_, index) =>
-      typeof values[index] === "string" ? values[index].trim().slice(0, 160) : "",
+      typeof values[index] === "string"
+        ? (values[index] as string).trim().slice(0, 160)
+        : "",
     );
   }
   return out;

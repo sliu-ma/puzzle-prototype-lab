@@ -384,7 +384,6 @@ export const getRoundState = createServerFn({ method: "POST" })
       teamExists?: boolean;
       pathCount?: number;
       branches?: Branches | null;
-      stationDescriptions?: StationDescriptions | null;
       variant?: string | null;
       teams?: { id: string; name: string; variant?: string | null }[];
       messages?: { id: string; body: string; createdAt: string }[];
@@ -399,7 +398,6 @@ export const getRoundState = createServerFn({ method: "POST" })
       startedAt: p.startedAt ?? null,
       pathCount: p.pathCount ?? 1,
       branches: (p.branches ?? null) as Branches | null,
-      stationDescriptions: (p.stationDescriptions ?? null) as StationDescriptions | null,
       variant: p.variant ?? null,
       teamExists: !!p.teamExists,
       teams: p.teams ?? [],
@@ -546,6 +544,7 @@ export const teacherRoundReport = createServerFn({ method: "POST" })
       startedAt?: string | null;
       pathCount?: number;
       branches?: Branches | null;
+      stationDescriptions?: StationDescriptions | null;
       teams?: {
         id: string;
         name: string;
@@ -572,6 +571,7 @@ export const teacherRoundReport = createServerFn({ method: "POST" })
       startedAt: p.startedAt ?? null,
       pathCount: p.pathCount ?? 1,
       branches: (p.branches ?? null) as Branches | null,
+      stationDescriptions: (p.stationDescriptions ?? null) as StationDescriptions | null,
       teams: buildReport(
         p.teams ?? [],
         p.events ?? [],
