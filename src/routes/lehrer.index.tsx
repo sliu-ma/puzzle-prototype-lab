@@ -96,7 +96,13 @@ function TeacherPage() {
     setBusy(true);
     try {
       const res = await teacherCreateRound({
-        data: { password, title: title.trim(), budgetMin: budget },
+        data: {
+          password,
+          title: title.trim(),
+          budgetMin: budget,
+          pathCount,
+          branches: normalizeBranches(branches, pathCount),
+        },
       });
       setTitle("");
       setError(null);
