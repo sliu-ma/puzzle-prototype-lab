@@ -7,8 +7,10 @@ import { cn } from "@/lib/utils";
 import { recordStageScan } from "@/lib/progress";
 import { getRoundSession } from "@/lib/round-client";
 import {
+  PATH_COLOR,
   tokenForStage,
   type Branches,
+  type Letter,
 } from "@/lib/variants";
 
 
@@ -417,8 +419,20 @@ export function QRGate({
           </p>
 
           {pathLetter && (
-            <div className="mt-4 flex items-center gap-3 rounded-sm border border-stamp/40 bg-stamp/10 p-3">
-              <span className="font-mono-typed flex h-10 w-10 items-center justify-center rounded-sm bg-stamp text-lg font-bold text-primary-foreground">
+            <div
+              className="mt-4 flex items-center gap-3 rounded-sm border-2 p-3"
+              style={{
+                borderColor: PATH_COLOR[pathLetter as Letter] ?? "var(--color-stamp)",
+                backgroundColor: `${PATH_COLOR[pathLetter as Letter] ?? "#8a1f1f"}1a`,
+              }}
+            >
+              <span
+                className="font-mono-typed flex h-10 w-10 items-center justify-center rounded-sm text-lg font-bold text-white"
+                style={{
+                  backgroundColor:
+                    PATH_COLOR[pathLetter as Letter] ?? "var(--color-stamp)",
+                }}
+              >
                 {pathLetter}
               </span>
               <p className="text-sm text-foreground/80">

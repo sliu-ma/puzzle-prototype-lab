@@ -326,10 +326,17 @@ input, textarea, select {
   .print-qr-card {
     break-inside: avoid;
     page-break-inside: avoid;
-    border: none;
     background: transparent;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    margin: 2mm;
+    /* Wegfarben müssen auch auf Papier sichtbar bleiben. */
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .print-qr-card * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
 }
