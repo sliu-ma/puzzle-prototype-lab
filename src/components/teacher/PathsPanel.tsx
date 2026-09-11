@@ -24,6 +24,7 @@ import { cn } from "@/lib/utils";
 
 export function PathsPanel({
   password,
+  code,
   pathCount,
   branches,
   teams,
@@ -43,7 +44,7 @@ export function PathsPanel({
   const letters = lettersFor(pathCount);
   const assigned = teams.filter((t) => t.variant).length;
 
-  const assign = async (code: string) => {
+  const assign = async () => {
     setAssigning(true);
     setError(null);
     try {
@@ -78,12 +79,15 @@ export function PathsPanel({
         dazukommen, erhalten automatisch den Weg mit den wenigsten Gruppen.
       </p>
 
-      <PathsAssignButton
-        assigning={assigning}
-        assigned={assigned}
-        onClick={assign}
-        teamCount={teams.length}
-      />
+      <button
+        type="button"
+        onClick={() => void assign()}
+        disabled={assigning || teams.length === 0}
+        className="mt-3 flex min-h-[44px] w-full items-center justify-center gap-2 rounded-sm border border-stamp bg-stamp/10 px-3 font-serif font-semibold disabled:opacity-50"
+      >
+        <Shuffle className={cn("h-4 w-4", assigning && "animate-spin")} />
+        {assigned > 0 ? "Wege neu verteilen" : "Wege zufällig verteilen"}
+      </button>
 
       {error && <p className="mt-2 text-xs text-destructive">{error}</p>}
       <p className="mt-2 text-xs text-muted-foreground">
@@ -157,37 +161,4 @@ export function PathsPanel({
       )}
     </section>
   );
-}
-
-/** Eigene Komponente, damit der Rundencode nur einmal übergeben werden muss. */
-function PathsAssignButton({
-  assigning,
-  assigned,
-  teamCount,
-  onClick,
-}: {
-  assigning: boolean;
-  assigned: number;
-  teamCount: number;
-  onClick: (code: string) => Promise<void>;
-}) {
-  const codeRef = usePanelCode();
-  return (
-    <button
-      type="button"
-      onClick={() => void onClick(codeRef)}
-      disabled={assigning || teamCount === 0}
-      className="mt-3 flex min-h-[44px] w-full items-center justify-center gap-2 rounded-sm border border-stamp bg-stamp/10 px-3 font-serif font-semibold disabled:opacity-50"
-    >
-      <Shuffle className={cn("h-4 w-4", assigning && "animate-spin")} />
-      {assigned > 0 ? "Wege neu verteilen" : "Wege zufällig verteilen"}
-    </button>
-  );
-}
-
-/** Rundencode aus dem Kontext der Seite (URL-Pfad /lehrer/CODE). */
-function usePanelCode(): string {
-  if (typeof window === "undefined") return "";
-  const parts = window.location.pathname.split("/").filter(Boolean);
-  return (parts[parts.length - 1] ?? "").toUpperCase();
 }
