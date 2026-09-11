@@ -292,3 +292,29 @@ input, textarea, select {
 @utility animate-shrink-x {
   animation: shrink-x 60s linear forwards;
 }
+
+/* Druck: nur die QR-Blätter aufs Papier, nicht das ganze Dashboard. */
+@media print {
+  body:has(.print-area) {
+    visibility: hidden;
+    background: #fff;
+  }
+  body:has(.print-area) .print-area {
+    visibility: visible;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12mm 8mm;
+  }
+  body:has(.print-area) .print-area * {
+    visibility: visible;
+  }
+  .print-qr-card {
+    break-inside: avoid;
+    border: none;
+    background: transparent;
+  }
+}
