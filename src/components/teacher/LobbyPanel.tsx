@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { RefreshCw, Trash2, Play, Users } from "lucide-react";
+import { RefreshCw, Trash2, Play, Users, Shuffle } from "lucide-react";
 import { PrologueOverlay } from "@/components/case-file/PrologueVideo";
 import { JoinCodeCard } from "@/components/teacher/JoinCodeCard";
 
