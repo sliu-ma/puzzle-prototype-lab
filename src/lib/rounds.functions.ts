@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import type { Branches } from "./variants";
+import type { Branches, StationDescriptions } from "./variants";
 
 const eventSchema = z.object({
   id: z.string().min(1).max(120),
@@ -227,6 +227,8 @@ export const teacherListRounds = createServerFn({ method: "POST" })
       started_at: r.started_at ?? null,
       path_count: (r as { path_count?: number }).path_count ?? 1,
       branches: ((r as { branches?: unknown }).branches ?? null) as Branches | null,
+      station_descriptions: ((r as { station_descriptions?: unknown })
+        .station_descriptions ?? null) as StationDescriptions | null,
     }));
   });
 
@@ -287,6 +289,9 @@ export const teacherCreateRound = createServerFn({ method: "POST" })
         branches: z
           .record(z.string(), z.array(z.array(z.enum(["A", "B", "C", "D"]))))
           .default({}),
+        stationDescriptions: z
+          .record(z.string(), z.array(z.string().max(160)))
+          .default({}),
       })
       .parse(d),
   )
@@ -304,6 +309,7 @@ export const teacherCreateRound = createServerFn({ method: "POST" })
         p_budget_min: data.budgetMin,
         p_path_count: data.pathCount,
         p_branches: data.branches as unknown as never,
+        p_station_descriptions: data.stationDescriptions as unknown as never,
       });
       if (!error && rows?.[0]) return rows[0];
       lastError = error?.message ?? null;
@@ -378,6 +384,7 @@ export const getRoundState = createServerFn({ method: "POST" })
       teamExists?: boolean;
       pathCount?: number;
       branches?: Branches | null;
+      stationDescriptions?: StationDescriptions | null;
       variant?: string | null;
       teams?: { id: string; name: string; variant?: string | null }[];
       messages?: { id: string; body: string; createdAt: string }[];
@@ -392,6 +399,7 @@ export const getRoundState = createServerFn({ method: "POST" })
       startedAt: p.startedAt ?? null,
       pathCount: p.pathCount ?? 1,
       branches: (p.branches ?? null) as Branches | null,
+      stationDescriptions: (p.stationDescriptions ?? null) as StationDescriptions | null,
       variant: p.variant ?? null,
       teamExists: !!p.teamExists,
       teams: p.teams ?? [],

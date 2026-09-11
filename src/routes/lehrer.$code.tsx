@@ -500,8 +500,10 @@ function RoundPage() {
               code={round.code}
               pathCount={ackReport?.pathCount ?? 1}
               branches={ackReport?.branches ?? null}
+              stationDescriptions={ackReport?.stationDescriptions ?? null}
               teams={ackReport?.teams ?? []}
               reload={reloadAckReport}
+              editable={false}
             />
           )}
 

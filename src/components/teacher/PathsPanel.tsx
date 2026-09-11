@@ -15,6 +15,7 @@ import {
   normalizeBranches,
   type Branches,
   type Letter,
+  type StationDescriptions,
 } from "@/lib/variants";
 import {
   teacherAssignVariants,
@@ -27,15 +28,19 @@ export function PathsPanel({
   code,
   pathCount,
   branches,
+  stationDescriptions,
   teams,
   reload,
+  editable,
 }: {
   password: string;
   code: string;
   pathCount: number;
   branches: Branches | null;
+  stationDescriptions: StationDescriptions | null;
   teams: { teamId: string; name: string; variant: string | null }[];
   reload: () => void;
+  editable: boolean;
 }) {
   const [assigning, setAssigning] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -75,19 +80,22 @@ export function PathsPanel({
     <section className="mt-5 rounded-sm border border-border bg-secondary/40 p-3">
       <h3 className="font-serif text-lg font-bold">Wege ({pathCount}) und Material</h3>
       <p className="mt-1 text-sm text-foreground/80">
-        Verteilt die Wege, sobald alle Gruppen angemeldet sind. Gruppen, die später
-        dazukommen, erhalten automatisch den Weg mit den wenigsten Gruppen.
+        {editable
+          ? "Die Wege werden beim Start automatisch gleichmässig verteilt. Eine Verteilung in der Lobby kann bei Bedarf angepasst werden."
+          : "Die Verteilung ist seit dem Start gesperrt. Neue Gruppen erhalten automatisch den am wenigsten belegten Weg."}
       </p>
 
-      <button
-        type="button"
-        onClick={() => void assign()}
-        disabled={assigning || teams.length === 0}
-        className="mt-3 flex min-h-[44px] w-full items-center justify-center gap-2 rounded-sm border border-stamp bg-stamp/10 px-3 font-serif font-semibold disabled:opacity-50"
-      >
-        <Shuffle className={cn("h-4 w-4", assigning && "animate-spin")} />
-        {assigned > 0 ? "Wege neu verteilen" : "Wege zufällig verteilen"}
-      </button>
+      {editable && (
+        <button
+          type="button"
+          onClick={() => void assign()}
+          disabled={assigning || teams.length === 0}
+          className="mt-3 flex min-h-[44px] w-full items-center justify-center gap-2 rounded-sm border border-stamp bg-stamp/10 px-3 font-serif font-semibold disabled:opacity-50"
+        >
+          <Shuffle className={cn("h-4 w-4", assigning && "animate-spin")} />
+          {assigned > 0 ? "Wege neu verteilen" : "Wege zufällig verteilen"}
+        </button>
+      )}
 
       {error && <p className="mt-2 text-xs text-destructive">{error}</p>}
       <p className="mt-2 text-xs text-muted-foreground">
@@ -119,6 +127,7 @@ export function PathsPanel({
               id={`weg-${t.teamId}`}
               value={t.variant ?? ""}
               onChange={(e) => void setOne(t.teamId, e.target.value)}
+              disabled={!editable}
               className="min-h-[40px] rounded-sm border border-border bg-background px-2 font-mono-typed text-sm"
             >
               <option value="">–</option>
@@ -143,6 +152,28 @@ export function PathsPanel({
           branches={normalizeBranches(branches, pathCount)}
         />
       </div>
+
+      <details className="mt-3 rounded-sm border border-border bg-card p-3">
+        <summary className="font-mono-typed cursor-pointer text-[10px] uppercase text-muted-foreground">
+          Orte der Stationen
+        </summary>
+        <div className="mt-3 space-y-3">
+          {Object.entries(normalizeBranches(branches, pathCount)).map(
+            ([stage, stations]) => (
+              <div key={stage}>
+                <p className="font-serif text-sm font-semibold">
+                  {({ "1": "Mobilität", "2": "Konsum", "3": "Wohnen", "4": "Biodiversität", "5": "Energie", "6": "Hearing" } as Record<string, string>)[stage]}
+                </p>
+                {stations.map((letters, index) => (
+                  <p key={index} className="mt-1 text-xs text-foreground/75">
+                    Weg {letters.join(", ")}: {stationDescriptions?.[stage]?.[index] || "Kein Ort eingetragen"}
+                  </p>
+                ))}
+              </div>
+            ),
+          )}
+        </div>
+      </details>
 
       <button
         type="button"
