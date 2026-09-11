@@ -1,58 +1,65 @@
-# Wege A bis D mit Verzweigungen pro Posten
+# Wege mit Verzweigungen pro Posten
 
-Jede Runde kann frei festlegen, wie sich die vier Wege A bis D über die Posten verteilen. Pro Posten gibt es eine oder mehrere Stationen, und an einer Station kann ein einziger QR-Code mehrere Wege abdecken. Inhalt und Rätsel bleiben für alle gleich; es ändert sich nur, welcher QR-Code welche Gruppe vor Ort öffnet.
+Pro Runde legt die Lehrperson fest, wie viele Wege es überhaupt gibt (1 bis 4) und wie sich diese Wege an jedem Posten auf Stationen verteilen. Wo Wege zusammenlaufen, genügt ein einziger QR-Code für mehrere Wege. Inhalt und Rätsel bleiben für alle gleich; es unterscheidet sich nur, welcher QR-Code welche Gruppe öffnet.
 
 ## Verzweigungs-Modell (gemäss Skizze)
 
-Es gibt immer die vier Wege A, B, C und D. Die Lehrperson legt pro Posten fest, wie viele Stationen dieser hat (1 bis 4) und welche Wege gemeinsam an einer Station sind. Beispiele:
+Zwei Einstellungen pro Runde:
 
-- **Alle gemeinsam** (ABCD): 1 Station, 1 QR-Code, jeder Weg akzeptiert. Das ist der heutige Zustand.
-- **Zwei Stationen** (AB | CD): A und B scannen denselben Code, C und D einen anderen. Es muss nicht pro Weg ein Code aufgehängt werden.
-- **Drei Stationen** (A | B | CD): A und B einzeln, C und D teilen sich einen Code.
-- **Vier Stationen** (A | B | C | D): jeder Weg hat einen eigenen QR-Code.
+1. **Anzahl Wege**: 1, 2, 3 oder 4 (A bis D). Bei 1 bleibt alles wie heute.
+2. **Pro Posten**: wie viele Stationen es gibt und welche Wege an derselben Station sind.
 
-So entstehen Verläufe wie in der Skizze: Start gemeinsam, dann AB | CD, dann A | B | CD, dann wieder gemeinsam, Finale gemeinsam.
+Beispiel mit vier Wegen:
+
+```text
+Posten 1   Posten 2   Posten 3   Posten 4   Hearing
+ ABCD       AB  CD      A  B       ABCD      ABCD
+                        CD
+1 QR-Code   2 Codes    3 Codes    1 Code    1 Code
+```
+
+Beispiel mit zwei Wegen: Posten 1 gemeinsam (ABCD-Prinzip, hier AB), Posten 2 getrennt A | B, Posten 3 wieder gemeinsam. Es werden nur so viele Codes aufgehängt, wie es Stationen gibt.
 
 ## Wie es sich anfühlt
 
-**Runde erstellen**
-- Neben Titel und Zeitbudget gibt es pro Posten eine kleine Verzweigungs-Einstellung: Anzahl Stationen (1 bis 4) und pro Weg ein Auswahlfeld „Station 1 bis n". Voreinstellung: alle Wege gemeinsam (1 Station).
-- Diese Einstellung wird beim Erstellen festgelegt und danach nicht mehr geändert.
+**Runde erstellen, grafisch**
+- Oben eine Auswahl „Anzahl Wege: 1 / 2 / 3 / 4".
+- Darunter ein Diagramm im Stil Ihrer Skizze: fünf Posten plus Hearing als Spalten, die Wege als farbige Linien (A rot, B grün, C blau, D gelb), die sich zusammenführen oder trennen.
+- Pro Posten ein Knopf „Stationen: 1, 2, 3, 4" und je Weg ein kleines Auswahlfeld, an welcher Station er steht. Das Diagramm aktualisiert sich sofort, so ist der ganze Ablauf auf einen Blick nachvollziehbar.
+- Unter dem Diagramm die Zusammenfassung „Benötigte QR-Codes: 8" mit Aufschlüsselung pro Posten.
+- Voreinstellung: 1 Weg, alle gemeinsam. Die Einstellung wird beim Erstellen festgelegt und danach nicht mehr geändert.
 
 **Lobby**
 - Die Gruppen melden sich wie bisher an, zunächst ohne Buchstaben.
-- Wenn alle da sind, drückt die Lehrperson **„Wege zufällig verteilen"**. Die Verteilung ist zufällig und gleichmässig: bei 7 Gruppen z. B. 2x A, 2x B, 2x C, 1x D.
-- Jede Gruppe zeigt in der Teamliste einen grossen, farbigen Buchstaben, dazu eine Übersicht „Weg A: 2 Gruppen · B: 2 · C: 2 · D: 1", damit das richtige Material ausgegeben werden kann.
-- Nochmals drücken verteilt neu (mit Rückfrage). Gruppen, die später beitreten, erhalten automatisch den Weg, der am wenigsten vertreten ist.
+- Wenn alle da sind: Knopf **„Wege zufällig verteilen"**. Zufällig, aber gleichmässig über die eingestellte Anzahl Wege (bei 7 Gruppen und 3 Wegen: 3x A, 2x B, 2x C).
+- Jede Gruppe zeigt einen grossen, farbigen Buchstaben; dazu eine Übersicht „Weg A: 3 Gruppen · B: 2 · C: 2".
+- Nochmals drücken verteilt neu (mit Rückfrage). Spätere Gruppen erhalten automatisch den Weg mit den wenigsten Gruppen.
 
 **Auf dem Handy der Gruppe**
-- Auf jeder Sperrseite steht „Euer Weg: B" (bzw. „Euer Weg: B (Station 2)", wenn mehrere Stationen existieren). Nur der QR-Code der eigenen Station öffnet den Posten; der Code einer anderen Station wird mit einer klaren Meldung abgelehnt.
-- Hat ein Posten nur eine Station, bleibt es beim Grund-QR-Code ohne Endung.
+- Auf der Sperrseite steht „Euer Weg: B" (bei mehreren Stationen zusätzlich die Station). Nur der Code der eigenen Station öffnet den Posten; ein Code einer anderen Station wird mit klarer Meldung abgelehnt.
+- Posten mit nur einer Station nutzen weiterhin den Grund-QR-Code ohne Endung.
 
-**Nachverfolgung für die Lehrperson**
-- Im Lehrerbereich gibt es eine **Weg-Übersicht**: pro Posten eine Zeile mit den Stationen und den Gruppen darauf, etwa „Posten 2 · Station 1 (AB): Adler, Füchse · Station 2 (CD): Murmeltiere". So ist jederzeit ersichtlich, welche Gruppe zu welcher Station gehen muss und welcher QR-Code dort hängt.
-- Der Buchstabe erscheint zusätzlich in der Live-Übersicht und in der Auswertung, damit nachvollziehbar bleibt, welche Gruppe welchen Weg gegangen ist.
-
-**QR-Codes zum Ausdrucken**
-- Pro Station gibt es genau eine Zeichenfolge: der Grundcode des Postens plus der Weg-Endung mit dem tiefsten Buchstaben der Station. Beispiel Station AB an Mobilität: `Tz3PqW8nXmYr5JcLs6Vk_A`; Station CD: `Tz3PqW8nXmYr5JcLs6Vk_C`. Eine Station mit allen Wegen nutzt den Grundcode ohne Endung.
-- Im Lehrerbereich gibt es eine Druckliste: pro Posten die benötigten QR-Bilder mit Beschriftung (Posten, Station, Wege), passend zur eingestellten Konfiguration.
+**Nachvollziehbarkeit für die Lehrperson**
+- Im Lehrerbereich dasselbe Diagramm nochmals, aber mit den echten Gruppen: an jeder Station stehen die Gruppennamen und die dort gültige Zeichenfolge, z. B. „Posten 2 · Station 1 (A, B): Adler, Füchse · Code `…_A`".
+- Der Buchstabe erscheint zusätzlich in der Live-Übersicht und in der Auswertung.
+- Druckliste: pro Station ein QR-Bild mit Beschriftung (Posten, Station, Wege), genau so viele Blätter wie Codes benötigt werden.
 
 ## Technische Umsetzung
 
 **Migration**
-- `rounds`: neue Spalte `branches jsonb not null default '{}'` (Form `{"1":[["A","B","C","D"]], "2":[["A","B"],["C","D"]]}` – pro Posten eine Liste von Stationen, jede Station eine Liste von Wegen).
+- `rounds`: neue Spalten `path_count int not null default 1` (1 bis 4) und `branches jsonb not null default '{}'` in der Form `{"1":[["A","B","C","D"]], "2":[["A","B"],["C","D"]]}` – pro Posten (1 bis 5, plus `"6"` für das Hearing) eine Liste von Stationen, jede Station eine Liste von Wegen.
 - `teams`: neue Spalte `variant text` (A bis D, null = noch nicht zugeteilt).
-- `teacher_create_round` erhält `p_branches jsonb` (validiert: Schlüssel 1 bis 5, jede Station eine Teilmenge von A bis D, jeder Weg genau einmal pro Posten).
-- Neue Funktion `teacher_assign_variants(p_password_hash, p_code)`: verteilt A bis D zufällig und gleichmässig, gibt die Zuordnung zurück.
-- `round_join`: vergibt den am wenigsten vertretenen Buchstaben, sobald verteilt wurde; gibt `variant` und `branches` zurück.
-- `round_lookup`, `round_state`, `teacher_list_rounds`, `teacher_round_report` geben `branches` bzw. `variant` mit zurück.
+- `teacher_create_round` erhält `p_path_count int` und `p_branches jsonb`; Validierung: jeder Weg im Bereich der `path_count` kommt pro Posten genau einmal vor, Stationen nicht leer.
+- Neue Funktion `teacher_assign_variants(p_password_hash, p_code)`: verteilt die Wege zufällig und gleichmässig, gibt die Zuordnung zurück.
+- `round_join` vergibt den am wenigsten vertretenen Weg, sobald verteilt wurde, und gibt `variant` zurück.
+- `round_lookup`, `round_state`, `teacher_list_rounds`, `teacher_round_report` geben `path_count`, `branches` bzw. `variant` mit zurück.
 
 **Frontend**
-- `src/lib/variants.ts` (neu): `LETTERS = ["A","B","C","D"]`, `stationFor(stage, letter, branches)` findet die Station des Weges, `tokenForStage(baseToken, station)` baut die Zeichenfolge (Grundcode + tiefster Buchstabe, ohne Endung bei einer Station). Die fünf Basis-Token werden hier zentral geführt, damit Sperre und Druckliste dieselbe Quelle nutzen.
-- `src/lib/round-client.ts`: `RoundSession` und `PendingJoin` erhalten `variant` und `branches`.
-- `src/components/case-file/QRGate.tsx`: liest Weg und Verzweigungen aus der Session, berechnet den erwarteten Code der eigenen Station, zeigt „Euer Weg: X" und lehnt Codes anderer Stationen mit „Das ist der Code einer anderen Station" ab. Ohne Session (Solo/Debug) gilt der Grundcode wie bisher.
-- `src/routes/lehrer.index.tsx`: Erstellformular mit Verzweigungs-Auswahl pro Posten (Anzahl Stationen + Weg-Zuordnung).
-- `src/components/teacher/LobbyPanel.tsx`: Buchstaben-Badge pro Team, Verteilungsübersicht, Knopf „Wege zufällig verteilen" mit Rückfrage beim Neuverteilen.
-- Neue Komponente `src/components/teacher/BranchOverview.tsx`: Posten-Stationen-Übersicht mit Gruppenzuordnung und den dort gültigen Zeichenfolgen.
-- Neue Komponente `src/components/teacher/QRPrintList.tsx`: QR-Bilder pro Station (Paket `qrcode`, bereits vorhanden) mit Druckansicht.
-- `src/components/teacher/ProgressMatrix.tsx` und `ReportPanel.tsx`: Buchstabe in der Teamzeile bzw. im Export.
+- `src/lib/variants.ts` (neu): `LETTERS`, `STAGE_TOKENS` (die fünf bestehenden Basis-Token plus Hearing), `stationFor(stage, letter, branches)`, `tokenForStation(baseToken, station, stationCount)` – die Zeichenfolge ist der Grundcode plus Endung mit dem ersten Buchstaben der Station (`…_A`, `…_C`); bei nur einer Station bleibt der Grundcode unverändert. Eine Quelle für Sperre, Diagramm und Druckliste.
+- `src/lib/round-client.ts`: `RoundSession` und `PendingJoin` erhalten `variant`, `pathCount` und `branches`.
+- `src/components/case-file/QRGate.tsx`: berechnet den erwarteten Code aus Session und Posten, zeigt „Euer Weg: X", lehnt fremde Stationscodes mit eigener Meldung ab; ohne Session (Solo/Debug) gilt der Grundcode wie bisher. Gespeichert wird wie heute nur der Hash des erwarteten Codes.
+- `src/components/teacher/BranchDiagram.tsx` (neu): SVG-Diagramm der Posten, Stationen und farbigen Weglinien. Zwei Modi: `editable` (Erstellformular) und `readonly` mit Gruppennamen und Codes (Lehreransicht).
+- `src/routes/lehrer.index.tsx`: Erstellformular mit „Anzahl Wege" und dem editierbaren Diagramm.
+- `src/components/teacher/LobbyPanel.tsx`: Weg-Badge pro Team, Verteilungsübersicht, Knopf „Wege zufällig verteilen" mit `ConfirmDialog` beim Neuverteilen.
+- `src/components/teacher/QRPrintList.tsx` (neu): QR-Bilder pro Station (Paket `qrcode`, bereits vorhanden) mit Druckansicht.
+- `src/components/teacher/ProgressMatrix.tsx` und `ReportPanel.tsx`: Weg-Buchstabe in der Teamzeile und im Export.
