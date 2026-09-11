@@ -24,6 +24,8 @@ type Item = {
   dataUrl: string;
 };
 
+const PAGE_SIZE = 6;
+
 export function QRPrintList({
   pathCount,
   branches,
@@ -70,12 +72,14 @@ export function QRPrintList({
       </div>
 
       {/* Nur dieser Bereich landet auf dem Papier (siehe @media print in styles.css). */}
-      <div className="print-area mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
-        {items.map((it) => (
-          <div
-            key={`${it.stage}-${it.token}`}
-            className="print-qr-card rounded-sm border border-border bg-card p-3 text-center"
-          >
+      <div className="print-area mt-3 space-y-3">
+        {Array.from({ length: Math.ceil(items.length / PAGE_SIZE) }, (_, page) => (
+          <div key={page} className="print-qr-page grid grid-cols-2 gap-3">
+            {items.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE).map((it) => (
+              <div
+                key={`${it.stage}-${it.token}`}
+                className="print-qr-card rounded-sm border border-border bg-card p-3 text-center"
+              >
             <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
               {STAGE_LABELS[it.stage]}
             </p>
@@ -95,9 +99,8 @@ export function QRPrintList({
                 </span>
               ))}
             </div>
-            <p className="mt-1 break-all font-mono-typed text-[9px] text-muted-foreground">
-              {it.token}
-            </p>
+              </div>
+            ))}
           </div>
         ))}
       </div>

@@ -10,7 +10,13 @@ import {
 } from "@/lib/teacher-session";
 import { cn } from "@/lib/utils";
 import { BranchDiagram } from "@/components/teacher/BranchDiagram";
-import { defaultBranches, normalizeBranches, type Branches } from "@/lib/variants";
+import {
+  defaultBranches,
+  normalizeBranches,
+  normalizeStationDescriptions,
+  type Branches,
+  type StationDescriptions,
+} from "@/lib/variants";
 
 export const Route = createFileRoute("/lehrer/")({
   ssr: false,
@@ -60,6 +66,7 @@ function TeacherPage() {
   // Wege dieser Runde: nur beim Anlegen einstellbar.
   const [pathCount, setPathCount] = useState(1);
   const [branches, setBranches] = useState<Branches>(() => defaultBranches(1));
+  const [stationDescriptions, setStationDescriptions] = useState<StationDescriptions>({});
 
   const loadRounds = useCallback(async (pw: string) => {
     const list = await teacherListRounds({ data: { password: pw } });
@@ -102,6 +109,11 @@ function TeacherPage() {
           budgetMin: budget,
           pathCount,
           branches: normalizeBranches(branches, pathCount),
+          stationDescriptions: normalizeStationDescriptions(
+            stationDescriptions,
+            normalizeBranches(branches, pathCount),
+            pathCount,
+          ),
         },
       });
       setTitle("");
@@ -223,6 +235,7 @@ function TeacherPage() {
                 const n = Number(e.target.value);
                 setPathCount(n);
                 setBranches(defaultBranches(n));
+                setStationDescriptions({});
               }}
               className="min-h-[40px] rounded-sm border border-border bg-paper px-2 text-sm"
             >
@@ -245,6 +258,8 @@ function TeacherPage() {
               pathCount={pathCount}
               branches={branches}
               onChange={setBranches}
+              descriptions={stationDescriptions}
+              onDescriptionsChange={setStationDescriptions}
             />
           </div>
         )}

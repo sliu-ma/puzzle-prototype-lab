@@ -305,16 +305,31 @@ input, textarea, select {
     left: 0;
     top: 0;
     width: 100%;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12mm 8mm;
+    display: block;
   }
   body:has(.print-area) .print-area * {
     visibility: visible;
   }
+  .print-qr-page {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(3, 82mm);
+    gap: 0;
+    min-height: 270mm;
+    break-after: page;
+    page-break-after: always;
+  }
+  .print-qr-page:last-child {
+    break-after: auto;
+    page-break-after: auto;
+  }
   .print-qr-card {
     break-inside: avoid;
+    page-break-inside: avoid;
     border: none;
     background: transparent;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
 }

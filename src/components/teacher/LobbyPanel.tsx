@@ -5,7 +5,12 @@ import { JoinCodeCard } from "@/components/teacher/JoinCodeCard";
 
 import { teacherRoundReport, teacherDeleteTeam } from "@/lib/rounds.functions";
 import { PathsPanel } from "@/components/teacher/PathsPanel";
-import { PATH_COLOR, type Branches, type Letter } from "@/lib/variants";
+import {
+  PATH_COLOR,
+  type Branches,
+  type Letter,
+  type StationDescriptions,
+} from "@/lib/variants";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { cn } from "@/lib/utils";
 
@@ -83,6 +88,7 @@ export type Report = {
   /** Anzahl Wege dieser Runde (1 = alle Gruppen gleich). */
   pathCount: number;
   branches: Branches | null;
+  stationDescriptions: StationDescriptions | null;
   teams: ReportTeam[];
 };
 
@@ -172,6 +178,7 @@ export function LobbyPanel({
 
   const pathCount = report?.pathCount ?? 1;
   const branches = report?.branches ?? null;
+  const stationDescriptions = report?.stationDescriptions ?? null;
 
   // Startknopf -> Vorgeschichte im Vollbild -> Runde genau einmal starten.
   // Das Overlay bleibt auf der Schlusstafel stehen, bis die Lehrperson weiterklickt.
@@ -249,8 +256,10 @@ export function LobbyPanel({
           code={code}
           pathCount={pathCount}
           branches={branches}
+          stationDescriptions={stationDescriptions}
           teams={teams}
           reload={reload}
+          editable={status === "lobby"}
         />
       )}
 
