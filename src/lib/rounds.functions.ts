@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import type { Branches } from "./variants";
 
 const eventSchema = z.object({
   id: z.string().min(1).max(120),
@@ -47,7 +48,7 @@ export const lookupRound = createServerFn({ method: "POST" })
       budgetMin: round.budget_min,
       startedAt: round.started_at ?? null,
       pathCount: (round as { path_count?: number }).path_count ?? 1,
-      branches: ((round as { branches?: unknown }).branches ?? null) as unknown,
+      branches: ((round as { branches?: unknown }).branches ?? null) as Branches | null,
     };
   });
 
@@ -89,7 +90,7 @@ export const joinRound = createServerFn({ method: "POST" })
       startedAt: row.started_at ?? null,
       budgetMin: row.budget_min ?? 90,
       pathCount: (row as { path_count?: number }).path_count ?? 1,
-      branches: ((row as { branches?: unknown }).branches ?? null) as unknown,
+      branches: ((row as { branches?: unknown }).branches ?? null) as Branches | null,
       variant: ((row as { variant?: string | null }).variant ?? null) as string | null,
     };
   });
@@ -225,7 +226,7 @@ export const teacherListRounds = createServerFn({ method: "POST" })
       budget_min: r.budget_min ?? 90,
       started_at: r.started_at ?? null,
       path_count: (r as { path_count?: number }).path_count ?? 1,
-      branches: ((r as { branches?: unknown }).branches ?? null) as unknown,
+      branches: ((r as { branches?: unknown }).branches ?? null) as Branches | null,
     }));
   });
 
@@ -352,7 +353,7 @@ export const getRoundState = createServerFn({ method: "POST" })
       startedAt?: string | null;
       teamExists?: boolean;
       pathCount?: number;
-      branches?: unknown;
+      branches?: Branches | null;
       variant?: string | null;
       teams?: { id: string; name: string; variant?: string | null }[];
       messages?: { id: string; body: string; createdAt: string }[];
@@ -366,7 +367,7 @@ export const getRoundState = createServerFn({ method: "POST" })
       budgetMin: p.budgetMin ?? 90,
       startedAt: p.startedAt ?? null,
       pathCount: p.pathCount ?? 1,
-      branches: (p.branches ?? null) as unknown,
+      branches: (p.branches ?? null) as Branches | null,
       variant: p.variant ?? null,
       teamExists: !!p.teamExists,
       teams: p.teams ?? [],
@@ -512,7 +513,7 @@ export const teacherRoundReport = createServerFn({ method: "POST" })
       budgetMin?: number;
       startedAt?: string | null;
       pathCount?: number;
-      branches?: unknown;
+      branches?: Branches | null;
       teams?: {
         id: string;
         name: string;
@@ -538,7 +539,7 @@ export const teacherRoundReport = createServerFn({ method: "POST" })
       budgetMin: p.budgetMin ?? 90,
       startedAt: p.startedAt ?? null,
       pathCount: p.pathCount ?? 1,
-      branches: (p.branches ?? null) as unknown,
+      branches: (p.branches ?? null) as Branches | null,
       teams: buildReport(
         p.teams ?? [],
         p.events ?? [],
