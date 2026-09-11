@@ -237,6 +237,19 @@ export function LobbyPanel({
             key={t.teamId}
             className="flex items-center gap-2 rounded-sm border border-border bg-card px-2.5 py-2"
           >
+            {pathCount > 1 && (
+              <span
+                className="font-mono-typed flex h-9 w-9 shrink-0 items-center justify-center rounded-sm text-base font-bold text-white"
+                style={{
+                  backgroundColor: t.variant
+                    ? PATH_COLOR[t.variant as Letter]
+                    : "hsl(var(--muted))",
+                }}
+                aria-label={t.variant ? `Weg ${t.variant}` : "noch kein Weg"}
+              >
+                {t.variant ?? "?"}
+              </span>
+            )}
             <div className="min-w-0 flex-1">
               <p className="truncate font-serif font-semibold">{t.name}</p>
               <p className="truncate text-xs text-muted-foreground">
