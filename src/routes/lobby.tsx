@@ -42,7 +42,17 @@ export const Route = createFileRoute("/lobby")({
 function LobbyPage() {
   const navigate = useNavigate();
   const [pending, setPending] = useState<PendingJoin | null>(null);
-  const [teams, setTeams] = useState<{ id: string; name: string }[]>([]);
+  const [teams, setTeams] = useState<
+    { id: string; name: string; variant?: string | null }[]
+  >([]);
+  // Weg-Zuteilung der Runde: wird beim Abfragen aktualisiert, damit der beim
+  // Start gespeicherte Spielstand den zugeteilten Weg kennt.
+  const paths = useRef<{
+    variant: string | null;
+    pathCount: number;
+    branches: unknown;
+  }>({ variant: null, pathCount: 1, branches: null });
+  const [myVariant, setMyVariant] = useState<string | null>(null);
   const [status, setStatus] = useState<string>("lobby");
   const [removed, setRemoved] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -87,6 +97,9 @@ function LobbyPage() {
             teamId: p.teamId,
             token: p.token,
             startedAt,
+            variant: paths.current.variant,
+            pathCount: paths.current.pathCount,
+            branches: paths.current.branches as never,
           });
           clearPendingJoin();
           // Briefing zuerst: die Startseite zeigt den IntroScreen.
@@ -115,6 +128,12 @@ function LobbyPage() {
         setTeams(res.teams);
         setStatus(res.status);
         setError(null);
+        paths.current = {
+          variant: res.variant ?? null,
+          pathCount: res.pathCount ?? 1,
+          branches: res.branches ?? null,
+        };
+        setMyVariant(res.variant ?? null);
         if (!res.teamExists) {
           setRemoved(true);
           return;
@@ -211,6 +230,11 @@ function LobbyPage() {
         <p className="mt-1 text-sm text-foreground/70">
           {pending.members.join(", ")}
         </p>
+        {myVariant && (
+          <p className="font-mono-typed mt-3 inline-flex items-center gap-2 rounded-sm bg-stamp px-2.5 py-1 text-xs font-bold uppercase tracking-wider text-primary-foreground">
+            Weg {myVariant}
+          </p>
+        )}
       </div>
 
       <div className="mt-5 flex items-center gap-2 rounded-sm border border-dashed border-border p-4">
@@ -236,6 +260,11 @@ function LobbyPage() {
             )}
           >
             {t.name}
+            {t.variant && (
+              <span className="font-mono-typed ml-2 text-[10px] uppercase tracking-wider text-muted-foreground">
+                Weg {t.variant}
+              </span>
+            )}
             {t.id === pending.teamId && (
               <span className="ml-2 font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
                 Ihr

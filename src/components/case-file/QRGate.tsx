@@ -5,6 +5,13 @@ import { PaperCard } from "./PaperCard";
 import { Stamp } from "./Stamp";
 import { cn } from "@/lib/utils";
 import { recordStageScan } from "@/lib/progress";
+import { getRoundSession } from "@/lib/round-client";
+import {
+  stationOf,
+  stationsFor,
+  tokenForStage,
+  type Branches,
+} from "@/lib/variants";
 
 
 // Default für Etappe 1, bewusst NICHT im UI angezeigt.
@@ -189,7 +196,6 @@ export function QRGate({
   stage,
 }: Props) {
 
-  const EXPECTED_TOKEN = token;
   const STORAGE_KEY = storageKey;
   const [unlocked, setUnlocked] = useState<boolean | null>(null);
   const [scanning, setScanning] = useState(false);
@@ -197,6 +203,16 @@ export function QRGate({
   const [manual, setManual] = useState("");
   const [manualError, setManualError] = useState(false);
   const [expectedHash, setExpectedHash] = useState<string | null>(null);
+  /**
+   * Erwartete Zeichenfolge dieser Gruppe. Bei einer Runde mit Verzweigungen
+   * hängt sie vom zugeteilten Weg ab; ohne Runde gilt der Grundcode.
+   */
+  const [expectedToken, setExpectedToken] = useState<string | null>(null);
+  const [pathInfo, setPathInfo] = useState<{
+    letter: string;
+    station: number;
+    stationCount: number;
+  } | null>(null);
 
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -206,7 +222,31 @@ export function QRGate({
   useEffect(() => {
     let mounted = true;
     (async () => {
-      const expected = await sha256(EXPECTED_TOKEN);
+      const session = getRoundSession();
+      const pathCount = session?.pathCount ?? 1;
+      const branches = (session?.branches ?? null) as Branches | null;
+      const letter = session?.variant ?? null;
+      const stations = stationsFor(branches, stage ?? 0, pathCount);
+      const station = stationOf(branches, stage ?? 0, pathCount, letter);
+      const target =
+        stage === undefined
+          ? token
+          : tokenForStage({ stage, baseToken: token, letter, branches, pathCount });
+      if (!mounted) return;
+      setExpectedToken(target);
+      setPathInfo(
+        letter && stations.length > 1 && station
+          ? {
+              letter,
+              station: station.index + 1,
+              stationCount: stations.length,
+            }
+          : letter
+            ? { letter, station: 1, stationCount: 1 }
+            : null,
+      );
+
+      const expected = await sha256(target);
       if (!mounted) return;
       setExpectedHash(expected);
       try {
@@ -219,7 +259,9 @@ export function QRGate({
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [token, STORAGE_KEY, stage]);
+
+  const EXPECTED_TOKEN = expectedToken ?? token;
 
   /** Ausweg ohne Kamera: Zeichenfolge unter dem QR-Code eintippen. */
   const unlockManually = async () => {
@@ -300,9 +342,14 @@ export function QRGate({
               const diag = await collectDiagnostics(
                 new Error("QR-Code passt nicht zur Etappe"),
               );
+              // Gleicher Posten, aber andere Station: eigene Meldung, damit die
+              // Gruppe merkt, dass sie am falschen Ort steht.
+              const otherStation = text.startsWith(`${token}_`) || text === token;
               setError({
-                headline: "Falscher QR-Code",
-                detail: "Dieser QR-Code passt nicht zur aktuellen Etappe.",
+                headline: otherStation ? "Andere Station" : "Falscher QR-Code",
+                detail: otherStation
+                  ? `Dieser Code gehört zu einer anderen Station dieses Postens. Sucht den Code für Weg ${pathInfo?.letter ?? "?"}.`
+                  : "Dieser QR-Code passt nicht zur aktuellen Etappe.",
                 builderBlocked: false,
                 diagnostics: { ...diag, name: "WrongCodeError" },
               });
@@ -330,7 +377,7 @@ export function QRGate({
       mediaStreamRef.current?.getTracks().forEach((t) => t.stop());
       mediaStreamRef.current = null;
     };
-  }, [scanning]);
+  }, [scanning, EXPECTED_TOKEN]);
 
   if (unlocked === null || expectedHash === null) {
     return (
@@ -386,6 +433,23 @@ export function QRGate({
             {description ??
               "Diese Etappe ist versiegelt. Sie lässt sich nur mit dem original beigelegten QR-Code öffnen. Halte den Code vor die Kamera deines Geräts."}
           </p>
+
+          {pathInfo && (
+            <div className="mt-4 flex items-center gap-3 rounded-sm border border-stamp/40 bg-stamp/10 p-3">
+              <span className="font-mono-typed flex h-10 w-10 items-center justify-center rounded-sm bg-stamp text-lg font-bold text-primary-foreground">
+                {pathInfo.letter}
+              </span>
+              <p className="text-sm text-foreground/80">
+                Euer Weg: <strong>{pathInfo.letter}</strong>
+                {pathInfo.stationCount > 1 && (
+                  <>
+                    {" "}
+                    · Station {pathInfo.station} von {pathInfo.stationCount}
+                  </>
+                )}
+              </p>
+            </div>
+          )}
 
           <div
             className={cn(

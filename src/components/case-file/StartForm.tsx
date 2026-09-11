@@ -171,6 +171,9 @@ export function StartForm({
           teamName: cleanName,
           members: finalMembers,
           budgetMin: res.budgetMin,
+          variant: res.variant,
+          pathCount: res.pathCount,
+          branches: res.branches as never,
         });
         void navigate({ to: "/lobby" });
       } catch (err) {
