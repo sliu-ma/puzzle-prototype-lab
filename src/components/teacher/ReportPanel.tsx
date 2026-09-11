@@ -752,7 +752,14 @@ function StageReportDialog({
                       !s && "text-muted-foreground/60",
                     )}
                   >
-                    <span className="min-w-0 flex-1 truncate font-serif">{t.name}</span>
+                    <span className="min-w-0 flex-1 truncate font-serif">
+                      {t.name}
+                      {t.variant && (
+                        <span className="font-mono-typed ml-1.5 text-[10px] uppercase tracking-wider text-muted-foreground">
+                          Weg {t.variant}
+                        </span>
+                      )}
+                    </span>
                     <span className="font-mono-typed shrink-0 tabular-nums text-muted-foreground">
                       {s
                         ? `${s.betweenMin === null ? "–" : `${s.betweenMin}′`} Weg · ${s.minutes}′ Rätsel`
