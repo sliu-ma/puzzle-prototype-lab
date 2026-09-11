@@ -78,7 +78,10 @@ export function QRPrintList({
             {items.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE).map((it) => (
               <div
                 key={`${it.stage}-${it.token}`}
-                className="print-qr-card rounded-sm border border-border bg-card p-3 text-center"
+                className="print-qr-card rounded-sm border-[3px] bg-card p-3 text-center"
+                style={{
+                  borderColor: PATH_COLOR[it.letters[0] ?? "A"],
+                }}
               >
             <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
               {STAGE_LABELS[it.stage]}
