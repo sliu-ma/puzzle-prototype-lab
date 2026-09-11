@@ -28,6 +28,7 @@ import {
 } from "@/lib/teacher-session";
 import { LobbyPanel, useRoundReport } from "@/components/teacher/LobbyPanel";
 import { LiveBoard } from "@/components/teacher/LiveBoard";
+import { PathsPanel } from "@/components/teacher/PathsPanel";
 import { ReportPanel } from "@/components/teacher/ReportPanel";
 import { helpId, useHelpDone } from "@/lib/teacher-help-done";
 import { MessageRooms } from "@/components/teacher/MessageRooms";
