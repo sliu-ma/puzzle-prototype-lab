@@ -268,6 +268,55 @@ export function LobbyPanel({
         ))}
       </ul>
 
+      {pathCount > 1 && (
+        <section className="mt-5 rounded-sm border border-border bg-secondary/40 p-3">
+          <h3 className="font-serif text-lg font-bold">
+            Wege ({pathCount}) und Material
+          </h3>
+          <p className="mt-1 text-sm text-foreground/80">
+            Verteilt die Wege erst, wenn alle Gruppen angemeldet sind. Danach steht
+            neben jeder Gruppe ihr Buchstabe.
+          </p>
+
+          <button
+            type="button"
+            onClick={() => void assign()}
+            disabled={assigning || teams.length === 0}
+            className="mt-3 flex min-h-[44px] w-full items-center justify-center gap-2 rounded-sm border border-stamp bg-stamp/10 px-3 font-serif font-semibold disabled:opacity-50"
+          >
+            <Shuffle className={cn("h-4 w-4", assigning && "animate-spin")} />
+            {assigned > 0 ? "Wege neu verteilen" : "Wege zufällig verteilen"}
+          </button>
+          {assignError && (
+            <p className="mt-2 text-xs text-destructive">{assignError}</p>
+          )}
+          <p className="mt-2 text-xs text-muted-foreground">
+            {assigned} von {teams.length} Gruppen haben einen Weg.
+          </p>
+
+          <div className="mt-3">
+            <BranchDiagram
+              pathCount={pathCount}
+              branches={normalizeBranches(branches, pathCount)}
+            />
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setShowCodes((v) => !v)}
+            className="font-mono-typed mt-3 min-h-[40px] text-[10px] uppercase tracking-wider text-muted-foreground underline"
+          >
+            {showCodes ? "QR-Codes ausblenden" : "QR-Codes zum Ausdrucken zeigen"}
+          </button>
+          {showCodes && (
+            <QRPrintList
+              pathCount={pathCount}
+              branches={normalizeBranches(branches, pathCount)}
+            />
+          )}
+        </section>
+      )}
+
       {prologueOpen && (
         <PrologueOverlay
           holdOnOutro
