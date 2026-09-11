@@ -31,6 +31,8 @@ export type ReportEvent = {
 export type ReportTeam = {
   teamId: string;
   name: string;
+  /** Zugeteilter Weg (A bis D) oder null. */
+  variant: string | null;
   members: string[];
   joinedAt: string;
   finishedAt: string | null;
@@ -76,6 +78,9 @@ export type Report = {
   status: string;
   budgetMin: number;
   startedAt: string | null;
+  /** Anzahl Wege dieser Runde (1 = alle Gruppen gleich). */
+  pathCount: number;
+  branches: Branches | null;
   teams: ReportTeam[];
 };
 
