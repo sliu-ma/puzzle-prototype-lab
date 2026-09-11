@@ -83,7 +83,10 @@ export function QRPrintList({
                   borderColor: PATH_COLOR[it.letters[0] ?? "A"],
                 }}
               >
-            <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+            <p
+              className="font-mono-typed text-[11px] font-bold uppercase tracking-wider"
+              style={{ color: PATH_COLOR[it.letters[0] ?? "A"] }}
+            >
               {STAGE_LABELS[it.stage]}
             </p>
             <img
