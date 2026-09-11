@@ -7,8 +7,10 @@ import { cn } from "@/lib/utils";
 import { recordStageScan } from "@/lib/progress";
 import { getRoundSession } from "@/lib/round-client";
 import {
+  PATH_COLOR,
   tokenForStage,
   type Branches,
+  type Letter,
 } from "@/lib/variants";
 
 
