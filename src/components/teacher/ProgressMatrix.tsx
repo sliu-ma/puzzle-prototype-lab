@@ -204,6 +204,11 @@ function TeamRow({
           {helpFresh && <LifeBuoy aria-hidden className="h-3.5 w-3.5 text-stamp" />}
           {s.finished && <Flag aria-hidden className="h-3 w-3 text-stamp" />}
           <span className="truncate">{s.team.name}</span>
+          {s.team.variant && (
+            <span className="font-mono-typed shrink-0 rounded-sm bg-secondary px-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+              {s.team.variant}
+            </span>
+          )}
         </span>
         {helpFresh && (
           <span className="font-mono-typed mt-0.5 block truncate text-[11px] font-bold text-stamp">

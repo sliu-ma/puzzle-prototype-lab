@@ -76,30 +76,36 @@ export type Database = {
       }
       rounds: {
         Row: {
+          branches: Json
           budget_min: number
           code: string
           created_at: string
           id: string
+          path_count: number
           started_at: string | null
           status: string
           title: string
           updated_at: string
         }
         Insert: {
+          branches?: Json
           budget_min?: number
           code: string
           created_at?: string
           id?: string
+          path_count?: number
           started_at?: string | null
           status?: string
           title?: string
           updated_at?: string
         }
         Update: {
+          branches?: Json
           budget_min?: number
           code?: string
           created_at?: string
           id?: string
+          path_count?: number
           started_at?: string | null
           status?: string
           title?: string
@@ -176,6 +182,7 @@ export type Database = {
           round_id: string
           token_hash: string
           updated_at: string
+          variant: string | null
         }
         Insert: {
           created_at?: string
@@ -186,6 +193,7 @@ export type Database = {
           round_id: string
           token_hash: string
           updated_at?: string
+          variant?: string | null
         }
         Update: {
           created_at?: string
@@ -196,6 +204,7 @@ export type Database = {
           round_id?: string
           token_hash?: string
           updated_at?: string
+          variant?: string | null
         }
         Relationships: [
           {
@@ -229,20 +238,25 @@ export type Database = {
           p_token_hash: string
         }
         Returns: {
+          branches: Json
           budget_min: number
+          path_count: number
           round_code: string
           round_status: string
           round_title: string
           started_at: string
           team_id: string
+          variant: string
         }[]
       }
       round_leaderboard_data: { Args: { p_code: string }; Returns: Json }
       round_lookup: {
         Args: { p_code: string }
         Returns: {
+          branches: Json
           budget_min: number
           code: string
+          path_count: number
           started_at: string
           status: string
           title: string
@@ -256,11 +270,17 @@ export type Database = {
         Args: { p_code: string; p_team_id: string; p_token_hash: string }
         Returns: Json
       }
+      teacher_assign_variants: {
+        Args: { p_code: string; p_password_hash: string }
+        Returns: Json
+      }
       teacher_create_round: {
         Args: {
+          p_branches?: Json
           p_budget_min: number
           p_code: string
           p_password_hash: string
+          p_path_count?: number
           p_title: string
         }
         Returns: {
@@ -290,9 +310,11 @@ export type Database = {
       teacher_list_rounds: {
         Args: { p_password_hash: string }
         Returns: {
+          branches: Json
           budget_min: number
           code: string
           created_at: string
+          path_count: number
           started_at: string
           status: string
           team_count: number

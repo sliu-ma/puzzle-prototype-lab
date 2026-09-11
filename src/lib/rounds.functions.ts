@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import type { Branches } from "./variants";
 
 const eventSchema = z.object({
   id: z.string().min(1).max(120),
@@ -46,6 +47,8 @@ export const lookupRound = createServerFn({ method: "POST" })
       status: round.status,
       budgetMin: round.budget_min,
       startedAt: round.started_at ?? null,
+      pathCount: (round as { path_count?: number }).path_count ?? 1,
+      branches: ((round as { branches?: unknown }).branches ?? null) as Branches | null,
     };
   });
 
@@ -86,6 +89,9 @@ export const joinRound = createServerFn({ method: "POST" })
       roundStatus: row.round_status,
       startedAt: row.started_at ?? null,
       budgetMin: row.budget_min ?? 90,
+      pathCount: (row as { path_count?: number }).path_count ?? 1,
+      branches: ((row as { branches?: unknown }).branches ?? null) as Branches | null,
+      variant: ((row as { variant?: string | null }).variant ?? null) as string | null,
     };
   });
 
@@ -219,7 +225,30 @@ export const teacherListRounds = createServerFn({ method: "POST" })
       teamCount: r.team_count ?? 0,
       budget_min: r.budget_min ?? 90,
       started_at: r.started_at ?? null,
+      path_count: (r as { path_count?: number }).path_count ?? 1,
+      branches: ((r as { branches?: unknown }).branches ?? null) as Branches | null,
     }));
+  });
+
+/** Wege zufällig und gleichmässig auf die angemeldeten Gruppen verteilen. */
+export const teacherAssignVariants = createServerFn({ method: "POST" })
+  .inputValidator((d) =>
+    z
+      .object({ password: z.string().min(1).max(200), code: z.string().min(1).max(20) })
+      .parse(d),
+  )
+  .handler(async ({ data }) => {
+    const { roundsDb, hashPassword } = await import("./rounds.server");
+    const { data: raw, error } = await roundsDb().rpc("teacher_assign_variants", {
+      p_password_hash: hashPassword(data.password),
+      p_code: data.code,
+    });
+    if (error) throw new Error(error.message);
+    const p = (raw ?? {}) as {
+      pathCount?: number;
+      teams?: { id: string; name: string; variant: string | null }[];
+    };
+    return { pathCount: p.pathCount ?? 1, teams: p.teams ?? [] };
   });
 
 
@@ -230,6 +259,10 @@ export const teacherCreateRound = createServerFn({ method: "POST" })
         password: z.string().min(1).max(200),
         title: z.string().min(1).max(80),
         budgetMin: z.number().int().min(15).max(240).default(90),
+        pathCount: z.number().int().min(1).max(4).default(1),
+        branches: z
+          .record(z.string(), z.array(z.array(z.enum(["A", "B", "C", "D"]))))
+          .default({}),
       })
       .parse(d),
   )
@@ -245,6 +278,8 @@ export const teacherCreateRound = createServerFn({ method: "POST" })
         p_code: makeRoundCode(),
         p_title: data.title.trim(),
         p_budget_min: data.budgetMin,
+        p_path_count: data.pathCount,
+        p_branches: data.branches as unknown as never,
       });
       if (!error && rows?.[0]) return rows[0];
       lastError = error?.message ?? null;
@@ -317,7 +352,10 @@ export const getRoundState = createServerFn({ method: "POST" })
       budgetMin?: number;
       startedAt?: string | null;
       teamExists?: boolean;
-      teams?: { id: string; name: string }[];
+      pathCount?: number;
+      branches?: Branches | null;
+      variant?: string | null;
+      teams?: { id: string; name: string; variant?: string | null }[];
       messages?: { id: string; body: string; createdAt: string }[];
     };
     if (!p.found) return { found: false as const };
@@ -328,6 +366,9 @@ export const getRoundState = createServerFn({ method: "POST" })
       status: p.status ?? "lobby",
       budgetMin: p.budgetMin ?? 90,
       startedAt: p.startedAt ?? null,
+      pathCount: p.pathCount ?? 1,
+      branches: (p.branches ?? null) as Branches | null,
+      variant: p.variant ?? null,
       teamExists: !!p.teamExists,
       teams: p.teams ?? [],
       messages: p.messages ?? [],
@@ -471,10 +512,13 @@ export const teacherRoundReport = createServerFn({ method: "POST" })
       status?: string;
       budgetMin?: number;
       startedAt?: string | null;
+      pathCount?: number;
+      branches?: Branches | null;
       teams?: {
         id: string;
         name: string;
         members: unknown;
+        variant?: string | null;
         created_at: string;
         finished_at: string | null;
       }[];
@@ -494,6 +538,8 @@ export const teacherRoundReport = createServerFn({ method: "POST" })
       status: p.status ?? "lobby",
       budgetMin: p.budgetMin ?? 90,
       startedAt: p.startedAt ?? null,
+      pathCount: p.pathCount ?? 1,
+      branches: (p.branches ?? null) as Branches | null,
       teams: buildReport(
         p.teams ?? [],
         p.events ?? [],

@@ -1,6 +1,7 @@
 // Klassen-Runde auf dem Gerät: Zuordnung Team ↔ Runde und Abgleich der
 // Punkte-Ereignisse mit dem Server. Ohne Runde läuft alles rein lokal weiter.
 import type { ScoreEvent } from "./score";
+import type { Branches } from "./variants";
 import { pushScoreEvents, finishTeam } from "./rounds.functions";
 
 const KEY_ROUND = "maya-round";
@@ -26,6 +27,12 @@ export type RoundSession = {
   teamId: string;
   token: string;
   startedAt?: string | null;
+  /** Zugeteilter Weg (A bis D), null solange nicht verteilt. */
+  variant?: string | null;
+  /** Anzahl Wege dieser Runde (1 = keine Verzweigung). */
+  pathCount?: number;
+  /** Stationen pro Posten: {"1":[["A","B"],["C","D"]], …}. */
+  branches?: Branches | null;
 };
 
 export type PendingJoin = {
@@ -36,6 +43,9 @@ export type PendingJoin = {
   teamName: string;
   members: string[];
   budgetMin: number;
+  variant?: string | null;
+  pathCount?: number;
+  branches?: Branches | null;
 };
 
 export function getPendingJoin(): PendingJoin | null {
@@ -55,6 +65,9 @@ export function getPendingJoin(): PendingJoin | null {
       teamName: p.teamName,
       members: Array.isArray(p.members) ? p.members : [],
       budgetMin: typeof p.budgetMin === "number" ? p.budgetMin : 90,
+      variant: p.variant ?? null,
+      pathCount: typeof p.pathCount === "number" ? p.pathCount : 1,
+      branches: p.branches ?? null,
     };
   } catch {
     return null;
@@ -91,6 +104,9 @@ export function getRoundSession(): RoundSession | null {
       teamId: p.teamId,
       token: p.token,
       startedAt: p.startedAt ?? null,
+      variant: p.variant ?? null,
+      pathCount: typeof p.pathCount === "number" ? p.pathCount : 1,
+      branches: p.branches ?? null,
     };
   } catch {
     return null;

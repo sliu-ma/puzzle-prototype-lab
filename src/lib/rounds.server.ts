@@ -231,6 +231,8 @@ export type ReportEvent = {
 export type ReportTeam = {
   teamId: string;
   name: string;
+  /** Zugeteilter Weg (A bis D) oder null, solange nicht verteilt. */
+  variant: string | null;
   members: string[];
   joinedAt: string;
   finishedAt: string | null;
@@ -321,6 +323,7 @@ export function buildReport(
     id: string;
     name: string;
     members: unknown;
+    variant?: string | null;
     created_at: string;
     finished_at: string | null;
   }[],
@@ -507,6 +510,7 @@ export function buildReport(
     return {
       teamId: t.id,
       name: t.name,
+      variant: t.variant ?? null,
       members: Array.isArray(t.members)
         ? (t.members as unknown[]).filter((m): m is string => typeof m === "string")
         : [],

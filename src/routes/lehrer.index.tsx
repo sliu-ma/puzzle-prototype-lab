@@ -9,6 +9,8 @@ import {
   STATUS_LABEL,
 } from "@/lib/teacher-session";
 import { cn } from "@/lib/utils";
+import { BranchDiagram } from "@/components/teacher/BranchDiagram";
+import { defaultBranches, normalizeBranches, type Branches } from "@/lib/variants";
 
 export const Route = createFileRoute("/lehrer/")({
   ssr: false,
@@ -55,6 +57,9 @@ function TeacherPage() {
   const [rounds, setRounds] = useState<RoundItem[]>([]);
   const [title, setTitle] = useState("");
   const [budget, setBudget] = useState(90);
+  // Wege dieser Runde: nur beim Anlegen einstellbar.
+  const [pathCount, setPathCount] = useState(1);
+  const [branches, setBranches] = useState<Branches>(() => defaultBranches(1));
 
   const loadRounds = useCallback(async (pw: string) => {
     const list = await teacherListRounds({ data: { password: pw } });
@@ -91,7 +96,13 @@ function TeacherPage() {
     setBusy(true);
     try {
       const res = await teacherCreateRound({
-        data: { password, title: title.trim(), budgetMin: budget },
+        data: {
+          password,
+          title: title.trim(),
+          budgetMin: budget,
+          pathCount,
+          branches: normalizeBranches(branches, pathCount),
+        },
       });
       setTitle("");
       setError(null);
@@ -182,28 +193,66 @@ function TeacherPage() {
 
       <form
         onSubmit={(e) => void create(e)}
-        className="mt-5 flex flex-col gap-2 rounded-sm border border-border bg-secondary/50 p-3 sm:flex-row"
+        className="mt-5 rounded-sm border border-border bg-secondary/50 p-3"
       >
-        <input
-          type="text"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          placeholder="z. B. Klasse 4b, Dienstag"
-          className={cn(inputBase, "font-serif")}
-        />
-        <input
-          type="number"
-          min={15}
-          max={240}
-          value={budget}
-          onChange={(e) => setBudget(Number(e.target.value))}
-          aria-label="Zeitbudget in Minuten"
-          className={cn(inputBase, "sm:w-28")}
-        />
+        <div className="flex flex-col gap-2 sm:flex-row">
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="z. B. Klasse 4b, Dienstag"
+            className={cn(inputBase, "font-serif")}
+          />
+          <input
+            type="number"
+            min={15}
+            max={240}
+            value={budget}
+            onChange={(e) => setBudget(Number(e.target.value))}
+            aria-label="Zeitbudget in Minuten"
+            className={cn(inputBase, "sm:w-28")}
+          />
+        </div>
+
+        <div className="mt-3">
+          <label className="flex flex-wrap items-center gap-2 font-serif text-sm font-semibold">
+            Wie viele Wege soll diese Runde haben?
+            <select
+              value={pathCount}
+              onChange={(e) => {
+                const n = Number(e.target.value);
+                setPathCount(n);
+                setBranches(defaultBranches(n));
+              }}
+              className="min-h-[40px] rounded-sm border border-border bg-paper px-2 text-sm"
+            >
+              {[1, 2, 3, 4].map((n) => (
+                <option key={n} value={n}>
+                  {n === 1 ? "1 (alle gleich)" : `${n} Wege`}
+                </option>
+              ))}
+            </select>
+          </label>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Mit mehreren Wegen laufen die Gruppen versetzt. Pro Posten legt ihr fest,
+            wie viele Stationen es gibt.
+          </p>
+        </div>
+
+        {pathCount > 1 && (
+          <div className="mt-3">
+            <BranchDiagram
+              pathCount={pathCount}
+              branches={branches}
+              onChange={setBranches}
+            />
+          </div>
+        )}
+
         <button
           type="submit"
           disabled={busy}
-          className="flex min-h-[48px] items-center justify-center gap-2 rounded-sm bg-primary px-4 font-serif font-semibold text-primary-foreground disabled:opacity-60 sm:w-44"
+          className="mt-3 flex min-h-[48px] w-full items-center justify-center gap-2 rounded-sm bg-primary px-4 font-serif font-semibold text-primary-foreground disabled:opacity-60"
         >
           <Plus className="h-4 w-4" />
           Runde anlegen
