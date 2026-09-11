@@ -14,6 +14,7 @@ import {
   stationsFor,
   type Branches,
   type Letter,
+  type StationDescriptions,
 } from "@/lib/variants";
 
 const COL_W = 118;
@@ -31,10 +32,14 @@ export function BranchDiagram({
   pathCount,
   branches,
   onChange,
+  descriptions,
+  onDescriptionsChange,
 }: {
   pathCount: number;
   branches: Branches;
   onChange?: (next: Branches) => void;
+  descriptions?: StationDescriptions | null;
+  onDescriptionsChange?: (next: StationDescriptions) => void;
 }) {
   const letters = lettersFor(pathCount);
   const width = PAD_X * 2 + COL_W * (STAGE_IDS.length - 1);
@@ -70,6 +75,29 @@ export function BranchDiagram({
       .filter((s) => s.length > 0)
       .map((s) => [...s].sort() as Letter[]);
     onChange(next);
+    if (onDescriptionsChange) {
+      const currentDescriptions = descriptions?.[String(stage)] ?? [];
+      onDescriptionsChange({
+        ...(descriptions ?? {}),
+        [String(stage)]: Array.from(
+          { length: count },
+          (_, index) => currentDescriptions[index] ?? "",
+        ),
+      });
+    }
+  };
+
+  const setDescription = (stage: number, index: number, value: string) => {
+    if (!onDescriptionsChange) return;
+    const count = stationsFor(branches, stage, pathCount).length;
+    const current = descriptions?.[String(stage)] ?? [];
+    onDescriptionsChange({
+      ...(descriptions ?? {}),
+      [String(stage)]: Array.from(
+        { length: count },
+        (_, i) => (i === index ? value : current[i] ?? ""),
+      ),
+    });
   };
 
   return (
@@ -242,6 +270,29 @@ export function BranchDiagram({
                         </label>
                       );
                     })}
+                  </div>
+                )}
+                {onDescriptionsChange && (
+                  <div className="mt-3 space-y-2">
+                    {stations.map((station, index) => (
+                      <label key={`place-${stage}-${index}`} className="block">
+                        <span className="font-mono-typed text-[10px] uppercase text-muted-foreground">
+                          {stations.length > 1
+                            ? `Station ${index + 1} · Weg ${station.join(", ")}`
+                            : "Ort des Postens"}
+                        </span>
+                        <input
+                          type="text"
+                          maxLength={160}
+                          value={descriptions?.[String(stage)]?.[index] ?? ""}
+                          onChange={(event) =>
+                            setDescription(stage, index, event.target.value)
+                          }
+                          placeholder="z. B. Haltestelle Bünteli"
+                          className="mt-1 min-h-[42px] w-full rounded-sm border border-border bg-background px-3 text-foreground"
+                        />
+                      </label>
+                    ))}
                   </div>
                 )}
               </div>

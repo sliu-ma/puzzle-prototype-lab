@@ -7,8 +7,6 @@ import { cn } from "@/lib/utils";
 import { recordStageScan } from "@/lib/progress";
 import { getRoundSession } from "@/lib/round-client";
 import {
-  stationOf,
-  stationsFor,
   tokenForStage,
   type Branches,
 } from "@/lib/variants";
@@ -208,11 +206,7 @@ export function QRGate({
    * hängt sie vom zugeteilten Weg ab; ohne Runde gilt der Grundcode.
    */
   const [expectedToken, setExpectedToken] = useState<string | null>(null);
-  const [pathInfo, setPathInfo] = useState<{
-    letter: string;
-    station: number;
-    stationCount: number;
-  } | null>(null);
+  const [pathLetter, setPathLetter] = useState<string | null>(null);
 
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -226,25 +220,13 @@ export function QRGate({
       const pathCount = session?.pathCount ?? 1;
       const branches = (session?.branches ?? null) as Branches | null;
       const letter = session?.variant ?? null;
-      const stations = stationsFor(branches, stage ?? 0, pathCount);
-      const station = stationOf(branches, stage ?? 0, pathCount, letter);
       const target =
         stage === undefined
           ? token
           : tokenForStage({ stage, baseToken: token, letter, branches, pathCount });
       if (!mounted) return;
       setExpectedToken(target);
-      setPathInfo(
-        letter && stations.length > 1 && station
-          ? {
-              letter,
-              station: station.index + 1,
-              stationCount: stations.length,
-            }
-          : letter
-            ? { letter, station: 1, stationCount: 1 }
-            : null,
-      );
+      setPathLetter(letter);
 
       const expected = await sha256(target);
       if (!mounted) return;
@@ -348,7 +330,7 @@ export function QRGate({
               setError({
                 headline: otherStation ? "Andere Station" : "Falscher QR-Code",
                 detail: otherStation
-                  ? `Dieser Code gehört zu einer anderen Station dieses Postens. Sucht den Code für Weg ${pathInfo?.letter ?? "?"}.`
+                  ? `Dieser Code gehört zu einem anderen Weg. Sucht den Code für Weg ${pathLetter ?? "?"}.`
                   : "Dieser QR-Code passt nicht zur aktuellen Etappe.",
                 builderBlocked: false,
                 diagnostics: { ...diag, name: "WrongCodeError" },
@@ -434,19 +416,13 @@ export function QRGate({
               "Diese Etappe ist versiegelt. Sie lässt sich nur mit dem original beigelegten QR-Code öffnen. Halte den Code vor die Kamera deines Geräts."}
           </p>
 
-          {pathInfo && (
+          {pathLetter && (
             <div className="mt-4 flex items-center gap-3 rounded-sm border border-stamp/40 bg-stamp/10 p-3">
               <span className="font-mono-typed flex h-10 w-10 items-center justify-center rounded-sm bg-stamp text-lg font-bold text-primary-foreground">
-                {pathInfo.letter}
+                {pathLetter}
               </span>
               <p className="text-sm text-foreground/80">
-                Euer Weg: <strong>{pathInfo.letter}</strong>
-                {pathInfo.stationCount > 1 && (
-                  <>
-                    {" "}
-                    · Station {pathInfo.station} von {pathInfo.stationCount}
-                  </>
-                )}
+                Euer Weg: <strong>{pathLetter}</strong>
               </p>
             </div>
           )}

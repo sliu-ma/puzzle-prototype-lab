@@ -45,6 +45,26 @@ export const PATH_COLOR: Record<Letter, string> = {
 /** Eine Station ist eine Liste von Wegen, die denselben QR-Code nutzen. */
 export type Branches = Record<string, Letter[][]>;
 
+/** Interne Ortsnotizen pro Station, nach Etappe und Stationsreihenfolge. */
+export type StationDescriptions = Record<string, string[]>;
+
+export function normalizeStationDescriptions(
+  raw: unknown,
+  branches: Branches,
+  pathCount: number,
+): StationDescriptions {
+  const src = (raw ?? {}) as Record<string, unknown>;
+  const out: StationDescriptions = {};
+  for (const stage of STAGE_IDS) {
+    const count = stationsFor(branches, stage, pathCount).length;
+    const values = Array.isArray(src[String(stage)]) ? src[String(stage)] : [];
+    out[String(stage)] = Array.from({ length: count }, (_, index) =>
+      typeof values[index] === "string" ? values[index].trim().slice(0, 160) : "",
+    );
+  }
+  return out;
+}
+
 export function lettersFor(pathCount: number): Letter[] {
   const n = Math.max(1, Math.min(LETTERS.length, Math.round(pathCount || 1)));
   return LETTERS.slice(0, n) as Letter[];
