@@ -55,7 +55,7 @@ export function QRPrintList({
 
   return (
     <div className="mt-4">
-      <div className="flex flex-wrap items-center justify-between gap-2">
+      <div className="flex flex-wrap items-center justify-between gap-2 print:hidden">
         <p className="text-sm text-muted-foreground">
           {totalCodeCount(branches, pathCount)} QR-Codes für diese Runde
         </p>
@@ -69,11 +69,12 @@ export function QRPrintList({
         </button>
       </div>
 
-      <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
+      {/* Nur dieser Bereich landet auf dem Papier (siehe @media print in styles.css). */}
+      <div className="print-area mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
         {items.map((it) => (
           <div
             key={`${it.stage}-${it.token}`}
-            className="rounded-sm border border-border bg-card p-3 text-center"
+            className="print-qr-card rounded-sm border border-border bg-card p-3 text-center"
           >
             <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
               {STAGE_LABELS[it.stage]}

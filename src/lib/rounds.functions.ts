@@ -251,6 +251,30 @@ export const teacherAssignVariants = createServerFn({ method: "POST" })
     return { pathCount: p.pathCount ?? 1, teams: p.teams ?? [] };
   });
 
+/** Weg einer einzelnen Gruppe von Hand setzen (leer = kein Weg). */
+export const teacherSetTeamVariant = createServerFn({ method: "POST" })
+  .inputValidator((d) =>
+    z
+      .object({
+        password: z.string().min(1).max(200),
+        teamId: z.string().uuid(),
+        variant: z.string().max(1),
+      })
+      .parse(d),
+  )
+  .handler(async ({ data }) => {
+    const { roundsDb, hashPassword } = await import("./rounds.server");
+    const { error } = await roundsDb().rpc("teacher_set_team_variant", {
+      p_password_hash: hashPassword(data.password),
+      p_team_id: data.teamId,
+      p_variant: data.variant,
+    });
+    if (error) throw new Error(error.message);
+    return { ok: true as const };
+  });
+
+
+
 
 export const teacherCreateRound = createServerFn({ method: "POST" })
   .inputValidator((d) =>
