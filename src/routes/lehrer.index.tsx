@@ -18,6 +18,7 @@ import {
   type StationDescriptions,
 } from "@/lib/variants";
 
+
 export const Route = createFileRoute("/lehrer/")({
   ssr: false,
   head: () => ({
