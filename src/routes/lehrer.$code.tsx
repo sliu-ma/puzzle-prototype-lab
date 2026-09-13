@@ -226,7 +226,8 @@ function RoundPage() {
     );
   }
 
-  const inLobby = round.status === "lobby";
+  const inPlanning = round.status === "planning";
+  const inLobby = round.status === "lobby" || inPlanning;
   const copy = () => {
     void navigator.clipboard?.writeText(round.code);
     setCopied(true);
