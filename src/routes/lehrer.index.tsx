@@ -107,13 +107,10 @@ function TeacherPage() {
           password,
           title: title.trim(),
           budgetMin: budget,
-          pathCount,
-          branches: normalizeBranches(branches, pathCount),
-          stationDescriptions: normalizeStationDescriptions(
-            stationDescriptions,
-            normalizeBranches(branches, pathCount),
-            pathCount,
-          ),
+          // Wege und Orte werden danach im Planungsmodus der Runde festgelegt.
+          pathCount: 1,
+          branches: defaultBranches(1),
+          stationDescriptions: {},
         },
       });
       setTitle("");
