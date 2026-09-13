@@ -317,9 +317,11 @@ input, textarea, select {
   .print-qr-page {
     display: grid;
     grid-template-columns: 1fr;
-    grid-template-rows: repeat(3, 87mm);
-    gap: 5mm;
-    min-height: 271mm;
+    grid-template-rows: repeat(2, 128mm);
+    gap: 6mm;
+    /* 2 × 128 + 6 = 262 mm – deutlich unter den 273 mm Nutzhöhe der
+       A4-Seite, damit garantiert keine Karte auf die nächste Seite rutscht. */
+    min-height: 262mm;
     background-color: #FAF7EF;
     break-after: page;
     page-break-after: always;
@@ -336,9 +338,9 @@ input, textarea, select {
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    gap: 6mm;
+    gap: 8mm;
     margin: 0;
-    padding: 7mm;
+    padding: 8mm;
     border-width: 0.6mm;
     /* Wegfarben müssen auch auf Papier sichtbar bleiben. */
     -webkit-print-color-adjust: exact;
@@ -348,10 +350,10 @@ input, textarea, select {
     flex: 1 1 55%;
   }
   .print-qr-code {
-    /* An die Kartenhöhe (87 mm minus Innenabstand) koppeln, sonst ragt
-       der QR-Code bei drei Karten pro Seite aus der Karte heraus. */
+    /* Kartenhöhe 128 mm minus Innenabstand (2 × 8 mm) = 112 mm nutzbar;
+       der QR-Code bleibt mit 96 mm inkl. Rahmen sicher darunter. */
     flex: 0 0 auto;
-    width: 64mm;
+    width: 96mm;
     max-width: none;
   }
   .print-qr-code img {
