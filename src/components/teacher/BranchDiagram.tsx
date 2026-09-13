@@ -3,7 +3,8 @@
  *
  * Jeder Weg (A bis D) hat eine Farbe und läuft von links nach rechts durch die
  * sechs Posten. Wo mehrere Wege an derselben Station stehen, laufen die Linien
- * zusammen: dort genügt ein einziger QR-Code.
+ * zusammen: dort genügt ein einziger QR-Code. Der eingetragene Ort steht direkt
+ * an der Station, damit man ohne zweite Liste sieht, wo ein Posten liegt.
  */
 import {
   LETTERS,
@@ -17,15 +18,26 @@ import {
   type StationDescriptions,
 } from "@/lib/variants";
 
-const COL_W = 118;
-const ROW_H = 46;
-const PAD_X = 58;
-const PAD_TOP = 34;
+const COL_W = 132;
+const ROW_H = 58;
+const PAD_X = 66;
+const PAD_TOP = 40;
 
 function stationY(index: number, count: number) {
   // Stationen mittig um die Achse verteilen.
   const offset = index - (count - 1) / 2;
   return PAD_TOP + 2 * ROW_H + offset * ROW_H;
+}
+
+/** «Posten 1 · Mobilität», Hearing bleibt ohne Nummer. */
+export function stageTitle(stage: number) {
+  const name = STAGE_LABELS[stage] ?? `Posten ${stage}`;
+  return stage >= 6 ? name : `Posten ${stage} · ${name}`;
+}
+
+function shorten(text: string, max = 16) {
+  if (text.length <= max) return text;
+  return `${text.slice(0, max - 1)}…`;
 }
 
 export function BranchDiagram({
@@ -43,7 +55,7 @@ export function BranchDiagram({
 }) {
   const letters = lettersFor(pathCount);
   const width = PAD_X * 2 + COL_W * (STAGE_IDS.length - 1);
-  const height = PAD_TOP + 4 * ROW_H + 30;
+  const height = PAD_TOP + 4 * ROW_H + 46;
 
   const stationsPerStage = STAGE_IDS.map((stage) =>
     stationsFor(branches, stage, pathCount),
@@ -93,12 +105,14 @@ export function BranchDiagram({
     const current = descriptions?.[String(stage)] ?? [];
     onDescriptionsChange({
       ...(descriptions ?? {}),
-      [String(stage)]: Array.from(
-        { length: count },
-        (_, i) => (i === index ? value : current[i] ?? ""),
+      [String(stage)]: Array.from({ length: count }, (_, i) =>
+        i === index ? value : (current[i] ?? ""),
       ),
     });
   };
+
+  const showBranchEditor = !!onChange && pathCount > 1;
+  const showStageCards = showBranchEditor || !!onDescriptionsChange;
 
   return (
     <div>
@@ -108,21 +122,31 @@ export function BranchDiagram({
           height={height}
           viewBox={`0 0 ${width} ${height}`}
           role="img"
-          aria-label="Wege der Gruppen über die Posten"
-          className="min-w-[680px]"
+          aria-label="Wege der Gruppen über die Posten mit Ortsangaben"
+          className="min-w-[760px]"
         >
-          {/* Postenbeschriftung */}
+          {/* Postenbeschriftung mit Nummer */}
           {STAGE_IDS.map((stage, i) => (
-            <text
-              key={`lbl-${stage}`}
-              x={PAD_X + i * COL_W}
-              y={18}
-              textAnchor="middle"
-              className="fill-muted-foreground"
-              style={{ fontSize: 10, letterSpacing: 1 }}
-            >
-              {STAGE_LABELS[stage]?.toUpperCase()}
-            </text>
+            <g key={`lbl-${stage}`}>
+              <text
+                x={PAD_X + i * COL_W}
+                y={16}
+                textAnchor="middle"
+                className="fill-muted-foreground"
+                style={{ fontSize: 9, letterSpacing: 1 }}
+              >
+                {stage >= 6 ? "ZIEL" : `POSTEN ${stage}`}
+              </text>
+              <text
+                x={PAD_X + i * COL_W}
+                y={30}
+                textAnchor="middle"
+                className="fill-foreground"
+                style={{ fontSize: 11, fontWeight: 700 }}
+              >
+                {STAGE_LABELS[stage]}
+              </text>
+            </g>
           ))}
 
           {/* Wege als Linien */}
@@ -161,17 +185,24 @@ export function BranchDiagram({
             );
           })}
 
-          {/* Stationen als Punkte mit Buchstaben */}
+          {/* Stationen als Punkte mit Buchstaben und Ort */}
           {STAGE_IDS.map((stage, i) => {
             const stations = stationsPerStage[i]!;
+            const places = descriptions?.[String(stage)] ?? [];
             return stations.map((station, idx) => {
               const x = PAD_X + i * COL_W;
               const y = stationY(idx, stations.length);
+              const place = (places[idx] ?? "").trim();
               return (
                 <g key={`st-${stage}-${idx}`}>
+                  <title>
+                    {`${stageTitle(stage)} · Weg ${station.join(", ")}${
+                      place ? ` · ${place}` : " · Ort offen"
+                    }`}
+                  </title>
                   <rect
                     x={x - 26}
-                    y={y - 12}
+                    y={y - 13}
                     width={52}
                     height={24}
                     rx={3}
@@ -180,13 +211,33 @@ export function BranchDiagram({
                   />
                   <text
                     x={x}
-                    y={y + 4}
+                    y={y + 3}
                     textAnchor="middle"
                     className="fill-foreground"
                     style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1 }}
                   >
                     {station.join("")}
                   </text>
+                  <text
+                    x={x}
+                    y={y + 22}
+                    textAnchor="middle"
+                    className={place ? "fill-foreground" : "fill-muted-foreground"}
+                    style={{ fontSize: 8.5, fontStyle: place ? "normal" : "italic" }}
+                  >
+                    {place ? shorten(place) : "Ort offen"}
+                  </text>
+                  {station.length > 1 && (
+                    <text
+                      x={x}
+                      y={y + 32}
+                      textAnchor="middle"
+                      className="fill-muted-foreground"
+                      style={{ fontSize: 7.5, letterSpacing: 0.5 }}
+                    >
+                      1 QR-CODE
+                    </text>
+                  )}
                 </g>
               );
             });
@@ -195,19 +246,21 @@ export function BranchDiagram({
       </div>
 
       {/* Farblegende */}
-      <div className="mt-2 flex flex-wrap gap-3">
-        {letters.map((l) => (
-          <span key={l} className="flex items-center gap-1.5 text-xs">
-            <span
-              className="inline-block h-2.5 w-5 rounded-sm"
-              style={{ backgroundColor: PATH_COLOR[l] }}
-            />
-            Weg {l}
-          </span>
-        ))}
-      </div>
+      {pathCount > 1 && (
+        <div className="mt-2 flex flex-wrap gap-3">
+          {letters.map((l) => (
+            <span key={l} className="flex items-center gap-1.5 text-xs">
+              <span
+                className="inline-block h-2.5 w-5 rounded-sm"
+                style={{ backgroundColor: PATH_COLOR[l] }}
+              />
+              Weg {l}
+            </span>
+          ))}
+        </div>
+      )}
 
-      {onChange && pathCount > 1 && (
+      {showStageCards && (
         <div className="mt-4 space-y-3">
           {STAGE_IDS.map((stage, i) => {
             const stations = stationsPerStage[i]!;
@@ -218,69 +271,55 @@ export function BranchDiagram({
               >
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <p className="font-serif text-sm font-semibold">
-                    {STAGE_LABELS[stage]}
+                    {stageTitle(stage)}
                   </p>
-                  <label className="flex items-center gap-2 text-xs text-muted-foreground">
-                    Stationen
-                    <select
-                      value={stations.length}
-                      onChange={(e) =>
-                        setStationCount(stage, Number(e.target.value))
-                      }
-                      className="min-h-[36px] rounded-sm border border-border bg-background px-2 text-sm text-foreground"
-                    >
-                      {letters.map((_, n) => (
-                        <option key={n} value={n + 1}>
-                          {n + 1}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
+                  {showBranchEditor && (
+                    <label className="flex items-center gap-2 text-xs text-muted-foreground">
+                      Stationen
+                      <select
+                        value={stations.length}
+                        onChange={(e) =>
+                          setStationCount(stage, Number(e.target.value))
+                        }
+                        className="min-h-[36px] rounded-sm border border-border bg-background px-2 text-sm text-foreground"
+                      >
+                        {letters.map((_, n) => (
+                          <option key={n} value={n + 1}>
+                            {n + 1}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                  )}
                 </div>
 
-                {stations.length > 1 && (
-                  <div className="mt-2 flex flex-wrap gap-2">
-                    {letters.map((l) => {
-                      const at = Math.max(
-                        0,
-                        stations.findIndex((s) => s.includes(l)),
-                      );
-                      return (
-                        <label
-                          key={l}
-                          className="flex items-center gap-1.5 rounded-sm border border-border px-2 py-1 text-xs"
-                        >
-                          <span
-                            className="inline-block h-2.5 w-2.5 rounded-full"
-                            style={{ backgroundColor: PATH_COLOR[l] }}
-                          />
-                          {l}
-                          <select
-                            value={at}
-                            onChange={(e) => move(stage, l, Number(e.target.value))}
-                            className="min-h-[32px] rounded-sm border border-border bg-background px-1 text-xs text-foreground"
-                            aria-label={`Station für Weg ${l} bei ${STAGE_LABELS[stage]}`}
-                          >
-                            {stations.map((_, idx) => (
-                              <option key={idx} value={idx}>
-                                Station {idx + 1}
-                              </option>
-                            ))}
-                          </select>
-                        </label>
-                      );
-                    })}
-                  </div>
-                )}
-                {onDescriptionsChange && (
-                  <div className="mt-3 space-y-2">
-                    {stations.map((station, index) => (
-                      <label key={`place-${stage}-${index}`} className="block">
-                        <span className="font-mono-typed text-[10px] uppercase text-muted-foreground">
-                          {stations.length > 1
-                            ? `Station ${index + 1} · Weg ${station.join(", ")}`
-                            : "Ort des Postens"}
+                <div className="mt-2 space-y-2">
+                  {stations.map((station, index) => (
+                    <div
+                      key={`station-${stage}-${index}`}
+                      className="rounded-sm border border-border/70 bg-secondary/30 p-2"
+                    >
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="flex items-center gap-1">
+                          {station.map((l) => (
+                            <span
+                              key={l}
+                              className="font-mono-typed inline-flex h-6 w-6 items-center justify-center rounded-sm text-[11px] font-bold text-white"
+                              style={{ backgroundColor: PATH_COLOR[l] }}
+                              aria-label={`Weg ${l}`}
+                            >
+                              {l}
+                            </span>
+                          ))}
                         </span>
+                        <span className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+                          {stations.length > 1
+                            ? `Station ${index + 1}${station.length > 1 ? " · ein QR-Code für beide Wege" : ""}`
+                            : "alle Gruppen am gleichen Ort"}
+                        </span>
+                      </div>
+
+                      {onDescriptionsChange ? (
                         <input
                           type="text"
                           maxLength={160}
@@ -288,13 +327,47 @@ export function BranchDiagram({
                           onChange={(event) =>
                             setDescription(stage, index, event.target.value)
                           }
-                          placeholder="z. B. Haltestelle Bünteli"
-                          className="mt-1 min-h-[42px] w-full rounded-sm border border-border bg-background px-3 text-foreground"
+                          placeholder="Wo steht dieser Posten? z. B. Haltestelle Bünteli"
+                          aria-label={`Ort für ${stageTitle(stage)}, Station ${index + 1}`}
+                          className="mt-2 min-h-[42px] w-full rounded-sm border border-border bg-background px-3 text-sm text-foreground"
                         />
-                      </label>
-                    ))}
-                  </div>
-                )}
+                      ) : (
+                        <p className="mt-1 text-sm">
+                          {descriptions?.[String(stage)]?.[index]?.trim() || (
+                            <span className="italic text-muted-foreground">
+                              Ort noch offen
+                            </span>
+                          )}
+                        </p>
+                      )}
+
+                      {showBranchEditor && stations.length > 1 && (
+                        <div className="mt-2 flex flex-wrap gap-2">
+                          {station.map((l) => (
+                            <label
+                              key={l}
+                              className="flex items-center gap-1.5 rounded-sm border border-border bg-background px-2 py-1 text-xs"
+                            >
+                              Weg {l} verschieben nach
+                              <select
+                                value={index}
+                                onChange={(e) => move(stage, l, Number(e.target.value))}
+                                className="min-h-[32px] rounded-sm border border-border bg-background px-1 text-xs text-foreground"
+                                aria-label={`Station für Weg ${l} bei ${stageTitle(stage)}`}
+                              >
+                                {stations.map((_, idx) => (
+                                  <option key={idx} value={idx}>
+                                    Station {idx + 1}
+                                  </option>
+                                ))}
+                              </select>
+                            </label>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
               </div>
             );
           })}
