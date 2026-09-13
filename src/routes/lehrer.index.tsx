@@ -9,11 +9,8 @@ import {
   STATUS_LABEL,
 } from "@/lib/teacher-session";
 import { cn } from "@/lib/utils";
-import { BranchDiagram } from "@/components/teacher/BranchDiagram";
 import {
   defaultBranches,
-  normalizeBranches,
-  normalizeStationDescriptions,
   type Branches,
   type StationDescriptions,
 } from "@/lib/variants";
