@@ -7,6 +7,7 @@
 import { useEffect, useState } from "react";
 import { Printer } from "lucide-react";
 import QRCode from "qrcode";
+import { Button } from "@/components/ui/button";
 import {
   PATH_COLOR,
   STAGE_IDS,
@@ -61,14 +62,15 @@ export function QRPrintList({
         <p className="text-sm text-muted-foreground">
           {totalCodeCount(branches, pathCount)} QR-Codes für diese Runde
         </p>
-        <button
+        <Button
           type="button"
+          variant="outline"
           onClick={() => window.print()}
-          className="flex min-h-[44px] items-center gap-2 rounded-sm border border-border px-3 font-serif text-sm font-semibold"
+          className="min-h-[44px] rounded-sm font-serif font-semibold"
         >
           <Printer className="h-4 w-4" />
           Drucken
-        </button>
+        </Button>
       </div>
 
       {/* Nur dieser Bereich landet auf dem Papier (siehe @media print in styles.css). */}
@@ -83,7 +85,7 @@ export function QRPrintList({
                   borderColor: PATH_COLOR[it.letters[0] ?? "A"],
                 }}
               >
-                <div className="min-w-0 text-left">
+                <div className="print-qr-copy min-w-0 text-left">
                   <div className="flex flex-wrap items-center gap-2">
                     <p
                       className="font-mono-typed text-[11px] font-bold uppercase tracking-wider"
@@ -111,7 +113,7 @@ export function QRPrintList({
                     Danach wartet euer nächstes Rätsel auf euch!
                   </p>
                 </div>
-                <div className="border-2 border-foreground/55 bg-background p-2">
+                <div className="print-qr-code border-2 border-foreground/55 bg-background p-2">
                   <img
                     src={it.dataUrl}
                     alt={`QR-Code ${STAGE_LABELS[it.stage]} für Weg ${it.letters.join(", ")}`}

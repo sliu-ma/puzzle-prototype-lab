@@ -5,7 +5,7 @@
  * Korrekturen pro Gruppe und das Ausdrucken der benötigten QR-Codes. Der
  * Bereich steht im Wartezimmer und während der laufenden Runde zur Verfügung.
  */
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Check, Loader2, Save, Shuffle } from "lucide-react";
 import { BranchDiagram } from "@/components/teacher/BranchDiagram";
 import { QRPrintList } from "@/components/teacher/QRPrintList";
@@ -54,13 +54,16 @@ export function PathsPanel({
 
   const letters = lettersFor(pathCount);
   const assigned = teams.filter((t) => t.variant).length;
-  const normalizedBranches = normalizeBranches(branches, pathCount);
+  const normalizedBranches = useMemo(
+    () => normalizeBranches(branches, pathCount),
+    [branches, pathCount],
+  );
 
   useEffect(() => {
     setPlaceDraft(
       normalizeStationDescriptions(stationDescriptions, normalizedBranches, pathCount),
     );
-  }, [stationDescriptions, branches, pathCount]);
+  }, [stationDescriptions, normalizedBranches, pathCount]);
 
   const assign = async () => {
     setAssigning(true);

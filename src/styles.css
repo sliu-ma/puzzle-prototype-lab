@@ -295,6 +295,10 @@ input, textarea, select {
 
 /* Druck: nur die QR-Blätter aufs Papier, nicht das ganze Dashboard. */
 @media print {
+  @page {
+    size: A4 portrait;
+    margin: 12mm;
+  }
   body:has(.print-area) {
     visibility: hidden;
     background: #fff;
@@ -338,6 +342,13 @@ input, textarea, select {
     /* Wegfarben müssen auch auf Papier sichtbar bleiben. */
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
+  }
+  .print-qr-copy {
+    flex: 1 1 55%;
+  }
+  .print-qr-code {
+    flex: 0 0 43%;
+    max-width: 92mm;
   }
   .print-qr-card * {
     -webkit-print-color-adjust: exact;
