@@ -80,6 +80,10 @@ export function StartForm({
         setCodeError("Der Code stimmt nicht. Fragt eure Lehrperson.");
         return;
       }
+      if (res.status === "planning") {
+        setCodeError("Diese Runde ist noch nicht offen. Fragt eure Lehrperson.");
+        return;
+      }
       if (res.status === "closed") {
         setCodeError("Diese Runde ist geschlossen.");
         return;
@@ -107,7 +111,7 @@ export function StartForm({
     void lookupRound({ data: { code: p.code } })
       .then((res) => {
         if (!alive) return;
-        if (res.found && res.status !== "closed") {
+        if (res.found && res.status !== "closed" && res.status !== "planning") {
           void navigate({ to: "/lobby" });
         } else {
           clearPendingJoin();
