@@ -67,10 +67,6 @@ function TeacherPage() {
   const [rounds, setRounds] = useState<RoundItem[]>([]);
   const [title, setTitle] = useState("");
   const [budget, setBudget] = useState(90);
-  // Wege dieser Runde: nur beim Anlegen einstellbar.
-  const [pathCount, setPathCount] = useState(1);
-  const [branches, setBranches] = useState<Branches>(() => defaultBranches(1));
-  const [stationDescriptions, setStationDescriptions] = useState<StationDescriptions>({});
 
   const loadRounds = useCallback(async (pw: string) => {
     const list = await teacherListRounds({ data: { password: pw } });
