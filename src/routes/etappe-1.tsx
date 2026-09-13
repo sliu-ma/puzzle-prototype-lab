@@ -235,8 +235,8 @@ function AktePage() {
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">Grossvaters altes Reiseticket</h2>
             <p className="mt-1 font-mono-typed text-xs text-muted-foreground">[Hinweis gefunden um {jetzt}]</p>
             <p className="mt-5 text-[15px] leading-relaxed">
-              An der Bushaltestelle Widnau, Gemeindehaus findet Maja auf der Wartebank ein Couvert mit Jakobs alten Reiseunterlagen und einem Zettel. Darauf steht:
-            </p>
+               Auf der Wartebank: ein Couvert mit Jakobs Reiseunterlagen und einem Zettel. Darauf steht:
+             </p>
             <blockquote className="mt-4 border-l-4 border-stamp pl-4 font-serif italic text-[15px] leading-relaxed">
               „Ich habe immer das gewählt, was am wenigsten Spuren hinterlässt. Findest du heraus, welchen Weg ich nach
               Hause genommen habe?"

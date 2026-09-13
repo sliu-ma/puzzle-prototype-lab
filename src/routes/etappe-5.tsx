@@ -193,16 +193,14 @@ function AktePage() {
               [Altes Wasserkraftwerk · {getFrozenClock("maya-clock-akte-005")} Uhr]
             </p>
             <blockquote className="mt-5 border-l-4 border-stamp pl-4 text-[15px] leading-relaxed">
-              Im alten Wasserkraftwerk wartet Marlene Vogt. Vor ihr liegen
-              mehrere Ordner. „Jakob hat in den letzten Monaten viele
-              Informationen gesammelt. Ich habe seine Unterlagen ergänzt.“
-              <br />
-              <br />
-              Sie legt drei Gutachten auf den Tisch. „Der Gemeinderat
-              entscheidet heute Abend. Leider enthalten diese Gutachten der
-              Gemeinde mehrere Fehler. Finde die fünf falschen Aussagen. Nur so
-              können wir rechtzeitig die vollständigen Fakten vorlegen.“&nbsp;&nbsp;
-            </blockquote>
+               Im Wasserkraftwerk wartet Marlene Vogt, vor ihr liegen Ordner.
+               „Jakob hat Informationen gesammelt, ich habe sie ergänzt.“
+               <br />
+               <br />
+               Sie legt drei Gutachten auf den Tisch. „Diese Gutachten enthalten
+               fünf Fehler. Finde sie, bevor der Gemeinderat heute Abend
+               entscheidet.“&nbsp;&nbsp;
+             </blockquote>
             <div className="mt-6 flex justify-end">
               <button
                 onClick={() => goto("spiel")}
