@@ -124,7 +124,8 @@ export function QRPrintList({
                   />
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
         ))}
       </div>
