@@ -494,18 +494,16 @@ function RoundPage() {
             </p>
           </details>
 
-          {(ackReport?.pathCount ?? 1) > 1 && (
-            <PathsPanel
-              password={password}
-              code={round.code}
-              pathCount={ackReport?.pathCount ?? 1}
-              branches={ackReport?.branches ?? null}
-              stationDescriptions={ackReport?.stationDescriptions ?? null}
-              teams={ackReport?.teams ?? []}
-              reload={reloadAckReport}
-              editable={false}
-            />
-          )}
+          <PathsPanel
+            password={password}
+            code={round.code}
+            pathCount={ackReport?.pathCount ?? 1}
+            branches={ackReport?.branches ?? null}
+            stationDescriptions={ackReport?.stationDescriptions ?? null}
+            teams={ackReport?.teams ?? []}
+            reload={reloadAckReport}
+            editable={false}
+          />
 
 
           <LiveBoard

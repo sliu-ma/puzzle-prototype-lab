@@ -51,6 +51,7 @@ export function PathsPanel({
   const [placeDraft, setPlaceDraft] = useState<StationDescriptions>({});
   const [savingPlaces, setSavingPlaces] = useState(false);
   const [placesSaved, setPlacesSaved] = useState(false);
+  const [placesDirty, setPlacesDirty] = useState(false);
 
   const letters = lettersFor(pathCount);
   const assigned = teams.filter((t) => t.variant).length;
@@ -60,10 +61,11 @@ export function PathsPanel({
   );
 
   useEffect(() => {
+    if (placesDirty) return;
     setPlaceDraft(
       normalizeStationDescriptions(stationDescriptions, normalizedBranches, pathCount),
     );
-  }, [stationDescriptions, normalizedBranches, pathCount]);
+  }, [stationDescriptions, normalizedBranches, pathCount, placesDirty]);
 
   const assign = async () => {
     setAssigning(true);
@@ -106,6 +108,7 @@ export function PathsPanel({
         data: { password, code, stationDescriptions: normalized },
       });
       setPlaceDraft(normalized);
+      setPlacesDirty(false);
       setPlacesSaved(true);
       reload();
     } catch (err) {
@@ -119,14 +122,18 @@ export function PathsPanel({
 
   return (
     <section className="mt-5 rounded-sm border border-border bg-secondary/40 p-3">
-      <h3 className="font-serif text-lg font-bold">Wege ({pathCount}) und Material</h3>
-      <p className="mt-1 text-sm text-foreground/80">
-        {editable
-          ? "Die Wege werden beim Start automatisch gleichmässig verteilt. Eine Verteilung in der Lobby kann bei Bedarf angepasst werden."
-          : "Die Verteilung ist seit dem Start gesperrt. Neue Gruppen erhalten automatisch den am wenigsten belegten Weg."}
-      </p>
+      <h3 className="font-serif text-lg font-bold">
+        {pathCount > 1 ? `Wege (${pathCount}) und Material` : "Material und QR-Codes"}
+      </h3>
+      {pathCount > 1 && (
+        <p className="mt-1 text-sm text-foreground/80">
+          {editable
+            ? "Die Wege werden beim Start automatisch gleichmässig verteilt. Eine Verteilung in der Lobby kann bei Bedarf angepasst werden."
+            : "Die Verteilung ist seit dem Start gesperrt. Neue Gruppen erhalten automatisch den am wenigsten belegten Weg."}
+        </p>
+      )}
 
-      {editable && (
+      {pathCount > 1 && editable && (
         <button
           type="button"
           onClick={() => void assign()}
@@ -139,11 +146,13 @@ export function PathsPanel({
       )}
 
       {error && <p className="mt-2 text-xs text-destructive">{error}</p>}
-      <p className="mt-2 text-xs text-muted-foreground">
-        {assigned} von {teams.length} Gruppen haben einen Weg.
-      </p>
+      {pathCount > 1 && (
+        <p className="mt-2 text-xs text-muted-foreground">
+          {assigned} von {teams.length} Gruppen haben einen Weg.
+        </p>
+      )}
 
-      <ul className="mt-3 space-y-1.5">
+      {pathCount > 1 && <ul className="mt-3 space-y-1.5">
         {teams.map((t) => (
           <li
             key={t.teamId}
@@ -185,14 +194,14 @@ export function PathsPanel({
             Noch keine Gruppe angemeldet.
           </li>
         )}
-      </ul>
+      </ul>}
 
-      <div className="mt-3">
+      {pathCount > 1 && <div className="mt-3">
         <BranchDiagram
           pathCount={pathCount}
           branches={normalizedBranches}
         />
-      </div>
+      </div>}
 
       <details className="mt-3 rounded-sm border border-border bg-card p-3">
         <summary className="font-mono-typed cursor-pointer text-[10px] uppercase text-muted-foreground">
@@ -220,6 +229,7 @@ export function PathsPanel({
                         const values = [...(placeDraft[stage] ?? [])];
                         values[index] = event.target.value;
                         setPlaceDraft((current) => ({ ...current, [stage]: values }));
+                        setPlacesDirty(true);
                         setPlacesSaved(false);
                       }}
                       placeholder="z. B. Haltestelle Bünteli"
@@ -233,7 +243,7 @@ export function PathsPanel({
           <Button
             type="button"
             onClick={() => void savePlaces()}
-            disabled={savingPlaces}
+            disabled={savingPlaces || !placesDirty}
             className="min-h-[44px] w-full rounded-sm font-serif font-semibold"
           >
             {savingPlaces ? (
