@@ -380,32 +380,73 @@ function RoundPage() {
             </form>
           )}
 
-          <button
-            type="button"
-            disabled={busy}
-            onClick={() =>
-              void run(() =>
-                teacherSetRoundStatus({
-                  data: {
-                    password,
-                    code: round.code,
-                    status: round.status === "closed" ? "lobby" : "closed",
-                  },
-                }),
-              )
-            }
-            className="flex min-h-[48px] w-full items-center justify-center gap-2 rounded-sm border border-border font-serif font-semibold"
-          >
-            {round.status === "closed" ? (
-              <>
-                <Unlock className="h-4 w-4" /> Runde wieder öffnen
-              </>
-            ) : (
-              <>
-                <Lock className="h-4 w-4" /> Runde abschliessen
-              </>
-            )}
-          </button>
+          {inPlanning && (
+            <PlanningPanel
+              password={password}
+              code={round.code}
+              pathCount={round.path_count ?? 1}
+              branches={round.branches ?? null}
+              stationDescriptions={round.station_descriptions ?? null}
+              busy={busy}
+              reload={() => void load(password).catch(() => undefined)}
+              onOpenForTeams={() => {
+                void run(async () => {
+                  await teacherSetRoundStatus({
+                    data: { password, code: round.code, status: "lobby" },
+                  });
+                  setStep("lobby");
+                });
+              }}
+            />
+          )}
+
+          {round.status === "lobby" && round.teamCount === 0 && (
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() =>
+                void run(() =>
+                  teacherSetRoundStatus({
+                    data: { password, code: round.code, status: "planning" },
+                  }),
+                )
+              }
+              className="flex min-h-[48px] w-full items-center justify-center gap-2 rounded-sm border border-border font-serif font-semibold"
+            >
+              <Pencil className="h-4 w-4" />
+              Zurück in die Planung
+            </button>
+          )}
+
+          {!inPlanning && (
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() =>
+                void run(() =>
+                  teacherSetRoundStatus({
+                    data: {
+                      password,
+                      code: round.code,
+                      status: round.status === "closed" ? "lobby" : "closed",
+                    },
+                  }),
+                )
+              }
+              className="flex min-h-[48px] w-full items-center justify-center gap-2 rounded-sm border border-border font-serif font-semibold"
+            >
+              {round.status === "closed" ? (
+                <>
+                  <Unlock className="h-4 w-4" /> Runde wieder öffnen
+                </>
+              ) : (
+                <>
+                  <Lock className="h-4 w-4" /> Runde abschliessen
+                </>
+              )}
+            </button>
+          )}
+
 
           <button
             type="button"
