@@ -2,8 +2,8 @@
  * Wege und Material einer Runde.
  *
  * Zeigt die Verteilung der Wege (A bis D), erlaubt zufälliges Verteilen,
- * Korrekturen pro Gruppe und das Ausdrucken der benötigten QR-Codes. Der
- * Bereich steht im Wartezimmer und während der laufenden Runde zur Verfügung.
+ * Korrekturen pro Gruppe und das Ausdrucken der benötigten QR-Codes. Die
+ * Ortsangaben stehen direkt in der Grafik und lassen sich jederzeit ergänzen.
  */
 import { useEffect, useMemo, useState } from "react";
 import { Check, Loader2, Save, Shuffle } from "lucide-react";
@@ -113,7 +113,9 @@ export function PathsPanel({
       reload();
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Die Ortsangaben konnten nicht gespeichert werden.",
+        err instanceof Error
+          ? err.message
+          : "Die Ortsangaben konnten nicht gespeichert werden.",
       );
     } finally {
       setSavingPlaces(false);
@@ -152,111 +154,85 @@ export function PathsPanel({
         </p>
       )}
 
-      {pathCount > 1 && <ul className="mt-3 space-y-1.5">
-        {teams.map((t) => (
-          <li
-            key={t.teamId}
-            className="flex items-center gap-2 rounded-sm border border-border bg-card px-2.5 py-2"
-          >
-            <span
-              className="font-mono-typed flex h-9 w-9 shrink-0 items-center justify-center rounded-sm text-base font-bold text-white"
-              style={{
-                backgroundColor: t.variant
-                  ? PATH_COLOR[t.variant as Letter]
-                  : "hsl(var(--muted-foreground))",
-              }}
-              aria-hidden
+      {pathCount > 1 && (
+        <ul className="mt-3 space-y-1.5">
+          {teams.map((t) => (
+            <li
+              key={t.teamId}
+              className="flex items-center gap-2 rounded-sm border border-border bg-card px-2.5 py-2"
             >
-              {t.variant ?? "?"}
-            </span>
-            <p className="min-w-0 flex-1 truncate font-serif font-semibold">{t.name}</p>
-            <label className="sr-only" htmlFor={`weg-${t.teamId}`}>
-              Weg für {t.name}
-            </label>
-            <select
-              id={`weg-${t.teamId}`}
-              value={t.variant ?? ""}
-              onChange={(e) => void setOne(t.teamId, e.target.value)}
-              disabled={!editable}
-              className="min-h-[40px] rounded-sm border border-border bg-background px-2 font-mono-typed text-sm"
-            >
-              <option value="">–</option>
-              {letters.map((l) => (
-                <option key={l} value={l}>
-                  Weg {l}
-                </option>
-              ))}
-            </select>
-          </li>
-        ))}
-        {teams.length === 0 && (
-          <li className="rounded-sm border border-dashed border-border p-3 text-sm text-muted-foreground">
-            Noch keine Gruppe angemeldet.
-          </li>
-        )}
-      </ul>}
-
-      {pathCount > 1 && <div className="mt-3">
-        <BranchDiagram
-          pathCount={pathCount}
-          branches={normalizedBranches}
-        />
-      </div>}
-
-      <details className="mt-3 rounded-sm border border-border bg-card p-3">
-        <summary className="font-mono-typed cursor-pointer text-[10px] uppercase text-muted-foreground">
-          Orte der Stationen
-        </summary>
-        <div className="mt-3 space-y-3">
-          {Object.entries(normalizedBranches).map(
-            ([stage, stations]) => (
-              <fieldset key={stage} className="space-y-2">
-                <p className="font-serif text-sm font-semibold">
-                  {({ "1": "Mobilität", "2": "Konsum", "3": "Wohnen", "4": "Biodiversität", "5": "Energie", "6": "Hearing" } as Record<string, string>)[stage]}
-                </p>
-                {stations.map((letters, index) => (
-                  <label key={index} className="block">
-                    <span className="font-mono-typed text-[10px] uppercase text-muted-foreground">
-                      {stations.length > 1
-                        ? `Station ${index + 1} · Weg ${letters.join(", ")}`
-                        : "Ort des Postens"}
-                    </span>
-                    <input
-                      type="text"
-                      maxLength={160}
-                      value={placeDraft[stage]?.[index] ?? ""}
-                      onChange={(event) => {
-                        const values = [...(placeDraft[stage] ?? [])];
-                        values[index] = event.target.value;
-                        setPlaceDraft((current) => ({ ...current, [stage]: values }));
-                        setPlacesDirty(true);
-                        setPlacesSaved(false);
-                      }}
-                      placeholder="z. B. Haltestelle Bünteli"
-                      className="mt-1 min-h-[42px] w-full rounded-sm border border-border bg-background px-3 text-sm text-foreground"
-                    />
-                  </label>
+              <span
+                className="font-mono-typed flex h-9 w-9 shrink-0 items-center justify-center rounded-sm text-base font-bold text-white"
+                style={{
+                  backgroundColor: t.variant
+                    ? PATH_COLOR[t.variant as Letter]
+                    : "hsl(var(--muted-foreground))",
+                }}
+                aria-hidden
+              >
+                {t.variant ?? "?"}
+              </span>
+              <p className="min-w-0 flex-1 truncate font-serif font-semibold">{t.name}</p>
+              <label className="sr-only" htmlFor={`weg-${t.teamId}`}>
+                Weg für {t.name}
+              </label>
+              <select
+                id={`weg-${t.teamId}`}
+                value={t.variant ?? ""}
+                onChange={(e) => void setOne(t.teamId, e.target.value)}
+                disabled={!editable}
+                className="min-h-[40px] rounded-sm border border-border bg-background px-2 font-mono-typed text-sm"
+              >
+                <option value="">–</option>
+                {letters.map((l) => (
+                  <option key={l} value={l}>
+                    Weg {l}
+                  </option>
                 ))}
-              </fieldset>
-            ),
+              </select>
+            </li>
+          ))}
+          {teams.length === 0 && (
+            <li className="rounded-sm border border-dashed border-border p-3 text-sm text-muted-foreground">
+              Noch keine Gruppe angemeldet.
+            </li>
           )}
-          <Button
-            type="button"
-            onClick={() => void savePlaces()}
-            disabled={savingPlaces || !placesDirty}
-            className="min-h-[44px] w-full rounded-sm font-serif font-semibold"
-          >
-            {savingPlaces ? (
-              <Loader2 className="animate-spin" />
-            ) : placesSaved ? (
-              <Check />
-            ) : (
-              <Save />
-            )}
-            {savingPlaces ? "Wird gespeichert" : placesSaved ? "Gespeichert" : "Orte speichern"}
-          </Button>
+        </ul>
+      )}
+
+      {/* Posten, Wege und Orte in einer Ansicht: Ortsangaben stehen direkt an der Station. */}
+      <div className="mt-4">
+        <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+          Posten und Orte
+        </p>
+        <div className="mt-2">
+          <BranchDiagram
+            pathCount={pathCount}
+            branches={normalizedBranches}
+            descriptions={placeDraft}
+            onDescriptionsChange={(next) => {
+              setPlaceDraft(next);
+              setPlacesDirty(true);
+              setPlacesSaved(false);
+            }}
+          />
         </div>
-      </details>
+        <Button
+          type="button"
+          onClick={() => void savePlaces()}
+          disabled={savingPlaces || !placesDirty}
+          className="mt-3 min-h-[44px] w-full rounded-sm font-serif font-semibold"
+        >
+          {savingPlaces ? (
+            <Loader2 className="animate-spin" />
+          ) : placesSaved ? (
+            <Check />
+          ) : (
+            <Save />
+          )}
+          {savingPlaces ? "Wird gespeichert" : placesSaved ? "Gespeichert" : "Orte speichern"}
+        </Button>
+      </div>
 
       <button
         type="button"
@@ -268,10 +244,7 @@ export function PathsPanel({
         {showCodes ? "QR-Codes ausblenden" : "QR-Codes zum Ausdrucken zeigen"}
       </button>
       {showCodes && (
-        <QRPrintList
-          pathCount={pathCount}
-          branches={normalizedBranches}
-        />
+        <QRPrintList pathCount={pathCount} branches={normalizedBranches} />
       )}
     </section>
   );
