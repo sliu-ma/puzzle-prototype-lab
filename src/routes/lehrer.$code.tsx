@@ -29,6 +29,7 @@ import {
 import { LobbyPanel, useRoundReport } from "@/components/teacher/LobbyPanel";
 import { LiveBoard } from "@/components/teacher/LiveBoard";
 import { PathsPanel } from "@/components/teacher/PathsPanel";
+import { PlanningPanel } from "@/components/teacher/PlanningPanel";
 import { ReportPanel } from "@/components/teacher/ReportPanel";
 import { helpId, useHelpDone } from "@/lib/teacher-help-done";
 import { MessageRooms } from "@/components/teacher/MessageRooms";
@@ -115,7 +116,13 @@ function RoundPage() {
   useEffect(() => {
     if (!round || step !== null) return;
     setStep(
-      round.status === "running" ? "live" : round.status === "closed" ? "report" : "lobby",
+      round.status === "running"
+        ? "live"
+        : round.status === "closed"
+          ? "report"
+          : round.status === "planning"
+            ? "prepare"
+            : "lobby",
     );
   }, [round, step]);
 
@@ -219,7 +226,8 @@ function RoundPage() {
     );
   }
 
-  const inLobby = round.status === "lobby";
+  const inPlanning = round.status === "planning";
+  const inLobby = round.status === "lobby" || inPlanning;
   const copy = () => {
     void navigator.clipboard?.writeText(round.code);
     setCopied(true);
@@ -372,32 +380,73 @@ function RoundPage() {
             </form>
           )}
 
-          <button
-            type="button"
-            disabled={busy}
-            onClick={() =>
-              void run(() =>
-                teacherSetRoundStatus({
-                  data: {
-                    password,
-                    code: round.code,
-                    status: round.status === "closed" ? "lobby" : "closed",
-                  },
-                }),
-              )
-            }
-            className="flex min-h-[48px] w-full items-center justify-center gap-2 rounded-sm border border-border font-serif font-semibold"
-          >
-            {round.status === "closed" ? (
-              <>
-                <Unlock className="h-4 w-4" /> Runde wieder öffnen
-              </>
-            ) : (
-              <>
-                <Lock className="h-4 w-4" /> Runde abschliessen
-              </>
-            )}
-          </button>
+          {inPlanning && (
+            <PlanningPanel
+              password={password}
+              code={round.code}
+              pathCount={round.path_count ?? 1}
+              branches={round.branches ?? null}
+              stationDescriptions={round.station_descriptions ?? null}
+              busy={busy}
+              reload={() => void load(password).catch(() => undefined)}
+              onOpenForTeams={() => {
+                void run(async () => {
+                  await teacherSetRoundStatus({
+                    data: { password, code: round.code, status: "lobby" },
+                  });
+                  setStep("lobby");
+                });
+              }}
+            />
+          )}
+
+          {round.status === "lobby" && round.teamCount === 0 && (
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() =>
+                void run(() =>
+                  teacherSetRoundStatus({
+                    data: { password, code: round.code, status: "planning" },
+                  }),
+                )
+              }
+              className="flex min-h-[48px] w-full items-center justify-center gap-2 rounded-sm border border-border font-serif font-semibold"
+            >
+              <Pencil className="h-4 w-4" />
+              Zurück in die Planung
+            </button>
+          )}
+
+          {!inPlanning && (
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() =>
+                void run(() =>
+                  teacherSetRoundStatus({
+                    data: {
+                      password,
+                      code: round.code,
+                      status: round.status === "closed" ? "lobby" : "closed",
+                    },
+                  }),
+                )
+              }
+              className="flex min-h-[48px] w-full items-center justify-center gap-2 rounded-sm border border-border font-serif font-semibold"
+            >
+              {round.status === "closed" ? (
+                <>
+                  <Unlock className="h-4 w-4" /> Runde wieder öffnen
+                </>
+              ) : (
+                <>
+                  <Lock className="h-4 w-4" /> Runde abschliessen
+                </>
+              )}
+            </button>
+          )}
+
 
           <button
             type="button"
@@ -436,7 +485,22 @@ function RoundPage() {
         </section>
       )}
 
-      {step === "lobby" && (
+      {step === "lobby" && inPlanning && (
+        <div className="mt-4 rounded-sm border border-dashed border-border p-4">
+          <p className="font-serif text-lg font-bold">Die Runde ist noch in Planung</p>
+          <p className="mt-1 text-sm text-foreground/80">
+            Gruppen können erst beitreten, wenn die Runde geöffnet ist.
+          </p>
+          <button
+            type="button"
+            onClick={() => setStep("prepare")}
+            className="mt-3 flex min-h-[44px] w-full items-center justify-center gap-2 rounded-sm border border-stamp bg-stamp/10 px-3 font-serif font-semibold"
+          >
+            Zur Vorbereitung
+          </button>
+        </div>
+      )}
+      {step === "lobby" && !inPlanning && (
         <LobbyPanel
           password={password}
           code={round.code}

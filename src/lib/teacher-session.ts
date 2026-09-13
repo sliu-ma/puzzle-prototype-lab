@@ -28,6 +28,7 @@ export function clearTeacherPassword() {
 }
 
 export const STATUS_LABEL: Record<string, string> = {
+  planning: "In Planung",
   lobby: "Lobby",
   running: "läuft",
   closed: "abgeschlossen",

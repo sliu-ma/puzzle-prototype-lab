@@ -343,6 +343,16 @@ export type Database = {
         }
         Returns: string
       }
+      teacher_set_round_paths: {
+        Args: {
+          p_branches: Json
+          p_code: string
+          p_password_hash: string
+          p_path_count: number
+          p_station_descriptions: Json
+        }
+        Returns: boolean
+      }
       teacher_set_round_status: {
         Args: { p_code: string; p_password_hash: string; p_status: string }
         Returns: boolean

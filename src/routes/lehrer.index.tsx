@@ -9,14 +9,12 @@ import {
   STATUS_LABEL,
 } from "@/lib/teacher-session";
 import { cn } from "@/lib/utils";
-import { BranchDiagram } from "@/components/teacher/BranchDiagram";
 import {
   defaultBranches,
-  normalizeBranches,
-  normalizeStationDescriptions,
   type Branches,
   type StationDescriptions,
 } from "@/lib/variants";
+
 
 export const Route = createFileRoute("/lehrer/")({
   ssr: false,
@@ -48,6 +46,9 @@ export type RoundItem = {
   teamCount: number;
   budget_min: number;
   started_at: string | null;
+  path_count?: number;
+  branches?: Branches | null;
+  station_descriptions?: StationDescriptions | null;
 };
 
 const inputBase =
@@ -63,10 +64,6 @@ function TeacherPage() {
   const [rounds, setRounds] = useState<RoundItem[]>([]);
   const [title, setTitle] = useState("");
   const [budget, setBudget] = useState(90);
-  // Wege dieser Runde: nur beim Anlegen einstellbar.
-  const [pathCount, setPathCount] = useState(1);
-  const [branches, setBranches] = useState<Branches>(() => defaultBranches(1));
-  const [stationDescriptions, setStationDescriptions] = useState<StationDescriptions>({});
 
   const loadRounds = useCallback(async (pw: string) => {
     const list = await teacherListRounds({ data: { password: pw } });
@@ -107,13 +104,10 @@ function TeacherPage() {
           password,
           title: title.trim(),
           budgetMin: budget,
-          pathCount,
-          branches: normalizeBranches(branches, pathCount),
-          stationDescriptions: normalizeStationDescriptions(
-            stationDescriptions,
-            normalizeBranches(branches, pathCount),
-            pathCount,
-          ),
+          // Wege und Orte werden danach im Planungsmodus der Runde festgelegt.
+          pathCount: 1,
+          branches: defaultBranches(1),
+          stationDescriptions: {},
         },
       });
       setTitle("");
@@ -226,43 +220,12 @@ function TeacherPage() {
           />
         </div>
 
-        <div className="mt-3">
-          <label className="flex flex-wrap items-center gap-2 font-serif text-sm font-semibold">
-            Wie viele Wege soll diese Runde haben?
-            <select
-              value={pathCount}
-              onChange={(e) => {
-                const n = Number(e.target.value);
-                setPathCount(n);
-                setBranches(defaultBranches(n));
-                setStationDescriptions({});
-              }}
-              className="min-h-[40px] rounded-sm border border-border bg-paper px-2 text-sm"
-            >
-              {[1, 2, 3, 4].map((n) => (
-                <option key={n} value={n}>
-                  {n === 1 ? "1 (alle gleich)" : `${n} Wege`}
-                </option>
-              ))}
-            </select>
-          </label>
-          <p className="mt-1 text-xs text-muted-foreground">
-            Mit mehreren Wegen laufen die Gruppen versetzt. Pro Posten legt ihr fest,
-            wie viele Stationen es gibt.
-          </p>
-        </div>
+        <p className="mt-2 text-xs text-muted-foreground">
+          Die neue Runde beginnt in der Planung: Wege, Orte und Material stellt ihr
+          danach in Ruhe auf der Rundenseite ein. Gruppen können erst beitreten, wenn
+          ihr die Runde öffnet.
+        </p>
 
-        {pathCount > 1 && (
-          <div className="mt-3">
-            <BranchDiagram
-              pathCount={pathCount}
-              branches={branches}
-              onChange={setBranches}
-              descriptions={stationDescriptions}
-              onDescriptionsChange={setStationDescriptions}
-            />
-          </div>
-        )}
 
         <button
           type="submit"
