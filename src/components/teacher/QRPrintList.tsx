@@ -7,6 +7,7 @@
 import { useEffect, useState } from "react";
 import { ImageDown, Printer } from "lucide-react";
 import QRCode from "qrcode";
+import JSZip from "jszip";
 import { Button } from "@/components/ui/button";
 import {
   PATH_COLOR,
@@ -37,24 +38,29 @@ export function QRPrintList({
   const [items, setItems] = useState<Item[]>([]);
   const [saving, setSaving] = useState(false);
 
-  // Speichert jeden QR-Code einzeln als hochauflösende PNG-Datei.
+  // Sammelt alle QR-Codes als hochauflösende PNGs in einem einzigen ZIP.
   const savePng = async () => {
     setSaving(true);
     try {
+      const zip = new JSZip();
       for (const it of items) {
         const dataUrl = await QRCode.toDataURL(it.token, { width: 1200, margin: 2 });
-        const a = document.createElement("a");
-        a.href = dataUrl;
-        a.download = `etappe-${String(it.stage).padStart(2, "0")}-${STAGE_LABELS[it.stage]
+        const base64 = dataUrl.split(",")[1];
+        const name = `etappe-${String(it.stage).padStart(2, "0")}-${STAGE_LABELS[it.stage]
           .toLowerCase()
           .replace(/[^a-z0-9]+/g, "-")
           .replace(/^-|-$/g, "")}-weg-${it.letters.join("")}.png`;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        // Kleine Pause, damit der Browser mehrere Downloads zulässt.
-        await new Promise((r) => window.setTimeout(r, 250));
+        zip.file(name, base64, { base64: true });
       }
+      const blob = await zip.generateAsync({ type: "blob" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "majas-mission-qr-codes.zip";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
     } finally {
       setSaving(false);
     }
@@ -104,7 +110,7 @@ export function QRPrintList({
             className="min-h-[44px] rounded-sm font-serif font-semibold"
           >
             <ImageDown className="h-4 w-4" />
-            {saving ? "Speichere PNG…" : "Als PNG speichern"}
+            {saving ? "Erstelle ZIP…" : "Als ZIP speichern"}
           </Button>
         </div>
       </div>
