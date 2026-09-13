@@ -326,7 +326,7 @@ export const teacherSetRoundStatus = createServerFn({ method: "POST" })
       .object({
         password: z.string().min(1).max(200),
         code: z.string().min(1).max(20),
-        status: z.enum(["lobby", "closed"]),
+        status: z.enum(["planning", "lobby", "closed"]),
       })
       .parse(d),
   )
@@ -511,6 +511,34 @@ export const teacherSetStationDescriptions = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true as const };
   });
+
+/** Wege, Verzweigungen und Orte einer Runde ändern (nur im Planungsmodus). */
+export const teacherSetRoundPaths = createServerFn({ method: "POST" })
+  .inputValidator((d) =>
+    z
+      .object({
+        password: z.string().min(1).max(200),
+        code: z.string().min(1).max(20),
+        pathCount: z.number().int().min(1).max(4),
+        branches: z.record(z.string(), z.array(z.array(z.enum(["A", "B", "C", "D"])))),
+        stationDescriptions: z.record(z.string(), z.array(z.string().max(160))),
+      })
+      .parse(d),
+  )
+  .handler(async ({ data }) => {
+    const { roundsDb, hashPassword } = await import("./rounds.server");
+    const { error } = await roundsDb().rpc("teacher_set_round_paths", {
+      p_password_hash: hashPassword(data.password),
+      p_code: data.code,
+      p_path_count: data.pathCount,
+      p_branches: data.branches as unknown as never,
+      p_station_descriptions: data.stationDescriptions as unknown as never,
+    });
+    if (error) throw new Error(error.message);
+    return { ok: true as const };
+  });
+
+
 
 export const teacherDeleteRound = createServerFn({ method: "POST" })
   .inputValidator((d) =>
