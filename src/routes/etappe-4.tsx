@@ -206,20 +206,18 @@ function AktePage() {
               [Aufgeschlagenes Beobachtungsbuch · {getFrozenClock("maya-clock-akte-004")} Uhr]
             </p>
             <blockquote className="mt-5 border-l-4 border-stamp pl-4 text-[15px] leading-relaxed">
-              Die Lichtung hat sich verändert. Zwischen den Bäumen hängen
-              Absperrbänder. Ein Schild warnt: Rodung beginnt in Kürze.
-              <br />
-              &nbsp;&nbsp;&nbsp;
-              <br />
-              Beim Forsthaus liegt Jakobs Notizbuch. Auf der letzten Seite
-              steht:
-              <br />
-              &nbsp;&nbsp;&nbsp;
-              <br />
-              „Manche dieser Tiere sind hier noch sicher, andere stehen kurz vor
-              dem Verschwinden. Trenne die gefährdeten von den nicht
-              gefährdeten Arten, um das Kiste zu öffnen.“
-            </blockquote>
+               Zwischen den Bäumen hängen Absperrbänder. Rodung beginnt in Kürze.
+               <br />
+               &nbsp;&nbsp;&nbsp;
+               <br />
+               Beim Forsthaus liegt Jakobs Notizbuch, auf der letzten Seite:
+               <br />
+               &nbsp;&nbsp;&nbsp;
+               <br />
+               „Manche dieser Tiere sind hier noch sicher, andere stehen kurz vor
+               dem Verschwinden. Trenne die gefährdeten von den nicht
+               gefährdeten Arten, um das Kiste zu öffnen.“
+             </blockquote>
             <div className="mt-6 flex justify-end">
               <button
                 onClick={() => setShowCodeHint(true)}

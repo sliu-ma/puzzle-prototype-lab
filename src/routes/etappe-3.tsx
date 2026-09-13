@@ -195,13 +195,12 @@ function AktePage() {
               [Hauszeichnung + Rechnungen aus der Kiste · {getFrozenClock("maya-clock-akte-003")} Uhr]
             </p>
             <blockquote className="mt-5 border-l-4 border-stamp pl-4 text-[15px] leading-relaxed">
-              Auf dem Küchentisch liegt eine Zeichnung des Hauses: ein
-              Querschnitt mit allen Räumen. Daneben ein kurzer Zettel:
-              <br />
-              <br />
-              „Nicht jede Massnahme spart gleich viel Energie. Finde heraus,
-              welche am meisten bewirken.“
-            </blockquote>
+               Auf dem Küchentisch: eine Hauszeichnung und ein kurzer Zettel.
+               <br />
+               <br />
+               „Nicht jede Massnahme spart gleich viel Energie. Finde heraus,
+               welche am meisten bewirken.“
+             </blockquote>
             <div className="mt-6 flex justify-end">
               <button
                 onClick={() => goto("raetselkarte")}
