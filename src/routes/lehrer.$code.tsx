@@ -116,7 +116,13 @@ function RoundPage() {
   useEffect(() => {
     if (!round || step !== null) return;
     setStep(
-      round.status === "running" ? "live" : round.status === "closed" ? "report" : "lobby",
+      round.status === "running"
+        ? "live"
+        : round.status === "closed"
+          ? "report"
+          : round.status === "planning"
+            ? "prepare"
+            : "lobby",
     );
   }, [round, step]);
 
