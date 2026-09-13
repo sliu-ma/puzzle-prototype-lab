@@ -301,7 +301,7 @@ input, textarea, select {
   }
   body:has(.print-area) {
     visibility: hidden;
-    background: #fff;
+    background: oklch(0.975 0.012 85);
   }
   body:has(.print-area) .print-area {
     visibility: visible;
