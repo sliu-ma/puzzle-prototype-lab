@@ -16,6 +16,7 @@ import { Route as Etappe4RouteImport } from './routes/etappe-4'
 import { Route as Etappe3RouteImport } from './routes/etappe-3'
 import { Route as Etappe2RouteImport } from './routes/etappe-2'
 import { Route as Etappe1RouteImport } from './routes/etappe-1'
+import { Route as AnleitungRouteImport } from './routes/anleitung'
 import { Route as AbschlussRouteImport } from './routes/abschluss'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as LehrerIndexRouteImport } from './routes/lehrer.index'
@@ -56,6 +57,11 @@ const Etappe1Route = Etappe1RouteImport.update({
   path: '/etappe-1',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AnleitungRoute = AnleitungRouteImport.update({
+  id: '/anleitung',
+  path: '/anleitung',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AbschlussRoute = AbschlussRouteImport.update({
   id: '/abschluss',
   path: '/abschluss',
@@ -80,6 +86,7 @@ const LehrerCodeRoute = LehrerCodeRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/abschluss': typeof AbschlussRoute
+  '/anleitung': typeof AnleitungRoute
   '/etappe-1': typeof Etappe1Route
   '/etappe-2': typeof Etappe2Route
   '/etappe-3': typeof Etappe3Route
@@ -93,6 +100,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/abschluss': typeof AbschlussRoute
+  '/anleitung': typeof AnleitungRoute
   '/etappe-1': typeof Etappe1Route
   '/etappe-2': typeof Etappe2Route
   '/etappe-3': typeof Etappe3Route
@@ -107,6 +115,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/abschluss': typeof AbschlussRoute
+  '/anleitung': typeof AnleitungRoute
   '/etappe-1': typeof Etappe1Route
   '/etappe-2': typeof Etappe2Route
   '/etappe-3': typeof Etappe3Route
@@ -122,6 +131,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/abschluss'
+    | '/anleitung'
     | '/etappe-1'
     | '/etappe-2'
     | '/etappe-3'
@@ -135,6 +145,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/abschluss'
+    | '/anleitung'
     | '/etappe-1'
     | '/etappe-2'
     | '/etappe-3'
@@ -148,6 +159,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/abschluss'
+    | '/anleitung'
     | '/etappe-1'
     | '/etappe-2'
     | '/etappe-3'
@@ -162,6 +174,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AbschlussRoute: typeof AbschlussRoute
+  AnleitungRoute: typeof AnleitungRoute
   Etappe1Route: typeof Etappe1Route
   Etappe2Route: typeof Etappe2Route
   Etappe3Route: typeof Etappe3Route
@@ -224,6 +237,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Etappe1RouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/anleitung': {
+      id: '/anleitung'
+      path: '/anleitung'
+      fullPath: '/anleitung'
+      preLoaderRoute: typeof AnleitungRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/abschluss': {
       id: '/abschluss'
       path: '/abschluss'
@@ -258,6 +278,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AbschlussRoute: AbschlussRoute,
+  AnleitungRoute: AnleitungRoute,
   Etappe1Route: Etappe1Route,
   Etappe2Route: Etappe2Route,
   Etappe3Route: Etappe3Route,
