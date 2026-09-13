@@ -4,10 +4,11 @@
  * Pro Posten wird für jede Station ein Code erzeugt. Stehen mehrere Wege an
  * derselben Station, reicht dort ein einziger Ausdruck.
  */
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ImageDown, Printer } from "lucide-react";
 import QRCode from "qrcode";
 import JSZip from "jszip";
+import { toPng } from "html-to-image";
 import { Button } from "@/components/ui/button";
 import {
   PATH_COLOR,
@@ -37,14 +38,23 @@ export function QRPrintList({
 }) {
   const [items, setItems] = useState<Item[]>([]);
   const [saving, setSaving] = useState(false);
+  const printRef = useRef<HTMLDivElement>(null);
 
-  // Sammelt alle QR-Codes als hochauflösende PNGs in einem einzigen ZIP.
+  // Rendert jede ganze Karte (Text + QR-Code) als PNG und packt alle in ein ZIP.
   const savePng = async () => {
     setSaving(true);
     try {
       const zip = new JSZip();
-      for (const it of items) {
-        const dataUrl = await QRCode.toDataURL(it.token, { width: 1200, margin: 2 });
+      const cards = printRef.current?.querySelectorAll<HTMLElement>(".print-qr-card") ?? [];
+      for (let i = 0; i < items.length; i++) {
+        const it = items[i];
+        const node = cards[i];
+        if (!node) continue;
+        const dataUrl = await toPng(node, {
+          pixelRatio: 3,
+          backgroundColor: "#FDFBF4",
+          cacheBust: true,
+        });
         const base64 = dataUrl.split(",")[1];
         const name = `etappe-${String(it.stage).padStart(2, "0")}-${STAGE_LABELS[it.stage]
           .toLowerCase()
@@ -56,7 +66,7 @@ export function QRPrintList({
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "majas-mission-qr-codes.zip";
+      a.download = "majas-mission-qr-karten.zip";
       document.body.appendChild(a);
       a.click();
       a.remove();
@@ -116,7 +126,7 @@ export function QRPrintList({
       </div>
 
       {/* Nur dieser Bereich landet auf dem Papier (siehe @media print in styles.css). */}
-      <div className="print-area mt-3 space-y-3">
+      <div ref={printRef} className="print-area mt-3 space-y-3">
         {Array.from({ length: Math.ceil(items.length / PAGE_SIZE) }, (_, page) => (
           <div key={page} className="print-qr-page grid gap-3">
             {items.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE).map((it) => {
