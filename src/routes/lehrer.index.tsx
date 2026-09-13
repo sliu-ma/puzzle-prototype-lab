@@ -48,6 +48,9 @@ export type RoundItem = {
   teamCount: number;
   budget_min: number;
   started_at: string | null;
+  path_count?: number;
+  branches?: Branches | null;
+  station_descriptions?: StationDescriptions | null;
 };
 
 const inputBase =
