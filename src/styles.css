@@ -348,8 +348,15 @@ input, textarea, select {
     flex: 1 1 55%;
   }
   .print-qr-code {
-    flex: 0 0 43%;
-    max-width: 92mm;
+    /* An die Kartenhöhe (87 mm minus Innenabstand) koppeln, sonst ragt
+       der QR-Code bei drei Karten pro Seite aus der Karte heraus. */
+    flex: 0 0 auto;
+    width: 64mm;
+    max-width: none;
+  }
+  .print-qr-code img {
+    width: 100%;
+    height: auto;
   }
   .print-qr-card * {
     -webkit-print-color-adjust: exact;
