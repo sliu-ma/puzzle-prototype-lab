@@ -77,19 +77,22 @@ export function QRPrintList({
       <div className="print-area mt-3 space-y-3">
         {Array.from({ length: Math.ceil(items.length / PAGE_SIZE) }, (_, page) => (
           <div key={page} className="print-qr-page grid gap-3">
-            {items.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE).map((it) => (
+            {items.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE).map((it) => {
+              // Karte mit genau einem Weg bekommt dessen Farbe. Ein geteilter
+              // Code (mehrere Wege an derselben Station) bleibt neutral, damit
+              // keine Weg-Farbe falsch dominiert.
+              const accent = it.letters.length === 1 ? PATH_COLOR[it.letters[0]] : undefined;
+              return (
               <div
                 key={`${it.stage}-${it.token}`}
                 className="print-qr-card grid grid-cols-[minmax(0,1fr)_minmax(180px,0.9fr)] items-center gap-5 rounded-sm border bg-card p-5"
-                style={{
-                  borderColor: PATH_COLOR[it.letters[0] ?? "A"],
-                }}
+                style={accent ? { borderColor: accent } : undefined}
               >
                 <div className="print-qr-copy min-w-0 text-left">
                   <div className="flex flex-wrap items-center gap-2">
                     <p
                       className="font-mono-typed text-[11px] font-bold uppercase tracking-wider"
-                      style={{ color: PATH_COLOR[it.letters[0] ?? "A"] }}
+                      style={accent ? { color: accent } : undefined}
                     >
                       Etappe {String(it.stage).padStart(2, "0")} · {STAGE_LABELS[it.stage]}
                     </p>
@@ -121,7 +124,8 @@ export function QRPrintList({
                   />
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
         ))}
       </div>
