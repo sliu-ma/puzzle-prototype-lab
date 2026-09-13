@@ -5,23 +5,26 @@
  * Korrekturen pro Gruppe und das Ausdrucken der benötigten QR-Codes. Der
  * Bereich steht im Wartezimmer und während der laufenden Runde zur Verfügung.
  */
-import { useState } from "react";
-import { Shuffle } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Check, Loader2, Save, Shuffle } from "lucide-react";
 import { BranchDiagram } from "@/components/teacher/BranchDiagram";
 import { QRPrintList } from "@/components/teacher/QRPrintList";
 import {
   PATH_COLOR,
   lettersFor,
   normalizeBranches,
+  normalizeStationDescriptions,
   type Branches,
   type Letter,
   type StationDescriptions,
 } from "@/lib/variants";
 import {
   teacherAssignVariants,
+  teacherSetStationDescriptions,
   teacherSetTeamVariant,
 } from "@/lib/rounds.functions";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 export function PathsPanel({
   password,
@@ -45,9 +48,19 @@ export function PathsPanel({
   const [assigning, setAssigning] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showCodes, setShowCodes] = useState(false);
+  const [placeDraft, setPlaceDraft] = useState<StationDescriptions>({});
+  const [savingPlaces, setSavingPlaces] = useState(false);
+  const [placesSaved, setPlacesSaved] = useState(false);
 
   const letters = lettersFor(pathCount);
   const assigned = teams.filter((t) => t.variant).length;
+  const normalizedBranches = normalizeBranches(branches, pathCount);
+
+  useEffect(() => {
+    setPlaceDraft(
+      normalizeStationDescriptions(stationDescriptions, normalizedBranches, pathCount),
+    );
+  }, [stationDescriptions, branches, pathCount]);
 
   const assign = async () => {
     setAssigning(true);
@@ -73,6 +86,31 @@ export function PathsPanel({
       setError(
         err instanceof Error ? err.message : "Der Weg konnte nicht geändert werden.",
       );
+    }
+  };
+
+  const savePlaces = async () => {
+    setSavingPlaces(true);
+    setPlacesSaved(false);
+    setError(null);
+    try {
+      const normalized = normalizeStationDescriptions(
+        placeDraft,
+        normalizedBranches,
+        pathCount,
+      );
+      await teacherSetStationDescriptions({
+        data: { password, code, stationDescriptions: normalized },
+      });
+      setPlaceDraft(normalized);
+      setPlacesSaved(true);
+      reload();
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Die Ortsangaben konnten nicht gespeichert werden.",
+      );
+    } finally {
+      setSavingPlaces(false);
     }
   };
 
@@ -149,7 +187,7 @@ export function PathsPanel({
       <div className="mt-3">
         <BranchDiagram
           pathCount={pathCount}
-          branches={normalizeBranches(branches, pathCount)}
+          branches={normalizedBranches}
         />
       </div>
 
@@ -158,20 +196,52 @@ export function PathsPanel({
           Orte der Stationen
         </summary>
         <div className="mt-3 space-y-3">
-          {Object.entries(normalizeBranches(branches, pathCount)).map(
+          {Object.entries(normalizedBranches).map(
             ([stage, stations]) => (
-              <div key={stage}>
+              <fieldset key={stage} className="space-y-2">
                 <p className="font-serif text-sm font-semibold">
                   {({ "1": "Mobilität", "2": "Konsum", "3": "Wohnen", "4": "Biodiversität", "5": "Energie", "6": "Hearing" } as Record<string, string>)[stage]}
                 </p>
                 {stations.map((letters, index) => (
-                  <p key={index} className="mt-1 text-xs text-foreground/75">
-                    Weg {letters.join(", ")}: {stationDescriptions?.[stage]?.[index] || "Kein Ort eingetragen"}
-                  </p>
+                  <label key={index} className="block">
+                    <span className="font-mono-typed text-[10px] uppercase text-muted-foreground">
+                      {stations.length > 1
+                        ? `Station ${index + 1} · Weg ${letters.join(", ")}`
+                        : "Ort des Postens"}
+                    </span>
+                    <input
+                      type="text"
+                      maxLength={160}
+                      value={placeDraft[stage]?.[index] ?? ""}
+                      onChange={(event) => {
+                        const values = [...(placeDraft[stage] ?? [])];
+                        values[index] = event.target.value;
+                        setPlaceDraft((current) => ({ ...current, [stage]: values }));
+                        setPlacesSaved(false);
+                      }}
+                      placeholder="z. B. Haltestelle Bünteli"
+                      className="mt-1 min-h-[42px] w-full rounded-sm border border-border bg-background px-3 text-sm text-foreground"
+                    />
+                  </label>
                 ))}
-              </div>
+              </fieldset>
             ),
           )}
+          <Button
+            type="button"
+            onClick={() => void savePlaces()}
+            disabled={savingPlaces}
+            className="min-h-[44px] w-full rounded-sm font-serif font-semibold"
+          >
+            {savingPlaces ? (
+              <Loader2 className="animate-spin" />
+            ) : placesSaved ? (
+              <Check />
+            ) : (
+              <Save />
+            )}
+            {savingPlaces ? "Wird gespeichert" : placesSaved ? "Gespeichert" : "Orte speichern"}
+          </Button>
         </div>
       </details>
 
@@ -187,7 +257,7 @@ export function PathsPanel({
       {showCodes && (
         <QRPrintList
           pathCount={pathCount}
-          branches={normalizeBranches(branches, pathCount)}
+          branches={normalizedBranches}
         />
       )}
     </section>
