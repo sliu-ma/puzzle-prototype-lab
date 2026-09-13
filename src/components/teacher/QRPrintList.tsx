@@ -25,7 +25,7 @@ type Item = {
   dataUrl: string;
 };
 
-const PAGE_SIZE = 3;
+const PAGE_SIZE = 2;
 
 export function QRPrintList({
   pathCount,
