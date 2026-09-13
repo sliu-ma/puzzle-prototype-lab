@@ -485,7 +485,22 @@ function RoundPage() {
         </section>
       )}
 
-      {step === "lobby" && (
+      {step === "lobby" && inPlanning && (
+        <div className="mt-4 rounded-sm border border-dashed border-border p-4">
+          <p className="font-serif text-lg font-bold">Die Runde ist noch in Planung</p>
+          <p className="mt-1 text-sm text-foreground/80">
+            Gruppen können erst beitreten, wenn die Runde geöffnet ist.
+          </p>
+          <button
+            type="button"
+            onClick={() => setStep("prepare")}
+            className="mt-3 flex min-h-[44px] w-full items-center justify-center gap-2 rounded-sm border border-stamp bg-stamp/10 px-3 font-serif font-semibold"
+          >
+            Zur Vorbereitung
+          </button>
+        </div>
+      )}
+      {step === "lobby" && !inPlanning && (
         <LobbyPanel
           password={password}
           code={round.code}
