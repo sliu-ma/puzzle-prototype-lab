@@ -5,7 +5,7 @@
  * derselben Station, reicht dort ein einziger Ausdruck.
  */
 import { useEffect, useState } from "react";
-import { Printer } from "lucide-react";
+import { ImageDown, Printer } from "lucide-react";
 import QRCode from "qrcode";
 import { Button } from "@/components/ui/button";
 import {
@@ -35,6 +35,30 @@ export function QRPrintList({
   branches: Branches | null;
 }) {
   const [items, setItems] = useState<Item[]>([]);
+  const [saving, setSaving] = useState(false);
+
+  // Speichert jeden QR-Code einzeln als hochauflösende PNG-Datei.
+  const savePng = async () => {
+    setSaving(true);
+    try {
+      for (const it of items) {
+        const dataUrl = await QRCode.toDataURL(it.token, { width: 1200, margin: 2 });
+        const a = document.createElement("a");
+        a.href = dataUrl;
+        a.download = `etappe-${String(it.stage).padStart(2, "0")}-${STAGE_LABELS[it.stage]
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-|-$/g, "")}-weg-${it.letters.join("")}.png`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        // Kleine Pause, damit der Browser mehrere Downloads zulässt.
+        await new Promise((r) => window.setTimeout(r, 250));
+      }
+    } finally {
+      setSaving(false);
+    }
+  };
 
   useEffect(() => {
     let alive = true;
@@ -62,15 +86,27 @@ export function QRPrintList({
         <p className="text-sm text-muted-foreground">
           {totalCodeCount(branches, pathCount)} QR-Codes für diese Runde
         </p>
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() => window.print()}
-          className="min-h-[44px] rounded-sm font-serif font-semibold"
-        >
-          <Printer className="h-4 w-4" />
-          Drucken
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => window.print()}
+            className="min-h-[44px] rounded-sm font-serif font-semibold"
+          >
+            <Printer className="h-4 w-4" />
+            Als PDF drucken
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            disabled={saving || items.length === 0}
+            onClick={() => void savePng()}
+            className="min-h-[44px] rounded-sm font-serif font-semibold"
+          >
+            <ImageDown className="h-4 w-4" />
+            {saving ? "Speichere PNG…" : "Als PNG speichern"}
+          </Button>
+        </div>
       </div>
 
       {/* Nur dieser Bereich landet auf dem Papier (siehe @media print in styles.css). */}
