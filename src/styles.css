@@ -295,6 +295,10 @@ input, textarea, select {
 
 /* Druck: nur die QR-Blätter aufs Papier, nicht das ganze Dashboard. */
 @media print {
+  @page {
+    size: A4 portrait;
+    margin: 12mm;
+  }
   body:has(.print-area) {
     visibility: hidden;
     background: #fff;
@@ -312,10 +316,10 @@ input, textarea, select {
   }
   .print-qr-page {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: repeat(3, 82mm);
-    gap: 0;
-    min-height: 270mm;
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(2, 132mm);
+    gap: 5mm;
+    min-height: 269mm;
     break-after: page;
     page-break-after: always;
   }
@@ -328,12 +332,23 @@ input, textarea, select {
     page-break-inside: avoid;
     background: transparent;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    align-items: center;
     justify-content: center;
-    margin: 2mm;
+    gap: 8mm;
+    margin: 0;
+    padding: 10mm;
+    border-width: 0.8mm;
     /* Wegfarben müssen auch auf Papier sichtbar bleiben. */
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
+  }
+  .print-qr-copy {
+    flex: 1 1 55%;
+  }
+  .print-qr-code {
+    flex: 0 0 43%;
+    max-width: 92mm;
   }
   .print-qr-card * {
     -webkit-print-color-adjust: exact;

@@ -491,6 +491,27 @@ export const teacherUpdateRound = createServerFn({ method: "POST" })
     return { ok: true as const };
   });
 
+export const teacherSetStationDescriptions = createServerFn({ method: "POST" })
+  .inputValidator((d) =>
+    z
+      .object({
+        password: z.string().min(1).max(200),
+        code: z.string().min(1).max(20),
+        stationDescriptions: z.record(z.array(z.string().max(160))),
+      })
+      .parse(d),
+  )
+  .handler(async ({ data }) => {
+    const { roundsDb, hashPassword } = await import("./rounds.server");
+    const { error } = await roundsDb().rpc("teacher_set_station_descriptions", {
+      p_password_hash: hashPassword(data.password),
+      p_code: data.code,
+      p_station_descriptions: data.stationDescriptions as unknown as never,
+    });
+    if (error) throw new Error(error.message);
+    return { ok: true as const };
+  });
+
 export const teacherDeleteRound = createServerFn({ method: "POST" })
   .inputValidator((d) =>
     z

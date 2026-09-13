@@ -5,23 +5,26 @@
  * Korrekturen pro Gruppe und das Ausdrucken der benötigten QR-Codes. Der
  * Bereich steht im Wartezimmer und während der laufenden Runde zur Verfügung.
  */
-import { useState } from "react";
-import { Shuffle } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Check, Loader2, Save, Shuffle } from "lucide-react";
 import { BranchDiagram } from "@/components/teacher/BranchDiagram";
 import { QRPrintList } from "@/components/teacher/QRPrintList";
 import {
   PATH_COLOR,
   lettersFor,
   normalizeBranches,
+  normalizeStationDescriptions,
   type Branches,
   type Letter,
   type StationDescriptions,
 } from "@/lib/variants";
 import {
   teacherAssignVariants,
+  teacherSetStationDescriptions,
   teacherSetTeamVariant,
 } from "@/lib/rounds.functions";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 export function PathsPanel({
   password,
@@ -45,9 +48,24 @@ export function PathsPanel({
   const [assigning, setAssigning] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showCodes, setShowCodes] = useState(false);
+  const [placeDraft, setPlaceDraft] = useState<StationDescriptions>({});
+  const [savingPlaces, setSavingPlaces] = useState(false);
+  const [placesSaved, setPlacesSaved] = useState(false);
+  const [placesDirty, setPlacesDirty] = useState(false);
 
   const letters = lettersFor(pathCount);
   const assigned = teams.filter((t) => t.variant).length;
+  const normalizedBranches = useMemo(
+    () => normalizeBranches(branches, pathCount),
+    [branches, pathCount],
+  );
+
+  useEffect(() => {
+    if (placesDirty) return;
+    setPlaceDraft(
+      normalizeStationDescriptions(stationDescriptions, normalizedBranches, pathCount),
+    );
+  }, [stationDescriptions, normalizedBranches, pathCount, placesDirty]);
 
   const assign = async () => {
     setAssigning(true);
@@ -76,16 +94,46 @@ export function PathsPanel({
     }
   };
 
+  const savePlaces = async () => {
+    setSavingPlaces(true);
+    setPlacesSaved(false);
+    setError(null);
+    try {
+      const normalized = normalizeStationDescriptions(
+        placeDraft,
+        normalizedBranches,
+        pathCount,
+      );
+      await teacherSetStationDescriptions({
+        data: { password, code, stationDescriptions: normalized },
+      });
+      setPlaceDraft(normalized);
+      setPlacesDirty(false);
+      setPlacesSaved(true);
+      reload();
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Die Ortsangaben konnten nicht gespeichert werden.",
+      );
+    } finally {
+      setSavingPlaces(false);
+    }
+  };
+
   return (
     <section className="mt-5 rounded-sm border border-border bg-secondary/40 p-3">
-      <h3 className="font-serif text-lg font-bold">Wege ({pathCount}) und Material</h3>
-      <p className="mt-1 text-sm text-foreground/80">
-        {editable
-          ? "Die Wege werden beim Start automatisch gleichmässig verteilt. Eine Verteilung in der Lobby kann bei Bedarf angepasst werden."
-          : "Die Verteilung ist seit dem Start gesperrt. Neue Gruppen erhalten automatisch den am wenigsten belegten Weg."}
-      </p>
+      <h3 className="font-serif text-lg font-bold">
+        {pathCount > 1 ? `Wege (${pathCount}) und Material` : "Material und QR-Codes"}
+      </h3>
+      {pathCount > 1 && (
+        <p className="mt-1 text-sm text-foreground/80">
+          {editable
+            ? "Die Wege werden beim Start automatisch gleichmässig verteilt. Eine Verteilung in der Lobby kann bei Bedarf angepasst werden."
+            : "Die Verteilung ist seit dem Start gesperrt. Neue Gruppen erhalten automatisch den am wenigsten belegten Weg."}
+        </p>
+      )}
 
-      {editable && (
+      {pathCount > 1 && editable && (
         <button
           type="button"
           onClick={() => void assign()}
@@ -98,11 +146,13 @@ export function PathsPanel({
       )}
 
       {error && <p className="mt-2 text-xs text-destructive">{error}</p>}
-      <p className="mt-2 text-xs text-muted-foreground">
-        {assigned} von {teams.length} Gruppen haben einen Weg.
-      </p>
+      {pathCount > 1 && (
+        <p className="mt-2 text-xs text-muted-foreground">
+          {assigned} von {teams.length} Gruppen haben einen Weg.
+        </p>
+      )}
 
-      <ul className="mt-3 space-y-1.5">
+      {pathCount > 1 && <ul className="mt-3 space-y-1.5">
         {teams.map((t) => (
           <li
             key={t.teamId}
@@ -144,34 +194,67 @@ export function PathsPanel({
             Noch keine Gruppe angemeldet.
           </li>
         )}
-      </ul>
+      </ul>}
 
-      <div className="mt-3">
+      {pathCount > 1 && <div className="mt-3">
         <BranchDiagram
           pathCount={pathCount}
-          branches={normalizeBranches(branches, pathCount)}
+          branches={normalizedBranches}
         />
-      </div>
+      </div>}
 
       <details className="mt-3 rounded-sm border border-border bg-card p-3">
         <summary className="font-mono-typed cursor-pointer text-[10px] uppercase text-muted-foreground">
           Orte der Stationen
         </summary>
         <div className="mt-3 space-y-3">
-          {Object.entries(normalizeBranches(branches, pathCount)).map(
+          {Object.entries(normalizedBranches).map(
             ([stage, stations]) => (
-              <div key={stage}>
+              <fieldset key={stage} className="space-y-2">
                 <p className="font-serif text-sm font-semibold">
                   {({ "1": "Mobilität", "2": "Konsum", "3": "Wohnen", "4": "Biodiversität", "5": "Energie", "6": "Hearing" } as Record<string, string>)[stage]}
                 </p>
                 {stations.map((letters, index) => (
-                  <p key={index} className="mt-1 text-xs text-foreground/75">
-                    Weg {letters.join(", ")}: {stationDescriptions?.[stage]?.[index] || "Kein Ort eingetragen"}
-                  </p>
+                  <label key={index} className="block">
+                    <span className="font-mono-typed text-[10px] uppercase text-muted-foreground">
+                      {stations.length > 1
+                        ? `Station ${index + 1} · Weg ${letters.join(", ")}`
+                        : "Ort des Postens"}
+                    </span>
+                    <input
+                      type="text"
+                      maxLength={160}
+                      value={placeDraft[stage]?.[index] ?? ""}
+                      onChange={(event) => {
+                        const values = [...(placeDraft[stage] ?? [])];
+                        values[index] = event.target.value;
+                        setPlaceDraft((current) => ({ ...current, [stage]: values }));
+                        setPlacesDirty(true);
+                        setPlacesSaved(false);
+                      }}
+                      placeholder="z. B. Haltestelle Bünteli"
+                      className="mt-1 min-h-[42px] w-full rounded-sm border border-border bg-background px-3 text-sm text-foreground"
+                    />
+                  </label>
                 ))}
-              </div>
+              </fieldset>
             ),
           )}
+          <Button
+            type="button"
+            onClick={() => void savePlaces()}
+            disabled={savingPlaces || !placesDirty}
+            className="min-h-[44px] w-full rounded-sm font-serif font-semibold"
+          >
+            {savingPlaces ? (
+              <Loader2 className="animate-spin" />
+            ) : placesSaved ? (
+              <Check />
+            ) : (
+              <Save />
+            )}
+            {savingPlaces ? "Wird gespeichert" : placesSaved ? "Gespeichert" : "Orte speichern"}
+          </Button>
         </div>
       </details>
 
@@ -187,7 +270,7 @@ export function PathsPanel({
       {showCodes && (
         <QRPrintList
           pathCount={pathCount}
-          branches={normalizeBranches(branches, pathCount)}
+          branches={normalizedBranches}
         />
       )}
     </section>

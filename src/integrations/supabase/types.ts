@@ -347,6 +347,14 @@ export type Database = {
         Args: { p_code: string; p_password_hash: string; p_status: string }
         Returns: boolean
       }
+      teacher_set_station_descriptions: {
+        Args: {
+          p_code: string
+          p_password_hash: string
+          p_station_descriptions: Json
+        }
+        Returns: boolean
+      }
       teacher_set_team_variant: {
         Args: { p_password_hash: string; p_team_id: string; p_variant: string }
         Returns: boolean

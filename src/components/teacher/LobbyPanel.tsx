@@ -250,18 +250,16 @@ export function LobbyPanel({
         ))}
       </ul>
 
-      {pathCount > 1 && (
-        <PathsPanel
-          password={password}
-          code={code}
-          pathCount={pathCount}
-          branches={branches}
-          stationDescriptions={stationDescriptions}
-          teams={teams}
-          reload={reload}
-          editable={status === "lobby"}
-        />
-      )}
+      <PathsPanel
+        password={password}
+        code={code}
+        pathCount={pathCount}
+        branches={branches}
+        stationDescriptions={stationDescriptions}
+        teams={teams}
+        reload={reload}
+        editable={status === "lobby"}
+      />
 
       {prologueOpen && (
         <PrologueOverlay
