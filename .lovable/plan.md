@@ -1,29 +1,25 @@
-# Biodiversitätsrätsel: klarere Anleitung, ohne die Lösung zu verraten
+# Biodiversitätsrätsel: Klarer machen, dass die Polaroids ausgeschnitten werden
 
 ## Problem
-Die Notiz in Etappe 4 sagt nur «Trenne die gefährdeten von den nicht gefährdeten Arten». Nirgends steht, dass die Polaroids ausgeschnitten, sortiert und umgedreht werden müssen und dass der Code auf der Rückseite eines Tieres steckt. Die Spielenden wissen nicht, was sie physisch tun sollen.
+Die Notiz in Etappe 4 sagt nur «Trenne die gefährdeten von den nicht gefährdeten Arten». Die Spielenden wissen nicht, dass sie die Polaroids ausschneiden, sortieren und umdrehen müssen. Der Hauptpunkt «ausschneiden» fehlt.
 
 ## Änderungen (nur `src/routes/etappe-4.tsx`)
 
-### 1. Auftrag als nummerierte Checkliste in der Notiz-Karte
-Unter Jakobs Zitat eine kurze Anleitung im Stempel-Look:
-1. Schneide die acht Polaroids aus.
-2. Sortiere sie in zwei Stapel: gefährdet / nicht gefährdet (unsicher? recherchiere kurz im Internet).
-3. Drehe die gefährdeten Tiere um und suche die Zahlen.
-4. Gib die drei Zahlen am Schloss von klein nach gross ein.
+### 1. Notiz-Karte: Ausschneiden als klaren Auftrag
+Jakobs Zitat bleibt. Direkt darunter ein kurzer, gestempelter Hinweis im Fokus:
+«Schneide die acht Polaroids aus. Sortiere sie: gefährdet / nicht gefährdet. Drehe die gefährdeten um und lies die Zahlen.»
 
-Damit ist der Weg klar, aber weder welche Tiere gefährdet sind noch welches Tier den Code trägt, wird verraten.
+Damit steht das Ausschneiden klar voran; welche Tiere gefährdet sind und welches Tier den Code trägt, bleibt ungesagt.
 
-### 2. Hinweis 1 und 2 leicht schärfen
-- Hinweis 1 ergänzen: «Unsicher bei einem Tier? Suche kurz im Internet nach ‹Tiername Rote Liste Schweiz›.»
-- Hinweis 2 klarer: «Die Zahlen stehen auf der Rückseite eines der gefährdeten Tiere.»
-- Auflösung (9 Min) bleibt unverändert.
+### 2. Hinweis 1 ergänzen
+«Unsicher bei einem Tier? Suche kurz im Internet nach ‹Tiername Rote Liste Schweiz›.»
+Hinweis 2 und Auflösung bleiben unverändert.
 
-### 3. Eine Stützzeile beim Zahlenschloss
-Beim Code-Schritt eine kleine Zeile ergänzen: «Die Zahlen findest du auf der Rückseite der Polaroids.»
+### 3. Stützzeile beim Zahlenschloss
+«Die Zahlen stehen auf der Rückseite der Polaroids.»
 
 ## Bewusst unverändert
-- Keine Lösung im Text (welche Tiere gefährdet sind, welches Tier den Code trägt, bleibt geheim).
+- Keine Lösung im Text.
 - Code `123`, Ablauf, physische Polaroids und QR-Codes bleiben gleich.
 - Keine Datenbank- oder Designänderungen.
 
