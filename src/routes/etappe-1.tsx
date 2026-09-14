@@ -58,7 +58,7 @@ const HINTS_003: Hint[] = [
     unlockMin: 9,
     label: "Auflösung",
     title: "So geht's",
-    body: "Start: Genf, Ziel: Widnau, Gemeindehaus (Bushaltestelle). Die nachhaltigste Route ist der Zug (IC 1 → IC 3 → IR 13 bis Heerbrugg) mit ca. 3 kg CO₂ pro Person. Auto und Inlandflug stossen ein Vielfaches aus, ohne nennenswerte Zeitersparnis.",
+    body: "Start: Genf, Ziel: deine Bushaltestelle in Widnau. Die nachhaltigste Route ist der Zug (IC 1 → IC 3 → IR 13 bis Heerbrugg) mit ca. 3 kg CO₂ pro Person. Auto und Inlandflug stossen ein Vielfaches aus, ohne nennenswerte Zeitersparnis.",
   },
 ];
 
@@ -70,7 +70,7 @@ function AkteGated() {
         token={AKTE_003_TOKEN}
         storageKey="akte-001-unlocked"
         title={<>Etappe 1, QR-Code an der Bushaltestelle scannen</>}
-        description="Diese Etappe ist versiegelt. Scanne den QR-Code, der an der Bushaltestelle Widnau, Gemeindehaus für dich hinterlegt ist."
+        description="Diese Etappe ist versiegelt. Scanne den QR-Code, der an deiner Bushaltestelle in Widnau für dich hinterlegt ist."
         label="Etappe 1 · Versiegelt"
       >
         <AktePage />
@@ -230,7 +230,7 @@ function AktePage() {
         {step === "brief" && (
           <PaperCard rotate={-0.4}>
             <p className="font-mono-typed text-[11px] uppercase tracking-[0.2em] text-stamp">
-              Notiz 01, Bushaltestelle Widnau, Gemeindehaus · Wartebank
+              Notiz 01, Bushaltestelle Widnau · Wartebank
             </p>
             <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">Grossvaters altes Reiseticket</h2>
             <p className="mt-1 font-mono-typed text-xs text-muted-foreground">[Hinweis gefunden um {jetzt}]</p>
@@ -316,7 +316,7 @@ function AktePage() {
                 Verbindung identifiziert
               </p>
               <h2 className="mt-2 font-serif text-2xl font-bold sm:text-3xl">
-                Genf <span className="text-muted-foreground">›</span> Widnau, Gemeindehaus
+                Genf <span className="text-muted-foreground">›</span> Widnau
               </h2>
               <p className="mt-1 text-sm text-foreground/70">
                 Drei Routen stehen zur Auswahl. Tippe eine an, um Karte und Verbindung im Detail zu sehen.
