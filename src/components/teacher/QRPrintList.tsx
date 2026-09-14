@@ -50,12 +50,26 @@ export function QRPrintList({
         const it = items[i];
         const node = cards[i];
         if (!node) continue;
+        // QR-Bilder zuerst vollständig laden lassen, sonst bleibt die Fläche leer.
+        const imgs = Array.from(node.querySelectorAll("img"));
+        await Promise.all(
+          imgs.map(async (img) => {
+            if (img.complete && img.naturalWidth > 0) return;
+            try {
+              await img.decode();
+            } catch {
+              /* ignoriert: Fallback ist der zweite Render-Durchlauf */
+            }
+          }),
+        );
         // Kein cacheBust: das würde an die data:-URL des QR-Bildes einen
         // Parameter hängen, wodurch der Code im PNG fehlt.
-        const dataUrl = await toPng(node, {
-          pixelRatio: 3,
-          backgroundColor: "#FDFBF4",
-        });
+        // Zwei Durchläufe: der erste wärmt html-to-image auf, der zweite
+        // enthält die eingebetteten Bilder zuverlässig.
+        const opts = { pixelRatio: 3, backgroundColor: "#FDFBF4" } as const;
+        await toPng(node, opts);
+        const dataUrl = await toPng(node, opts);
+
         const base64 = dataUrl.split(",")[1];
         const name = `etappe-${String(it.stage).padStart(2, "0")}-${STAGE_LABELS[it.stage]
           .toLowerCase()
