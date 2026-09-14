@@ -382,7 +382,7 @@ function AktePage() {
         )}
 
         <p className="mt-12 text-center font-mono-typed text-xs uppercase tracking-[0.2em] text-muted-foreground">
-         , Etappe 3 · Jakobs Haus
+          ETAPPE 3 · JAKOBS HAUS
         </p>
       </div>
 
