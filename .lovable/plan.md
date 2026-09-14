@@ -13,7 +13,7 @@ Die Botschaft in Etappe 2 (Konsum) schärfen: Saisonal und regional schlägt imp
 **Import-Zwetschgen (bleibt die schlechte Wahl):**
 - Bild: neues Migros-Bild
 - Siegel: neu **Bio** (statt kein Siegel)
-- Herkunft: bleibt Chile
+- Herkunft: neu USA
 - Hinweistext neu: Bio angebaut, aber um die halbe Welt gereist, während hier Saison ist. Plastikverpackung.
 - Nachhaltigkeitsbarometer: Label steigt (Bio), regional und saisonal bleiben tief, Verpackung tief (Schale).
 
