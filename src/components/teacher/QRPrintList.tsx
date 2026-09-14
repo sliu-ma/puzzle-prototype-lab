@@ -29,6 +29,50 @@ type Item = {
 
 const PAGE_SIZE = 2;
 
+function loadImage(src: string) {
+  return new Promise<HTMLImageElement>((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => resolve(image);
+    image.onerror = () => reject(new Error("Bild konnte nicht geladen werden."));
+    image.src = src;
+  });
+}
+
+async function renderCardWithQr(node: HTMLElement, qrDataUrl: string) {
+  const cardDataUrl = await toPng(node, {
+    pixelRatio: 3,
+    backgroundColor: "#FDFBF4",
+  });
+  const [cardImage, qrImage] = await Promise.all([
+    loadImage(cardDataUrl),
+    loadImage(qrDataUrl),
+  ]);
+  const qrElement = node.querySelector<HTMLImageElement>(".print-qr-code img");
+  if (!qrElement) return cardDataUrl;
+
+  const cardRect = node.getBoundingClientRect();
+  const qrRect = qrElement.getBoundingClientRect();
+  if (cardRect.width <= 0 || cardRect.height <= 0) return cardDataUrl;
+
+  const canvas = document.createElement("canvas");
+  canvas.width = cardImage.naturalWidth;
+  canvas.height = cardImage.naturalHeight;
+  const context = canvas.getContext("2d");
+  if (!context) return cardDataUrl;
+
+  context.drawImage(cardImage, 0, 0);
+  const scaleX = canvas.width / cardRect.width;
+  const scaleY = canvas.height / cardRect.height;
+  context.drawImage(
+    qrImage,
+    (qrRect.left - cardRect.left) * scaleX,
+    (qrRect.top - cardRect.top) * scaleY,
+    qrRect.width * scaleX,
+    qrRect.height * scaleY,
+  );
+  return canvas.toDataURL("image/png");
+}
+
 export function QRPrintList({
   pathCount,
   branches,
@@ -50,25 +94,9 @@ export function QRPrintList({
         const it = items[i];
         const node = cards[i];
         if (!node) continue;
-        // QR-Bilder zuerst vollständig laden lassen, sonst bleibt die Fläche leer.
-        const imgs = Array.from(node.querySelectorAll("img"));
-        await Promise.all(
-          imgs.map(async (img) => {
-            if (img.complete && img.naturalWidth > 0) return;
-            try {
-              await img.decode();
-            } catch {
-              /* ignoriert: Fallback ist der zweite Render-Durchlauf */
-            }
-          }),
-        );
-        // Kein cacheBust: das würde an die data:-URL des QR-Bildes einen
-        // Parameter hängen, wodurch der Code im PNG fehlt.
-        // Zwei Durchläufe: der erste wärmt html-to-image auf, der zweite
-        // enthält die eingebetteten Bilder zuverlässig.
-        const opts = { pixelRatio: 3, backgroundColor: "#FDFBF4" } as const;
-        await toPng(node, opts);
-        const dataUrl = await toPng(node, opts);
+        // Die Kartenaufnahme kann data:-Bilder sporadisch auslassen. Darum wird
+        // der QR-Code danach nochmals direkt auf die fertige PNG-Karte gezeichnet.
+        const dataUrl = await renderCardWithQr(node, it.dataUrl);
 
         const base64 = dataUrl.split(",")[1];
         const name = `etappe-${String(it.stage).padStart(2, "0")}-${STAGE_LABELS[it.stage]
