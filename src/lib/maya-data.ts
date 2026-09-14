@@ -26,7 +26,7 @@ import spargelAsset from "@/assets/produkte/spargel.webp.asset.json";
 import rhabarberAsset from "@/assets/produkte/rhabarber.webp.asset.json";
 import kuerbisAsset from "@/assets/produkte/kuerbis.webp.asset.json";
 import zwetschgeAsset from "@/assets/produkte/zwetschgen-import.webp.asset.json";
-import zwetschgenBioChAsset from "@/assets/produkte/zwetschgen-bio-ch.webp.asset.json";
+import zwetschgenBioChAsset from "@/assets/produkte/zwetschgen-bio-ch.jpg.asset.json";
 import zimtBioAsset from "@/assets/produkte/zimt-bio.webp.asset.json";
 import zimtClassicAsset from "@/assets/produkte/zimt-classic.webp.asset.json";
 import aepfelPinkladyAsset from "@/assets/produkte/aepfel-pinklady.jpg.asset.json";
@@ -336,7 +336,7 @@ export const PRODUKTE: Produkt[] = [
     name: "Zwetschgen 1kg",
     kategorie: "fruechte-gemuese",
     herkunft: "USA",
-    preis: 4.5,
+    preis: 4.95,
     siegel: ["bio"],
     saison: "out",
     saisonMonate: [1, 2, 3],
@@ -360,7 +360,7 @@ export const PRODUKTE: Produkt[] = [
     name: "Zwetschgen 1kg",
     kategorie: "fruechte-gemuese",
     herkunft: "Schweiz",
-    preis: 4.95,
+    preis: 4.5,
     siegel: ["ip-suisse"],
     saison: "in",
     saisonMonate: [8, 9],
