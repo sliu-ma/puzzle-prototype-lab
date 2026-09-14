@@ -72,7 +72,7 @@ function buildHints(): Hint[] {
   const fruchtTipp = istToertchen
     ? "Beide Erdbeeren haben ihre Stärken: Die spanischen sind bio, die Schweizer sind regional und mitten in der Saison. Bio sagt etwas über den Anbau, aber nicht über Transport und Saison. Kurze Wege und Saisonware schlagen den Import meist deutlich."
     : keys.includes("zwetschgen")
-      ? "Bei den Zwetschgen zählt die Herkunft: Die Schweizer Bio-Zwetschgen sind gerade in der Saison (August bis September), die Importware reist um die halbe Welt. Beim Zimt gibt es kein regionales Produkt, dort entscheidet das Label: Bio und Fairtrade statt namenlos billig."
+      ? "Bei den Zwetschgen zählt die Herkunft: Die Schweizer IP-Suisse-Zwetschgen sind gerade in der Saison (August bis September), die Importware ist zwar bio, reist aber um die halbe Welt. Beim Zimt gibt es kein regionales Produkt, dort entscheidet das Label: Bio und Fairtrade statt namenlos billig."
       : "Bei den Äpfeln zählt die Herkunft: Schweizer Äpfel sind ganzjährig aus regionaler Lagerung verfügbar, Pink Lady kommt aus Frankreich. Beim Zimt gibt es kein regionales Produkt, dort entscheidet das Label: Bio und Fairtrade statt namenlos billig.";
   const loesung = istToertchen
     ? "Wähle Schweizer Erdbeeren, Schweizer Bio-Freiland-Eier und die Bio/Demeter-Zitrone aus Italien. Ergänze Mehl, Zucker, Salz, Butter, Vollrahm und Vanillezucker, für die gibt es je nur eine Option. Dann springt die Kasse an."
