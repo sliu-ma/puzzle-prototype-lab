@@ -219,7 +219,7 @@ function AktePage() {
               [Holztresen · leerer Korb · {getFrozenClock("maya-clock-akte-002")} Uhr]
             </p>
             <blockquote className="mt-5 border-l-4 border-stamp pl-4 text-[15px] leading-relaxed">
-              Der Dorfladen ist geschlossen, doch Jakobs Freundin Frau Berger lässt dich ein. „Dein Grossvater war jede Woche hier. Wenn ich sehe, was die Leute kaufen, weiss ich, was schiefläuft."
+              Der Dorfladen ist geschlossen, doch Jakobs Freundin Frau Berger lässt dich ein. „Deine Grossvater war jede Woche hier. Er sagte: Wenn ich sehe, was die Leute kaufen, weiss ich, was schiefläuft.“
               <br /><br />
               Sie stellt einen leeren Korb auf den Tresen. „Alles ist da. Welche Zutaten du wählst, musst du selbst entscheiden."
             </blockquote>
