@@ -64,7 +64,17 @@ export type RouteOption = {
   osrm?: { points: LatLng[] };
 };
 
-export const VALID_START = ["genf", "geneve", "genève", "geneva", "gva"];
+export const VALID_START = [
+  "genf",
+  "geneve",
+  "genève",
+  "geneva",
+  "gva",
+  "genf cornavin",
+  "geneve cornavin",
+  "cornavin",
+  "geneva cornavin",
+];
 export const VALID_ZIEL = [
   "widnau",
   "widnau sg",
@@ -73,6 +83,14 @@ export const VALID_ZIEL = [
   "gemeindehaus",
   "gemeindehaus widnau",
   "bushaltestelle widnau",
+  "widnau post",
+  "post widnau",
+  "post",
+  "widnau schlatt",
+  "schlatt widnau",
+  "schlatt",
+  "bushaltestelle widnau post",
+  "bushaltestelle widnau schlatt",
   "heerbrugg",
   "heerbrugg sg",
   "bahnhof heerbrugg",
