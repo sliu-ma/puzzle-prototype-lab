@@ -5,9 +5,9 @@ Die Notiz in Etappe 4 sagt nur «Trenne die gefährdeten von den nicht gefährde
 
 ## Änderungen (nur `src/routes/etappe-4.tsx`)
 
-### 1. Notiz-Karte: Ausschneiden als klaren Auftrag
-Jakobs Zitat bleibt. Direkt darunter ein kurzer, gestempelter Hinweis im Fokus:
-«Schneide die acht Polaroids aus. Sortiere sie: gefährdet / nicht gefährdet. Drehe die gefährdeten um und lies die Zahlen.»
+### 1. Notiz-Karte: Ausschneiden und Trennen als klarer Auftrag
+Jakobs Zitat wird ersetzt durch eine direktere Formulierung in diese Richtung:
+«Schneide die Polaroids aus und trenne die gefährdeten von den nicht gefährdeten Arten, um die Kiste zu öffnen. Die Gefährdeten erzählen eine Geschichte — drehe sie um und lies die Zahlen.»
 
 Damit steht das Ausschneiden klar voran; welche Tiere gefährdet sind und welches Tier den Code trägt, bleibt ungesagt.
 
