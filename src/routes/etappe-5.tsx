@@ -229,7 +229,7 @@ function AktePage() {
         {step === "input" && (
           <InputCarousel
             kicker="Fachlicher Input · Energieträger"
-            title="Wie Energie wirkt"
+            title="Voller Energie"
             intro="Drei Blickwinkel auf unsere Energie, an ihnen entscheidet sich, was im Hearing zählt:"
             cards={[
               {
