@@ -157,7 +157,7 @@ const FAQ = [
 
 function HeroSection() {
   return (
-    <header className="relative flex min-h-[92dvh] flex-col items-center justify-center overflow-hidden px-5 py-16 text-center">
+    <header className="relative flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden px-5 text-center">
       {/* Schwebende Papier-Elemente im Hintergrund */}
       <div
         aria-hidden
@@ -192,7 +192,7 @@ function HeroSection() {
         </p>
       </PaperCard>
 
-      <div className="animate-bounce-soft mt-12 flex flex-col items-center gap-1 text-muted-foreground">
+      <div className="animate-bounce-soft absolute bottom-6 left-1/2 flex -translate-x-1/2 flex-col items-center gap-1 text-muted-foreground">
         <span className="font-mono-typed text-xs uppercase tracking-widest">Scrollen</span>
         <ChevronDown className="h-5 w-5" aria-hidden />
       </div>
