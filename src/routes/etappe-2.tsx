@@ -76,7 +76,7 @@ function buildHints(): Hint[] {
       : "Bei den Äpfeln zählt die Herkunft: Schweizer Äpfel sind ganzjährig aus regionaler Lagerung verfügbar, Pink Lady kommt aus Frankreich. Beim Zimt gibt es kein regionales Produkt, dort entscheidet das Label: Bio und Fairtrade statt namenlos billig.";
   const loesung = istToertchen
     ? "Wähle Schweizer Erdbeeren, Schweizer Bio-Freiland-Eier und die Bio/Demeter-Zitrone aus Italien. Ergänze Mehl, Zucker, Salz, Butter, Vollrahm und Vanillezucker, für die gibt es je nur eine Option. Dann springt die Kasse an."
-    : `Wähle ${keys.includes("zwetschgen") ? "die Schweizer Bio-Zwetschgen" : "die Schweizer Äpfel"}, Schweizer Bio-Freiland-Eier und den Bio-/Fairtrade-Zimt aus Sri Lanka. Ergänze Mehl, Salz, Butter, gemahlene Mandeln, Vollrahm, Vanillezucker und Zucker, für die gibt es je nur eine Option. Dann springt die Kasse an.`;
+    : `Wähle ${keys.includes("zwetschgen") ? "die Schweizer IP-Suisse-Zwetschgen" : "die Schweizer Äpfel"}, Schweizer Bio-Freiland-Eier und den Bio-/Fairtrade-Zimt aus Sri Lanka. Ergänze Mehl, Salz, Butter, gemahlene Mandeln, Vollrahm, Vanillezucker und Zucker, für die gibt es je nur eine Option. Dann springt die Kasse an.`;
 
   return [
     {
