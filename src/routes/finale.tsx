@@ -1498,7 +1498,6 @@ function MatchView({
 
   const usedRight = new Set(Object.values(pairs));
   const leftById = Object.fromEntries(frage.links.map((l) => [l.id, l]));
-  const rechtsById = Object.fromEntries(frage.rechts.map((r) => [r.id, r.label]));
 
 
   const findRightAt = (x: number, y: number): string | null => {
@@ -1574,23 +1573,18 @@ function MatchView({
         Ziehe jedes Label auf den passenden Zweck.
       </p>
       <div className="grid gap-3 sm:grid-cols-2">
-        {/* Links (draggable) */}
+        {/* Links (draggable) - nur noch nicht zugeordnete Labels */}
         <div className="space-y-2">
-          {linksShuffled.map((l) => {
-            const paired = pairs[l.id];
+          {linksShuffled.filter((l) => !pairs[l.id]).map((l) => {
             const isDragging = dragging === l.id;
-            const showGreen = submitted && allOk;
             return (
               <div
                 key={l.id}
                 onPointerDown={startDrag(l.id)}
                 className={cn(
-                  "select-none touch-none rounded-sm border px-3 py-2 text-left font-serif text-[14px] transition-colors",
-                  submitted ? "cursor-default" : "cursor-grab active:cursor-grabbing",
+                  "select-none touch-none rounded-sm border px-3 py-2 text-left font-serif text-[14px] transition-colors cursor-grab active:cursor-grabbing",
                   isDragging && "opacity-40",
-                  !submitted && !isDragging && "border-border bg-paper hover:bg-secondary",
-                  submitted && !showGreen && "border-border bg-paper",
-                  showGreen && "border-emerald-500/60 bg-emerald-500/10",
+                  !isDragging && "border-border bg-paper hover:bg-secondary",
                 )}
               >
                 <div className="flex items-center gap-2">
@@ -1604,33 +1598,22 @@ function MatchView({
                   )}
                   <div className="font-bold">{l.label}</div>
                 </div>
-                {paired && (
-                  <div className="mt-1 flex items-center justify-between gap-2 text-xs text-foreground/70">
-                    <span>→ {rechtsById[paired]}</span>
-                    {!submitted && (
-                      <span
-                        role="button"
-                        onPointerDown={(e) => e.stopPropagation()}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          clear(l.id);
-                        }}
-                        className="rounded-sm border border-border bg-card px-1.5 py-0.5 font-mono-typed text-[10px] uppercase hover:bg-secondary"
-                      >
-                        Lösen
-                      </span>
-                    )}
-                  </div>
-                )}
               </div>
             );
           })}
+          {linksShuffled.filter((l) => !pairs[l.id]).length === 0 && (
+            <p className="px-1 py-2 font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
+              Alle zugeordnet
+            </p>
+          )}
         </div>
         {/* Rechts (drop targets) */}
         <div className="space-y-2">
           {rechtsShuffled.map((r) => {
             const used = usedRight.has(r.id);
             const isHover = hoverRight === r.id && dragging;
+            const assignedLink = frage.links.find((l) => pairs[l.id] === r.id);
+            const showGreen = submitted && allOk;
             return (
               <div
                 key={r.id}
@@ -1641,9 +1624,38 @@ function MatchView({
                   "rounded-sm border-2 border-dashed px-3 py-2 text-left font-serif text-[14px] transition-colors",
                   isHover ? "border-stamp bg-stamp/15" : "border-border/70 bg-paper",
                   used && !isHover && "opacity-70",
+                  showGreen && assignedLink && "border-emerald-500/60 bg-emerald-500/10",
                 )}
               >
-                {r.label}
+                <div className="text-foreground/80">{r.label}</div>
+                {assignedLink && (
+                  <div className="mt-2 flex items-center justify-between gap-2 rounded-sm border border-border bg-card px-2 py-1.5">
+                    <div className="flex items-center gap-2">
+                      {assignedLink.icon && (
+                        <img
+                          src={assignedLink.icon}
+                          alt=""
+                          className="h-7 w-7 shrink-0 object-contain"
+                          draggable={false}
+                        />
+                      )}
+                      <span className="font-bold">{assignedLink.label}</span>
+                    </div>
+                    {!submitted && (
+                      <span
+                        role="button"
+                        onPointerDown={(e) => e.stopPropagation()}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          clear(assignedLink.id);
+                        }}
+                        className="rounded-sm border border-border bg-paper px-1.5 py-0.5 font-mono-typed text-[10px] uppercase hover:bg-secondary"
+                      >
+                        Lösen
+                      </span>
+                    )}
+                  </div>
+                )}
               </div>
             );
           })}
