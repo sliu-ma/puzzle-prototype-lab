@@ -25,7 +25,7 @@ import rosenkohlAsset from "@/assets/produkte/rosenkohl.png.asset.json";
 import spargelAsset from "@/assets/produkte/spargel.webp.asset.json";
 import rhabarberAsset from "@/assets/produkte/rhabarber.webp.asset.json";
 import kuerbisAsset from "@/assets/produkte/kuerbis.webp.asset.json";
-import zwetschgeAsset from "@/assets/produkte/zwetschge.jpg.asset.json";
+import zwetschgeAsset from "@/assets/produkte/zwetschgen-import.webp.asset.json";
 import zwetschgenBioChAsset from "@/assets/produkte/zwetschgen-bio-ch.webp.asset.json";
 import zimtBioAsset from "@/assets/produkte/zimt-bio.webp.asset.json";
 import zimtClassicAsset from "@/assets/produkte/zimt-classic.webp.asset.json";
@@ -335,9 +335,9 @@ export const PRODUKTE: Produkt[] = [
     id: "zwetschge-import",
     name: "Zwetschgen 1kg",
     kategorie: "fruechte-gemuese",
-    herkunft: "Chile",
+    herkunft: "USA",
     preis: 4.5,
-    siegel: [],
+    siegel: ["bio"],
     saison: "out",
     saisonMonate: [1, 2, 3],
     emoji: "🍑",
@@ -345,14 +345,14 @@ export const PRODUKTE: Produkt[] = [
     bewertung: "schlecht",
     zutat: "zwetschgen",
     problemHinweis:
-      "Zwetschgen aus Chile reisen um die halbe Welt, obwohl es in der Schweiz gerade Zwetschgen-Saison gibt. Die Schweizer Bio-Zwetschgen sind die klar bessere Wahl.",
+      "Diese Zwetschgen sind bio, reisen aber aus den USA um die halbe Welt, obwohl es in der Schweiz gerade Zwetschgen-Saison gibt. Dazu kommt die Plastikschale. Die Schweizer IP-Suisse-Zwetschgen sind die klar bessere Wahl.",
     nachhaltigkeit: {
       regional: 1,
       saisonal: 1,
-      verpackung: 2,
-      label: 1,
+      verpackung: 1,
+      label: 4,
       erklaerung:
-        "Importzwetschgen aus Übersee: sehr lange Transportwege, Ernte in der südlichen Halbkugel-Saison, keine Nachhaltigkeitslabel.",
+        "Bio-Zwetschgen aus den USA: biologisch angebaut, aber sehr lange Transportwege in der Plastikschale, während hier Saison ist.",
     },
   },
   {
@@ -361,7 +361,7 @@ export const PRODUKTE: Produkt[] = [
     kategorie: "fruechte-gemuese",
     herkunft: "Schweiz",
     preis: 4.95,
-    siegel: ["bio"],
+    siegel: ["ip-suisse"],
     saison: "in",
     saisonMonate: [8, 9],
     emoji: "🍑",
@@ -375,7 +375,7 @@ export const PRODUKTE: Produkt[] = [
       verpackung: 3,
       label: 5,
       erklaerung:
-        "Schweizer Bio-Zwetschgen aus der Hauptsaison (August–September), kurze Transportwege, Anbau ohne synthetische Pestizide.",
+        "Schweizer IP-Suisse-Zwetschgen aus der Hauptsaison (August–September): kurze Transportwege und ressourcenschonender Anbau.",
     },
   },
   {
