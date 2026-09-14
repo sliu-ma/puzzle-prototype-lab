@@ -1,12 +1,17 @@
-# Etappe 5: Besserer Titel für Energie-Fachinput
+# Etappe 5: Grauen Hearing-Hinweistext entfernen
 
 ## Änderung
-In `src/routes/etappe-5.tsx` (Zeile 232) den `title` des `InputCarousel` von `"Wie Energie wirkt"` zu `"Worauf Energie ankommt"` ändern.
+In `src/routes/etappe-5.tsx` (Zeile 275–278) den Hinweis-Absatz entfernen:
 
-Der Titel passt zur Intro-Zeile «an ihnen entscheidet sich, was im Hearing zählt» und klingt wie die Nachbar-Titel («Nachhaltig einkaufen, worauf es ankommt», «Warum Vielfalt zählt»).
+    <p className="mt-5 text-sm text-foreground/70">
+      Im Hearing stellt der Rat dir zehn Fragen aus allen fünf Themen.
+      Max. 3 Fehler, sonst kippt die Abstimmung.
+    </p>
+
+Der Hinweis erscheint auf der Folgeseite (Finale/Hearing) erneut, dort wo er hingehört. Die «Hearing starten»- und «Übersicht»-Buttons bleiben unverändert.
 
 ## Keine Änderung an
-- Intro-Text, Karten, Charts, Header/Footer, Rätsel-Logik
+- Storytext, Marlene-Vogt-Label, Buttons, Hearing-Logik
 
 ## Prüfung
 - Typecheck `bunx tsgo --noEmit`
