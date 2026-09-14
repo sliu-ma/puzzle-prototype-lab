@@ -320,6 +320,7 @@ export type Database = {
           created_at: string
           path_count: number
           started_at: string
+          station_descriptions: Json
           status: string
           team_count: number
           title: string
