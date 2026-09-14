@@ -50,10 +50,11 @@ export function QRPrintList({
         const it = items[i];
         const node = cards[i];
         if (!node) continue;
+        // Kein cacheBust: das würde an die data:-URL des QR-Bildes einen
+        // Parameter hängen, wodurch der Code im PNG fehlt.
         const dataUrl = await toPng(node, {
           pixelRatio: 3,
           backgroundColor: "#FDFBF4",
-          cacheBust: true,
         });
         const base64 = dataUrl.split(",")[1];
         const name = `etappe-${String(it.stage).padStart(2, "0")}-${STAGE_LABELS[it.stage]
