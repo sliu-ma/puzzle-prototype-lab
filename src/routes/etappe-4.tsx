@@ -214,11 +214,10 @@ function AktePage() {
                <br />
                &nbsp;&nbsp;&nbsp;
                <br />
-                „Manche dieser Tiere sind hier noch sicher, andere stehen kurz vor
-                dem Verschwinden. <strong>Schneide die Polaroids aus</strong> und
-                <strong>trenne</strong> die gefährdeten von den nicht gefährdeten
-                Arten, um die Kiste zu öffnen. Die gefährdeten Tiere erzählen eine
-                Geschichte — höre zu, was sie zu sagen haben.“
+                 „Manche dieser Tiere sind hier noch sicher, andere stehen kurz vor dem
+                 Verschwinden. Schneide die Polaroids aus undtrenne die gefährdeten von
+                 den nicht gefährdeten Arten, um die Kiste zu öffnen. Die gefährdeten
+                 Tiere erzählen eine Geschichte, höre zu, was sie zu sagen haben.“
              </blockquote>
             <div className="mt-6 flex justify-end">
               <button
