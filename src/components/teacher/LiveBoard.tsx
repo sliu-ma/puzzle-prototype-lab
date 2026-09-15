@@ -122,7 +122,7 @@ export function LiveBoard({
         roundOver={roundOver}
       />
 
-      <LiveLeaderboard teams={teams} />
+      <LiveLeaderboard teams={teams} code={code} />
     </div>
   );
 }
