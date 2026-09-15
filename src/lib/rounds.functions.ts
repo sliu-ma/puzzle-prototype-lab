@@ -74,14 +74,25 @@ export const joinRound = createServerFn({ method: "POST" })
       p_token_hash: hashToken(token),
     });
     if (error) {
-      if (error.message.includes("duplicate") || error.code === "23505") {
-        throw new Error("Dieser Teamname ist in der Runde schon vergeben.");
+      // Erwartbare Eingabefehler (z. B. Teamname schon vergeben) sind kein
+      // Serverfehler: als Ergebnis zurückgeben, nicht werfen.
+      const msg = error.message ?? "";
+      if (
+        msg.toLowerCase().includes("teamname") ||
+        msg.includes("duplicate") ||
+        error.code === "23505"
+      ) {
+        return {
+          ok: false as const,
+          message: msg || "Dieser Teamname ist in der Runde schon vergeben.",
+        };
       }
-      throw new Error(error.message);
+      throw new Error(msg);
     }
     const row = rows?.[0];
     if (!row) throw new Error("Beitritt fehlgeschlagen. Bitte nochmals versuchen.");
     return {
+      ok: true as const,
       teamId: row.team_id,
       token,
       roundCode: row.round_code,
