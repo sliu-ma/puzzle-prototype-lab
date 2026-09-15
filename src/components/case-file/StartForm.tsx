@@ -166,6 +166,12 @@ export function StartForm({
         const res = await joinRound({
           data: { code: cleanCode, teamName: cleanName, members: finalMembers },
         });
+        if (!res.ok) {
+          setRoundError(res.message);
+          setNameError(res.message);
+          setBusy(false);
+          return;
+        }
         setRoundError(null);
         setPendingJoin({
           code: res.roundCode,
