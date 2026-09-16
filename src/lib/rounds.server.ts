@@ -568,6 +568,8 @@ export function buildReport(
       hearingWrong: hearing.filter((e) => payloadOf(e)["correct"] !== true).length,
       totalMin,
       stageMinutes: stages.map((s) => ({ stage: s.stage, minutes: s.minutes })),
+      readByStage,
+      readMinTotal,
       stages,
       hintsByStage: [...hintMap.entries()]
         .map(([stage, v]) => ({ stage, maxLevel: v.maxLevel, count: v.count }))
