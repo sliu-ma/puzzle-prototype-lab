@@ -38,7 +38,7 @@ export const Route = createFileRoute("/finale")({
   component: FinaleGated,
 });
 
-/** Zeichenfolge im QR-Code des Hearings (hängt im Schulzimmer). */
+/** Zeichenfolge im QR-Code des Hearings (hängt am Gemeindehaus Widnau). */
 const HEARING_TOKEN = "Hq4Zn8Tv2LrYc6Wk1Pm5";
 
 function FinaleGated() {
@@ -48,8 +48,8 @@ function FinaleGated() {
         stage={6}
         token={HEARING_TOKEN}
         storageKey="hearing-unlocked"
-        title={<>Hearing, QR-Code im Schulzimmer scannen</>}
-        description="Das Hearing ist versiegelt. Scanne den QR-Code im Schulzimmer, um die Fragerunde des Gemeinderats zu öffnen."
+        title={<>Hearing, QR-Code am Gemeindehaus scannen</>}
+        description="Das Hearing ist versiegelt. Scanne den QR-Code am Gemeindehaus Widnau, um die Fragerunde des Gemeinderats zu öffnen."
         label="Hearing · Versiegelt"
       >
         <FinalePage />
