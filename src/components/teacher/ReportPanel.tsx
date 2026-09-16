@@ -1167,6 +1167,8 @@ export function ReportPanel({
       "Versuch",
       "Abzeichen",
       "Dauer_sek",
+      "Karten_gesehen",
+      "Karten_total",
     ];
     const startMs = report?.startedAt ? Date.parse(report.startedAt) : null;
     const rows = teams.flatMap((t) =>
