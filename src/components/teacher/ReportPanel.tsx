@@ -453,7 +453,7 @@ function TeamReportDialog({
               <span className="text-sm font-bold tabular-nums">{t.points} Pkt</span>
             </div>
 
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
               <Metric label="Gesamt" value={fmt(t.totalMin, "min")} />
               <Metric label="Rätsel" value={`${puzzle} min`} />
               <Metric
@@ -462,6 +462,17 @@ function TeamReportDialog({
                 hint={
                   puzzle + travel > 0
                     ? `${Math.round((travel / (puzzle + travel)) * 100)} % der Zeit`
+                    : undefined
+                }
+              />
+              <Metric
+                label="Fachinput gelesen"
+                value={t.readMinTotal === null ? "–" : `${t.readMinTotal} min`}
+                hint={
+                  t.readByStage && t.readByStage.length > 0
+                    ? t.readByStage
+                        .map((r) => `E${r.stage} ${r.readSec}s (${r.cardsSeen}/${r.cardsTotal})`)
+                        .join(" · ")
                     : undefined
                 }
               />
