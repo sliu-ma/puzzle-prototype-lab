@@ -1025,6 +1025,9 @@ export function ReportPanel({
     teams.map((t) => t.totalMin).filter((m): m is number => typeof m === "number"),
   );
   const hints = stats(teams.map((t) => t.hintsUsed));
+  const reading = stats(
+    teams.map((t) => t.readMinTotal).filter((m): m is number => typeof m === "number"),
+  );
 
   const analyses = STAGES.map((s) => analyseStage(teams, s));
   const withData = analyses.filter((a) => a.solvedBy > 0);
