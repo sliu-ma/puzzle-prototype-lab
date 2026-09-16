@@ -3,7 +3,7 @@ import { MapPin, ExternalLink } from "lucide-react";
 import "leaflet/dist/leaflet.css";
 
 /** Koordinaten des Gemeindehauses Widnau, Neugasse 4. */
-const GEMEINDEHAUS: [number, number] = [47.4117, 9.6415];
+const GEMEINDEHAUS: [number, number] = [47.40560708592863, 9.635730145049182];
 const ADDRESS = "Gemeindehaus Widnau, Neugasse 4, 9443 Widnau";
 const ROUTE_URL =
   "https://www.google.com/maps/search/?api=1&query=" +
