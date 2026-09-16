@@ -433,6 +433,9 @@ export function buildReport(
           betweenMin,
           hintLevel: (hintMap.get(stage)?.maxLevel ?? 0) as 0 | 1 | 2 | 3,
           solvedAt: new Date(solvedAt.get(stage)!).toISOString(),
+          readSec: readMap.get(stage)?.readSec ?? null,
+          cardsSeen: readMap.get(stage)?.cardsSeen ?? null,
+          cardsTotal: readMap.get(stage)?.cardsTotal ?? null,
         };
       });
 
