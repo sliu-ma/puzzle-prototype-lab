@@ -6,6 +6,7 @@ import { QRGate } from "@/components/case-file/QRGate";
 import { StageGate } from "@/components/case-file/StageGate";
 import { GutachtenRaetsel } from "@/components/case-file/GutachtenRaetsel";
 import { InputCarousel } from "@/components/case-file/InputCarousel";
+import { HearingLocationHint } from "@/components/case-file/HearingLocationHint";
 import {
   CO2VergleichChart,
   AnteilErneuerbarChart,
@@ -272,6 +273,7 @@ function AktePage() {
                 MARLENE VOGT
               </p>
             </div>
+            <HearingLocationHint />
             <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
               <Link
                 to="/finale"
