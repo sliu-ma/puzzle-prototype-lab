@@ -12,6 +12,8 @@ export type InputCard = {
 };
 
 interface InputCarouselProps {
+  /** Etappennummer – nur für die Lesezeit-Erhebung. */
+  stage: number;
   kicker: string;
   title: string;
   intro: string;
