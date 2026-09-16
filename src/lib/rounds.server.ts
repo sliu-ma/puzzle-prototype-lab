@@ -544,6 +544,8 @@ export function buildReport(
           attempt: num("attempt"),
           badgeId: p["badgeId"] === undefined ? null : String(p["badgeId"]),
           durationSec: num("durationSec"),
+          cardsSeen: num("cardsSeen"),
+          cardsTotal: num("cardsTotal"),
         };
       });
 
