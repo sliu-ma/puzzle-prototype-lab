@@ -14,6 +14,7 @@ const eventSchema = z.object({
     "hearing_attempt",
     "help_requested",
     "message_ack",
+    "input_read",
   ]),
   at: z.number().int().nonnegative().optional(),
   stage: z.number().int().min(0).max(10).optional(),
