@@ -103,6 +103,29 @@ export function recordHelpRequest(stage: number, note?: string) {
   });
 }
 
+/**
+ * Sichtbare Lesezeit des fachlichen Inputs einer Etappe. Wird pro Besuch
+ * einmal gesendet; mehrere Besuche werden in der Auswertung addiert.
+ */
+export function recordInputRead(
+  stage: number,
+  durationSec: number,
+  cardsSeen: number,
+  cardsTotal: number,
+  sessionId: string,
+) {
+  if (durationSec < 1) return;
+  addScoreEvent({
+    id: `input_read:${stage}:${sessionId}`,
+    type: "input_read",
+    at: Date.now(),
+    stage,
+    durationSec: Math.min(86_400, Math.round(durationSec)),
+    cardsSeen,
+    cardsTotal,
+  });
+}
+
 /** Lesebestätigung einer Nachricht der Lehrperson. */
 export function recordMessageAck(messageId: string) {
   addScoreEvent({
