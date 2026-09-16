@@ -229,6 +229,7 @@ function AktePage() {
 
         {step === "input" && (
           <InputCarousel
+            stage={5}
             kicker="Fachlicher Input · Energieträger"
             title="Voller Energie"
             intro="Drei Blickwinkel auf unsere Energie, an ihnen entscheidet sich, was im Hearing zählt:"
