@@ -231,6 +231,8 @@ export type ReportEvent = {
   attempt: number | null;
   badgeId: string | null;
   durationSec: number | null;
+  cardsSeen: number | null;
+  cardsTotal: number | null;
 };
 
 export type ReportTeam = {
