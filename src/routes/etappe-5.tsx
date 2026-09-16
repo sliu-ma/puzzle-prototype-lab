@@ -273,6 +273,7 @@ function AktePage() {
                 MARLENE VOGT
               </p>
             </div>
+            <HearingLocationHint />
             <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
               <Link
                 to="/finale"
