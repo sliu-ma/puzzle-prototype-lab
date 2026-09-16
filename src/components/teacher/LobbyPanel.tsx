@@ -33,6 +33,8 @@ export type ReportEvent = {
   attempt: number | null;
   badgeId: string | null;
   durationSec: number | null;
+  cardsSeen?: number | null;
+  cardsTotal?: number | null;
 };
 
 export type ReportTeam = {
@@ -53,6 +55,10 @@ export type ReportTeam = {
   stageMinutes: { stage: number; minutes: number }[];
   stages: ReportStage[];
   hintsByStage: { stage: number; maxLevel: number; count: number }[];
+  /** Lesezeit des fachlichen Inputs pro Etappe (Sekunden). */
+  readByStage?: { stage: number; readSec: number; cardsSeen: number; cardsTotal: number }[];
+  /** Gesamte Lesezeit in Minuten oder null. */
+  readMinTotal?: number | null;
   currentStage: number;
   lastSolvedAt: string | null;
   phase: "travel" | "puzzle";

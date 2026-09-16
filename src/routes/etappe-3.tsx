@@ -276,6 +276,7 @@ function AktePage() {
 
         {step === "input" && (
           <InputCarousel
+            stage={3}
             kicker="Fachlicher Input · Wohnen & Energie"
              title="Wo Zuhause Energie versickert"
             intro="Rund 40 % des Schweizer Energieverbrauchs entstehen in Gebäuden. Drei Impulse, die du fürs Hearing brauchst:"

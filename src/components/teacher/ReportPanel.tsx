@@ -74,10 +74,17 @@ function stats(values: number[]): Stats {
 
 const fmt = (v: number | null, unit = "") => (v === null ? "–" : `${v}${unit ? ` ${unit}` : ""}`);
 
+/** Lesezeit unter dieser Schwelle gilt als „nur durchgewischt" (Sekunden). */
+export const SKIM_SEC = 15;
+
 type StageAnalysis = {
   stage: number;
   puzzle: Stats;
   travel: Stats;
+  /** Sichtbare Lesezeit des fachlichen Inputs in Sekunden. */
+  read: Stats;
+  /** Gruppen mit sehr kurzer Lesezeit (durchgewischt). */
+  skimmed: number;
   solvedBy: number;
   withHint: number;
   withSolution: number;
@@ -88,6 +95,11 @@ function analyseStage(teams: ReportTeam[], stage: number): StageAnalysis {
   const solved = teams
     .map((t) => t.stages.find((s) => s.stage === stage))
     .filter((s): s is NonNullable<typeof s> => !!s);
+  const readSecs = teams
+    .map((t) => t.readByStage?.find((r) => r.stage === stage)?.readSec)
+    .filter((v): v is number => typeof v === "number");
+  const read = stats(readSecs);
+  const skimmed = readSecs.filter((v) => v < SKIM_SEC).length;
   const puzzle = stats(solved.map((s) => s.minutes));
   const travel = stats(
     solved.map((s) => s.betweenMin).filter((m): m is number => typeof m === "number"),
@@ -111,7 +123,7 @@ function analyseStage(teams: ReportTeam[], stage: number): StageAnalysis {
       verdict = "passend";
     }
   }
-  return { stage, puzzle, travel, solvedBy: n, withHint, withSolution, verdict };
+  return { stage, puzzle, travel, read, skimmed, solvedBy: n, withHint, withSolution, verdict };
 }
 
 type Try = { attempt: number; correct: boolean };
@@ -441,7 +453,7 @@ function TeamReportDialog({
               <span className="text-sm font-bold tabular-nums">{t.points} Pkt</span>
             </div>
 
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
               <Metric label="Gesamt" value={fmt(t.totalMin, "min")} />
               <Metric label="Rätsel" value={`${puzzle} min`} />
               <Metric
@@ -450,6 +462,17 @@ function TeamReportDialog({
                 hint={
                   puzzle + travel > 0
                     ? `${Math.round((travel / (puzzle + travel)) * 100)} % der Zeit`
+                    : undefined
+                }
+              />
+              <Metric
+                label="Fachinput gelesen"
+                value={t.readMinTotal === null ? "–" : `${t.readMinTotal} min`}
+                hint={
+                  t.readByStage && t.readByStage.length > 0
+                    ? t.readByStage
+                        .map((r) => `E${r.stage} ${r.readSec}s (${r.cardsSeen}/${r.cardsTotal})`)
+                        .join(" · ")
                     : undefined
                 }
               />
@@ -732,6 +755,18 @@ function StageReportDialog({
                 label="Weg zur Etappe (Median)"
                 value={a.travel.n > 0 ? fmt(a.travel.med, "min") : "–"}
               />
+              <Fact
+                label="Lesezeit Fachinput (Median)"
+                value={
+                  a.read.n > 0
+                    ? `${a.read.med} s (${a.read.min}–${a.read.max} s)`
+                    : "keine Daten"
+                }
+              />
+              <Fact
+                label="Nur durchgewischt"
+                value={a.read.n > 0 ? `${a.skimmed} von ${a.read.n} (< ${SKIM_SEC} s)` : "–"}
+              />
               <Fact label="Ohne Hinweis gelöst" value={`${a.solvedBy - a.withHint}`} />
               <Fact
                 label="Mit Hinweis"
@@ -765,6 +800,20 @@ function StageReportDialog({
                         ? `${s.betweenMin === null ? "–" : `${s.betweenMin}′`} Weg · ${s.minutes}′ Rätsel`
                         : "nicht gelöst"}
                     </span>
+                    {(() => {
+                      const r = t.readByStage?.find((x) => x.stage === a.stage);
+                      return (
+                        <span
+                          className={cn(
+                            "font-mono-typed w-14 shrink-0 text-right tabular-nums",
+                            r && r.readSec < SKIM_SEC && "font-bold text-stamp",
+                          )}
+                          title="Lesezeit fachlicher Input"
+                        >
+                          {r ? `${r.readSec}s Lesen` : "–"}
+                        </span>
+                      );
+                    })()}
                     <span
                       className={cn(
                         "font-mono-typed w-6 shrink-0 text-right",
@@ -976,6 +1025,9 @@ export function ReportPanel({
     teams.map((t) => t.totalMin).filter((m): m is number => typeof m === "number"),
   );
   const hints = stats(teams.map((t) => t.hintsUsed));
+  const reading = stats(
+    teams.map((t) => t.readMinTotal).filter((m): m is number => typeof m === "number"),
+  );
 
   const analyses = STAGES.map((s) => analyseStage(teams, s));
   const withData = analyses.filter((a) => a.solvedBy > 0);
@@ -1001,7 +1053,14 @@ export function ReportPanel({
       "Gesamtzeit_min",
       "Raetselzeit_total_min",
       "Zeit_zwischen_Raetseln_total_min",
-      ...STAGES.flatMap((s) => [`E${s}_raetsel_min`, `E${s}_weg_min`, `E${s}_hinweisstufe`]),
+      "Lesezeit_fachinput_total_min",
+      ...STAGES.flatMap((s) => [
+        `E${s}_raetsel_min`,
+        `E${s}_weg_min`,
+        `E${s}_hinweisstufe`,
+        `E${s}_lesezeit_sek`,
+        `E${s}_karten_gesehen`,
+      ]),
       "Abzeichen_anzahl",
       "Abzeichen",
       "Hearing_richtig",
@@ -1023,9 +1082,17 @@ export function ReportPanel({
         t.totalMin ?? "",
         t.stages.reduce((s, x) => s + x.minutes, 0),
         t.stages.reduce((s, x) => s + (x.betweenMin ?? 0), 0),
+        t.readMinTotal ?? "",
         ...STAGES.flatMap((s) => {
           const st = t.stages.find((x) => x.stage === s);
-          return [st?.minutes ?? "", st?.betweenMin ?? "", st?.hintLevel ?? ""];
+          const r = t.readByStage?.find((x) => x.stage === s);
+          return [
+            st?.minutes ?? "",
+            st?.betweenMin ?? "",
+            st?.hintLevel ?? "",
+            r?.readSec ?? "",
+            r ? `${r.cardsSeen}/${r.cardsTotal}` : "",
+          ];
         }),
         t.badges.length,
         anon ? "" : t.badges.join(" / "),
@@ -1049,6 +1116,10 @@ export function ReportPanel({
       "Min",
       "Max",
       "Median_weg_min",
+      "Median_lesezeit_sek",
+      "Lesezeit_min_sek",
+      "Lesezeit_max_sek",
+      "durchgewischt_unter_15s",
       "mit_Hinweis",
       "mit_Aufloesung",
       "Einschaetzung",
@@ -1061,6 +1132,10 @@ export function ReportPanel({
       a.puzzle.min ?? "",
       a.puzzle.max ?? "",
       a.travel.med ?? "",
+      a.read.med ?? "",
+      a.read.min ?? "",
+      a.read.max ?? "",
+      a.skimmed,
       a.withHint,
       a.withSolution,
       a.verdict,
@@ -1092,6 +1167,8 @@ export function ReportPanel({
       "Versuch",
       "Abzeichen",
       "Dauer_sek",
+      "Karten_gesehen",
+      "Karten_total",
     ];
     const startMs = report?.startedAt ? Date.parse(report.startedAt) : null;
     const rows = teams.flatMap((t) =>
@@ -1111,6 +1188,8 @@ export function ReportPanel({
           e.attempt ?? "",
           e.badgeId ?? "",
           e.durationSec ?? "",
+          e.cardsSeen ?? "",
+          e.cardsTotal ?? "",
         ];
       }),
     );
@@ -1163,6 +1242,11 @@ export function ReportPanel({
           value={fmt(totals.med, "min")}
         />
         <Metric label="Hinweise" value={fmt(hints.med)} />
+        <Metric
+          label="Fachinput gelesen"
+          value={reading.n > 0 ? fmt(reading.med, "min") : "–"}
+          hint={reading.n > 0 ? `Median über ${reading.n} Gruppen` : "noch keine Daten"}
+        />
       </div>
 
       <h3 className="mt-5 flex items-center gap-1.5 font-serif text-lg font-bold">

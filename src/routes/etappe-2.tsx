@@ -255,6 +255,7 @@ function AktePage() {
           const saison = getSaisonInfo();
           return (
           <InputCarousel
+            stage={2}
             kicker="Fachlicher Input · 3 Lernkarten"
              title="Nachhaltig einkaufen, worauf es ankommt"
             intro="Drei Grundregeln, die du gerade angewendet hast, und die der Rat heute Abend hören will:"

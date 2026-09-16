@@ -14,6 +14,7 @@ const eventSchema = z.object({
     "hearing_attempt",
     "help_requested",
     "message_ack",
+    "input_read",
   ]),
   at: z.number().int().nonnegative().optional(),
   stage: z.number().int().min(0).max(10).optional(),
@@ -25,6 +26,8 @@ const eventSchema = z.object({
   attempt: z.number().int().min(1).max(20).optional(),
   note: z.string().max(200).optional(),
   messageId: z.string().max(60).optional(),
+  cardsSeen: z.number().int().min(0).max(50).optional(),
+  cardsTotal: z.number().int().min(0).max(50).optional(),
 });
 
 

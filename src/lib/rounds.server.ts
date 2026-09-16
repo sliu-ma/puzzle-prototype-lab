@@ -213,6 +213,11 @@ export type ReportStage = {
   /** Höchste auf dieser Etappe genutzte Hinweisstufe (0 = keine). */
   hintLevel: 0 | 1 | 2 | 3;
   solvedAt: string;
+  /** Sichtbare Lesezeit des fachlichen Inputs in Sekunden (null = keine Daten). */
+  readSec: number | null;
+  /** Angesehene Input-Karten und deren Gesamtzahl. */
+  cardsSeen: number | null;
+  cardsTotal: number | null;
 };
 
 /** Ein einzelnes Ereignis im Langformat – Rohdaten für die Statistik. */
@@ -226,6 +231,8 @@ export type ReportEvent = {
   attempt: number | null;
   badgeId: string | null;
   durationSec: number | null;
+  cardsSeen: number | null;
+  cardsTotal: number | null;
 };
 
 export type ReportTeam = {
@@ -244,6 +251,15 @@ export type ReportTeam = {
   hearingWrong: number;
   totalMin: number | null;
   stageMinutes: { stage: number; minutes: number }[];
+  /** Lesezeit des fachlichen Inputs pro Etappe – auch für offene Etappen. */
+  readByStage: {
+    stage: number;
+    readSec: number;
+    cardsSeen: number;
+    cardsTotal: number;
+  }[];
+  /** Gesamte Lesezeit über alle Etappen in Minuten (null = keine Daten). */
+  readMinTotal: number | null;
   /** Detaillierte Etappenwerte inklusive Wegzeit und Hinweisstufe. */
   stages: ReportStage[];
   /** Hinweise pro Etappe – auch für Etappen, die noch nicht gelöst sind. */
@@ -374,6 +390,27 @@ export function buildReport(
       durations.set(stage, Number(payloadOf(e)["durationSec"]) || 0);
     }
 
+    // Lesezeit des fachlichen Inputs pro Etappe (mehrere Besuche addiert).
+    const readMap = new Map<number, { readSec: number; cardsSeen: number; cardsTotal: number }>();
+    for (const e of raw) {
+      if (e.type !== "input_read") continue;
+      const p = payloadOf(e);
+      const stage = Number(p["stage"]) || 0;
+      const cur = readMap.get(stage) ?? { readSec: 0, cardsSeen: 0, cardsTotal: 0 };
+      readMap.set(stage, {
+        readSec: cur.readSec + (Number(p["durationSec"]) || 0),
+        cardsSeen: Math.max(cur.cardsSeen, Number(p["cardsSeen"]) || 0),
+        cardsTotal: Math.max(cur.cardsTotal, Number(p["cardsTotal"]) || 0),
+      });
+    }
+    const readByStage = [...readMap.entries()]
+      .map(([stage, v]) => ({ stage, ...v }))
+      .sort((a, b) => a.stage - b.stage);
+    const readMinTotal =
+      readByStage.length === 0
+        ? null
+        : Math.round((readByStage.reduce((s, r) => s + r.readSec, 0) / 60) * 10) / 10;
+
     // Startpunkt des Teams: Rundenstart (Schule) oder – falls unbekannt – das
     // erste Ereignis. Damit zählt auch der Weg von der Schule zu Posten 1.
     const firstEventMs = raw.length > 0 ? Math.min(...raw.map(eventMs)) : null;
@@ -396,6 +433,9 @@ export function buildReport(
           betweenMin,
           hintLevel: (hintMap.get(stage)?.maxLevel ?? 0) as 0 | 1 | 2 | 3,
           solvedAt: new Date(solvedAt.get(stage)!).toISOString(),
+          readSec: readMap.get(stage)?.readSec ?? null,
+          cardsSeen: readMap.get(stage)?.cardsSeen ?? null,
+          cardsTotal: readMap.get(stage)?.cardsTotal ?? null,
         };
       });
 
@@ -504,6 +544,8 @@ export function buildReport(
           attempt: num("attempt"),
           badgeId: p["badgeId"] === undefined ? null : String(p["badgeId"]),
           durationSec: num("durationSec"),
+          cardsSeen: num("cardsSeen"),
+          cardsTotal: num("cardsTotal"),
         };
       });
 
@@ -526,6 +568,8 @@ export function buildReport(
       hearingWrong: hearing.filter((e) => payloadOf(e)["correct"] !== true).length,
       totalMin,
       stageMinutes: stages.map((s) => ({ stage: s.stage, minutes: s.minutes })),
+      readByStage,
+      readMinTotal,
       stages,
       hintsByStage: [...hintMap.entries()]
         .map(([stage, v]) => ({ stage, maxLevel: v.maxLevel, count: v.count }))
