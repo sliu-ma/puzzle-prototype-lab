@@ -1082,9 +1082,17 @@ export function ReportPanel({
         t.totalMin ?? "",
         t.stages.reduce((s, x) => s + x.minutes, 0),
         t.stages.reduce((s, x) => s + (x.betweenMin ?? 0), 0),
+        t.readMinTotal ?? "",
         ...STAGES.flatMap((s) => {
           const st = t.stages.find((x) => x.stage === s);
-          return [st?.minutes ?? "", st?.betweenMin ?? "", st?.hintLevel ?? ""];
+          const r = t.readByStage?.find((x) => x.stage === s);
+          return [
+            st?.minutes ?? "",
+            st?.betweenMin ?? "",
+            st?.hintLevel ?? "",
+            r?.readSec ?? "",
+            r ? `${r.cardsSeen}/${r.cardsTotal}` : "",
+          ];
         }),
         t.badges.length,
         anon ? "" : t.badges.join(" / "),
