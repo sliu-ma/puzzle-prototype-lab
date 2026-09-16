@@ -744,6 +744,18 @@ function StageReportDialog({
                 label="Weg zur Etappe (Median)"
                 value={a.travel.n > 0 ? fmt(a.travel.med, "min") : "–"}
               />
+              <Fact
+                label="Lesezeit Fachinput (Median)"
+                value={
+                  a.read.n > 0
+                    ? `${a.read.med} s (${a.read.min}–${a.read.max} s)`
+                    : "keine Daten"
+                }
+              />
+              <Fact
+                label="Nur durchgewischt"
+                value={a.read.n > 0 ? `${a.skimmed} von ${a.read.n} (< ${SKIM_SEC} s)` : "–"}
+              />
               <Fact label="Ohne Hinweis gelöst" value={`${a.solvedBy - a.withHint}`} />
               <Fact
                 label="Mit Hinweis"
