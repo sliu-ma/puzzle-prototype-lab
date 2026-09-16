@@ -789,6 +789,20 @@ function StageReportDialog({
                         ? `${s.betweenMin === null ? "–" : `${s.betweenMin}′`} Weg · ${s.minutes}′ Rätsel`
                         : "nicht gelöst"}
                     </span>
+                    {(() => {
+                      const r = t.readByStage?.find((x) => x.stage === a.stage);
+                      return (
+                        <span
+                          className={cn(
+                            "font-mono-typed w-14 shrink-0 text-right tabular-nums",
+                            r && r.readSec < SKIM_SEC && "font-bold text-stamp",
+                          )}
+                          title="Lesezeit fachlicher Input"
+                        >
+                          {r ? `${r.readSec}s Lesen` : "–"}
+                        </span>
+                      );
+                    })()}
                     <span
                       className={cn(
                         "font-mono-typed w-6 shrink-0 text-right",
