@@ -402,13 +402,16 @@ function ProgressPanel({
             onOpen={() => navigate({ to: "/finale" })}
           />
         ) : currentStage >= 6 ? (
-          <NextStepCard
-            nr={6}
-            ort={finale.ort}
-            thema={finale.thema}
-            isFinale
-            onOpen={() => openStage(6)}
-          />
+          <>
+            <NextStepCard
+              nr={6}
+              ort={finale.ort}
+              thema={finale.thema}
+              isFinale
+              onOpen={() => openStage(6)}
+            />
+            <HearingLocationHint />
+          </>
         ) : nextStage ? (
           <NextStepCard
             nr={nextStage.nr}
