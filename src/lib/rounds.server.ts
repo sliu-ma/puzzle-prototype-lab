@@ -249,6 +249,15 @@ export type ReportTeam = {
   hearingWrong: number;
   totalMin: number | null;
   stageMinutes: { stage: number; minutes: number }[];
+  /** Lesezeit des fachlichen Inputs pro Etappe – auch für offene Etappen. */
+  readByStage: {
+    stage: number;
+    readSec: number;
+    cardsSeen: number;
+    cardsTotal: number;
+  }[];
+  /** Gesamte Lesezeit über alle Etappen in Minuten (null = keine Daten). */
+  readMinTotal: number | null;
   /** Detaillierte Etappenwerte inklusive Wegzeit und Hinweisstufe. */
   stages: ReportStage[];
   /** Hinweise pro Etappe – auch für Etappen, die noch nicht gelöst sind. */
