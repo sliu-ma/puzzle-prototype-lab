@@ -33,6 +33,19 @@ export type ScoreEvent =
       correct: boolean;
       attempt: number;
     }
+  /**
+   * Lesezeit des fachlichen Inputs einer Etappe (sichtbare Zeit auf den
+   * Input-Karten). Reine Erhebung, ohne Einfluss auf die Punkte.
+   */
+  | {
+      id: string;
+      type: "input_read";
+      at: number;
+      stage: number;
+      durationSec: number;
+      cardsSeen: number;
+      cardsTotal: number;
+    }
   /** Hilferuf einer Gruppe an die Lehrperson (ohne Punkteeinfluss). */
   | { id: string; type: "help_requested"; at: number; stage: number; note?: string }
   /** Lesebestätigung einer Nachricht der Lehrperson. */
