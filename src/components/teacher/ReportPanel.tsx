@@ -74,10 +74,17 @@ function stats(values: number[]): Stats {
 
 const fmt = (v: number | null, unit = "") => (v === null ? "–" : `${v}${unit ? ` ${unit}` : ""}`);
 
+/** Lesezeit unter dieser Schwelle gilt als „nur durchgewischt" (Sekunden). */
+export const SKIM_SEC = 15;
+
 type StageAnalysis = {
   stage: number;
   puzzle: Stats;
   travel: Stats;
+  /** Sichtbare Lesezeit des fachlichen Inputs in Sekunden. */
+  read: Stats;
+  /** Gruppen mit sehr kurzer Lesezeit (durchgewischt). */
+  skimmed: number;
   solvedBy: number;
   withHint: number;
   withSolution: number;
@@ -88,6 +95,11 @@ function analyseStage(teams: ReportTeam[], stage: number): StageAnalysis {
   const solved = teams
     .map((t) => t.stages.find((s) => s.stage === stage))
     .filter((s): s is NonNullable<typeof s> => !!s);
+  const readSecs = teams
+    .map((t) => t.readByStage?.find((r) => r.stage === stage)?.readSec)
+    .filter((v): v is number => typeof v === "number");
+  const read = stats(readSecs);
+  const skimmed = readSecs.filter((v) => v < SKIM_SEC).length;
   const puzzle = stats(solved.map((s) => s.minutes));
   const travel = stats(
     solved.map((s) => s.betweenMin).filter((m): m is number => typeof m === "number"),
