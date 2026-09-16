@@ -123,7 +123,7 @@ function analyseStage(teams: ReportTeam[], stage: number): StageAnalysis {
       verdict = "passend";
     }
   }
-  return { stage, puzzle, travel, solvedBy: n, withHint, withSolution, verdict };
+  return { stage, puzzle, travel, read, skimmed, solvedBy: n, withHint, withSolution, verdict };
 }
 
 type Try = { attempt: number; correct: boolean };
