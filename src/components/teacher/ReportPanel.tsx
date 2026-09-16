@@ -1215,6 +1215,11 @@ export function ReportPanel({
           value={fmt(totals.med, "min")}
         />
         <Metric label="Hinweise" value={fmt(hints.med)} />
+        <Metric
+          label="Fachinput gelesen"
+          value={reading.n > 0 ? fmt(reading.med, "min") : "–"}
+          hint={reading.n > 0 ? `Median über ${reading.n} Gruppen` : "noch keine Daten"}
+        />
       </div>
 
       <h3 className="mt-5 flex items-center gap-1.5 font-serif text-lg font-bold">
