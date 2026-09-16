@@ -390,6 +390,27 @@ export function buildReport(
       durations.set(stage, Number(payloadOf(e)["durationSec"]) || 0);
     }
 
+    // Lesezeit des fachlichen Inputs pro Etappe (mehrere Besuche addiert).
+    const readMap = new Map<number, { readSec: number; cardsSeen: number; cardsTotal: number }>();
+    for (const e of raw) {
+      if (e.type !== "input_read") continue;
+      const p = payloadOf(e);
+      const stage = Number(p["stage"]) || 0;
+      const cur = readMap.get(stage) ?? { readSec: 0, cardsSeen: 0, cardsTotal: 0 };
+      readMap.set(stage, {
+        readSec: cur.readSec + (Number(p["durationSec"]) || 0),
+        cardsSeen: Math.max(cur.cardsSeen, Number(p["cardsSeen"]) || 0),
+        cardsTotal: Math.max(cur.cardsTotal, Number(p["cardsTotal"]) || 0),
+      });
+    }
+    const readByStage = [...readMap.entries()]
+      .map(([stage, v]) => ({ stage, ...v }))
+      .sort((a, b) => a.stage - b.stage);
+    const readMinTotal =
+      readByStage.length === 0
+        ? null
+        : Math.round((readByStage.reduce((s, r) => s + r.readSec, 0) / 60) * 10) / 10;
+
     // Startpunkt des Teams: Rundenstart (Schule) oder – falls unbekannt – das
     // erste Ereignis. Damit zählt auch der Weg von der Schule zu Posten 1.
     const firstEventMs = raw.length > 0 ? Math.min(...raw.map(eventMs)) : null;
