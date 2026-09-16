@@ -27,6 +27,7 @@ interface InputCarouselProps {
 const HINT_KEY = "maya-input-swipe-hint";
 
 export function InputCarousel({
+  stage,
   kicker,
   title,
   intro,
@@ -41,6 +42,66 @@ export function InputCarousel({
   const [active, setActive] = useState(0);
   const [showFirstHint, setShowFirstHint] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
+
+  // --- Lesezeit-Erhebung (nur Statistik, ohne Punkteeinfluss) --------------
+  const sessionId = useRef(`${Date.now().toString(36)}`);
+  const visibleMs = useRef(0);
+  const since = useRef<number | null>(null);
+  const maxCard = useRef(0);
+  const sent = useRef(false);
+
+  useEffect(() => {
+    if (active + 1 > maxCard.current) maxCard.current = active + 1;
+  }, [active]);
+
+  useEffect(() => {
+    if (isDesktop) maxCard.current = cards.length;
+  }, [isDesktop, cards.length]);
+
+  useEffect(() => {
+    const pause = () => {
+      if (since.current !== null) {
+        visibleMs.current += Date.now() - since.current;
+        since.current = null;
+      }
+    };
+    const resume = () => {
+      if (since.current === null) since.current = Date.now();
+    };
+    const onVisibility = () => {
+      if (document.visibilityState === "hidden") pause();
+      else resume();
+    };
+
+    resume();
+    document.addEventListener("visibilitychange", onVisibility);
+
+    const flush = () => {
+      pause();
+      if (sent.current) return;
+      sent.current = true;
+      const seconds = Math.round(visibleMs.current / 1000);
+      void import("@/lib/score-events").then((m) =>
+        m.recordInputRead(
+          stage,
+          seconds,
+          Math.min(cards.length, maxCard.current),
+          cards.length,
+          sessionId.current,
+        ),
+      );
+    };
+
+    window.addEventListener("pagehide", flush);
+    return () => {
+      document.removeEventListener("visibilitychange", onVisibility);
+      window.removeEventListener("pagehide", flush);
+      flush();
+    };
+    // Absicht: einmal pro Besuch messen, nicht bei jeder Änderung neu starten.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stage]);
+
 
   useEffect(() => {
     const mql = window.matchMedia("(min-width: 768px)");
