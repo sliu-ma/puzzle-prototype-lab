@@ -213,6 +213,11 @@ export type ReportStage = {
   /** Höchste auf dieser Etappe genutzte Hinweisstufe (0 = keine). */
   hintLevel: 0 | 1 | 2 | 3;
   solvedAt: string;
+  /** Sichtbare Lesezeit des fachlichen Inputs in Sekunden (null = keine Daten). */
+  readSec: number | null;
+  /** Angesehene Input-Karten und deren Gesamtzahl. */
+  cardsSeen: number | null;
+  cardsTotal: number | null;
 };
 
 /** Ein einzelnes Ereignis im Langformat – Rohdaten für die Statistik. */
