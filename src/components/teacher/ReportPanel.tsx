@@ -1188,6 +1188,8 @@ export function ReportPanel({
           e.attempt ?? "",
           e.badgeId ?? "",
           e.durationSec ?? "",
+          e.cardsSeen ?? "",
+          e.cardsTotal ?? "",
         ];
       }),
     );
