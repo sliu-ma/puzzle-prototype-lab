@@ -68,8 +68,8 @@ export function RouteMap({ segments, stops, color = "#5eead4", minHeight = 420 }
         style={{ height: "100%", width: "100%", minHeight, background: "#f5f1e8" }}
       >
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
-          url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         {segments.map((seg, i) => (
           <Polyline
