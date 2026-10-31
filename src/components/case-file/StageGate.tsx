@@ -1,3 +1,4 @@
+import { DEV_BYPASS_GATES } from "@/lib/dev-flags";
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Lock } from "lucide-react";
@@ -16,6 +17,8 @@ type Props = {
  * gestartet (kein Team), wird auf die Startseite verwiesen.
  */
 export function StageGate({ stage, children }: Props) {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  if (DEV_BYPASS_GATES) return <>{children}</>;
   const [ready, setReady] = useState(false);
   const [current, setCurrent] = useState(0);
   const [hasTeam, setHasTeam] = useState(false);

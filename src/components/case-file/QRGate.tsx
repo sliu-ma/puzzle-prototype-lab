@@ -1,3 +1,4 @@
+import { DEV_BYPASS_GATES } from "@/lib/dev-flags";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { BrowserQRCodeReader, IScannerControls } from "@zxing/browser";
@@ -195,6 +196,8 @@ export function QRGate({
   label = "Etappe · Versiegelt",
   stage,
 }: Props) {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  if (DEV_BYPASS_GATES) return <>{children}</>;
 
   const STORAGE_KEY = storageKey;
   const [unlocked, setUnlocked] = useState<boolean | null>(null);

@@ -9,57 +9,22 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as LobbyRouteImport } from './routes/lobby'
-import { Route as FinaleRouteImport } from './routes/finale'
-import { Route as Etappe5RouteImport } from './routes/etappe-5'
-import { Route as Etappe4RouteImport } from './routes/etappe-4'
-import { Route as Etappe3RouteImport } from './routes/etappe-3'
-import { Route as Etappe2RouteImport } from './routes/etappe-2'
-import { Route as Etappe1RouteImport } from './routes/etappe-1'
-import { Route as AnleitungRouteImport } from './routes/anleitung'
-import { Route as AbschlussRouteImport } from './routes/abschluss'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AbschlussRouteImport } from './routes/abschluss'
+import { Route as AnleitungRouteImport } from './routes/anleitung'
+import { Route as Etappe1RouteImport } from './routes/etappe-1'
+import { Route as Etappe2RouteImport } from './routes/etappe-2'
+import { Route as Etappe3RouteImport } from './routes/etappe-3'
+import { Route as Etappe4RouteImport } from './routes/etappe-4'
+import { Route as Etappe5RouteImport } from './routes/etappe-5'
+import { Route as FinaleRouteImport } from './routes/finale'
+import { Route as LobbyRouteImport } from './routes/lobby'
 import { Route as LehrerIndexRouteImport } from './routes/lehrer.index'
 import { Route as LehrerCodeRouteImport } from './routes/lehrer.$code'
 
-const LobbyRoute = LobbyRouteImport.update({
-  id: '/lobby',
-  path: '/lobby',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FinaleRoute = FinaleRouteImport.update({
-  id: '/finale',
-  path: '/finale',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const Etappe5Route = Etappe5RouteImport.update({
-  id: '/etappe-5',
-  path: '/etappe-5',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const Etappe4Route = Etappe4RouteImport.update({
-  id: '/etappe-4',
-  path: '/etappe-4',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const Etappe3Route = Etappe3RouteImport.update({
-  id: '/etappe-3',
-  path: '/etappe-3',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const Etappe2Route = Etappe2RouteImport.update({
-  id: '/etappe-2',
-  path: '/etappe-2',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const Etappe1Route = Etappe1RouteImport.update({
-  id: '/etappe-1',
-  path: '/etappe-1',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AnleitungRoute = AnleitungRouteImport.update({
-  id: '/anleitung',
-  path: '/anleitung',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AbschlussRoute = AbschlussRouteImport.update({
@@ -67,9 +32,44 @@ const AbschlussRoute = AbschlussRouteImport.update({
   path: '/abschluss',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const AnleitungRoute = AnleitungRouteImport.update({
+  id: '/anleitung',
+  path: '/anleitung',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Etappe1Route = Etappe1RouteImport.update({
+  id: '/etappe-1',
+  path: '/etappe-1',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Etappe2Route = Etappe2RouteImport.update({
+  id: '/etappe-2',
+  path: '/etappe-2',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Etappe3Route = Etappe3RouteImport.update({
+  id: '/etappe-3',
+  path: '/etappe-3',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Etappe4Route = Etappe4RouteImport.update({
+  id: '/etappe-4',
+  path: '/etappe-4',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Etappe5Route = Etappe5RouteImport.update({
+  id: '/etappe-5',
+  path: '/etappe-5',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FinaleRoute = FinaleRouteImport.update({
+  id: '/finale',
+  path: '/finale',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LobbyRoute = LobbyRouteImport.update({
+  id: '/lobby',
+  path: '/lobby',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LehrerIndexRoute = LehrerIndexRouteImport.update({
@@ -188,60 +188,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/lobby': {
-      id: '/lobby'
-      path: '/lobby'
-      fullPath: '/lobby'
-      preLoaderRoute: typeof LobbyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/finale': {
-      id: '/finale'
-      path: '/finale'
-      fullPath: '/finale'
-      preLoaderRoute: typeof FinaleRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/etappe-5': {
-      id: '/etappe-5'
-      path: '/etappe-5'
-      fullPath: '/etappe-5'
-      preLoaderRoute: typeof Etappe5RouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/etappe-4': {
-      id: '/etappe-4'
-      path: '/etappe-4'
-      fullPath: '/etappe-4'
-      preLoaderRoute: typeof Etappe4RouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/etappe-3': {
-      id: '/etappe-3'
-      path: '/etappe-3'
-      fullPath: '/etappe-3'
-      preLoaderRoute: typeof Etappe3RouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/etappe-2': {
-      id: '/etappe-2'
-      path: '/etappe-2'
-      fullPath: '/etappe-2'
-      preLoaderRoute: typeof Etappe2RouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/etappe-1': {
-      id: '/etappe-1'
-      path: '/etappe-1'
-      fullPath: '/etappe-1'
-      preLoaderRoute: typeof Etappe1RouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/anleitung': {
-      id: '/anleitung'
-      path: '/anleitung'
-      fullPath: '/anleitung'
-      preLoaderRoute: typeof AnleitungRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/abschluss': {
@@ -251,11 +202,60 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AbschlussRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/anleitung': {
+      id: '/anleitung'
+      path: '/anleitung'
+      fullPath: '/anleitung'
+      preLoaderRoute: typeof AnleitungRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/etappe-1': {
+      id: '/etappe-1'
+      path: '/etappe-1'
+      fullPath: '/etappe-1'
+      preLoaderRoute: typeof Etappe1RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/etappe-2': {
+      id: '/etappe-2'
+      path: '/etappe-2'
+      fullPath: '/etappe-2'
+      preLoaderRoute: typeof Etappe2RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/etappe-3': {
+      id: '/etappe-3'
+      path: '/etappe-3'
+      fullPath: '/etappe-3'
+      preLoaderRoute: typeof Etappe3RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/etappe-4': {
+      id: '/etappe-4'
+      path: '/etappe-4'
+      fullPath: '/etappe-4'
+      preLoaderRoute: typeof Etappe4RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/etappe-5': {
+      id: '/etappe-5'
+      path: '/etappe-5'
+      fullPath: '/etappe-5'
+      preLoaderRoute: typeof Etappe5RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/finale': {
+      id: '/finale'
+      path: '/finale'
+      fullPath: '/finale'
+      preLoaderRoute: typeof FinaleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lobby': {
+      id: '/lobby'
+      path: '/lobby'
+      fullPath: '/lobby'
+      preLoaderRoute: typeof LobbyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/lehrer/': {
