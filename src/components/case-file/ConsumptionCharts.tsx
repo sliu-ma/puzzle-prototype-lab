@@ -59,9 +59,21 @@ function currentSeason(d = new Date()): Saison {
   return "herbst";
 }
 
-export function getSaisonInfo() {
-  const s = currentSeason();
-  return { key: s, ...SAISON_MAP[s] };
+export function getSaisonInfo(d = new Date()) {
+  const s = currentSeason(d);
+  const m = d.getMonth() + 1;
+  const all = Object.values(SAISON_MAP).flatMap((x) => x.items);
+  const own = SAISON_MAP[s].items.filter((i) => i.months.includes(m));
+  // Frucht passend zum Rezept: September Zwetschge, Okt–Apr Apfel, Mai–Aug Erdbeere
+  const fruit = m === 9 ? "Zwetschge" : m >= 5 && m <= 8 ? "Erdbeere" : "Apfel";
+  const picked: SaisonItem[] = [];
+  const add = (i?: SaisonItem) => {
+    if (i && !picked.some((p) => p.name === i.name)) picked.push(i);
+  };
+  add(all.find((i) => i.name === fruit && i.months.includes(m)));
+  own.forEach(add);
+  all.filter((i) => i.months.includes(m)).forEach(add);
+  return { key: s, label: SAISON_MAP[s].label, items: picked.slice(0, 2) };
 }
 
 function seasonRangeLabel(months: number[]): string {
