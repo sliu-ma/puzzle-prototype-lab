@@ -153,7 +153,7 @@ function AktePage() {
       goto("routen");
     } else {
       setHadFail(true);
-      setEingabeError("Hm, das passt noch nicht. Lies Jakobs Zettel und die Tickets nochmal genau.");
+      setEingabeError("Hm, das passt noch nicht. Lies Jakobs Zettel nochmal genau.");
     }
   };
 
