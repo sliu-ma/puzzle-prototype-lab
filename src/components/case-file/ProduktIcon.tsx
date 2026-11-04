@@ -15,7 +15,7 @@ export function ProduktIcon({ emoji, className, circle = false }: { emoji: strin
   const Icon = MAP[emoji] ?? Leaf;
   if (!circle) return <Icon aria-hidden className={cn("h-4 w-4", className)} strokeWidth={1.75} />;
   return (
-    <span aria-hidden className="inline-flex aspect-square items-center justify-center rounded-full border border-border bg-secondary text-primary p-[18%]">
+    <span aria-hidden className="inline-flex h-full w-full aspect-square items-center justify-center rounded-full border border-border bg-secondary text-primary p-[18%]">
       <Icon className={cn("h-full w-full", className)} strokeWidth={1.5} />
     </span>
   );
