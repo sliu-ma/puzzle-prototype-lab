@@ -214,8 +214,8 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
             className="flex flex-1 items-center justify-between gap-2 rounded-sm border border-border bg-card px-3 py-2 text-left"
           >
             <span className="flex items-center gap-2">
-              <ShoppingCart aria-hidden className="h-5 w-5" />
-              <span className="font-mono-typed text-xs">
+              <ShoppingCart aria-hidden className="h-5 w-5 shrink-0" />
+              <span className="inline-flex items-center self-center font-mono-typed text-xs leading-none translate-y-[1px]">
                 {warenkorb.length} Artikel
               </span>
             </span>
