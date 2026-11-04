@@ -215,7 +215,7 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
           >
             <span className="flex items-center gap-2">
               <ShoppingCart aria-hidden className="h-5 w-5" />
-              <span className="font-mono-typed text-base leading-5">
+              <span className="font-mono-typed text-xs">
                 {warenkorb.length} Artikel
               </span>
             </span>
