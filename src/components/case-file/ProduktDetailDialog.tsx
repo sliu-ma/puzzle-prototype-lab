@@ -1,3 +1,4 @@
+import { ProduktIcon } from "./ProduktIcon";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { SIEGEL, getSaisonStatus, getEffektiveNachhaltigkeit, type Produkt } from "@/lib/maya-data";
 import { cn } from "@/lib/utils";
@@ -64,9 +65,7 @@ export function ProduktDetailDialog({ produkt, onOpenChange }: ProduktDetailDial
               className="h-44 w-auto object-contain"
             />
           ) : (
-            <span className="text-7xl" aria-hidden>
-              {produkt.emoji}
-            </span>
+            <span className="h-28 w-28"><ProduktIcon emoji={produkt.emoji} circle /></span>
           )}
         </div>
 
