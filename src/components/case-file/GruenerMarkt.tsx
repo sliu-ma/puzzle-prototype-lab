@@ -1,3 +1,5 @@
+import { ProduktIcon } from "./ProduktIcon";
+import { ShoppingCart } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { usePersistentState } from "@/lib/persist";
 
@@ -181,7 +183,7 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
                   : "border-border bg-paper hover:bg-secondary",
               )}
             >
-              <span>{k.emoji}</span>
+              <ProduktIcon emoji={k.emoji} />
               <span className="whitespace-nowrap">{k.label}</span>
             </button>
           ))}
@@ -213,7 +215,7 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
             className="flex flex-1 items-center justify-between gap-2 rounded-sm border border-border bg-card px-3 py-2 text-left"
           >
             <span className="flex items-center gap-2">
-              <span className="text-lg">🛒</span>
+              <ShoppingCart aria-hidden className="h-5 w-5" />
               <span className="font-mono-typed text-xs">
                 {warenkorb.length} Artikel
               </span>
@@ -297,7 +299,7 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
                 {p.bildUrl ? (
                   <img src={p.bildUrl} alt="" className="h-8 w-8 shrink-0 rounded-sm object-contain" />
                 ) : (
-                  <span className="text-lg" aria-hidden>{p.emoji}</span>
+                  <span className="h-8 w-8 shrink-0"><ProduktIcon emoji={p.emoji} circle /></span>
                 )}
                 <div className="min-w-0">
                   <p className="truncate font-medium leading-tight">{p.name}</p>
@@ -372,9 +374,7 @@ function ProduktKarte({
             className="h-full w-full object-contain p-1.5 transition-transform group-hover:scale-105"
           />
         ) : (
-          <span className="text-4xl transition-transform group-hover:scale-110 sm:text-5xl" aria-hidden>
-            {produkt.emoji}
-          </span>
+          <span className="h-14 w-14 transition-transform group-hover:scale-110 sm:h-16 sm:w-16"><ProduktIcon emoji={produkt.emoji} circle /></span>
         )}
       </button>
 
