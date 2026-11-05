@@ -193,7 +193,7 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
       <div className="px-3 py-3 pb-24 sm:px-5 sm:pb-5">
         <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3">
           {kategorieProdukte.map((p, idx) => (
-            <div key={p.id} ref={idx === 0 ? produktRef : undefined}>
+            <div key={p.id} ref={idx === 0 ? produktRef : undefined} className="h-full">
               <ProduktKarte
                 produkt={p}
                 imKorb={inKorb(p.id)}
@@ -356,7 +356,7 @@ function ProduktKarte({
   return (
     <div
       className={cn(
-        "flex flex-col rounded-sm border bg-paper p-2.5 text-sm transition-colors sm:p-3",
+        "flex h-full flex-col rounded-sm border bg-paper p-2.5 text-sm transition-colors sm:p-3",
         imKorb ? "border-ink/60 bg-paper-deep/40" : "border-border",
       )}
     >
@@ -377,11 +377,11 @@ function ProduktKarte({
         )}
       </button>
 
-      <div className="mt-2 flex items-start justify-between gap-1">
-        <span className="font-mono-typed text-base font-bold leading-none sm:text-lg">
+      <div className="mt-2 flex h-7 items-center justify-between gap-1 sm:h-8">
+        <span className="shrink-0 font-mono-typed text-base font-bold leading-none sm:text-lg">
           CHF {produkt.preis.toFixed(2)}
         </span>
-      <div className="flex flex-wrap items-center justify-end gap-1">
+      <div className="flex flex-nowrap items-center justify-end gap-1 overflow-hidden">
         {produkt.siegel.map((key) => {
           const info = SIEGEL[key];
           return info.logoUrl ? (
@@ -412,7 +412,8 @@ function ProduktKarte({
         })}
       </div>
       </div>
-      <p className="mt-1.5 flex-1 text-xs font-medium leading-tight sm:text-sm">{produkt.name}</p>
+      <p className="mt-1.5 line-clamp-2 min-h-[2.5em] text-xs font-medium leading-tight sm:text-sm" title={produkt.name}>{produkt.name}</p>
+      <div className="flex-1" />
 
       <button
         onClick={imKorb ? onRemove : onAdd}
