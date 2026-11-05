@@ -400,10 +400,10 @@ function ProduktKarte({
           )}
         </span>
 
-        <span className="mt-2 font-mono-typed text-base font-bold leading-none sm:text-lg">
+        <span className="mt-2 font-mono-typed text-[20px] font-bold leading-none sm:text-[22px]">
           CHF {produkt.preis.toFixed(2)}
         </span>
-        <span className="mt-1.5 line-clamp-2 text-xs font-medium leading-tight sm:text-sm">
+        <span className="mt-1.5 line-clamp-2 text-[16px] font-medium leading-tight sm:text-[18px]">
           {produkt.name}
         </span>
         {mengenZeile(produkt) && (
