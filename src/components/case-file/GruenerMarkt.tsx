@@ -145,7 +145,7 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
               Grüner Markt
             </p>
             <p className="font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground">
-              Nachhaltig einkaufen · CH
+              NACHHALTIG EINKAUFEN
             </p>
           </div>
         </div>
