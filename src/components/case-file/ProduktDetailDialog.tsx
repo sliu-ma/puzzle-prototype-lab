@@ -6,6 +6,8 @@ import { cn } from "@/lib/utils";
 interface ProduktDetailDialogProps {
   produkt: Produkt | null;
   onOpenChange: (open: boolean) => void;
+  imKorb?: boolean;
+  onToggleKorb?: () => void;
 }
 
 
@@ -32,7 +34,7 @@ function scoreLabel(avg: number) {
   return "Problematisch";
 }
 
-export function ProduktDetailDialog({ produkt, onOpenChange }: ProduktDetailDialogProps) {
+export function ProduktDetailDialog({ produkt, onOpenChange, imKorb, onToggleKorb }: ProduktDetailDialogProps) {
   const open = !!produkt;
   if (!produkt) {
     return (
@@ -168,6 +170,26 @@ export function ProduktDetailDialog({ produkt, onOpenChange }: ProduktDetailDial
             {n.erklaerung}
           </p>
         </div>
+
+        {onToggleKorb && (
+          <div className="sticky bottom-0 border-t border-border bg-paper/95 px-5 py-3 backdrop-blur">
+            <button
+              type="button"
+              onClick={() => {
+                onToggleKorb();
+                onOpenChange(false);
+              }}
+              className={cn(
+                "w-full rounded-sm py-2.5 font-serif text-sm font-semibold transition-colors",
+                imKorb
+                  ? "border border-stamp/40 bg-stamp/5 text-stamp hover:bg-stamp/10"
+                  : "bg-primary text-primary-foreground hover:bg-primary/90",
+              )}
+            >
+              {imKorb ? "− Aus dem Korb entfernen" : "+ In den Korb"}
+            </button>
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   );

@@ -329,6 +329,12 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
       <ProduktDetailDialog
         produkt={detail}
         onOpenChange={(open) => !open && setDetail(null)}
+        imKorb={detail ? inKorb(detail.id) : false}
+        onToggleKorb={
+          detail
+            ? () => (inKorb(detail.id) ? entfernen(detail.id) : hinzufuegen(detail.id))
+            : undefined
+        }
       />
 
       <MarketTutorial
