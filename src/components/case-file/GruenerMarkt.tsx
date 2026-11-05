@@ -378,13 +378,10 @@ function ProduktKarte({
       </button>
 
       <div className="mt-2 flex items-start justify-between gap-1">
-        <p className="text-xs font-medium leading-tight sm:text-sm">{produkt.name}</p>
-        <span className="shrink-0 font-mono-typed text-[11px] sm:text-xs">
+        <span className="font-mono-typed text-base font-bold leading-none sm:text-lg">
           CHF {produkt.preis.toFixed(2)}
         </span>
-      </div>
-
-      <div className="mt-1.5 flex flex-wrap items-center gap-1">
+      <div className="flex flex-wrap items-center justify-end gap-1">
         {produkt.siegel.map((key) => {
           const info = SIEGEL[key];
           return info.logoUrl ? (
@@ -402,7 +399,7 @@ function ProduktKarte({
                   "rounded-full border border-border bg-card px-1.5 py-0.5 font-mono-typed text-[9px] sm:text-[10px]";
                 img.replaceWith(fallback);
               }}
-              className="h-7 w-7 rounded-full border border-border bg-white object-contain p-1 sm:h-8 sm:w-8"
+              className="h-6 w-6 rounded-full border border-border bg-white object-contain p-1 sm:h-8 sm:w-8"
             />
           ) : (
             <span
@@ -414,6 +411,8 @@ function ProduktKarte({
           );
         })}
       </div>
+      </div>
+      <p className="mt-1.5 flex-1 text-xs font-medium leading-tight sm:text-sm">{produkt.name}</p>
 
       <button
         onClick={imKorb ? onRemove : onAdd}
