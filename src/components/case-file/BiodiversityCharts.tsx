@@ -193,7 +193,12 @@ export function VielfaltGrid() {
             key={it.label}
             className="flex items-center gap-2 rounded-sm border border-border bg-paper px-2 py-1.5"
           >
-            <span className="text-lg leading-none">{it.icon}</span>
+            <span
+              aria-hidden
+              className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-border bg-secondary text-stamp"
+            >
+              <it.icon className="h-3.5 w-3.5" strokeWidth={1.75} />
+            </span>
             <span className="font-mono-typed text-[11px]">{it.label}</span>
           </div>
         ))}
