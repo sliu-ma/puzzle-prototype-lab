@@ -401,7 +401,7 @@ function ProduktKarte({
         <span className="mt-2 font-mono-typed text-base font-bold leading-none sm:text-lg">
           CHF {produkt.preis.toFixed(2)}
         </span>
-        <span className="mt-1.5 line-clamp-2 min-h-[2.5em] text-xs font-medium leading-tight sm:text-sm">
+        <span className="mt-1.5 line-clamp-2 text-xs font-medium leading-tight sm:text-sm">
           {produkt.name}
         </span>
 
