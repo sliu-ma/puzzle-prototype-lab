@@ -386,7 +386,7 @@ function ProduktKarte({
         aria-label={`${produkt.name}, Details anzeigen`}
         className="group flex h-full flex-col text-left"
       >
-        <span className="flex aspect-square w-full items-center justify-center overflow-hidden px-4 py-3">
+        <span className="-mx-3 -mt-3 flex aspect-square w-[calc(100%+1.5rem)] items-center justify-center overflow-hidden rounded-t-sm sm:-mx-4 sm:-mt-4 sm:w-[calc(100%+2rem)]">
           {produkt.bildUrl ? (
             <img
               src={produkt.bildUrl}
