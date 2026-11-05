@@ -1,5 +1,5 @@
 import { ProduktIcon } from "./ProduktIcon";
-import { ShoppingCart } from "lucide-react";
+import { Check, ShoppingCart } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { usePersistentState } from "@/lib/persist";
 
@@ -362,75 +362,71 @@ function ProduktKarte({
   return (
     <div
       className={cn(
-        "flex h-full flex-col rounded-sm border bg-paper p-2.5 text-sm transition-colors sm:p-3",
-        imKorb ? "border-ink/60 bg-paper-deep/40" : "border-border",
+        "relative flex h-full flex-col rounded-sm border bg-white p-2.5 text-sm transition-colors sm:p-3",
+        imKorb ? "border-ink/70 ring-1 ring-ink/40" : "border-border",
       )}
     >
       <button
         type="button"
-        onClick={onOpenDetail}
-        aria-label={`${produkt.name}, Details anzeigen`}
-        className="group flex aspect-square w-full items-center justify-center overflow-hidden rounded-sm border border-border/60 bg-white transition-colors hover:border-ink/40"
-      >
-        {produkt.bildUrl ? (
-          <img
-            src={produkt.bildUrl}
-            alt={produkt.name}
-            className="h-full w-full object-contain p-1.5 transition-transform group-hover:scale-105"
-          />
-        ) : (
-          <span className="h-14 w-14 transition-transform group-hover:scale-110 sm:h-16 sm:w-16"><ProduktIcon emoji={produkt.emoji} circle /></span>
+        onClick={imKorb ? onRemove : onAdd}
+        aria-label={imKorb ? `${produkt.name} aus dem Korb entfernen` : `${produkt.name} in den Korb legen`}
+        className={cn(
+          "absolute right-1.5 top-1.5 z-10 flex h-8 w-8 items-center justify-center rounded-full border transition-colors",
+          imKorb
+            ? "border-ink bg-ink text-paper"
+            : "border-border bg-white text-ink hover:bg-secondary",
         )}
+      >
+        {imKorb ? <Check className="h-4 w-4" /> : <ShoppingCart className="h-4 w-4" strokeWidth={1.75} />}
       </button>
 
-      <div className="mt-2 flex h-7 items-center justify-between gap-1 sm:h-8">
-        <span className="shrink-0 font-mono-typed text-base font-bold leading-none sm:text-lg">
-          CHF {produkt.preis.toFixed(2)}
-        </span>
-      <div className="flex flex-nowrap items-center justify-end gap-1 overflow-hidden">
-        {produkt.siegel.map((key) => {
-          const info = SIEGEL[key];
-          return info.logoUrl ? (
+      <button
+        type="button"
+        onClick={onOpenDetail}
+        aria-label={`${produkt.name}, Details anzeigen`}
+        className="group flex h-full flex-col text-left"
+      >
+        <span className="flex aspect-square w-full items-center justify-center overflow-hidden">
+          {produkt.bildUrl ? (
             <img
-              key={key}
-              src={info.logoUrl}
-              alt={info.label}
-              title={info.label}
-              loading="lazy"
-              onError={(e) => {
-                const img = e.currentTarget;
-                const fallback = document.createElement("span");
-                fallback.textContent = info.label;
-                fallback.className =
-                  "rounded-full border border-border bg-card px-1.5 py-0.5 font-mono-typed text-[9px] sm:text-[10px]";
-                img.replaceWith(fallback);
-              }}
-              className="h-6 w-6 rounded-full border border-border bg-white object-contain p-1 sm:h-8 sm:w-8"
+              src={produkt.bildUrl}
+              alt={produkt.name}
+              className="h-full w-full object-contain p-1.5 transition-transform group-hover:scale-105"
             />
           ) : (
-            <span
-              key={key}
-              className="rounded-full border border-border bg-card px-1.5 py-0.5 font-mono-typed text-[9px] sm:text-[10px]"
-            >
-              {info.label}
-            </span>
-          );
-        })}
-      </div>
-      </div>
-      <p className="mt-1.5 line-clamp-2 min-h-[2.5em] text-xs font-medium leading-tight sm:text-sm" title={produkt.name}>{produkt.name}</p>
-      <div className="flex-1" />
+            <span className="h-14 w-14 transition-transform group-hover:scale-110 sm:h-16 sm:w-16"><ProduktIcon emoji={produkt.emoji} circle /></span>
+          )}
+        </span>
 
-      <button
-        onClick={imKorb ? onRemove : onAdd}
-        className={cn(
-          "mt-2 rounded-sm py-1.5 text-[11px] font-semibold transition-colors sm:text-xs",
-          imKorb
-            ? "border border-stamp/40 bg-stamp/5 text-stamp hover:bg-stamp/10"
-            : "bg-ink text-paper hover:bg-ink/90",
-        )}
-      >
-        {imKorb ? "− Entfernen" : "+ In den Korb"}
+        <span className="mt-2 font-mono-typed text-base font-bold leading-none sm:text-lg">
+          CHF {produkt.preis.toFixed(2)}
+        </span>
+        <span className="mt-1.5 line-clamp-2 min-h-[2.5em] text-xs font-medium leading-tight sm:text-sm">
+          {produkt.name}
+        </span>
+
+        <span className="mt-auto flex h-7 flex-nowrap items-center gap-1 overflow-hidden pt-1 sm:h-9">
+          {produkt.siegel.map((key) => {
+            const info = SIEGEL[key];
+            return info.logoUrl ? (
+              <img
+                key={key}
+                src={info.logoUrl}
+                alt={info.label}
+                title={info.label}
+                loading="lazy"
+                className="h-6 w-6 rounded-full border border-border bg-white object-contain p-1 sm:h-7 sm:w-7"
+              />
+            ) : (
+              <span
+                key={key}
+                className="rounded-full border border-border bg-card px-1.5 py-0.5 font-mono-typed text-[9px] sm:text-[10px]"
+              >
+                {info.label}
+              </span>
+            );
+          })}
+        </span>
       </button>
     </div>
   );
