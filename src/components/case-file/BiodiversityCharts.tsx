@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { ChevronLeft, ChevronRight, Bird, Fish, Bug, Rabbit, Squirrel, Turtle, Snail, Cat, Dog } from "lucide-react";
+import { ChevronLeft, ChevronRight, Bird, Fish, Bug, Rabbit, Squirrel, Turtle, Snail, Cat, Dog, Droplets, Wind, Sprout, Flower2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import versiegelungAsset from "@/assets/ursachen/versiegelung.jpg.asset.json";
 import pestizideAsset from "@/assets/ursachen/pestizide.jpg.asset.json";
@@ -176,10 +176,10 @@ export function UrsachenCarousel() {
 /** Vielfalt = Lebensgrundlage. Vier Icons/Werte. */
 export function VielfaltGrid() {
   const items = [
-    { icon: "💧", label: "Trinkwasser" },
-    { icon: "🌬️", label: "Saubere Luft" },
-    { icon: "🌱", label: "Fruchtbare Böden" },
-    { icon: "🐝", label: "Bestäubung" },
+    { icon: Droplets, label: "Trinkwasser" },
+    { icon: Wind, label: "Saubere Luft" },
+    { icon: Sprout, label: "Fruchtbare Böden" },
+    { icon: Flower2, label: "Bestäubung" },
   ];
   return (
     <div className="flex h-full flex-col rounded-sm border border-dashed border-stamp/40 bg-paper-deep/20 p-3">
@@ -193,7 +193,12 @@ export function VielfaltGrid() {
             key={it.label}
             className="flex items-center gap-2 rounded-sm border border-border bg-paper px-2 py-1.5"
           >
-            <span className="text-lg leading-none">{it.icon}</span>
+            <span
+              aria-hidden
+              className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-border bg-secondary text-stamp"
+            >
+              <it.icon className="h-3.5 w-3.5" strokeWidth={1.75} />
+            </span>
             <span className="font-mono-typed text-[11px]">{it.label}</span>
           </div>
         ))}
