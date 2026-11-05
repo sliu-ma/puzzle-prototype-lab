@@ -292,7 +292,7 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
           {warenkorbProdukte.map((p) => (
             <li
               key={p.id}
-              className="flex items-start justify-between gap-2 rounded-sm border border-border/60 bg-card p-2 text-xs"
+              className="flex items-start justify-between gap-2 rounded-sm border border-border/60 bg-white p-2 text-xs"
             >
               <div className="flex min-w-0 items-center gap-2">
                 {p.bildUrl ? (
