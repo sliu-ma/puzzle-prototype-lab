@@ -52,7 +52,7 @@ export function ProduktDetailDialog({ produkt, onOpenChange, imKorb, onToggleKor
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[92vh] max-w-md gap-0 overflow-y-auto rounded-sm border-border bg-paper p-0">
+      <DialogContent className="h-[100dvh] max-h-[100dvh] w-full max-w-full gap-0 overflow-y-auto rounded-none border-0 border-border bg-paper p-0 sm:h-auto sm:max-h-[92vh] sm:max-w-md sm:rounded-sm sm:border">
         <DialogTitle className="sr-only">{produkt.name}</DialogTitle>
         <DialogDescription className="sr-only">
           Produktdetails und Nachhaltigkeitsbewertung
