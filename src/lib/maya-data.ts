@@ -80,12 +80,32 @@ export type ZutatKey =
   | "nuesse";
 
 
+export type Einheit = "g" | "kg" | "ml" | "dl" | "l" | "Stück";
+export interface Menge { wert: number; einheit: Einheit }
+
+const fmt = (n: number) => n.toLocaleString("de-CH", { maximumFractionDigits: 2 });
+
+/** z. B. "500 g · CHF 13.60/kg"; kleine Mengen (< 100 g/ml) pro 100 g/ml. */
+export function mengenZeile(p: Pick<Produkt, "preis" | "menge">): string | null {
+  const m = p.menge;
+  if (!m) return null;
+  const menge = `${fmt(m.wert)} ${m.einheit}`;
+  if (m.einheit === "Stück") {
+    return m.wert === 1 ? "1 Stück" : `${menge} · CHF ${(p.preis / m.wert).toFixed(2)}/Stück`;
+  }
+  const basis = m.einheit === "kg" ? m.wert * 1000 : m.einheit === "l" ? m.wert * 1000 : m.einheit === "dl" ? m.wert * 100 : m.wert;
+  const gewicht = m.einheit === "g" || m.einheit === "kg";
+  const [teiler, label] = basis < 100 ? [100, gewicht ? "100 g" : "100 ml"] : [1000, gewicht ? "kg" : "l"];
+  return `${menge} · CHF ${((p.preis / basis) * teiler).toFixed(2)}/${label}`;
+}
+
 export interface Produkt {
   id: string;
   name: string;
   kategorie: Kategorie;
   herkunft: string;
   preis: number; // CHF
+  menge?: Menge;
   siegel: SiegelKey[];
   saison: "in" | "out" | "ganzjahr";
   /** 1-basierte Monate der Saison im Herkunftsland; leer/undefiniert = ganzjährig. */
@@ -136,7 +156,8 @@ export const PRODUKTE: Produkt[] = [
   // ── Früchte & Gemüse ────────────────────────────────────────────
   {
     id: "erdbeeren-es",
-    name: "Erdbeeren 500g",
+    name: "Erdbeeren",
+    menge: { wert: 500, einheit: "g" },
     kategorie: "fruechte-gemuese",
     herkunft: "Spanien",
     preis: 6.8,
@@ -160,7 +181,8 @@ export const PRODUKTE: Produkt[] = [
   },
   {
     id: "erdbeeren-ch",
-    name: "Erdbeeren 500g",
+    name: "Erdbeeren",
+    menge: { wert: 500, einheit: "g" },
     kategorie: "fruechte-gemuese",
     herkunft: "Region Thurgau (CH)",
     preis: 6.0,
@@ -184,6 +206,7 @@ export const PRODUKTE: Produkt[] = [
   {
     id: "zitrone-it",
     name: "Zitrone",
+    menge: { wert: 1, einheit: "Stück" },
     kategorie: "fruechte-gemuese",
     herkunft: "Italien",
     preis: 0.45,
@@ -205,7 +228,8 @@ export const PRODUKTE: Produkt[] = [
   },
   {
     id: "aepfel-ch",
-    name: "Äpfel 'Gala' 1kg",
+    name: "Äpfel 'Gala'",
+    menge: { wert: 1, einheit: "kg" },
     kategorie: "fruechte-gemuese",
     herkunft: "Schweiz",
     preis: 2.8,
@@ -228,7 +252,8 @@ export const PRODUKTE: Produkt[] = [
   },
   {
     id: "tomaten-ma",
-    name: "Tomaten 500g",
+    name: "Tomaten",
+    menge: { wert: 500, einheit: "g" },
     kategorie: "fruechte-gemuese",
     herkunft: "Marokko",
     preis: 3.2,
@@ -249,7 +274,8 @@ export const PRODUKTE: Produkt[] = [
   },
   {
     id: "rosenkohl-ch",
-    name: "Rosenkohl 500g",
+    name: "Rosenkohl",
+    menge: { wert: 500, einheit: "g" },
     kategorie: "fruechte-gemuese",
     herkunft: "Schweiz",
     preis: 3.6,
@@ -270,7 +296,8 @@ export const PRODUKTE: Produkt[] = [
   },
   {
     id: "spargel-ch",
-    name: "Grüner Spargel 500g",
+    name: "Grüner Spargel",
+    menge: { wert: 500, einheit: "g" },
     kategorie: "fruechte-gemuese",
     herkunft: "Schweiz",
     preis: 6.9,
@@ -291,7 +318,8 @@ export const PRODUKTE: Produkt[] = [
   },
   {
     id: "rhabarber-ch",
-    name: "Rhabarber 1kg",
+    name: "Rhabarber",
+    menge: { wert: 1, einheit: "kg" },
     kategorie: "fruechte-gemuese",
     herkunft: "Schweiz",
     preis: 4.2,
@@ -313,6 +341,7 @@ export const PRODUKTE: Produkt[] = [
   {
     id: "kuerbis-ch",
     name: "Butternut-Kürbis",
+    menge: { wert: 1, einheit: "Stück" },
     kategorie: "fruechte-gemuese",
     herkunft: "Schweiz",
     preis: 3.9,
@@ -333,7 +362,8 @@ export const PRODUKTE: Produkt[] = [
   },
   {
     id: "zwetschge-import",
-    name: "Zwetschgen 1kg",
+    name: "Zwetschgen",
+    menge: { wert: 1, einheit: "kg" },
     kategorie: "fruechte-gemuese",
     herkunft: "USA",
     preis: 4.95,
@@ -357,7 +387,8 @@ export const PRODUKTE: Produkt[] = [
   },
   {
     id: "zwetschge-bio-ch",
-    name: "Zwetschgen 1kg",
+    name: "Zwetschgen",
+    menge: { wert: 1, einheit: "kg" },
     kategorie: "fruechte-gemuese",
     herkunft: "Schweiz",
     preis: 4.5,
@@ -380,7 +411,8 @@ export const PRODUKTE: Produkt[] = [
   },
   {
     id: "aepfel-pinklady-fr",
-    name: "Äpfel 'Pink Lady' 1kg",
+    name: "Äpfel 'Pink Lady'",
+    menge: { wert: 1, einheit: "kg" },
     kategorie: "fruechte-gemuese",
     herkunft: "Frankreich",
     preis: 4.8,
@@ -404,7 +436,8 @@ export const PRODUKTE: Produkt[] = [
   },
   {
     id: "zimt-bio-fairtrade",
-    name: "Ceylon-Zimt gemahlen 35g",
+    name: "Ceylon-Zimt gemahlen",
+    menge: { wert: 35, einheit: "g" },
     kategorie: "backzutaten",
     herkunft: "Sri Lanka",
     preis: 1.6,
@@ -426,7 +459,8 @@ export const PRODUKTE: Produkt[] = [
   },
   {
     id: "zimt-classic",
-    name: "Ceylon-Zimt gemahlen 32g",
+    name: "Ceylon-Zimt gemahlen",
+    menge: { wert: 32, einheit: "g" },
     kategorie: "backzutaten",
     herkunft: "Madagaskar",
     preis: 0.45,
@@ -452,7 +486,8 @@ export const PRODUKTE: Produkt[] = [
 
   {
     id: "eier-bh-import",
-    name: "Eier 10er\u00a0 Bodenhaltung",
+    name: "Eier Bodenhaltung",
+    menge: { wert: 10, einheit: "Stück" },
     kategorie: "milch-eier",
     herkunft: "EU-Import",
     preis: 3.2,
@@ -475,7 +510,8 @@ export const PRODUKTE: Produkt[] = [
   },
   {
     id: "eier-bio-ch",
-    name: "Eier 4er Freiland",
+    name: "Eier Freiland",
+    menge: { wert: 4, einheit: "Stück" },
     kategorie: "milch-eier",
     herkunft: "Schweiz",
     preis: 3.5,
@@ -496,7 +532,8 @@ export const PRODUKTE: Produkt[] = [
   },
   {
     id: "milch-valflora",
-    name: "Valflora Vollmilch 1L · PAST",
+    name: "Valflora Vollmilch · PAST",
+    menge: { wert: 1, einheit: "l" },
     kategorie: "milch-eier",
     herkunft: "Schweiz",
     preis: 1.85,
@@ -517,6 +554,7 @@ export const PRODUKTE: Produkt[] = [
   {
     id: "joghurt-schoko",
     name: "M-Classic Joghurt Schokolade",
+    menge: { wert: 180, einheit: "g" },
     kategorie: "milch-eier",
     herkunft: "Schweiz",
     preis: 1.1,
@@ -536,7 +574,8 @@ export const PRODUKTE: Produkt[] = [
   },
   {
     id: "butter-ch",
-    name: "Butter 250g",
+    name: "Butter",
+    menge: { wert: 250, einheit: "g" },
     kategorie: "milch-eier",
     herkunft: "Schweiz",
     preis: 3.85,
@@ -557,7 +596,8 @@ export const PRODUKTE: Produkt[] = [
   },
   {
     id: "vollrahm-ch",
-    name: "Vollrahm 2.5dl",
+    name: "Vollrahm",
+    menge: { wert: 2.5, einheit: "dl" },
     kategorie: "milch-eier",
     herkunft: "Schweiz",
     preis: 2.1,
@@ -579,7 +619,8 @@ export const PRODUKTE: Produkt[] = [
   // ── Getreide & Backen ───────────────────────────────────────────
   {
     id: "mehl-ch",
-    name: "Weissmehl 1kg",
+    name: "Weissmehl",
+    menge: { wert: 1, einheit: "kg" },
     kategorie: "backzutaten",
     herkunft: "Schweiz",
     preis: 1.9,
@@ -599,7 +640,8 @@ export const PRODUKTE: Produkt[] = [
   },
   {
     id: "zucker-ch",
-    name: "Cristal Feinkristall-Zucker 1kg",
+    name: "Cristal Feinkristall-Zucker",
+    menge: { wert: 1, einheit: "kg" },
     kategorie: "backzutaten",
     herkunft: "Schweiz",
     preis: 1.8,
@@ -619,7 +661,8 @@ export const PRODUKTE: Produkt[] = [
   },
   {
     id: "vanillezucker",
-    name: "Vanillezucker 10×8g",
+    name: "Vanillezucker",
+    menge: { wert: 80, einheit: "g" },
     kategorie: "backzutaten",
     herkunft: "Schweiz (verpackt)",
     preis: 0.45,
@@ -641,7 +684,8 @@ export const PRODUKTE: Produkt[] = [
   // ── Andere ──────────────────────────────────────────────────────
   {
     id: "salz",
-    name: "Sel des Alpes · Speisesalz 500g",
+    name: "Sel des Alpes · Speisesalz",
+    menge: { wert: 500, einheit: "g" },
     kategorie: "andere",
     herkunft: "Schweizer Berggebiete",
     preis: 1.6,
@@ -664,7 +708,8 @@ export const PRODUKTE: Produkt[] = [
   // ── Neue Ergänzungen ────────────────────────────────────────────
   {
     id: "oatly-hafer",
-    name: "Oatly Haferdrink Barista 1L",
+    name: "Oatly Haferdrink Barista",
+    menge: { wert: 1, einheit: "l" },
     kategorie: "milch-eier",
     herkunft: "Schweden",
     preis: 3.4,
@@ -685,6 +730,7 @@ export const PRODUKTE: Produkt[] = [
   {
     id: "zitrone-za",
     name: "Zitrone",
+    menge: { wert: 1, einheit: "Stück" },
     kategorie: "fruechte-gemuese",
     herkunft: "Südafrika",
     preis: 0.4,
@@ -708,6 +754,7 @@ export const PRODUKTE: Produkt[] = [
   {
     id: "gurke-ch",
     name: "Gurke",
+    menge: { wert: 1, einheit: "Stück" },
     kategorie: "fruechte-gemuese",
     herkunft: "Schweiz",
     preis: 2.3,
@@ -728,6 +775,7 @@ export const PRODUKTE: Produkt[] = [
   {
     id: "backpulver",
     name: "Pâtissier Backpulver",
+    menge: { wert: 85, einheit: "g" },
     kategorie: "backzutaten",
     herkunft: "Deutschland",
     preis: 0.5,
@@ -748,6 +796,7 @@ export const PRODUKTE: Produkt[] = [
   {
     id: "mandeln-ch",
     name: "Mandeln gemahlen",
+    menge: { wert: 200, einheit: "g" },
     kategorie: "backzutaten",
     herkunft: "Schweiz (verpackt)",
     preis: 2.8,

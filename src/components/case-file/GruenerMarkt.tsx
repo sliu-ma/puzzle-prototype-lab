@@ -11,6 +11,7 @@ import {
   SIEGEL,
   type Kategorie,
   type Produkt,
+  mengenZeile,
 } from "@/lib/maya-data";
 
 import { ProduktDetailDialog } from "./ProduktDetailDialog";
@@ -302,7 +303,7 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
                 )}
                 <div className="min-w-0">
                   <p className="truncate font-medium leading-tight">{p.name}</p>
-                  <p className="text-muted-foreground">CHF {p.preis.toFixed(2)}</p>
+                  <p className="text-muted-foreground">CHF {p.preis.toFixed(2)}{mengenZeile(p) ? ` · ${mengenZeile(p)}` : ""}</p>
                 </div>
               </div>
               <button
@@ -363,7 +364,7 @@ function ProduktKarte({
     <div
       className={cn(
         "relative flex h-full flex-col rounded-sm border bg-white p-3 text-sm transition-colors sm:p-4",
-        imKorb ? "border-ink/70 ring-1 ring-ink/40" : "border-border",
+        "border-border",
       )}
     >
       <button
@@ -401,6 +402,9 @@ function ProduktKarte({
         <span className="mt-2 font-mono-typed text-base font-bold leading-none sm:text-lg">
           CHF {produkt.preis.toFixed(2)}
         </span>
+        {mengenZeile(produkt) && (
+          <span className="mt-1 text-[11px] leading-tight text-muted-foreground sm:text-xs">{mengenZeile(produkt)}</span>
+        )}
         <span className="mt-1.5 line-clamp-2 text-xs font-medium leading-tight sm:text-sm">
           {produkt.name}
         </span>

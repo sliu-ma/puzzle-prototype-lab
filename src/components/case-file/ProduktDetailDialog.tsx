@@ -1,6 +1,6 @@
 import { ProduktIcon } from "./ProduktIcon";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { SIEGEL, getSaisonStatus, getEffektiveNachhaltigkeit, type Produkt } from "@/lib/maya-data";
+import { SIEGEL, getSaisonStatus, getEffektiveNachhaltigkeit, mengenZeile, type Produkt } from "@/lib/maya-data";
 import { cn } from "@/lib/utils";
 
 interface ProduktDetailDialogProps {
@@ -121,6 +121,12 @@ export function ProduktDetailDialog({ produkt, onOpenChange, imKorb, onToggleKor
             <span className="text-muted-foreground">Preis</span>
             <span className="font-mono-typed font-medium">CHF {produkt.preis.toFixed(2)}</span>
           </div>
+          {mengenZeile(produkt) && (
+            <div className="flex justify-between gap-3">
+              <span className="text-muted-foreground">Menge</span>
+              <span className="text-right font-medium">{mengenZeile(produkt)}</span>
+            </div>
+          )}
           {produkt.kategorie === "fruechte-gemuese" && (
             <div className="flex justify-between gap-3">
               <span className="text-muted-foreground">Saison</span>
