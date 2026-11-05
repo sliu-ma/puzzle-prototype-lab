@@ -14,6 +14,7 @@ import {
 } from "@/lib/maya-data";
 
 import { ProduktDetailDialog } from "./ProduktDetailDialog";
+import { getBildZoom } from "@/lib/produkt-bild-zoom";
 
 import { MarketTutorial, type TutorialStep } from "./MarketTutorial";
 
@@ -391,7 +392,8 @@ function ProduktKarte({
             <img
               src={produkt.bildUrl}
               alt={produkt.name}
-              className="h-full w-full object-contain object-center transition-transform group-hover:scale-105"
+              style={{ transform: `scale(${getBildZoom(produkt.bildUrl)})` }}
+              className="h-full w-full object-contain object-center"
             />
           ) : (
             <span className="h-14 w-14 transition-transform group-hover:scale-110 sm:h-16 sm:w-16"><ProduktIcon emoji={produkt.emoji} circle /></span>
