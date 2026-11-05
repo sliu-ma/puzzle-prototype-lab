@@ -85,18 +85,47 @@ export interface Menge { wert: number; einheit: Einheit }
 
 const fmt = (n: number) => n.toLocaleString("de-CH", { maximumFractionDigits: 2 });
 
-/** z. B. "500 g · CHF 13.60/kg"; kleine Mengen (< 100 g/ml) pro 100 g/ml. */
-export function mengenZeile(p: Pick<Produkt, "preis" | "menge">): string | null {
+/** Grundpreis pro 10 g: Gewürz und Backhilfe. */
+const BASIS_10G = new Set(["zimt-bio-fairtrade", "zimt-classic", "backpulver", "vanillezucker"]);
+
+const round2 = (n: number) => (Math.round(n * 100) / 100).toFixed(2);
+
+/**
+ * Grundpreis-Regel:
+ * - Zimt, Backpulver, Vanillezucker: pro 10 g
+ * - Früchte/Gemüse und Milch/Eier: pro 100 g bzw. 100 ml (Stück pro Stück)
+ * - Rest: pro kg bzw. l, kleine Packungen (< 100 g/ml) pro 100 g/ml
+ */
+export function mengenZeile(
+  p: Pick<Produkt, "id" | "kategorie" | "preis" | "menge">,
+): string | null {
   const m = p.menge;
   if (!m) return null;
   const menge = `${fmt(m.wert)} ${m.einheit}`;
   if (m.einheit === "Stück") {
-    return m.wert === 1 ? "1 Stück" : `${menge} · CHF ${(p.preis / m.wert).toFixed(2)}/Stück`;
+    return m.wert === 1 ? "1 Stück" : `${menge} · CHF ${round2(p.preis / m.wert)}/Stück`;
   }
-  const basis = m.einheit === "kg" ? m.wert * 1000 : m.einheit === "l" ? m.wert * 1000 : m.einheit === "dl" ? m.wert * 100 : m.wert;
+  const grund =
+    m.einheit === "kg" || m.einheit === "l"
+      ? m.wert * 1000
+      : m.einheit === "dl"
+        ? m.wert * 100
+        : m.wert; // in g bzw. ml
   const gewicht = m.einheit === "g" || m.einheit === "kg";
-  const [teiler, label] = basis < 100 ? [100, gewicht ? "100 g" : "100 ml"] : [1000, gewicht ? "kg" : "l"];
-  return `${menge} · CHF ${((p.preis / basis) * teiler).toFixed(2)}/${label}`;
+  const basis: [number, string] = BASIS_10G.has(p.id)
+    ? [10, "10 g"]
+    : p.kategorie === "fruechte-gemuese" || p.kategorie === "milch-eier"
+      ? [100, gewicht ? "100 g" : "100 ml"]
+      : grund < 100
+        ? [100, gewicht ? "100 g" : "100 ml"]
+        : [1000, gewicht ? "kg" : "l"];
+  return `${menge} · CHF ${round2((p.preis / grund) * basis[0])}/${basis[1]}`;
+}
+
+/** Nur die Packungsgrösse, z. B. "500 g" oder "4 Stück". */
+export function packungsZeile(p: Pick<Produkt, "menge">): string | null {
+  const m = p.menge;
+  return m ? `${fmt(m.wert)} ${m.einheit}` : null;
 }
 
 export interface Produkt {
