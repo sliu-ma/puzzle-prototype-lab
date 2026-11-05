@@ -190,8 +190,8 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
       </div>
 
       {/* Produkt-Grid */}
-      <div className="px-3 py-3 pb-24 sm:px-5 sm:pb-5">
-        <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3">
+      <div className="px-2 py-3 pb-24 sm:px-5 sm:pb-5">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3">
           {kategorieProdukte.map((p, idx) => (
             <div key={p.id} ref={idx === 0 ? produktRef : undefined} className="h-full">
               <ProduktKarte
@@ -362,7 +362,7 @@ function ProduktKarte({
   return (
     <div
       className={cn(
-        "relative flex h-full flex-col rounded-sm border bg-white p-2.5 text-sm transition-colors sm:p-3",
+        "relative flex h-full flex-col rounded-sm border bg-white p-3 text-sm transition-colors sm:p-4",
         imKorb ? "border-ink/70 ring-1 ring-ink/40" : "border-border",
       )}
     >
@@ -371,13 +371,13 @@ function ProduktKarte({
         onClick={imKorb ? onRemove : onAdd}
         aria-label={imKorb ? `${produkt.name} aus dem Korb entfernen` : `${produkt.name} in den Korb legen`}
         className={cn(
-          "absolute right-1.5 top-1.5 z-10 flex h-8 w-8 items-center justify-center rounded-full border transition-colors",
+          "absolute right-1.5 top-1.5 z-10 flex h-7 w-7 items-center justify-center rounded-full border transition-colors",
           imKorb
             ? "border-ink bg-ink text-paper"
             : "border-border bg-white text-ink hover:bg-secondary",
         )}
       >
-        {imKorb ? <Check className="h-4 w-4" /> : <ShoppingCart className="h-4 w-4" strokeWidth={1.75} />}
+        {imKorb ? <Check className="h-3.5 w-3.5" /> : <ShoppingCart className="h-3.5 w-3.5" strokeWidth={1.75} />}
       </button>
 
       <button
@@ -386,12 +386,12 @@ function ProduktKarte({
         aria-label={`${produkt.name}, Details anzeigen`}
         className="group flex h-full flex-col text-left"
       >
-        <span className="flex aspect-square w-full items-center justify-center overflow-hidden">
+        <span className="flex aspect-square w-full items-center justify-center overflow-hidden px-4 py-3">
           {produkt.bildUrl ? (
             <img
               src={produkt.bildUrl}
               alt={produkt.name}
-              className="h-full w-full object-contain p-1.5 transition-transform group-hover:scale-105"
+              className="h-full w-full object-contain object-center transition-transform group-hover:scale-105"
             />
           ) : (
             <span className="h-14 w-14 transition-transform group-hover:scale-110 sm:h-16 sm:w-16"><ProduktIcon emoji={produkt.emoji} circle /></span>
@@ -405,7 +405,7 @@ function ProduktKarte({
           {produkt.name}
         </span>
 
-        <span className="mt-auto flex h-7 flex-nowrap items-center gap-1 overflow-hidden pt-1 sm:h-9">
+        <span className="mt-1.5 flex h-8 flex-nowrap items-center gap-1.5 overflow-hidden sm:h-9">
           {produkt.siegel.map((key) => {
             const info = SIEGEL[key];
             return info.logoUrl ? (
@@ -415,7 +415,7 @@ function ProduktKarte({
                 alt={info.label}
                 title={info.label}
                 loading="lazy"
-                className="h-6 w-6 rounded-full border border-border bg-white object-contain p-1 sm:h-7 sm:w-7"
+                className="h-8 w-8 rounded-full border border-border bg-white object-contain p-1 sm:h-9 sm:w-9"
               />
             ) : (
               <span
