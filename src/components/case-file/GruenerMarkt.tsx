@@ -11,6 +11,7 @@ import {
   SIEGEL,
   type Kategorie,
   type Produkt,
+  mengenZeile,
 } from "@/lib/maya-data";
 
 import { ProduktDetailDialog } from "./ProduktDetailDialog";
