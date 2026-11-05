@@ -193,7 +193,7 @@ export function GruenerMarkt({ startWarenkorb, onErfolg }: GruenerMarktProps) {
       <div className="px-3 py-3 pb-24 sm:px-5 sm:pb-5">
         <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3">
           {kategorieProdukte.map((p, idx) => (
-            <div key={p.id} ref={idx === 0 ? produktRef : undefined}>
+            <div key={p.id} ref={idx === 0 ? produktRef : undefined} className="h-full">
               <ProduktKarte
                 produkt={p}
                 imKorb={inKorb(p.id)}
