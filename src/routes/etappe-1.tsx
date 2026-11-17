@@ -43,8 +43,8 @@ const HINTS_003: Hint[] = [
     id: 0,
     unlockMin: 3,
     label: "Hinweis 1",
-    title: "Schau dir die Unterlagen genau an",
-    body: "Wo hat Jakob geschlafen, und von wo aus ist er am nächsten Morgen aufgebrochen?",
+    title: "Wo startet Jakobs Reise?",
+    body: "Jakob ist direkt nach der Übernachtung aufgebrochen. In welcher Stadt lag sein Hotel? Genau das ist euer Startort.",
   },
   {
     id: 1,
