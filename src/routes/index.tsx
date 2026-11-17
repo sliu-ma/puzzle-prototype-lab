@@ -18,7 +18,6 @@ import {
 } from "@/lib/progress";
 import { getStageHintsUsed } from "@/lib/badges";
 import { NextStepCard } from "@/components/case-file/NextStepCard";
-import { HearingLocationHint } from "@/components/case-file/HearingLocationHint";
 import { BadgeShelf } from "@/components/case-file/BadgeShelf";
 import { StartForm } from "@/components/case-file/StartForm";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -410,7 +409,6 @@ function ProgressPanel({
               isFinale
               onOpen={() => openStage(6)}
             />
-            <HearingLocationHint />
           </>
         ) : nextStage ? (
           <NextStepCard
