@@ -114,9 +114,6 @@ export function FactCheck({ open, stage, pool, onPassed, onReread }: Props) {
               <p className="font-mono-typed text-xl font-bold uppercase tracking-[0.18em] text-stamp sm:text-2xl">
                 Geprüft
               </p>
-              <p className="mt-0.5 font-mono-typed text-[10px] uppercase tracking-[0.22em] text-stamp/80">
-                fürs Hearing bereit
-              </p>
             </div>
             <div className="space-y-1">
               <p className="font-serif text-lg font-bold">„Perfekt, danke!"</p>
