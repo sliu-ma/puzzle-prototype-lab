@@ -304,6 +304,16 @@ input, textarea, select {
   animation: stamp-in 700ms cubic-bezier(0.22, 1, 0.36, 1) 250ms both;
 }
 
+/* Outro: Balken läuft die 4 Sekunden des Erfolgs-Fensters ab. */
+@keyframes outro-count {
+  from { transform: scaleX(1); }
+  to { transform: scaleX(0); }
+}
+
+@utility animate-outro-count {
+  animation: outro-count 4000ms linear both;
+}
+
 /* Schwebende Papier-Elemente. */
 @keyframes float-y {
   0%, 100% { transform: translateY(0) rotate(var(--float-rot, 0deg)); }
@@ -350,7 +360,8 @@ input, textarea, select {
 @media (prefers-reduced-motion: reduce) {
   .animate-stamp-in,
   .animate-float-slow,
-  .animate-bounce-soft {
+  .animate-bounce-soft,
+  .animate-outro-count {
     animation: none;
   }
   .reveal-up,

@@ -1,7 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, Hand } from "lucide-react";
 import { PaperCard } from "@/components/case-file/PaperCard";
 import { cn } from "@/lib/utils";
+import { FactCheck } from "@/components/case-file/FactCheck";
+import { FACT_CHECKS, isFactCheckPassed } from "@/lib/fact-checks";
 
 export type InputCard = {
   title: string;
@@ -42,6 +44,8 @@ export function InputCarousel({
   const [active, setActive] = useState(0);
   const [showFirstHint, setShowFirstHint] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
+  const [quizOpen, setQuizOpen] = useState(false);
+  const statements = FACT_CHECKS[stage];
 
   // --- Lesezeit-Erhebung (nur Statistik, ohne Punkteeinfluss) --------------
   const sessionId = useRef(`${Date.now().toString(36)}`);
@@ -298,7 +302,7 @@ export function InputCarousel({
 
         {showNext ? (
           <button
-            onClick={onNext}
+            onClick={() => (statements?.length && !isFactCheckPassed(stage) ? setQuizOpen(true) : onNext())}
             className="rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md"
           >
             {nextLabel}
@@ -310,6 +314,21 @@ export function InputCarousel({
           </div>
         )}
       </div>
+      {statements && (
+        <FactCheck
+          open={quizOpen}
+          stage={stage}
+          pool={statements}
+          onPassed={() => {
+            setQuizOpen(false);
+            onNext();
+          }}
+          onReread={() => {
+            setQuizOpen(false);
+            scrollerRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+          }}
+        />
+      )}
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import type { Badge } from "@/lib/badges";
-import { setBadgeOverlayOpen } from "@/lib/overlay-bus";
+import { setBadgeOverlayOpen, FACT_CHECK, isFactCheckOpen } from "@/lib/overlay-bus";
 
 
 const CONFETTI_COLORS = [
@@ -42,7 +42,14 @@ function makePieces(n: number): Piece[] {
 export function BadgeToast() {
   const [queue, setQueue] = useState<Badge[]>([]);
   const [confettiOn, setConfettiOn] = useState(false);
-  const badge = queue[0] ?? null;
+  const [paused, setPaused] = useState(false);
+  useEffect(() => {
+    setPaused(isFactCheckOpen());
+    const on = (e: Event) => setPaused(!!(e as CustomEvent<{ open: boolean }>).detail?.open);
+    window.addEventListener(FACT_CHECK, on);
+    return () => window.removeEventListener(FACT_CHECK, on);
+  }, []);
+  const badge = paused ? null : (queue[0] ?? null);
   const pieces = useMemo(
     () => (badge ? makePieces(48) : []),
     // eslint-disable-next-line react-hooks/exhaustive-deps

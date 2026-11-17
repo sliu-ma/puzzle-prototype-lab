@@ -15,3 +15,16 @@ export function setBadgeOverlayOpen(open: boolean) {
 export function isBadgeOverlayOpen() {
   return badgeOpen;
 }
+
+// Während der Wissenscheck offen ist, warten Badge-Overlays.
+export const FACT_CHECK = "factcheck:open";
+let factCheckOpen = false;
+export function setFactCheckOpen(open: boolean) {
+  if (factCheckOpen === open) return;
+  factCheckOpen = open;
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(new CustomEvent(FACT_CHECK, { detail: { open } }));
+}
+export function isFactCheckOpen() {
+  return factCheckOpen;
+}
