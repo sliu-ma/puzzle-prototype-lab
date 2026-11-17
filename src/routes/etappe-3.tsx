@@ -35,14 +35,14 @@ const HINTS_004: Hint[] = [
     unlockMin: 6,
     label: "Hinweis 2",
     title: "Gewohnheiten sind gratis, und stark",
-    body: "18 °C heizen, kurz duschen, Wäsche aufhängen, Eco-Programme, Deckel auf den Topf, Kühlschrank auf 7 °C: alles kostet 0 CHF und bringt zusammen schon fast die 3'500 ESP.",
+    body: "20 °C heizen, kurz duschen, Wäsche aufhängen, Eco-Programme, Deckel auf den Topf, passende Pfanne, Kühlschrank auf 7 °C: alles kostet 0 CHF. Für die 3'500 ESP brauchst du danach noch zwei günstige Anschaffungen.",
   },
   {
     id: 2,
     unlockMin: 9,
     label: "Auflösung",
     title: "So erreichst du die 3'500 ESP",
-    body: "Nur mit Verhalten: 18 °C (1480) + 5-Min-Dusche (820) + Aufhängen (550) + Eco-Waschen (340) + Eco-Spülen (150) + Umluft (20) + Deckel + Pfannengrösse (220) + Kühlschrank 7 °C (90) = ~3'670 ESP. Ergänze eine LED-Lampe (60 CHF) oder Sparbrause (30 CHF), Budget bleibt fast unangetastet.",
+    body: "20 °C (740) + Sparbrause und kurz duschen (1150, 30 CHF) + Aufhängen (550) + LED-Lampe (350, 60 CHF) + Eco-Waschen (340) + Eco-Spülen (150) + Deckel (120) + Pfannengrösse (100) + Kühlschrank 7 °C (90) + Umluft (20) = 3'610 ESP für nur 90 CHF.",
   },
 ];
 
