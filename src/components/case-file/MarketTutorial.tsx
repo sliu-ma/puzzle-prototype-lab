@@ -198,15 +198,6 @@ export function MarketTutorial({ open, steps, onClose }: Props) {
             {isLast ? "Los geht's" : "Weiter"}
           </button>
         </div>
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onClose();
-          }}
-          className="mt-2 w-full rounded-sm py-1 font-mono-typed text-[11px] uppercase tracking-wider text-muted-foreground underline-offset-4 hover:text-ink hover:underline"
-        >
-          Überspringen
-        </button>
       </div>
     </div>
   );
