@@ -6,6 +6,7 @@ import { ScoreCounter } from "@/components/case-file/ScoreCounter";
 import { SyncIndicator } from "@/components/case-file/SyncIndicator";
 import { ErrorScreen } from "@/components/case-file/ErrorScreen";
 import { TeacherMessageOverlay } from "@/components/case-file/TeacherMessageOverlay";
+import { Notebook } from "@/components/case-file/Notebook";
 import { HelpButton } from "@/components/case-file/HelpButton";
 import { ProgressRecovery } from "@/components/case-file/ProgressRecovery";
 
@@ -102,6 +103,7 @@ function RootComponent() {
         <SyncIndicator />
         <ScoreCounter />
         <GlobalTimer />
+        <Notebook />
       </div>
       <BadgeToast />
       <TeacherMessageOverlay />
