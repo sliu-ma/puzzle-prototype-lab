@@ -58,6 +58,7 @@ export function HelpButton() {
           setOpen(true);
         }}
         aria-label="Hilfe von der Lehrperson anfordern"
+        data-tour="help"
         className="fixed bottom-4 left-3 z-40 flex min-h-11 items-center gap-1.5 rounded-full border border-border bg-card/95 px-3 py-2 font-mono-typed text-[10px] uppercase tracking-wider text-muted-foreground shadow-md backdrop-blur"
       >
         <LifeBuoy className="h-4 w-4 text-stamp" />

@@ -122,6 +122,7 @@ export function ScoreCounter() {
           type="button"
           onClick={() => setOpen(true)}
           aria-label="Punkte-Aufschlüsselung öffnen"
+          data-tour="score"
           className="flex items-center gap-1.5 rounded-sm border border-border bg-card/95 px-2.5 py-1.5 font-mono-typed text-sm text-foreground shadow-md backdrop-blur transition-transform active:scale-95"
         >
           <Trophy className="h-4 w-4 text-stamp" />

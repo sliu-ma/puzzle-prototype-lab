@@ -30,6 +30,7 @@ import { IntroScreen, hasSeenIntro } from "@/components/case-file/IntroScreen";
 import { useScrollToTopOnChange } from "@/hooks/use-scroll-top";
 import { useEnvelopePrompt } from "@/components/case-file/EnvelopeDialog";
 import { cn } from "@/lib/utils";
+import { OverviewTour } from "@/components/case-file/OverviewTour";
 
 export const Route = createFileRoute("/")({
   // Beitritts-Link der Lehrperson: /?r=RUNDENCODE
@@ -373,7 +374,7 @@ function ProgressPanel({
       </div>
 
       {/* Nächster Schritt */}
-      <div ref={ctaRef}>
+      <div ref={ctaRef} data-tour="next">
         {timeUp && !finished ? (
           <div className="rounded-sm border border-stamp/60 bg-secondary/40 p-4">
             <p className="font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
@@ -541,7 +542,10 @@ function ProgressPanel({
         </li>
       </ol>
 
-      <BadgeShelf />
+      <div data-tour="badges">
+        <BadgeShelf />
+      </div>
+      <OverviewTour />
 
       {/* Sticky-CTA auf dem Handy */}
       {showSticky && !finished && !timeUp && (

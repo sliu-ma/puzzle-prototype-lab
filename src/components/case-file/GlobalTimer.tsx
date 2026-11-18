@@ -267,6 +267,7 @@ export function GlobalTimer() {
                 : "border-border text-foreground",
         )}
         aria-live="polite"
+        data-tour="timer"
       >
         {isFinished ? (
           <CheckCircle2 className="h-4 w-4" />

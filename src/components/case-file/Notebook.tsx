@@ -96,6 +96,7 @@ export function Notebook() {
         type="button"
         onClick={openBook}
         aria-label="Jakobs Notizbuch öffnen"
+        data-tour="notebook"
         className={cn(
           "flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card/95 text-foreground shadow-md backdrop-blur",
           pulse && "animate-pulse ring-2 ring-stamp",
