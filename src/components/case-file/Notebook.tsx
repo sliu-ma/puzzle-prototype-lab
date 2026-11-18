@@ -227,7 +227,7 @@ function NotesPage({ notes, onChange }: { notes: string; onChange: (v: string) =
       <PaperCard rotate={-1.1} tape="top-left" className="mb-4 p-3">
         <p className="font-mono-typed text-[13px] leading-snug text-ink/85">
           Hier ist Platz für eure eigenen Notizen.
-          Meine Faktenkarten sind auf der anderen Seite eingeklebt eingeklebt.
+          Meine Faktenkarten sind weiter hinten eingeklebt.
         </p>
         <p className="mt-1 text-right font-mono-typed text-[12px] text-stamp">– J.</p>
       </PaperCard>
