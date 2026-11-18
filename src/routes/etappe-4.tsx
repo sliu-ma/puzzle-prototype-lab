@@ -54,22 +54,22 @@ const HINTS_002: Hint[] = [
     id: 0,
     unlockMin: 3,
     label: "Hinweis 1",
-    title: "Sortier zuerst die Tiere",
-    body: "Lege die acht Polaroids vor dich. Welche dieser Tiere sind in der Schweiz bedroht? Fünf davon sind in der Schweiz in irgendeiner Form gefährdet, drei sind nicht gefährdet.",
+    title: "Ausschneiden und trennen",
+    body: "Schneidet alle acht Polaroids sauber aus und teilt sie in zwei Stapel auf: in der Schweiz gefährdet und nicht gefährdet. Wichtig: Auch Tiere, die nur «potenziell» oder «leicht» gefährdet sind, zählen hier zu den gefährdeten Arten.",
   },
   {
     id: 1,
     unlockMin: 6,
     label: "Hinweis 2",
-    title: "Dreh die Karten um",
-    body: "Hinter einer einzigen Karte verbergen sich gleich alle drei Zahlen des Codes. Such bei den bedrohten Arten weiter.",
+    title: "Die Zuordnung überprüfen",
+    body: "Zur Kontrolle für eure Stapel: Biber, Reh und Rotkehlchen sind in der Schweiz nicht gefährdet, die anderen fünf Arten hingegen schon. Schaut euch die gefährdeten Arten nun genauer an: Findet ihr irgendwo Zahlen im Text?",
   },
   {
     id: 2,
     unlockMin: 9,
     label: "Auflösung",
-    title: "So geht's",
-    body: "Hinter der Kreuzotter (in der Schweiz stark gefährdet) stehen die Zahlen 1, 2 und 3. Aufsteigend ergibt das den Code 1, 2, 3.",
+    title: "Die Auflösung",
+    body: "Auf der Rückseite der Kreuzotter (stark gefährdet) verbergen sich die Zahlen 1, 2 und 3. Von der kleinsten zur grössten Zahl eingegeben lautet der Code: 1 2 3.",
   },
 ];
 
@@ -215,7 +215,7 @@ function AktePage() {
                &nbsp;&nbsp;&nbsp;
                <br />
                  „Manche dieser Tiere sind hier noch sicher, andere stehen kurz vor dem
-                 Verschwinden. Schneide die Polaroids aus undtrenne die gefährdeten von
+                 Verschwinden. Schneide die Polaroids aus und trenne die gefährdeten von
                  den nicht gefährdeten Arten, um die Kiste zu öffnen. Die gefährdeten
                  Tiere erzählen eine Geschichte, höre zu, was sie zu sagen haben.“
              </blockquote>
