@@ -202,7 +202,7 @@ export function IntroScreen({
               „Maja! Du bist wirklich gekommen, ich wusste nicht, ob ich noch mit
               dir rechnen darf.“ Der Mann atmet erleichtert aus. „Ich bin ein
               Freund deines Grossvaters. Bevor er starb, hat er mir diesen
-              Umschlag und sein Notizbuch für dich gegeben. Sammle darin die Fakten, im Gemeinderat sind sie dein stärkstes Beweismittel.“ „Aber es bleibt keine Zeit. In{" "}
+              Umschlag und sein Notizbuch für dich gegeben.“ „Aber es bleibt keine Zeit. In{" "}
               <strong className="not-italic">{budgetMin} Minuten</strong> entscheidet der
               Gemeinderat über das Gaskraftwerk hier, auf eurer Lichtung. Du
               musst dich beeilen.“
@@ -246,7 +246,7 @@ export function IntroScreen({
                 <div className="flex-1">
                   <p className="font-serif text-sm font-semibold text-ink">Jakobs Notizbuch</p>
                   <p className="text-[13px] leading-snug text-ink/80">
-                    {bookTaken ? "Eingesteckt. Du findest es oben rechts." : "Darin klebt ihr unterwegs die Faktenkarten ein und macht eigene Notizen."}
+                    {bookTaken ? "Oben rechts griffbereit." : "Für Fakten und eigene Notizen."}
                   </p>
                 </div>
                 {!bookTaken && (
