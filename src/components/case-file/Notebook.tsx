@@ -31,8 +31,9 @@ export function Notebook() {
   const [pulse, setPulse] = useState(false);
   const [hint, setHint] = useState(false);
   const scroller = useRef<HTMLDivElement>(null);
-  // Nur bereits erspielte Etappen + Eigene Notizen (0)
-  const PAGES = [...unlocked.filter((n) => n >= 1 && n <= 5).sort((a, b) => a - b), 0];
+  // 1 = Gesammelte Faktenkarten, 0 = Eigene Notizen
+  const PAGES = [1, 0];
+  const stages = unlocked.filter((n) => n >= 1 && n <= 5).sort((a, b) => a - b);
 
   useEffect(() => {
     const sync = () => { setUnlocked(getUnlockedStages()); setNotesState(getNotes()); };
@@ -68,8 +69,8 @@ export function Notebook() {
   const openBook = () => {
     setUnlocked(getUnlockedStages());
     const last = getUnlockedStages().at(-1);
-    const pages = [...getUnlockedStages().filter((n) => n >= 1 && n <= 5).sort((a, b) => a - b), 0];
-    const start = last ? Math.max(0, pages.indexOf(last)) : 0;
+    void last;
+    const start = 0;
     setPage(start);
     setOpen(true);
     if (hint) { setHint(false); try { localStorage.setItem(HINT_KEY, "seen"); } catch { /* ignore */ } }
@@ -119,20 +120,18 @@ export function Notebook() {
           {/* Register-Reiter */}
           <div className="flex gap-1 px-3">
             {PAGES.map((s, i) => {
-              const has = s === 0 || unlocked.includes(s);
               return (
                 <button
                   key={s}
                   type="button"
                   onClick={() => goTo(i)}
-                  aria-label={s === 0 ? "Eigene Notizen" : `Etappe ${s} ${STAGE_NAMES[s]}`}
+                  
                   className={cn(
                     "min-h-9 flex-1 rounded-t-md border border-b-0 border-ink/15 font-mono-typed text-[11px] uppercase tracking-wider transition-transform",
                     i === page ? "translate-y-0 bg-paper text-ink" : "translate-y-1 bg-paper-deep text-ink/60",
-                    !has && "opacity-60",
                   )}
                 >
-                  {s === 0 ? <PenLine className="mx-auto h-3.5 w-3.5" /> : s}
+                  {s === 0 ? <span className="inline-flex items-center gap-1"><PenLine className="h-3.5 w-3.5" /> Eigene Notizen</span> : "Faktenkarten"}
                 </button>
               );
             })}
@@ -153,7 +152,15 @@ export function Notebook() {
                 {s === 0 ? (
                   <NotesPage notes={notes} onChange={(v) => { setNotesState(v); setNotes(v); }} />
                 ) : (
-                  <StagePage stage={s} unlocked={unlocked.includes(s)} />
+                  <div>
+                    <p className="font-mono-typed text-[10px] uppercase tracking-[0.2em] text-stamp">{stages.length * 3} / 15 eingeklebt</p>
+                    <h3 className="mb-5 font-serif text-2xl font-semibold italic text-ink">Deine gesammelten Faktenkarten</h3>
+                    {stages.length === 0 ? (
+                      <p className="flex items-center gap-2 font-serif text-sm italic text-ink/60"><Lock className="h-4 w-4" /> Besteht die Prüffragen einer Etappe, dann werden ihre Karten hier eingeklebt.</p>
+                    ) : (
+                      <div className="space-y-10">{stages.map((n) => <StagePage key={n} stage={n} unlocked />)}</div>
+                    )}
+                  </div>
                 )}
               </section>
             ))}
