@@ -156,7 +156,7 @@ export function Notebook() {
                     <p className="font-mono-typed text-[10px] uppercase tracking-[0.2em] text-stamp">{stages.length * 3} / 15 eingeklebt</p>
                     <h3 className="mb-5 font-serif text-2xl font-semibold italic text-ink">Deine gesammelten Faktenkarten</h3>
                     {stages.length === 0 ? (
-                      <p className="flex items-center gap-2 font-serif text-sm italic text-ink/60"><Lock className="h-4 w-4" /> Besteht die Prüffragen einer Etappe, dann werden ihre Karten hier eingeklebt.</p>
+                      <p className="flex items-center gap-2 font-serif text-sm italic text-ink/60"><Lock className="h-4 w-4" /> Nach jeder erfolgreich gelösten Etappe, erscheinen die neuen Faktenkarten hier.{"\u00a0"}</p>
                     ) : (
                       <div className="space-y-10">{stages.map((n) => <StagePage key={n} stage={n} unlocked />)}</div>
                     )}
