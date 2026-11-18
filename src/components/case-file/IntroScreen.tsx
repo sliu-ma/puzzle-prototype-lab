@@ -6,6 +6,7 @@ import {
   TriangleAlert,
   Play,
   Hand,
+  BookOpen,
 } from "lucide-react";
 
 import { PaperCard } from "@/components/case-file/PaperCard";
@@ -47,6 +48,7 @@ export function IntroScreen({
   const [prologueOpen, setPrologueOpen] = useState(false);
   const [videoWatched, setVideoWatched] = useState(false);
   const [budgetMin, setBudgetMin] = useState(90);
+  const [bookTaken, setBookTaken] = useState(false);
 
   useEffect(() => {
     setBudgetMin(getBudgetMin());
@@ -200,7 +202,7 @@ export function IntroScreen({
               „Maja! Du bist wirklich gekommen, ich wusste nicht, ob ich noch mit
               dir rechnen darf.“ Der Mann atmet erleichtert aus. „Ich bin ein
               Freund deines Grossvaters. Bevor er starb, hat er mir diesen
-              Umschlag für dich gegeben.“ „Aber es bleibt keine Zeit. In{" "}
+              Umschlag und sein Notizbuch für dich gegeben. Sammle darin die Fakten, im Gemeinderat sind sie dein stärkstes Beweismittel.“ „Aber es bleibt keine Zeit. In{" "}
               <strong className="not-italic">{budgetMin} Minuten</strong> entscheidet der
               Gemeinderat über das Gaskraftwerk hier, auf eurer Lichtung. Du
               musst dich beeilen.“
@@ -238,6 +240,30 @@ export function IntroScreen({
                 </p>
               </div>
             )}
+            {letterOpen && (
+              <div className="mt-5 flex items-center gap-4 rounded-sm border border-border bg-kraft/60 p-4">
+                <BookOpen className="h-9 w-9 shrink-0 text-ink" />
+                <div className="flex-1">
+                  <p className="font-serif text-sm font-semibold text-ink">Jakobs Notizbuch</p>
+                  <p className="text-[13px] leading-snug text-ink/80">
+                    {bookTaken ? "Eingesteckt. Du findest es oben rechts." : "Darin klebt ihr unterwegs die Faktenkarten ein und macht eigene Notizen."}
+                  </p>
+                </div>
+                {!bookTaken && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setBookTaken(true);
+                      try { localStorage.setItem("maya-notebook-hint", "pending"); } catch { /* ignore */ }
+                      window.dispatchEvent(new Event("maya-notebook-received"));
+                    }}
+                    className="min-h-[44px] shrink-0 rounded-sm bg-primary px-3 font-serif text-sm font-semibold text-primary-foreground"
+                  >
+                    Einstecken
+                  </button>
+                )}
+              </div>
+            )}
           </PaperCard>
         )}
 
@@ -249,7 +275,7 @@ export function IntroScreen({
             onClick={next}
             disabled={
               (current === "video" && !videoWatched) ||
-              (current === "brief" && !letterOpen)
+              (current === "brief" && (!letterOpen || !bookTaken))
             }
             className="inline-flex min-h-[48px] items-center gap-2 rounded-sm bg-primary px-5 py-2.5 font-serif text-sm font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-md disabled:pointer-events-none disabled:opacity-40"
           >
