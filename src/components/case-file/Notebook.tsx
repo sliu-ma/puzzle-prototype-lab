@@ -9,6 +9,7 @@ import { getFactCards } from "@/lib/fact-cards";
 import {
   getUnlockedStages, getNotes, setNotes, NOTEBOOK_EVENT, STAGE_NAMES,
 } from "@/lib/notebook";
+import { hasSeenBriefing } from "@/lib/progress";
 
 const HINT_KEY = "maya-notebook-hint";
 
@@ -30,13 +31,15 @@ export function Notebook() {
   const [page, setPage] = useState(0);
   const [pulse, setPulse] = useState(false);
   const [hint, setHint] = useState(false);
+  // Das Notizbuch gibt es erst, sobald die Ermittlung läuft (Briefing done).
+  const [started, setStarted] = useState(false);
   const scroller = useRef<HTMLDivElement>(null);
   // 1 = Gesammelte Faktenkarten, 0 = Eigene Notizen
   const PAGES = [1, 0];
   const stages = unlocked.filter((n) => n >= 1 && n <= 5).sort((a, b) => a - b);
 
   useEffect(() => {
-    const sync = () => { setUnlocked(getUnlockedStages()); setNotesState(getNotes()); };
+    const sync = () => { setUnlocked(getUnlockedStages()); setNotesState(getNotes()); setStarted(hasSeenBriefing()); };
     sync();
     try { setHint(localStorage.getItem(HINT_KEY) === "pending"); } catch { /* ignore */ }
     const onHint = () => { setHint(true); setPulse(true); window.setTimeout(() => setPulse(false), 6000); };
@@ -77,7 +80,7 @@ export function Notebook() {
     window.setTimeout(() => goTo(start, false), 30);
   };
 
-  if (HIDDEN.some((p) => pathname.startsWith(p))) return null;
+  if (!started || HIDDEN.some((p) => pathname.startsWith(p))) return null;
 
   const onScroll = () => {
     const el = scroller.current;

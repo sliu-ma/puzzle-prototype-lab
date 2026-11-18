@@ -12,27 +12,16 @@ import {
 import { PaperCard } from "@/components/case-file/PaperCard";
 import { Stamp } from "@/components/case-file/Stamp";
 import { PrologueOverlay } from "@/components/case-file/PrologueVideo";
-import { getBudgetMin, startGame } from "@/lib/progress";
+import {
+  getBudgetMin,
+  startGame,
+  hasSeenBriefing,
+  markBriefingSeen,
+} from "@/lib/progress";
 import { getRoundSession } from "@/lib/round-client";
 import { useScrollToTopOnChange } from "@/hooks/use-scroll-top";
 
-const KEY = "maya-intro-seen";
-
-export function hasSeenIntro(): boolean {
-  try {
-    return localStorage.getItem(KEY) === "1";
-  } catch {
-    return false;
-  }
-}
-
-export function markIntroSeen() {
-  try {
-    localStorage.setItem(KEY, "1");
-  } catch {
-    /* ignore */
-  }
-}
+export { hasSeenBriefing as hasSeenIntro, markBriefingSeen as markIntroSeen };
 
 /* ---------- Screen ---------- */
 
@@ -65,7 +54,7 @@ export function IntroScreen({
   const current = steps[step];
 
   const finish = () => {
-    markIntroSeen();
+    markBriefingSeen();
     startGame();
     onDone();
   };

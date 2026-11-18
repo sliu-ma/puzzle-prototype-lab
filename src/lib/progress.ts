@@ -19,6 +19,28 @@ const KEY_STAGE = "maya-current-stage";
 export const KEY_START_TS = "maya-start-ts";
 export const KEY_END_TS = "maya-end-ts";
 const KEY_BUDGET = "maya-budget-min";
+/** Briefing gelesen: ab jetzt läuft die Ermittlung. */
+const KEY_INTRO_SEEN = "maya-intro-seen";
+
+/** True, sobald das Briefing abgeschlossen wurde (= Spiel läuft). */
+export function hasSeenBriefing(): boolean {
+  try {
+    return localStorage.getItem(KEY_INTRO_SEEN) === "1";
+  } catch {
+    return false;
+  }
+}
+
+/** Markiert das Briefing als gelesen und informiert die Kopfzeile. */
+export function markBriefingSeen() {
+  try {
+    localStorage.setItem(KEY_INTRO_SEEN, "1");
+    window.dispatchEvent(new Event("maya-progress"));
+  } catch {
+    /* ignore */
+  }
+}
+
 /** Standard-Zeitbudget in Minuten. Eine Klassen-Runde kann davon abweichen. */
 export const TIMER_DURATION_MIN = 90;
 
