@@ -6,11 +6,7 @@ import { QRGate } from "@/components/case-file/QRGate";
 import { StageGate } from "@/components/case-file/StageGate";
 import { GutachtenRaetsel } from "@/components/case-file/GutachtenRaetsel";
 import { InputCarousel } from "@/components/case-file/InputCarousel";
-import {
-  CO2VergleichChart,
-  AnteilErneuerbarChart,
-  ImportabhaengigkeitChart,
-} from "@/components/case-file/EnergietraegerCharts";
+import { getFactCards } from "@/lib/fact-cards";
 import { HintSystem, type Hint } from "@/components/case-file/HintSystem";
 import { completeStage, getFrozenClock, getHearingClock } from "@/lib/progress";
 import { awardBadge, getTotalHintsUsed, tryAwardNoHintStage } from "@/lib/badges";
@@ -232,23 +228,7 @@ function AktePage() {
             kicker="Fachlicher Input · Energieträger"
             title="Voller Energie"
             intro="Drei Blickwinkel auf unsere Energie, an ihnen entscheidet sich, was im Hearing zählt:"
-            cards={[
-              {
-                title: "Vergleich Energieträger",
-                body: "Verschiedene Energiequellen verursachen unterschiedlich viel Gramm CO₂ pro Kilowattstunde Strom. Im Betrieb verursachen erneuerbare Energien praktisch keine CO₂-Emissionen.",
-                visual: <CO2VergleichChart />,
-              },
-              {
-                title: "Anteil erneuerbare Energien",
-                body: "Der Anteil erneuerbarer Energien in der Schweiz betrug 2023 rund 28 Prozent. Der grösste Teil der Energie stammt also weiterhin aus fossilen Quellen wie Öl oder Gas.",
-                visual: <AnteilErneuerbarChart />,
-              },
-              {
-                title: "Abhängigkeit von Importen",
-                body: "2024 war die Schweiz energetisch zu 68 Prozent vom Ausland abhängig. Solar- und Windenergie machen die Schweiz unabhängiger von diesen Importen, die vor allem in Krisenzeiten stark schwanken können.",
-                visual: <ImportabhaengigkeitChart />,
-              },
-            ]}
+            cards={getFactCards(5)}
             onBack={() => setStep("spiel")}
             nextLabel="Zum Hearing →"
             onNext={() => goto("naechstes")}

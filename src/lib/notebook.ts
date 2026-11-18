@@ -1,38 +1,19 @@
-/** Jakobs Notizbuch: gesammelte Faktenkarten + eigene Notizen (nur lokal). */
-export type SavedFactCard = { title: string; body: string; hint?: string };
-export type SavedFactSet = { stage: number; title: string; cards: SavedFactCard[] };
+/** Jakobs Notizbuch: freigeschaltete Etappen (über Prüffragen) + eigene Notizen. */
+import { isFactCheckPassed } from "@/lib/fact-checks";
 
 export const STAGE_NAMES: Record<number, string> = {
-  1: "Mobilität",
-  2: "Konsum",
-  3: "Wohnen",
-  4: "Biodiversität",
-  5: "Energie",
+  1: "Mobilität", 2: "Konsum", 3: "Wohnen", 4: "Biodiversität", 5: "Energie",
 };
-
-const factKey = (s: number) => `maya-notebook-facts-${s}`;
 const NOTES_KEY = "maya-notebook-notes";
 export const NOTEBOOK_EVENT = "maya-notebook";
 
-export function saveFactSet(set: SavedFactSet) {
-  try {
-    const had = localStorage.getItem(factKey(set.stage));
-    localStorage.setItem(factKey(set.stage), JSON.stringify(set));
-    window.dispatchEvent(new CustomEvent(NOTEBOOK_EVENT, { detail: { newStage: had ? null : set.stage } }));
-  } catch { /* ignore */ }
+export function getUnlockedStages(): number[] {
+  return [1, 2, 3, 4, 5].filter((s) => isFactCheckPassed(s));
 }
-
-export function getFactSets(): SavedFactSet[] {
-  const out: SavedFactSet[] = [];
-  for (let s = 1; s <= 5; s++) {
-    try {
-      const raw = localStorage.getItem(factKey(s));
-      if (raw) out.push(JSON.parse(raw));
-    } catch { /* ignore */ }
-  }
-  return out;
+/** Nach bestandenen Prüffragen: Notizbuch informieren (Toast + Puls). */
+export function announceFactsCollected(stage: number) {
+  try { window.dispatchEvent(new CustomEvent(NOTEBOOK_EVENT, { detail: { newStage: stage } })); } catch { /* ignore */ }
 }
-
 export function getNotes(): string {
   try { return localStorage.getItem(NOTES_KEY) ?? ""; } catch { return ""; }
 }

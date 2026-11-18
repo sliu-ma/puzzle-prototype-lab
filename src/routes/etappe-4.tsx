@@ -4,6 +4,7 @@ import { PaperCard } from "@/components/case-file/PaperCard";
 import { Stamp } from "@/components/case-file/Stamp";
 import { CodeLock } from "@/components/case-file/CodeLock";
 import { InputCarousel } from "@/components/case-file/InputCarousel";
+import { getFactCards } from "@/lib/fact-cards";
 import { QRGate } from "@/components/case-file/QRGate";
 import { StageGate } from "@/components/case-file/StageGate";
 import { HintSystem, type Hint } from "@/components/case-file/HintSystem";
@@ -18,11 +19,6 @@ import { useSuccessBurst } from "@/components/case-file/SuccessBurst";
 import { StageScoreRecap } from "@/components/case-file/StageScoreRecap";
 import { IconStamp } from "@/components/case-file/IconStamp";
 import { Search } from "lucide-react";
-import {
-  RoteListeChart,
-  UrsachenCarousel,
-  VielfaltGrid,
-} from "@/components/case-file/BiodiversityCharts";
 
 import {
   Dialog,
@@ -265,24 +261,7 @@ function AktePage() {
             kicker="Fachlicher Input · Biodiversität"
              title="Warum Vielfalt zählt "
             intro="Die Schweiz gehört in Europa zu den Ländern mit dem grössten Anteil bedrohter Arten. Drei Informationen, die du für den Rat brauchst:"
-            cards={[
-              {
-                title: "Rote Liste",
-                body: "Jede dritte untersuchte Art in der Schweiz gilt heute als gefährdet oder ist bereits ausgestorben. Diese bedrohten Arten stehen auf der sogenannten Roten Liste.",
-                visual: <RoteListeChart />,
-              },
-              {
-                title: "Ursachen",
-                body: "Die Gründe für den Rückgang der Biodiversität sind vielfältig. Diese Bilder zeigen drei davon.",
-                visual: <UrsachenCarousel />,
-              },
-              {
-                title: "Biodiversität bedeutet Vielfalt",
-                body: "All das brauchen wir zum Leben. Die Vielfalt an Arten sichert uns genau das.",
-                visual: <VielfaltGrid />,
-                visualFirst: true,
-              },
-            ]}
+            cards={getFactCards(4)}
             onBack={() => setStep("code")}
             nextLabel="Weiter zu Etappe 5 →"
             onNext={() => goto("naechstes")}

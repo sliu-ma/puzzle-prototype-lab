@@ -9,7 +9,7 @@ import { HintSystem, type Hint } from "@/components/case-file/HintSystem";
 import { RouteCards } from "@/components/case-file/RouteCards";
 import { RouteDetail } from "@/components/case-file/RouteDetail";
 import { InputCarousel } from "@/components/case-file/InputCarousel";
-import { CostPerKm, TrainVsCars, ShortTripsShare } from "@/components/case-file/MobilityCharts";
+import { getFactCards } from "@/lib/fact-cards";
 import { VALID_START, VALID_ZIEL, type RouteOption } from "@/lib/mobility-data";
 import { completeStage } from "@/lib/progress";
 import { tryAwardNoHintStage, awardBadge } from "@/lib/badges";
@@ -365,23 +365,7 @@ function AktePage() {
             kicker="Fachlicher Input · Nachhaltige Mobilität"
             title="Wie Mobilität wirkt"
             intro="Der Verkehr verursacht in der Schweiz rund ein Drittel aller Treibhausgase. Drei Karten, die du für das Hearing brauchst:"
-            cards={[
-              {
-                title: "Was kostet ein Kilometer wirklich?",
-                body: "Zu den Autokosten gehören nicht nur Benzin. Auch Versicherung, Parken und Reparaturen gehören dazu. Das ergibt zusammen die Vollkosten.",
-                visual: <CostPerKm />,
-              },
-              {
-                title: "Ein Zug ersetzt viele Autos",
-                body: "Ein Zug transportiert im Schnitt so viele Personen wie 90 Autos. Bei voller Kapazität wären es sogar bis zu 310. Der Grund: Züge sind oft nicht voll besetzt.",
-                visual: <TrainVsCars />,
-              },
-              {
-                title: "Aktive Mobilität",
-                body: "Viele Autofahrten in der Schweiz sind sehr kurz. Fast die Hälfte ist kürzer als 5 Kilometer. Solche kurzen Strecken kann man gut mit dem Velo oder zu Fuss zurücklegen.",
-                visual: <ShortTripsShare />,
-              },
-            ]}
+            cards={getFactCards(1)}
             onBack={() => setStep("routen")}
             nextLabel="Weiter zu Etappe 2 →"
             onNext={() => goto("naechstes")}

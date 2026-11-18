@@ -4,12 +4,7 @@ import { PaperCard } from "@/components/case-file/PaperCard";
 import { Stamp } from "@/components/case-file/Stamp";
 import { GruenerMarkt } from "@/components/case-file/GruenerMarkt";
 import { InputCarousel } from "@/components/case-file/InputCarousel";
-import {
-  SaisonProdukte,
-  FoodWasteChart,
-  LabelUebersicht,
-  getSaisonInfo,
-} from "@/components/case-file/ConsumptionCharts";
+import { getFactCards } from "@/lib/fact-cards";
 import { QRGate } from "@/components/case-file/QRGate";
 import { StageGate } from "@/components/case-file/StageGate";
 import { HintSystem, type Hint } from "@/components/case-file/HintSystem";
@@ -252,30 +247,13 @@ function AktePage() {
         )}
 
         {step === "input" && (() => {
-          const saison = getSaisonInfo();
           return (
           <InputCarousel
             stage={2}
             kicker="Fachlicher Input · 3 Lernkarten"
              title="Nachhaltig einkaufen, worauf es ankommt"
             intro="Drei Grundregeln, die du gerade angewendet hast, und die der Rat heute Abend hören will:"
-            cards={[
-              {
-                title: "Regional & saisonal einkaufen",
-                body: `Regionale und saisonale Lebensmittel haben kürzere Transportwege und kürzere Lagerzeiten als importierte Ware. Im ${saison.label} sind zum Beispiel folgende Lebensmittel saisonal und regional:\u00a0`,
-                visual: <SaisonProdukte />,
-              },
-              {
-                title: "Food-Waste vermeiden",
-                body: "Pro Person werden in der Schweiz jährlich viele Lebensmittel weggeworfen. Ein Grund dafür: Es wird zu viel eingekauft. Ein anderer Grund: Das Haltbarkeitsdatum läuft ab. Diese Grafik zeigt, wie viel das ausmacht.",
-                visual: <FoodWasteChart />,
-              },
-              {
-                title: "Auf die Verpackung achten",
-                body: "Labels auf Verpackungen zeigen besondere Eigenschaften eines Produkts. Zum Beispiel gute Qualität, faire Herstellung oder Umweltschutz. Drei Beispiele aus Frau Bergers Laden:\u00a0",
-                visual: <LabelUebersicht />,
-              },
-            ]}
+            cards={getFactCards(2)}
             backLabel="← Zurück in den Laden"
             onBack={() => setStep("shop")}
             nextLabel="Weiter zu Etappe 3 →"

@@ -4,7 +4,7 @@ import { PaperCard } from "@/components/case-file/PaperCard";
 import { cn } from "@/lib/utils";
 import { FactCheck } from "@/components/case-file/FactCheck";
 import { FACT_CHECKS, isFactCheckPassed } from "@/lib/fact-checks";
-import { saveFactSet } from "@/lib/notebook";
+import { announceFactsCollected } from "@/lib/notebook";
 
 export type InputCard = {
   title: string;
@@ -47,13 +47,6 @@ export function InputCarousel({
   const [isDesktop, setIsDesktop] = useState(false);
   const [quizOpen, setQuizOpen] = useState(false);
   const statements = FACT_CHECKS[stage];
-  const collect = useCallback(() => {
-    saveFactSet({ stage, title, cards: cards.map(({ title, body, hint }) => ({ title, body, hint })) });
-  }, [stage, title, cards]);
-  useEffect(() => {
-    if (!statements?.length || isFactCheckPassed(stage)) collect();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   // --- Lesezeit-Erhebung (nur Statistik, ohne Punkteeinfluss) --------------
   const sessionId = useRef(`${Date.now().toString(36)}`);
@@ -328,7 +321,7 @@ export function InputCarousel({
           stage={stage}
           pool={statements}
           onPassed={() => {
-            collect();
+            announceFactsCollected(stage);
             setQuizOpen(false);
             onNext();
           }}

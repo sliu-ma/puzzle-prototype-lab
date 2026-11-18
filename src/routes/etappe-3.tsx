@@ -6,6 +6,7 @@ import { QRGate } from "@/components/case-file/QRGate";
 import { StageGate } from "@/components/case-file/StageGate";
 import { EnergyGame } from "@/components/case-file/EnergyGame";
 import { InputCarousel } from "@/components/case-file/InputCarousel";
+import { getFactCards } from "@/lib/fact-cards";
 import { HintSystem, type Hint } from "@/components/case-file/HintSystem";
 import { completeStage, getFrozenClock } from "@/lib/progress";
 import { tryAwardNoHintStage } from "@/lib/badges";
@@ -17,9 +18,6 @@ import { useEnvelopePrompt } from "@/components/case-file/EnvelopeDialog";
 import { useSuccessBurst } from "@/components/case-file/SuccessBurst";
 import { StageScoreRecap } from "@/components/case-file/StageScoreRecap";
 import energieetiketteAsset from "@/assets/energieetikette.png.asset.json";
-import waschmaschineEtiketteAsset from "@/assets/waschmaschine-klasse-a.png.asset.json";
-import waschmaschineEtiketteEAsset from "@/assets/waschmaschine-klasse-e.png.asset.json";
-import { AlltagsTippsGrid, SparPotenzialChart } from "@/components/case-file/WohnenCharts";
 
 
 const HINTS_004: Hint[] = [
@@ -280,51 +278,7 @@ function AktePage() {
             kicker="Fachlicher Input · Wohnen & Energie"
              title="Wo Zuhause Energie versickert"
             intro="Rund 40 % des Schweizer Energieverbrauchs entstehen in Gebäuden. Drei Impulse, die du fürs Hearing brauchst:"
-            cards={[
-              {
-                title: "Energieetiketten",
-                body: "Energieetiketten verraten, wie sparsam ein Gerät mit Strom umgeht. Geräte der Klasse A brauchen wenig Strom, Geräte der Klasse G deutlich mehr.",
-                visual: (
-                  <figure className="mx-auto flex w-full flex-col items-center">
-                    <div className="flex w-full items-end justify-center gap-3">
-                      <div className="flex flex-col items-center">
-                        <img
-                          src={waschmaschineEtiketteAsset.url}
-                          alt="Energieetikette einer Waschmaschine der Klasse A"
-                          className="block h-[220px] w-auto max-w-full object-contain"
-                        />
-                        <span className="mt-1 font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
-                          Klasse A
-                        </span>
-                      </div>
-                      <div className="flex flex-col items-center">
-                        <img
-                          src={waschmaschineEtiketteEAsset.url}
-                          alt="Energieetikette einer Waschmaschine der Klasse E"
-                          className="block h-[220px] w-auto max-w-full object-contain"
-                        />
-                        <span className="mt-1 font-mono-typed text-[10px] uppercase tracking-wider text-stamp">
-                          Klasse E
-                        </span>
-                      </div>
-                    </div>
-                    <figcaption className="mt-2 text-center font-serif text-xs italic text-ink/70">
-                      Zwei Waschmaschinen im Vergleich. Links sparsam. Rechts stromhungrig.
-                    </figcaption>
-                  </figure>
-                ),
-              },
-              {
-                title: "Kleine Veränderungen, grosse Wirkung",
-                body: "Schon kleine Änderungen im Alltag sparen viel Energie.",
-                visual: <AlltagsTippsGrid />,
-              },
-              {
-                title: "Energie sparen bedeutet Geld sparen",
-                body: "Es lohnt sich, Energie zu sparen. Wer Energie spart, spart auch Geld. Du kannst deine Nebenkosten um bis zu 30 % senken. Ein Beispiel:",
-                visual: <SparPotenzialChart />,
-              },
-            ]}
+            cards={getFactCards(3)}
             backLabel="← Zurück zum Spiel"
             onBack={() => setStep("spiel")}
             nextLabel="Weiter zu Etappe 4 →"
