@@ -232,7 +232,7 @@ function NotesPage({ notes, onChange }: { notes: string; onChange: (v: string) =
           Hier ist Platz für eure eigenen Notizen.
           Meine Faktenkarten sind weiter hinten eingeklebt.
         </p>
-        <p className="mt-1 text-right font-mono-typed text-[12px] text-stamp">– J.</p>
+        <p className="mt-1 text-right font-mono-typed text-[12px] text-stamp">\n</p>
       </PaperCard>
       <textarea
         value={notes}
