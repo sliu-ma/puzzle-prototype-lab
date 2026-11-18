@@ -227,7 +227,7 @@ function NotesPage({ notes, onChange }: { notes: string; onChange: (v: string) =
       <p className="font-mono-typed text-[10px] uppercase tracking-[0.2em] text-stamp">Eure Seite</p>
       <h3 className="mb-1 font-serif text-2xl font-semibold italic text-ink">Eigene Notizen</h3>
       <p className="mb-2 font-mono-typed text-[10px] uppercase tracking-wider text-ink/50">Wird automatisch gespeichert</p>
-      <PaperCard rotate={-1.1} tape="top-left" className="mb-4 p-3">
+      <PaperCard rotate={-1.6} tape="top-left" className="mb-4 mt-4 p-3">
         <p className="font-mono-typed text-[13px] leading-snug text-ink/85">
           Hier ist Platz für eure eigenen Notizen.
           Meine Faktenkarten sind weiter hinten eingeklebt.
